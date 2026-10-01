@@ -67,6 +67,7 @@ test("PROD-13 13-07 saves only the selected file and discloses user prompts", as
     window.__p0PromptRequest = null;
     const originalFetch = window.fetch.bind(window);
     window.fetch = (input, init = {}) => {
+      if (String(input).endsWith('/demo/session')) return Promise.resolve(new Response(JSON.stringify({token:'dmo_privacy-fixture',expires_in:900}),{status:200,headers:{'content-type':'application/json'}}));
       if (!String(input).includes("gpt.yapweijun1996.com/demo/v1/responses")) return originalFetch(input, init);
       window.__p0PromptRequest = { body: JSON.parse(init.body) };
       return new Promise((_resolve, reject) => init.signal?.addEventListener("abort", () => reject(new DOMException("aborted", "AbortError")), { once: true }));

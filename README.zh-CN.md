@@ -20,6 +20,8 @@
 
 ### 🎨 PrintForm Studio —— 可视化调试工具
 
+[Studio v3](studio-v3/) 提供独立的设计、数据绑定、验证三工作区，适用于发票、采购单和送货单。状态为 Pilot；[功能与限制](docs/STUDIO_V3.md)。v2 保留。
+
 Studio v2 当前是面向 ERP 工程师的 **Production Pilot**，不是无代码自由画布。请打开 [studio-v2/index.html](studio-v2/index.html)：它以单一 `.html` 为事实来源，提供声明式 JSON Pointer 数据绑定、内嵌 runtime、质量门、WebMCP 渐进增强和离线 PWA。工程师下载后仍可阅读和手改 HTML。
 
 Start with the [Studio v2 index](docs/STUDIO_V2_INDEX.zh-CN.md), [protocol](docs/PRINTFORM_V2_PROTOCOL.zh-CN.md) and [Agent setup](studio-v2/AGENT_SETUP.md). Versions remain runtime 1.0.0 / Studio 0.11.0 / Protocol 2.0.0 / Agent Contract 4.0.0. E14 UI and change cards exist; the current worktree has shared scope/apply/data-policy enforcement and closed Agent projections, while composed release acceptance remains Partial. The [production plan](docs/STUDIO_V2_PRODUCTION_PLAN.md) records current evidence and pending requirements. No Production Ready release is declared.

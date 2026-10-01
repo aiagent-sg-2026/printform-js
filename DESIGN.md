@@ -1,5 +1,7 @@
 # DESIGN.md — PrintForm.js 架构设计
 
+> Studio v3 is an independent structured-authoring Pilot. Current scope, architecture and acceptance: [docs/STUDIO_V3.md](docs/STUDIO_V3.md). Its checks do not close v2 release gates.
+
 > 状态词沿用 [docs/STUDIO_V2_INDEX.zh-CN.md](docs/STUDIO_V2_INDEX.zh-CN.md)：**Current** = 代码已实现；**Target** = 已决定未实现；**Backlog** = 方向性。
 >
 > Last reviewed: 2026-09-11. Code is authoritative. Live execution status is derived in [PROGRESS.md](PROGRESS.md) from [TASK.md](TASK.md); acceptance evidence and requirements remain in the [production plan](docs/STUDIO_V2_PRODUCTION_PLAN.md). Dated history below is not a fresh release certificate.

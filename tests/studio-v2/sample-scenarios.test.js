@@ -41,4 +41,12 @@ describe("createScenario array targeting", () => {
     expect(result.totals.subtotal).toBeCloseTo(100);
     expect(result.totals.tax).toBeCloseTo(6);
   });
+  it('preserves supplied ERP totals when only descriptive text changes', () => {
+    const data = {items:[{description:'Claim stage',amountCertified:999}],totals:{subtotal:999,tax:17,grandTotal:1016}};
+    const long = createScenario(data,'long-text');
+    expect(long.totals).toEqual(data.totals);
+    expect(long.items[0].amountCertified).toBe(999);
+    expect(long.items[0].description).not.toBe(data.items[0].description);
+    expect(data.items[0].description).toBe('Claim stage');
+  });
 });

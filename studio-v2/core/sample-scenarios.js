@@ -30,7 +30,9 @@ export function createScenario(sampleData, scenario) {
   if (scenario === "long-text") {
     items.forEach((item, index) => { item.description = `Row ${index + 1}: ${"Long multilingual description 长文本 penerangan panjang ".repeat(8)}`; });
   }
-  if (data.totals) {
+  // Text-only stress must preserve the supplied ERP totals, including forms
+  // whose financial fields differ from the standard invoice fixture.
+  if (data.totals && scenario !== 'long-text') {
     const subtotal = calculateFinancialTotals(data).subtotal;
     data.totals.subtotal = subtotal;
     if (typeof data.totals.tax === "number") data.totals.tax = Math.round(subtotal * taxRate * 100) / 100;

@@ -1,5 +1,7 @@
 # TASK.md — 任务板
 
+> Studio v3 is an independent structured-authoring Pilot. Current scope, architecture and acceptance: [docs/STUDIO_V3.md](docs/STUDIO_V3.md). Its checks do not close v2 release gates.
+
 > Last reviewed: 2026-09-11. **Implementation Partial.** S01-S16 retain closure; S17 and later acceptance remain open. P0 X-01..03 are now closed by separate production-shell browser runs; the current-source Demo Gateway 13-07 rerun supplies supporting browser transport/privacy evidence, while Demo does not close direct-BYOK PI-04. Current counters and next action are in the sequential ledger below; the derived view is [PROGRESS.md](PROGRESS.md); Production Ready is not established.
 >
 > 规则：任务完成时移到「已完成」并附 commit；新任务先写验收标准再动手。Epic 归属见 [EPIC.md](EPIC.md)。

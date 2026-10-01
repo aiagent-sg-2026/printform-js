@@ -139,6 +139,7 @@ describe("revision-bound AI layout review", () => {
     const result = await bus.execute("capture_layout_evidence", { expectedRevision: 0, scenario: "long-text" });
     expect(result.ok).toBe(true);
     expect(result.result.evidence).toBeNull();
+    expect(result.result.validation).toMatchObject({ valid: false, productionValid: false });
     expect(result.result.validation.errors).toContainEqual(expect.objectContaining({ code: "VERTICAL_OVERFLOW" }));
     expect(bus.evidenceReceipts.size).toBe(0);
   });

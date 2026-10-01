@@ -1,0 +1,18 @@
+:root { color-scheme:light; --blue:#1763dc; --blue-deep:#1252bb; --blue-soft:#eaf2ff; --ink:#192b45; --muted:#64748b; --line:#dce4ee; --surface:#fff; --paper-ground:#e5ebf2; --subtle:#f7f9fc; --danger:#a42323; --success:#19734f; --radius:6px; --shadow:0 4px 20px #162b4518; }
+* { box-sizing:border-box; }
+:where([hidden]) { display:none !important; }
+body { margin:0; font:14px/1.45 -apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif; color:var(--ink); background:var(--surface); }
+button,input,select,textarea { font:inherit; color:inherit; }
+button { cursor:pointer; border:1px solid var(--line); background:var(--surface); border-radius:var(--radius); min-height:34px; padding:6px 10px; display:inline-flex; align-items:center; justify-content:center; gap:7px; }
+button:hover { background:var(--blue-soft); border-color:#a6c5f5; }
+button:disabled { opacity:.48; cursor:default; }
+:focus-visible { outline:3px solid #69a6ff; outline-offset:2px; }
+input,select,textarea { border:1px solid #ccd8e7; background:var(--surface); border-radius:var(--radius); padding:7px 9px; min-width:0; width:100%; }
+input[type=checkbox] { width:16px; height:16px; }
+input[type=color] { padding:3px; height:36px; }
+a { color:var(--blue); }
+h2,h3,p { margin-top:0; }
+.muted { color:var(--muted); }
+.primary { background:var(--blue); border-color:var(--blue); color:white; }
+.primary:hover { background:var(--blue-deep); color:white; }
+@media (prefers-reduced-motion:reduce) { *,*::before,*::after { scroll-behavior:auto !important; } }

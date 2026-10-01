@@ -180,9 +180,11 @@ export class ByokVault {
     this.db = null;
     await new Promise((resolve, reject) => {
       const request = indexedDB.deleteDatabase(this.dbName);
-      request.onsuccess = () => resolve();
-      request.onblocked = () => reject(new Error("Cannot clear provider vault while it is in use"));
-      request.onerror = () => reject(request.error || new Error("Cannot clear provider vault"));
+      // WebKit may report blocked while the just-closed connection finishes
+      // draining. Wait for deletion, with a bound for truly open connections.
+      const timer = setTimeout(() => reject(new Error("Cannot clear provider vault while it is in use")),5000);
+      request.onsuccess = () => { clearTimeout(timer); resolve(); };
+      request.onerror = () => { clearTimeout(timer); reject(request.error || new Error("Cannot clear provider vault")); };
     });
   }
 }
