@@ -1,5 +1,7 @@
 # SPEC.md — PrintForm.js 行为规格
 
+> Studio v3 is an independent structured-authoring Pilot. Current scope, architecture and acceptance: [docs/STUDIO_V3.md](docs/STUDIO_V3.md). Its checks do not close v2 release gates.
+
 > This document owns implemented behavior and public contracts. Current means code exists with relevant test or runtime evidence; Target and Backlog do not become Current by appearing in prose. See [ROADMAP.md](ROADMAP.md) and [GOAL.md](GOAL.md) for planned work.
 >
 > Last reviewed: 2026-09-11. Configuration is owned by the generated [docs/CONFIGURATION.md](docs/CONFIGURATION.md); this file describes existing behavior and does not turn future UX goals into a Current contract. Live task status is in [TASK.md](TASK.md), with the derived view in [PROGRESS.md](PROGRESS.md).

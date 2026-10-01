@@ -1,0 +1,26 @@
+const paths = {
+  form:'M6 3h9l4 4v14H6z M14 3v5h5 M9 12h7 M9 16h7',
+  undo:'M9 5 4 10l5 5 M4 10h10a6 6 0 0 1 0 12',
+  redo:'m15 5 5 5-5 5 M20 10H10a6 6 0 0 0 0 12',
+  save:'M4 3h14l3 3v15H3V3z M7 3v6h10V3 M7 21v-8h10v8',
+  open:'M3 7V4h6l3 3h9v13H3z M3 11h18',
+  download:'M12 3v12 m-5-5 5 5 5-5 M4 16v5h16v-5',
+  print:'M6 8V3h12v5 M6 17H3V8h18v9h-3 M6 13h12v8H6z',
+  design:'m4 16-1 5 5-1L21 7l-4-4z M14 6l4 4',
+  data:'M20 6c0 5-16 5-16 0s16-5 16 0z M4 6v12c0 5 16 5 16 0V6 M4 12c0 5 16 5 16 0',
+  check:'M20 12a8 8 0 1 1-4-7 M8 11l4 4 9-10',
+  header:'M3 4h18v16H3z M3 9h18',
+  customer:'M16 7a4 4 0 1 1-8 0 4 4 0 0 1 8 0z M4 21v-3a8 8 0 0 1 16 0v3',
+  items:'M3 4h18v16H3z M3 9h18 M3 14h18 M8 4v16',
+  totals:'M19 4H5l7 8-7 8h14',
+  footer:'M3 4h18v16H3z M3 15h18',
+  field:'M6 3h9l4 4v14H6z M14 3v5h5',
+  plus:'M12 4v16 M4 12h16',
+  up:'m6 14 6-6 6 6', down:'m6 10 6 6 6-6',
+  previous:'m14 5-7 7 7 7', next:'m10 5 7 7-7 7',
+  trash:'M4 6h16 M9 6V3h6v3 M6 6l1 15h10l1-15 M10 10v7 M14 10v7',
+  eye:'M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0z',
+  style:'M4 21 18 7 M15 4l5 5 M3 16l5 5',
+  close:'m5 5 14 14 M19 5 5 19'
+};
+export const icon = name => `<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="${paths[name] || paths.field}"/></svg>`;
