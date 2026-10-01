@@ -9,6 +9,7 @@
   <link rel="icon" href="../studio-v2/icon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="tokens.css">
   <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="ai-panel.css">
   <script type="module" src="app.js"></script>
 </head>
 <body inert aria-busy="true">
@@ -32,17 +33,34 @@
       <button data-mode="data" data-icon="data">Data</button>
       <button data-mode="validate" data-icon="check">Validate</button>
     </div>
+    <button data-ai-toggle data-icon="sparkles" aria-expanded="false" aria-controls="ai-panel">AI editor</button>
     <button data-action="preview" data-icon="eye" aria-pressed="false">Preview</button>
   </nav>
   <main class="studio-grid">
     <aside id="left-panel" class="side-panel" aria-label="Template structure"></aside>
     <section class="paper-workspace" aria-label="Paper preview">
-      <div class="paper-toolbar"><button data-layout="structure" data-icon="header" aria-label="Toggle structure panel" title="Structure" aria-expanded="true"></button><button data-layout="properties" data-icon="style" aria-label="Toggle properties panel" title="Properties" aria-expanded="true"></button><button data-layout="thumbnails" data-icon="items" aria-label="Toggle page thumbnails" title="Page thumbnails" aria-expanded="true"></button><button id="show-database" data-db-action="database" data-icon="data" hidden>Sample database</button><span>A4 <span class="muted">210 × 297 mm</span></span><label>Zoom <select id="zoom"><option value="fit">Fit page</option><option value="width">Fit width</option><option value="1">100%</option><option value="0.5">50%</option><option value="0.75">75%</option><option value="1.25">125%</option></select></label><button data-layout="zoom-out" data-icon="minus" aria-label="Zoom out"></button><button data-layout="zoom-in" data-icon="plus" aria-label="Zoom in"></button><span id="page-count">Rendering…</span><button data-action="previous" data-icon="previous" aria-label="Previous page"></button><button data-action="next" data-icon="next" aria-label="Next page"></button></div>
+      <div class="paper-toolbar"><button data-layout="structure" data-icon="structure" aria-label="Toggle structure panel" title="Structure" aria-expanded="true"></button><button data-layout="properties" data-icon="properties" aria-label="Toggle properties panel" title="Properties" aria-expanded="true"></button><button data-layout="thumbnails" data-icon="pages" aria-label="Toggle page thumbnails" title="Page thumbnails" aria-expanded="true"></button><button id="show-database" data-db-action="database" data-icon="data" hidden>Sample database</button><span>A4 <span class="muted">210 × 297 mm</span></span><label>Zoom <select id="zoom"><option value="fit">Fit page</option><option value="width">Fit width</option><option value="1">100%</option><option value="0.5">50%</option><option value="0.75">75%</option><option value="1.25">125%</option></select></label><button data-layout="zoom-out" data-icon="minus" aria-label="Zoom out"></button><button data-layout="zoom-in" data-icon="plus" aria-label="Zoom in"></button><span id="page-count">Rendering…</span><button data-action="previous" data-icon="previous" aria-label="Previous page"></button><button data-action="next" data-icon="next" aria-label="Next page"></button></div>
       <div id="paper-scroll" tabindex="0" aria-label="Scrollable print pages"><div id="paper-wrap"><iframe id="preview-frame" title="Rendered A4 print form" sandbox="allow-scripts allow-modals" referrerpolicy="no-referrer"></iframe></div></div>
       <div id="thumbnails" aria-label="Page thumbnails"></div>
       <section id="database-workbench" aria-label="Local sample database editor" hidden></section>
     </section>
     <aside id="right-panel" class="side-panel inspector" aria-label="Component properties"></aside>
+    <aside id="ai-panel" aria-label="AI layout editor" hidden>
+      <div class="ai-heading"><h2>AI layout editor</h2><button data-ai="close" data-icon="close" aria-label="Close AI editor"></button></div>
+      <p>Pi AgentHarness · browser · GPT Server Demo<br><strong>Suggestions only. Preview, then Apply.</strong></p>
+      <p data-ai-origin></p>
+      <form>
+        <label>Demo model alias<select id="ai-model"><option value="demo-fast">demo-fast</option><option value="demo-auto">demo-auto</option></select></label>
+        <button type="button" data-ai="models">Discover available models</button>
+        <label for="ai-prompt">Describe color or layout changes</label><textarea id="ai-prompt" maxlength="4000" placeholder="Use dark navy headings and reduce cell padding to 5 px."></textarea>
+        <details><summary>Review request and layout to share</summary><pre id="ai-share"></pre></details>
+        <p>Your request and the layout JSON above go to gpt.yapweijun1996.com and its model provider. Data values, business text and amounts are excluded from layout context. Anything you type is sent. Unapplied edits are excluded. Do not include private data.</p>
+        <label class="ai-consent"><input id="ai-consent" type="checkbox" required>I reviewed this request and layout and agree to share them.</label>
+        <div class="ai-actions"><button class="primary" data-ai-send>Send layout request</button><button type="button" data-ai="cancel" hidden>Cancel request</button></div>
+      </form>
+      <p data-ai-status role="status" aria-live="polite">Ready. Review what will be shared before sending.</p>
+      <section data-ai-proposal hidden aria-label="Unapplied AI proposal"><h3>Proposed changes</h3><p data-ai-summary></p><table class="ai-diff"><thead><tr><th>Setting</th><th>Before</th><th>After</th></tr></thead><tbody data-ai-diff></tbody></table><div class="ai-actions"><button data-ai="preview" disabled>Preview suggestion</button><button data-ai="apply" class="primary" disabled>Apply suggestion</button><button data-ai="discard">Discard</button></div><p>Preview uses the same print runtime. Apply creates one history entry; Undo restores the layout. ERP values stay supplied by your data.</p></section>
+    </aside>
   </main>
   <footer class="status-bar"><span id="status" role="status" aria-live="polite">Loading Studio…</span><span id="data-source" class="status-hint">Loading data source…</span><a href="../studio-v2/">Studio v2</a></footer>
   <input id="open-file" type="file" accept=".json,.html,text/html,application/json" hidden>

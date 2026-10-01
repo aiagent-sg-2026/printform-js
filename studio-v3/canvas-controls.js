@@ -1,3 +1,4 @@
+import { persistZoom } from './zoom-preference.js';
 export class CanvasControls {
   constructor({resize,guard}) {
     this.resize = resize; this.guard = guard; this.drawer = null; this.returnFocus = null;
@@ -71,6 +72,6 @@ export class CanvasControls {
     const next = Math.max(.15,Math.min(2,Math.round((current+step)*100)/100));
     let option = select.querySelector('[data-custom-zoom]');
     if (!option) { option = document.createElement('option'); option.dataset.customZoom = 'true'; select.append(option); }
-    option.value = String(next); option.textContent = `${Math.round(next*100)}%`; select.value = String(next); this.resize();
+    option.value = String(next); option.textContent = `${Math.round(next*100)}%`; select.value = String(next); persistZoom(select); this.resize();
   }
 }
