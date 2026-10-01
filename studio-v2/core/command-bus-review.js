@@ -76,12 +76,15 @@ async function captureEvidence(bus, input, context) {
   assertBusPolicyCurrent(bus, context);
   if (report.status !== "ready" || (visualMode === "pixels" && !report.pixelSnapshot)) {
     const missingPixels = visualMode === "pixels" && !report.pixelSnapshot;
+    // Runtime reports carry layout validity, without a production decision.
+    // A broken capture is explicitly ineligible and remains unsigned.
+    const validation = missingPixels ? unavailablePixel(report) : {...report.validation,valid:false,productionValid:false};
     return {
       revision: bus.revision,
       scenario: input.scenario,
       evidence: null,
-      observation: createLayoutObservation({ revision: bus.revision, scenario: input.scenario, renderReport: report }),
-      validation: missingPixels ? unavailablePixel(report) : report.validation,
+      observation: createLayoutObservation({ revision: bus.revision, scenario: input.scenario, renderReport: {...report,validation} }),
+      validation,
       metrics: report.metrics,
       ...(missingPixels ? { pixelCapture: report.pixelCapture || { code: "PIXEL_CAPTURE_UNAVAILABLE" } } : {})
     };

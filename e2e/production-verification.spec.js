@@ -195,14 +195,17 @@ test("reports pagination diagnostics with page and component context in Chromium
 
 test("persists an approved revision-bound Evidence Pack after trusted export", async ({ page, context, browserName }, testInfo) => {
   test.skip(browserName !== "chromium", "Trusted export evidence uses the Chromium reference environment");
-  await page.goto("/studio-v2/?sample=progress-claim");
+  await page.goto("/studio-v2/");
   await expect(page.locator("#render-status")).toHaveText("Printable", { timeout: 20_000 });
   await admitPublicGateway(page);
   const flow = await page.evaluate(async () => {
     const run = (name, input) => window.PrintFormStudioAgent.execute(name, input);
     const revision = (await run("get_project_summary", {})).result.revision;
     const captured = {};
-    for (const scenario of ["default", "long-text"]) captured[scenario] = await run("capture_layout_evidence", { expectedRevision: revision, scenario });
+    for (const scenario of ["default", "long-text"]) {
+      captured[scenario] = await run("capture_layout_evidence", { expectedRevision: revision, scenario });
+      if (!captured[scenario].ok || !captured[scenario].result?.evidence) throw new Error(`Evidence capture failed for ${scenario}: ${JSON.stringify(captured[scenario])}`);
+    }
     await run("begin_layout_review", { expectedRevision: revision });
     const evidenceIds = Object.values(captured).map((entry) => entry.result.evidence.evidenceId);
     const review = await run("complete_layout_review", { expectedRevision: revision, reviewer: "ai-agent", findings: [], summary: "real Chromium evidence", evidenceIds });
@@ -222,8 +225,23 @@ test("persists an approved revision-bound Evidence Pack after trusted export", a
   const pack = await page.evaluate(async () => (await window.PrintFormStudioAgent.execute("get_evidence_pack", {})).result.evidencePack);
   const evidence = { pack, browser: { name: browserName, version: await context.browser()?.version(), userAgent: await page.evaluate(() => navigator.userAgent) }, dialogCount: dialogs.length, htmlBytes: new TextEncoder().encode(html).byteLength, captured: flow.captured };
   await persistEvidence(testInfo, "evidence-pack.json", JSON.stringify(evidence, null, 2), "application/json");
-  await persistEvidence(testInfo, "approved-progress-claim.png", await page.screenshot(), "image/png");
+  await persistEvidence(testInfo, "approved-invoice.png", await page.screenshot(), "image/png");
   expect(pack).toMatchObject({ revision: flow.revision, formSpecHash: expect.stringMatching(/^sha256:/), previewHash: expect.any(String), exportHtmlHash: expect.stringMatching(/^sha256:/), runtimeHash: expect.stringMatching(/^sha256:/), printformRuntimeHash: expect.stringMatching(/^sha256:/), pageCount: expect.any(Number), timestamp: expect.any(String), hash: expect.stringMatching(/^sha256:/), validation: { status: "PASS" }, security: { status: "PASS", externalNetwork: false, arbitraryJavascript: false } });
   expect(evidence.browser.userAgent).toContain("Chrome");
   expect(html).toContain('id="pf-manifest"');
+});
+
+test('keeps the legacy progress-claim long-text overflow unsigned and export blocked',async({page,browserName})=>{
+  test.skip(browserName !== 'chromium','Legacy overflow regression uses the Chromium reference environment');
+  await page.goto('/studio-v2/?sample=progress-claim');
+  await expect(page.locator('#render-status')).toHaveText('Printable',{timeout:20000});
+  await admitPublicGateway(page);
+  const result=await page.evaluate(async()=>{
+    const agent=window.PrintFormStudioAgent, revision=(await agent.execute('get_project_summary')).result.revision;
+    return {capture:await agent.execute('capture_layout_evidence',{expectedRevision:revision,scenario:'long-text'}),export:await agent.execute('request_export')};
+  });
+  expect(result.capture.ok).toBe(true);
+  expect(result.capture.result).toMatchObject({evidence:null,validation:{valid:false,productionValid:false}});
+  expect(result.capture.result.metrics.verticalOverflowPages).toBeGreaterThan(0);
+  expect(result.export.result.ready).toBe(false);
 });

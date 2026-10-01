@@ -96,3 +96,9 @@ undo/redo, column changes, interrupted runs, keyboard/dialog focus and responsiv
 layouts. Preview and standalone export text, row order, page count and geometry
 are compared; Chromium also writes an A4 PDF. Native printer output remains an
 owner review boundary.
+
+Aggregate CI also covers existing v2 behavior. Its legacy progress-claim
+long-text fixture has a confirmed pagination overflow and remains blocked;
+its unsigned diagnostic now crosses the public gateway correctly. Positive
+trusted-export evidence uses the passing invoice fixture. This does not close
+the existing v2 Pilot release gates.
