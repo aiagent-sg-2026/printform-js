@@ -23,6 +23,7 @@ export function bindingValidation(project) {
     const items = validPointer(d.collection) ? resolvePointer(project.sampleData, d.collection) : undefined;
     if (!Array.isArray(items)) issue('COLLECTION_NOT_ARRAY', d.collection, 'Collection must be an array. Use /items, without a wildcard.', 'items');
     else d.columns.forEach(f => {
+      if (!f.pointer) return;
       if (!validPointer(f.pointer, true)) return issue('INVALID_POINTER', f.pointer, 'Use a row-relative pointer such as ./description.', `items-${f.id}`);
       items.forEach((item, i) => check(resolvePointer(project.sampleData, f.pointer, item), f, `${d.collection}/${i}/${f.pointer.slice(2)}`, `items-${f.id}`, issue));
     });

@@ -1,6 +1,6 @@
 # Studio v3 — structured ERP print forms
 
-Studio v3 0.1.0 is a separate Pilot at `/studio-v3/`. The v2 editor and its
+Studio v3 0.2.0 is a separate Pilot at `/studio-v3/`. The v2 editor and its
 existing release gates remain available at `/studio-v2/`.
 
 ## What ships
@@ -12,10 +12,13 @@ properties plus collapsible Quality on the right. Icons are inline SVG.
 
 - **Design:** start a blank form or invoice, purchase order, delivery note;
   show/hide sections, add/remove/reorder fields and columns, edit labels,
-  bindings, static text, column widths, print typography, color and table style.
+  column widths, print typography, color and table style. Properties and Data
+  binding are separate tabs; binding explicitly chooses Bound value or Static text.
 - **Data:** set an absolute collection pointer (`/items`), row-relative field
   pointers (`./description`) or document pointers (`/customer/name`); apply
-  ERP JSON, locale and currency; switch isolated synthetic samples.
+  sample JSON, locale and currency; switch isolated synthetic samples. The wide
+  workbench offers typed field tables, paged item editing, a path picker and
+  Advanced JSON with parse-error line/column positions.
 - **Validate:** render 0/1/45/100/500-row and long bilingual samples; inspect
   missing fields, invalid numeric data, row identity/order, repeated headers,
   page/footer geometry and overflow. Sample-matrix results clear on edits.
@@ -25,8 +28,11 @@ properties plus collapsible Quality on the right. Icons are inline SVG.
 - **History:** edits use the existing CommandBus and monotonic revisions;
   undo/redo support buttons and Cmd/Ctrl Z / Shift Z outside text inputs.
 
-Desktop and tablet support editing. Mobile supports paper preview, thumbnails,
-opening existing v3 files, printing and export. The UI uses English; user data
+Desktop, tablet and mobile support editing. At widths up to 900 px, Structure
+and Properties open as drawers with Escape/backdrop close and focus return.
+Fit page, Fit width, 100%, incremental zoom and panel/thumbnail toggles affect
+only the editor view; horizontal paper panning never changes print geometry.
+The current-page indicator follows navigation and scrolling. The UI uses English; user data
 supports bilingual text and the existing five print locales.
 
 ## Source and runtime ownership
@@ -55,13 +61,40 @@ not derive financial values. Synthetic sample fixtures are demonstration data.
 
 ## File and data boundaries
 
-Data is kept in the tab's memory; v3 does not use localStorage, IndexedDB,
-remote APIs or an autosave service. Save/Export are explicit downloads and
-include the active dataset. Synthetic sample switching restores the last
-supplied ERP dataset when ERP / current data is selected. A fresh tab starts
-with synthetic data and does not inherit another tab's dataset.
-The supplied-data baseline and sample selection follow CommandBus history;
-undo/redo restores both. That session state is excluded from Save/Export.
+Saved sample datasets use IndexedDB `printform-studio-v3-demo-db` version 1,
+with `datasets` and `preferences` stores. Three synthetic starter records are
+seeded once; deleting one does not silently recreate it on reload. Selection is
+remembered per document type. This is a browser-local demo database, with no ERP
+connection, credentials, financial calculation or remote data API.
+
+Table edits remain unapplied drafts until Apply or Save & apply. Save & apply
+atomically writes the selected record plus selection, then updates the form.
+Save as new creates a separate record; imports also create new records and do
+not overwrite older datasets. Reload saved explicitly replaces the form data.
+Restore starter datasets asks for confirmation and writes only the three known
+starter records; copies, current drafts and other browser storage are retained.
+Revision compare-and-swap blocks stale overwrites from another tab. Cross-tab
+notifications never replace an active form or draft automatically.
+
+If opening or seeding IndexedDB fails or is blocked, the UI explicitly offers
+tab-only storage and export. Later quota/transaction failures retain the draft
+and roll back the database transaction; they do not silently claim persistence.
+Browser/site-data clearing or changing origin can remove these local datasets.
+Dataset JSON exports are the portable backup. Template layout remains an
+explicit `.printform.json` download; it is not auto-saved to the database.
+
+Save form and Export HTML embed the active dataset. Source labels distinguish
+Built-in demo, Local demo dataset, Imported data and Validation sample. Sample
+switching restores the prior current-document dataset and source. Source, sample
+selection and baseline follow CommandBus undo/redo, but saved database records
+do not: undo changes only the form draft. Imports of existing forms remain
+unlinked drafts until saved as a new dataset.
+
+Unapplied properties, binding, style, locale, JSON and table edits are distinct
+from an applied but unsaved template revision. Selection/workspace/file/history
+transitions use Apply / Discard / Stay. Apply commits to the form, Discard restores
+current values, and Stay retains input/focus. Database and template-file saves
+remain explicit; failed JSON parsing retains the text and prevents transition.
 
 Imports are limited to 10 MB, root sample JSON to 2 MB, a block to 30 fields,
 and the existing runtime to 500 table rows / 100 logical pages. JSON and HTML
@@ -88,12 +121,15 @@ use the existing engine's final-page flow and repeat page numbers.
 at `studio-v3/samples/`. The source revision is stamped into the built v3
 index as `printform-source-revision`; no service worker caches v3.
 
-`tests/studio-v3.test.js` covers canonical model/binding/history/import safety.
-`e2e/studio-v3.spec.js` is part of the existing three-browser CI matrix and
+`tests/studio-v3*.test.js` covers canonical model/binding/history/import safety,
+typed dataset limits, independent ERP amounts and source/history behavior.
+`e2e/studio-v3*.spec.js` is part of the existing three-browser CI matrix and
 covers fresh blank-to-export, measured row identity/pagination for all starters,
 long bilingual content, missing-field recovery, hostile strings, tab isolation,
 undo/redo, column changes, interrupted runs, keyboard/dialog focus and responsive
-layouts. Preview and standalone export text, row order, page count and geometry
+layouts, draft transitions, IndexedDB persistence, stale concurrent writes,
+quota/transaction rollback, tab-only fallback and non-destructive reset. Required
+viewports are 1366×768, 1440×900, 768×1024, 390×844 and 430×932. Preview and standalone export text, row order, page count and geometry
 are compared; Chromium also writes an A4 PDF. Native printer output remains an
 owner review boundary.
 

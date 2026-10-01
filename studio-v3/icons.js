@@ -16,6 +16,7 @@ const paths = {
   footer:'M3 4h18v16H3z M3 15h18',
   field:'M6 3h9l4 4v14H6z M14 3v5h5',
   plus:'M12 4v16 M4 12h16',
+  minus:'M4 12h16',
   up:'m6 14 6-6 6 6', down:'m6 10 6 6 6-6',
   previous:'m14 5-7 7 7 7', next:'m10 5 7 7-7 7',
   trash:'M4 6h16 M9 6V3h6v3 M6 6l1 15h10l1-15 M10 10v7 M14 10v7',

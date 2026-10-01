@@ -20,6 +20,7 @@ async function newForm(page,type) {
   await page.locator(`[data-template=${type}]`).click();
   await ready(page);
 }
+async function openJSON(page) { await page.locator('[data-mode=data]').click(); await page.locator('#database-workbench [data-db-group=json]').click(); }
 test.beforeEach(async ({page}) => {
   page.on('dialog', dialog => dialog.accept());
   await page.goto('/studio-v3/');
@@ -39,8 +40,10 @@ test('fresh blank -> structure -> bind -> save -> reopen -> validate -> export',
   }
   await page.locator('#left-panel [data-select=items-description]').click();
   await page.getByLabel('Label',{exact:true}).fill('Item / 项目');
+  await revisionEdit(page,() => page.getByRole('button',{name:'Apply field',exact:true}).click()); await ready(page);
+  await page.locator('[data-action=binding]').click();
   await page.getByLabel('Row field (./field)',{exact:true}).fill('./description');
-  await revisionEdit(page,() => page.getByRole('button',{name:'Apply field',exact:true}).click());
+  await revisionEdit(page,() => page.getByRole('button',{name:'Apply binding',exact:true}).click());
   await ready(page);
   await expect(frame(page).locator('.prowheader_processed th').first()).toHaveText('#');
   await page.locator('#document-name').fill('My invoice'); await page.locator('#document-name').press('Tab');
@@ -96,7 +99,7 @@ for (const type of ['invoice','purchase','delivery']) {
 
 test('data errors recover; malicious text stays inert; data remains isolated between tabs', async ({page,context}) => {
   const outbound = []; page.on('request',r=> { if (/^https?:/.test(r.url()) && new URL(r.url()).hostname !== '127.0.0.1') outbound.push(r.url()); });
-  await page.locator('[data-mode=data]').click();
+  await openJSON(page);
   const original = JSON.parse(await page.locator('#data-json').inputValue());
   const hostile = structuredClone(original);
   hostile.company.name = '<img src=x onerror="window.leaked=1">';
@@ -105,7 +108,7 @@ test('data errors recover; malicious text stays inert; data remains isolated bet
   await page.locator('#data-json').fill(JSON.stringify(hostile));
   await revisionEdit(page,() => page.getByRole('button',{name:'Apply JSON data',exact:true}).click());
   await expect(page.locator('[data-action=export]')).toBeDisabled();
-  await expect(page.locator('#right-panel details')).toContainText('/items/1/description');
+  await expect(page.locator('#right-panel details.quality-panel')).toContainText('/items/1/description');
   hostile.items[1].description = 'Recovered field';
   await page.locator('#data-json').fill(JSON.stringify(hostile));
   await revisionEdit(page,() => page.getByRole('button',{name:'Apply JSON data',exact:true}).click()); await ready(page);
@@ -158,6 +161,7 @@ test('desktop/tablet editing, mobile preview, keyboard focus and back navigation
     await expect(page.locator('#preview-frame')).toBeVisible();
     await page.screenshot({path:info.outputPath(`viewport-${width}.png`)});
     if (width===820) {
+      await page.locator('[data-layout=structure]').first().click();
       await page.locator('#left-panel [data-select=header]').click();
       await page.getByLabel('Document heading',{exact:true}).fill('TABLET INVOICE');
       await revisionEdit(page,()=>page.getByRole('button',{name:'Apply section',exact:true}).click()); await ready(page);
@@ -176,26 +180,30 @@ test('desktop/tablet editing, mobile preview, keyboard focus and back navigation
 
 test('remaining authoring controls, completed matrix, page navigation and HTML reopening', async ({page},info) => {
   await page.locator('#left-panel [data-select=header-company]').click();
-  await page.getByLabel('Data field (/field)',{exact:true}).fill('');
-  await page.getByLabel('Static text (clear binding to use)',{exact:true}).fill('My own company');
-  await revisionEdit(page,()=>page.getByRole('button',{name:'Apply field',exact:true}).click()); await ready(page);
+  await page.locator('[data-action=binding]').click(); await page.getByLabel('Value source',{exact:true}).selectOption('static');
+  await page.getByLabel('Static text',{exact:true}).fill('My own company');
+  await revisionEdit(page,()=>page.getByRole('button',{name:'Apply binding',exact:true}).click()); await ready(page);
   await expect(frame(page).locator('[data-v3-id=header-company]').first()).toHaveText('My own company');
   await revisionEdit(page,()=>page.locator('#left-panel [data-action=add-field]').click()); await ready(page);
+  await page.locator('[data-action=properties]').click();
   await page.getByLabel('Label',{exact:true}).fill('Contact');
-  await page.getByLabel('Static text (clear binding to use)',{exact:true}).fill('Contact info');
   await revisionEdit(page,()=>page.getByRole('button',{name:'Apply field',exact:true}).click()); await ready(page);
+  await page.locator('[data-action=binding]').click(); await page.getByLabel('Static text',{exact:true}).fill('Contact info');
+  await revisionEdit(page,()=>page.getByRole('button',{name:'Apply binding',exact:true}).click()); await ready(page);
   await expect(frame(page).locator('.company-fields').first()).toContainText('Contact info');
-  await page.locator('#left-panel summary').filter({hasText:'Style'}).click();
+  await page.locator('#left-panel [data-action=go-style]').click();
   await page.getByLabel('Brand color',{exact:true}).fill('#174180');
   await page.getByLabel('Font size (pt)',{exact:true}).fill('10');
   await page.getByLabel('Cell padding (px)',{exact:true}).fill('5');
   await page.getByLabel('Alternate item rows',{exact:true}).uncheck();
   await revisionEdit(page,()=>page.getByRole('button',{name:'Apply style',exact:true}).click()); await ready(page);
   await page.locator('[data-mode=data]').click();
+  await page.locator('#right-panel summary').filter({hasText:'Locale & currency'}).click();
   await page.getByRole('combobox',{name:'Locale',exact:true}).selectOption('zh-CN');
   await page.getByRole('combobox',{name:'Currency',exact:true}).selectOption('USD');
   await revisionEdit(page,()=>page.getByRole('button',{name:'Apply locale',exact:true}).click()); await ready(page);
   await expect(frame(page).locator('html')).toHaveAttribute('lang','zh-CN');
+  await page.locator('[data-db-action=preview]').click();
   await page.locator('#zoom').selectOption('0.75');
   await expect(page.locator('#preview-frame')).toHaveCSS('transform','matrix(0.75, 0, 0, 0.75, 0, 0)');
   await page.locator('#thumbnails [data-page="1"]').click();
@@ -217,7 +225,7 @@ test('remaining authoring controls, completed matrix, page navigation and HTML r
 });
 
 test('ERP import and sample selection remain coherent through undo/redo and multiple imports', async ({page}) => {
-  await page.locator('[data-mode=data]').click();
+  await openJSON(page);
   const initial = JSON.parse(await page.locator('#data-json').inputValue());
   const apply = async name => {
     const data = structuredClone(initial); data.company.name = name;

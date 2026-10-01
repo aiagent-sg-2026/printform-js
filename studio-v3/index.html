@@ -19,13 +19,14 @@
       <button data-action="redo" data-icon="redo" title="Redo (⌘/Ctrl Shift Z)">Redo</button>
       <button data-action="new" data-icon="plus">New</button>
       <button data-action="open" data-icon="open">Open</button>
-      <button data-action="save" data-icon="save">Save</button>
+      <button data-action="save" data-icon="save" title="Save the editable template and current active data">Save</button>
       <button data-action="print" data-icon="print" disabled>Print</button>
-      <button data-action="export" data-icon="download" disabled>Export HTML</button>
+      <button data-action="export" data-icon="download" title="Export standalone HTML with current active data embedded" disabled>Export HTML</button>
     </div>
   </header>
   <nav class="workspace-bar" aria-label="Workspace">
     <div class="document-title"><input id="document-name" aria-label="Template name" maxlength="100"><span id="revision"></span></div>
+    <button id="draft-state" data-action="review-drafts">No unapplied edits</button>
     <div class="workspace-tabs">
       <button data-mode="design" data-icon="design" aria-current="page">Design</button>
       <button data-mode="data" data-icon="data">Data</button>
@@ -36,15 +37,19 @@
   <main class="studio-grid">
     <aside id="left-panel" class="side-panel" aria-label="Template structure"></aside>
     <section class="paper-workspace" aria-label="Paper preview">
-      <div class="paper-toolbar"><span>A4 <span class="muted">210 × 297 mm</span></span><label>Zoom <select id="zoom"><option value="fit">Fit</option><option value="0.5">50%</option><option value="0.75">75%</option><option value="1">100%</option></select></label><span id="page-count">Rendering…</span><button data-action="previous" data-icon="previous" aria-label="Previous page"></button><button data-action="next" data-icon="next" aria-label="Next page"></button></div>
+      <div class="paper-toolbar"><button data-layout="structure" data-icon="header" aria-label="Toggle structure panel" title="Structure" aria-expanded="true"></button><button data-layout="properties" data-icon="style" aria-label="Toggle properties panel" title="Properties" aria-expanded="true"></button><button data-layout="thumbnails" data-icon="items" aria-label="Toggle page thumbnails" title="Page thumbnails" aria-expanded="true"></button><button id="show-database" data-db-action="database" data-icon="data" hidden>Sample database</button><span>A4 <span class="muted">210 × 297 mm</span></span><label>Zoom <select id="zoom"><option value="fit">Fit page</option><option value="width">Fit width</option><option value="1">100%</option><option value="0.5">50%</option><option value="0.75">75%</option><option value="1.25">125%</option></select></label><button data-layout="zoom-out" data-icon="minus" aria-label="Zoom out"></button><button data-layout="zoom-in" data-icon="plus" aria-label="Zoom in"></button><span id="page-count">Rendering…</span><button data-action="previous" data-icon="previous" aria-label="Previous page"></button><button data-action="next" data-icon="next" aria-label="Next page"></button></div>
       <div id="paper-scroll" tabindex="0" aria-label="Scrollable print pages"><div id="paper-wrap"><iframe id="preview-frame" title="Rendered A4 print form" sandbox="allow-scripts allow-modals" referrerpolicy="no-referrer"></iframe></div></div>
       <div id="thumbnails" aria-label="Page thumbnails"></div>
+      <section id="database-workbench" aria-label="Local sample database editor" hidden></section>
     </section>
     <aside id="right-panel" class="side-panel inspector" aria-label="Component properties"></aside>
   </main>
-  <footer class="status-bar"><span id="status" role="status" aria-live="polite">Loading Studio…</span><span class="status-hint">Amounts & taxes supplied by your ERP</span><a href="../studio-v2/">Studio v2</a></footer>
+  <footer class="status-bar"><span id="status" role="status" aria-live="polite">Loading Studio…</span><span id="data-source" class="status-hint">Loading data source…</span><a href="../studio-v2/">Studio v2</a></footer>
   <input id="open-file" type="file" accept=".json,.html,text/html,application/json" hidden>
+  <input id="dataset-file" type="file" accept=".json,application/json" hidden>
+  <button id="drawer-backdrop" aria-label="Close panel backdrop" hidden></button>
   <dialog id="new-dialog" aria-labelledby="new-heading"><h2 id="new-heading">Start a print form</h2><p id="new-warning"></p><div class="template-options"><button data-template="blank">Blank form<span>Build your structure step by step</span></button><button data-template="invoice">Invoice<span>Customer, line items, supplied totals</span></button><button data-template="purchase">Purchase order<span>Supplier, delivery and approval</span></button><button data-template="delivery">Delivery note<span>Quantities, packages and receipt</span></button></div><button data-action="cancel-new">Cancel</button></dialog>
+  <dialog id="draft-dialog" aria-labelledby="draft-heading"><h2 id="draft-heading">Unapplied edits</h2><p>These edits have not changed the print form. Apply commits them to the form; Discard restores current values; Stay keeps editing. Database saves and template-file saves remain explicit.</p><ul id="draft-list"></ul><div class="draft-dialog-actions"><button data-draft-choice="apply" class="primary">Apply</button><button data-draft-choice="discard">Discard</button><button data-draft-choice="stay" autofocus>Stay</button></div></dialog>
   <noscript>Studio requires JavaScript to design and paginate forms.</noscript>
 </body>
 </html>
