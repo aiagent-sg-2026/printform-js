@@ -48,7 +48,7 @@ export function compileProject(project, design) {
   next.themeCss = documentTheme(design);
   const spec = createEmptyFormSpec(design.type);
   spec.tokens = { brand: design.color, fontPt: design.font };
-  spec.pagination = { ...spec.pagination, repeatDocumentHeader: design.repeatHeader, repeatTableHeader: design.repeatTable, pageNumbers: design.pageNumbers };
+  spec.pagination = { ...spec.pagination, repeatDocumentHeader: design.blocks.header.enabled && design.repeatHeader, repeatTableHeader: design.repeatTable, pageNumbers: design.pageNumbers };
   const add = (id, label, type, role, binding, parent = null) => spec.components.push({ id, label, type, role, parent, sourceSelector: `[data-v3-id="${id}"]`, binding, tableId: role?.startsWith('table') ? 'items' : null });
   BLOCKS.filter(id => design.blocks[id].enabled).forEach(id => {
     add(id, design.blocks[id].label, { header: 'DocumentHeader', customer: 'ProjectInfo', items: 'DataTable', totals: 'MoneySummary', footer: 'PageFooter' }[id], id === 'items' ? 'table-row' : id === 'header' ? 'document-header' : id, id === 'items' ? { each: design.collection } : null);

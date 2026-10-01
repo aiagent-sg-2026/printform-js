@@ -11,14 +11,14 @@ function fields(design, block) {
 }
 export function compileTemplate(d) {
   const enabled = id => d.blocks[id].enabled;
-  const header = enabled('header') ? `<header class="pheader v3-header" data-v3-id="header" data-pf-component-id="header"><div class="brand-mark">A</div><div class="company-fields">${fields(d, 'header')}</div><h1>${escape(d.title)}</h1></header>` : '<header class="pheader blank"><span>Untitled form</span></header>';
+  const header = enabled('header') ? `<header class="pheader v3-header" data-v3-id="header" data-pf-component-id="header"><div class="brand-mark">A</div><div class="company-fields">${fields(d, 'header')}</div><h1>${escape(d.title)}</h1></header>` : '';
   const customer = enabled('customer') ? `<section class="pdocinfo v3-customer" data-v3-id="customer" data-pf-component-id="customer">${fields(d, 'customer')}</section>` : '';
   const cols = d.columns;
   const cell = (f, heading) => `<${heading ? 'th' : 'td'}${attr('style', `width:${f.width}%;text-align:${['number', 'currency'].includes(f.format) ? 'right' : 'left'}`)}>${heading ? escape(f.label) : valueNode('items', f)}</${heading ? 'th' : 'td'}>`;
   const table = enabled('items') ? `<table class="prowheader v3-grid" data-pf-table-id="items" data-v3-id="items-header" data-pf-component-id="items-header" data-pf-repeat-rowheader="${d.repeatTable ? 'y' : 'n'}"><thead><tr>${cols.map(f => cell(f, true)).join('')}</tr></thead></table>${d.breakBefore ? '<div class="ptac-rowitem tb_page_break_before" data-pf-table-id="items" style="height:1px"></div>' : ''}<table class="prowitem v3-grid" data-pf-each="${escape(d.collection)}" data-pf-table-id="items" data-v3-id="items" data-pf-component-id="items"><tbody><tr>${cols.map(f => cell(f, false)).join('')}</tr></tbody></table>` : '';
   const totals = enabled('totals') ? `<footer class="pfooter v3-totals" data-v3-id="totals" data-pf-component-id="totals"><div class="summary">${fields(d, 'totals')}</div></footer>` : '';
   const footer = enabled('footer') ? `<footer class="pfooter002 v3-notes" data-v3-id="footer" data-pf-component-id="footer">${fields(d, 'footer')}</footer>` : '';
-  return `<section class="printform" data-paper-size="A4" data-papersize="A4" data-orientation="portrait" data-repeat-header="${d.repeatHeader ? 'y' : 'n'}" data-repeat-docinfo="n" data-repeat-rowheader="${d.repeatTable ? 'y' : 'n'}" data-repeat-footer="n" data-repeat-footer002="n" data-repeat-footer-pagenum="y" data-insert-dummy-row-item-while-format-table="n" data-insert-footer-spacer-while-format-table="y">${header}${customer}${table}${totals}${footer}<footer class="pfooter_pagenum v3-page-number">${d.pageNumbers ? 'Page <span data-page-number></span> of <span data-page-total></span>' : ''}</footer></section>`;
+  return `<section class="printform" data-paper-size="A4" data-papersize="A4" data-orientation="portrait" data-repeat-header="${enabled('header') && d.repeatHeader ? 'y' : 'n'}" data-repeat-docinfo="n" data-repeat-rowheader="${d.repeatTable ? 'y' : 'n'}" data-repeat-footer="n" data-repeat-footer002="n" data-repeat-footer-pagenum="y" data-insert-dummy-row-item-while-format-table="n" data-insert-footer-spacer-while-format-table="y">${header}${customer}${table}${totals}${footer}<footer class="pfooter_pagenum v3-page-number">${d.pageNumbers ? 'Page <span data-page-number></span> of <span data-page-total></span>' : ''}</footer></section>`;
 }
 export function documentTheme(d) {
   const color = /^#[0-9a-f]{6}$/i.test(d.color) ? d.color : '#1763dc';
@@ -54,7 +54,6 @@ ${d.striped ? '#pf-mount .prowitem_processed[data-pf-row-index]:nth-child(even) 
 #pf-mount .v3-notes { padding:20px 36px; }
 #pf-mount .v3-notes .field { margin-bottom:8px; }
 #pf-mount .v3-page-number { margin:0 36px; padding:10px 0 16px; border-top:1px solid #bac8da; text-align:right; color:#566477; font-size:var(--pf-font-minus-1); }
-#pf-mount .blank { padding:36px; min-height:120px; color:#68788c; }
 @page { size:A4; margin:0; }
 @media print { body { background:white; } #pf-mount .printform_page { margin:0; box-shadow:none; } }`;
 }

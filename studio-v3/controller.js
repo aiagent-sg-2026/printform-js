@@ -3,15 +3,26 @@ import { compileProject, designOf, selectionField } from './model.js';
 import { validateDesign } from './file-io.js';
 
 export function createBus(project) {
-  return new CommandBus(project, {hydrateDurable:false,dataPolicy:{allowDurable:false},agentId:'studio-v3-human'});
+  const initial = structuredClone(project);
+  // Session data follows the same undo/redo snapshots as the active dataset.
+  // It is excluded from the explicit save format and standalone serializer.
+  initial.studioV3Session = {sample:'erp',erpData:structuredClone(initial.sampleData)};
+  return new CommandBus(initial, {hydrateDurable:false,dataPolicy:{allowDurable:false},agentId:'studio-v3-human'});
 }
-export async function editProject(bus, operations, reason) {
+export async function editProject(bus, operations, reason, dataSession = null) {
   const revision = bus.revision;
   const preview = bus.preview(operations, revision);
   const design = designOf(preview.candidate);
   validateDesign(design);
   const next = compileProject(preview.candidate, design);
+  if (dataSession) next.studioV3Session = structuredClone(dataSession);
   return bus.commit(next, reason, {expectedRevision:revision});
+}
+export async function replaceData(bus, data, sample = 'erp') {
+  const session = bus.project.studioV3Session;
+  return editProject(bus,[{type:'replace_sample_data',value:data}],`data: ${sample}`,{
+    sample,erpData:sample === 'erp' ? data : session.erpData
+  });
 }
 export function designOperations(project, design) {
   validateDesign(design);

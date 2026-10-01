@@ -2,7 +2,7 @@ import { describe, it, expect } from 'vitest';
 import { newProject, sampleData, compileProject, designOf } from '../studio-v3/model.js';
 import { validateProject } from '../studio-v2/core/acceptance.js';
 import { bindTemplate } from '../studio-v2/core/binding.js';
-import { createBus, editProject, designOperations } from '../studio-v3/controller.js';
+import { createBus, editProject, replaceData, designOperations } from '../studio-v3/controller.js';
 import { inspectProject, bindingValidation, validatePaperReport } from '../studio-v3/validation.js';
 import { readProject, saveProject, validateDesign } from '../studio-v3/file-io.js';
 
@@ -77,5 +77,31 @@ describe('Studio v3 ERP authoring', () => {
     const overflowing = validatePaperReport({status:'ready',validation:{errors:[]},pageGeometry:[{width:794,height:21012,pageIndex:1}],metrics:{verticalOverflowPages:0}});
     expect(overflowing.status).toBe('blocked');
     expect(overflowing.validation.errors[0].code).toBe('PAPER_SIZE_OVERFLOW');
+  });
+  it('undo/redo restores imported ERP baselines and sample selection without saving inactive data', async () => {
+    const bus = createBus(newProject()), a = sampleData(), b = sampleData();
+    a.company.name = 'Private ERP A'; b.company.name = 'Private ERP B';
+    await replaceData(bus,a); await replaceData(bus,b);
+    await bus.navigateHistory('undo',bus.revision);
+    expect(bus.project.studioV3Session.erpData.company.name).toBe('Private ERP A');
+    await bus.navigateHistory('redo',bus.revision);
+    expect(bus.project.studioV3Session.erpData.company.name).toBe('Private ERP B');
+    await bus.navigateHistory('undo',bus.revision);
+    await replaceData(bus,sampleData('invoice',1),'1');
+    expect(saveProject(bus.project)).not.toContain('Private ERP');
+    await bus.navigateHistory('undo',bus.revision);
+    expect(bus.project.studioV3Session.sample).toBe('erp');
+    await bus.navigateHistory('redo',bus.revision);
+    expect(bus.project.studioV3Session.sample).toBe('1');
+    await replaceData(bus,bus.project.studioV3Session.erpData);
+    expect(bus.project.sampleData.company.name).toBe('Private ERP A');
+  });
+  it('hidden headers emit no placeholder or reserved print space', () => {
+    const p = newProject(), d = designOf(p); d.blocks.header.enabled = false;
+    const hidden = compileProject(p,d);
+    const template = document.createElement('template'); template.innerHTML = hidden.templateHtml;
+    expect(template.content.querySelector('.pheader')).toBeNull();
+    expect(hidden.templateHtml).not.toContain('Untitled form');
+    expect(validateProject(hidden).errors).toEqual([]);
   });
 });

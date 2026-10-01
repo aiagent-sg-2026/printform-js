@@ -60,6 +60,8 @@ remote APIs or an autosave service. Save/Export are explicit downloads and
 include the active dataset. Synthetic sample switching restores the last
 supplied ERP dataset when ERP / current data is selected. A fresh tab starts
 with synthetic data and does not inherit another tab's dataset.
+The supplied-data baseline and sample selection follow CommandBus history;
+undo/redo restores both. That session state is excluded from Save/Export.
 
 Imports are limited to 10 MB, root sample JSON to 2 MB, a block to 30 fields,
 and the existing runtime to 500 table rows / 100 logical pages. JSON and HTML

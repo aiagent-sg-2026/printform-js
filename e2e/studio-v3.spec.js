@@ -215,3 +215,44 @@ test('remaining authoring controls, completed matrix, page navigation and HTML r
   await expect(page.locator('#left-panel')).toBeHidden();
   await page.locator('[data-action=preview]').click(); await expect(page.locator('#left-panel')).toBeVisible();
 });
+
+test('ERP import and sample selection remain coherent through undo/redo and multiple imports', async ({page}) => {
+  await page.locator('[data-mode=data]').click();
+  const initial = JSON.parse(await page.locator('#data-json').inputValue());
+  const apply = async name => {
+    const data = structuredClone(initial); data.company.name = name;
+    await page.locator('#data-json').fill(JSON.stringify(data));
+    await revisionEdit(page,()=>page.getByRole('button',{name:'Apply JSON data',exact:true}).click()); await ready(page);
+  };
+  const history = async direction => {await revisionEdit(page,()=>page.locator(`[data-action=${direction}]`).click()); await ready(page);};
+  const company = async name => {await expect(frame(page).locator('[data-v3-id=header-company]').first()).toHaveText(name);};
+  await apply('ERP A'); await apply('ERP B');
+  await history('undo'); await company('ERP A');
+  await history('redo'); await company('ERP B');
+  await history('undo'); await sample(page,'1');
+  await history('undo'); await company('ERP A');
+  await expect(page.locator('[data-sample=erp]')).toHaveClass('active');
+  await history('redo'); await expect(page.locator('[data-sample="1"]')).toHaveClass('active');
+  await revisionEdit(page,()=>page.locator('[data-sample=erp]').click()); await ready(page); await company('ERP A');
+  await apply('ERP C'); await history('undo'); await company('ERP A');
+  await sample(page,'0'); await revisionEdit(page,()=>page.locator('[data-sample=erp]').click()); await ready(page); await company('ERP A');
+});
+
+test('hidden header removes printed content and space in preview and standalone export', async ({page,context},info) => {
+  const before = await frame(page).locator('.printform_page').count();
+  await page.locator('#left-panel [data-select=header]').click();
+  await page.getByLabel('Show section',{exact:true}).uncheck();
+  await revisionEdit(page,()=>page.getByRole('button',{name:'Apply section',exact:true}).click()); await ready(page);
+  const after = await frame(page).locator('.printform_page').count();
+  expect(after).toBeLessThan(before);
+  await expect(frame(page).locator('.pheader_processed')).toHaveCount(0);
+  await expect(frame(page).locator('#pf-mount')).not.toContainText('Untitled form');
+  expect(await frame(page).locator('.pdocinfo_processed').evaluate(n=>n.getBoundingClientRect().top-n.closest('.printform_page').getBoundingClientRect().top)).toBeLessThan(5);
+  const promise = page.waitForEvent('download'); await page.locator('[data-action=export]').click();
+  const downloaded = await promise, file = info.outputPath('hidden-header.html'); await downloaded.saveAs(file);
+  const exported = await context.newPage(); await exported.goto(pathToFileURL(file).href);
+  await expect(exported.locator('html')).toHaveAttribute('data-printform-status','ready');
+  await expect(exported.locator('.pheader_processed')).toHaveCount(0);
+  await expect(exported.locator('.printform_page')).toHaveCount(after);
+  await expect(exported.locator('#pf-mount')).not.toContainText('Untitled form');
+});

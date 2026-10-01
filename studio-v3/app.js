@@ -1,5 +1,5 @@
 import { newProject, designOf, sampleData } from './model.js';
-import { createBus, editProject, designOperations, formDesign, alterFields } from './controller.js';
+import { createBus, editProject, replaceData, designOperations, formDesign, alterFields } from './controller.js';
 import { icon } from './icons.js';
 import { leftView, rightView, SAMPLES } from './views.js';
 import { PaperPreview } from './preview.js';
@@ -8,7 +8,7 @@ import { inspectProject } from './validation.js';
 
 const $ = selector => document.querySelector(selector);
 const state = {mode:'design',selected:'items',tab:'properties',sample:'erp',report:null,matrix:{},dirty:false,dataDraft:null,running:false,runId:0};
-let bus, erpData, displayed, zoom = 1, pageIndex = 0, editQueue = Promise.resolve();
+let bus, displayed, zoom = 1, pageIndex = 0, editQueue = Promise.resolve();
 const paper = new PaperPreview($('#preview-frame'), (report,view) => {
   state.report = report;
   if (report.status === 'ready') {
@@ -65,7 +65,7 @@ async function render(project = bus.project) {
 }
 function stopRun() { state.runId += 1; state.running = false; }
 async function changed() {
-  stopRun(); state.dirty = true; state.matrix = {}; renderPanels(); syncControls(); await render();
+  stopRun(); state.sample = bus.project.studioV3Session.sample; state.dirty = true; state.matrix = {}; renderPanels(); syncControls(); await render();
 }
 async function mutate(operations, reason) { await editProject(bus,operations,reason); await changed(); }
 function queueEdit(work) {
@@ -74,15 +74,15 @@ function queueEdit(work) {
   return editQueue;
 }
 function install(project) {
-  stopRun(); bus?.deactivate(); paper.cancel(); bus = createBus(project); erpData = structuredClone(project.sampleData);
+  stopRun(); bus?.deactivate(); paper.cancel(); bus = createBus(project);
   Object.assign(state,{selected:'items',sample:'erp',report:null,matrix:{},dirty:false,dataDraft:null});
   pageIndex = 0; renderPanels(); syncControls(); render();
 }
 async function switchSample(id) {
   stopRun();
-  const data = id === 'erp' ? erpData : sampleData(designOf(bus.project).type,id === 'long' ? 45 : Number(id),id === 'long');
-  state.sample = id; state.dataDraft = null;
-  await mutate([{type:'replace_sample_data',value:data}],`sample: ${id}`);
+  const data = id === 'erp' ? bus.project.studioV3Session.erpData : sampleData(designOf(bus.project).type,id === 'long' ? 45 : Number(id),id === 'long');
+  state.dataDraft = null;
+  await replaceData(bus,data,id); await changed();
 }
 async function validateAll() {
   if (state.running) { stopRun(); paper.cancel(); renderPanels(); await render(); return; }
@@ -152,8 +152,8 @@ document.addEventListener('submit', e => {
       if (new TextEncoder().encode(source).length > 2 * 1024 * 1024) throw new Error('Sample data exceeds the 2 MB limit.');
       const data = JSON.parse(source);
       if (!data || typeof data !== 'object' || Array.isArray(data)) throw new Error('Sample data must be a JSON object.');
-      erpData = structuredClone(data); state.sample = 'erp'; state.dataDraft = null;
-      await mutate([{type:'replace_sample_data',value:data}],'ERP sample data');
+      state.dataDraft = null;
+      await replaceData(bus,data); await changed();
     } else if (kind === 'locale') {
       const values = new FormData(form);
       await mutate([{type:'set_manifest_value',path:'/locale',value:values.get('locale')},{type:'set_manifest_value',path:'/currency',value:values.get('currency')}],'locale & currency');
