@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { sampleData, defaultDesign } from '../studio-v3/model.js';
-import { dataValue, setDataValue, validateDataset, importDataset, exportDataset, datasetRecord, newItem } from '../studio-v3/database-model.js';
+import { dataValue, setDataValue, validateDataset, importDataset, exportDataset, datasetRecord, newItem, itemColumns } from '../studio-v3/database-model.js';
 
 describe('Studio v3 local demo dataset contract', () => {
   it('retains independent ERP numbers and unknown fields through dataset export/import', () => {
@@ -42,4 +42,12 @@ describe('Studio v3 local demo dataset contract', () => {
     expect(data.items).toHaveLength(1);
     expect(data.summary.total).toBe(270);
   });
+});
+
+
+it('invalid current-form collections remain inspectable without crashing the table schema',()=>{
+  const design=defaultDesign('invoice');
+  expect(itemColumns({items:{}},design)).toHaveLength(design.columns.length);
+  expect(itemColumns({},design)).toHaveLength(design.columns.length);
+  expect(()=>validateDataset({items:{}})).toThrow('array');
 });

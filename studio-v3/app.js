@@ -175,6 +175,12 @@ async function action(name) {
 }
 document.querySelectorAll('[data-icon]').forEach(n => n.insertAdjacentHTML('afterbegin',icon(n.dataset.icon)));
 document.addEventListener('click', e => {
+  const path = e.target.closest('[data-tree-path]');
+  if (path && !path.disabled) {
+    const input = $('#right-panel').querySelector(path.dataset.treeScope === 'collection' ? '[name=collection]' : '[name=pointer]');
+    if (input) { input.value = path.dataset.treePath; drafts.capture(input); canvas.focusDraft(input); }
+    return;
+  }
   const fold = e.target.closest('[data-fold]');
   if (fold) { state.collapsed[fold.dataset.fold] = !state.collapsed[fold.dataset.fold]; renderPanels(); return; }
   const dataset = e.target.closest('[data-db-select]');

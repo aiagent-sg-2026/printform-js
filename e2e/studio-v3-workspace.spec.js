@@ -107,3 +107,30 @@ test('database actions protect unapplied binding edits while keeping table save 
   await expect(page.locator('#database-notice')).toContainText('Dataset saved locally');
   await expect(page.locator('#draft-state')).toHaveText('No unapplied edits');
 });
+
+test('Data field tree proposes document, collection and row paths; values stay inert and invalid collections remain repairable',async({page},info)=>{
+  const errors=[];page.on('pageerror',error=>errors.push(error.message));
+  await page.locator('[data-mode=data]').click();await page.locator('#database-workbench [data-db-group=schema]').click();
+  await expect(page.locator('.data-schema-tree')).toContainText('/company/name');
+  await expect(page.locator('.data-schema-tree')).toContainText('./description');
+  await page.getByRole('button',{name:'Use /items',exact:true}).click();await expect(page.getByLabel('Collection',{exact:true})).toHaveValue('/items');
+  await page.locator('[data-mode=design]').click();await page.locator('#left-panel [data-select=customer-bill]').click();
+  await page.locator('[data-mode=data]').click();await page.locator('#database-workbench [data-db-group=schema]').click();
+  const revision=await page.locator('#revision').innerText();await page.getByRole('button',{name:'Use /customer/address',exact:true}).click();
+  await expect(page.getByLabel('Data field (/field)',{exact:true})).toHaveValue('/customer/address');await expect(page.locator('#revision')).toHaveText(revision);
+  await edit(page,()=>page.getByRole('button',{name:'Apply binding',exact:true}).click());await expect(frame(page).locator('[data-v3-id=customer-bill]').first()).toContainText('455 Western Avenue');
+  await page.locator('[data-mode=design]').click();await page.locator('#left-panel [data-select=items-sku]').click();
+  await page.locator('[data-mode=data]').click();await page.locator('#database-workbench [data-db-group=schema]').click();
+  await page.getByRole('button',{name:'Use ./amount',exact:true}).click();await edit(page,()=>page.getByRole('button',{name:'Apply binding',exact:true}).click());
+  await expect(frame(page).locator('.prowitem_processed').first().locator('td').nth(1)).toHaveText('250');
+  await page.locator('#database-workbench [data-db-group=json]').click();const original=JSON.parse(await page.locator('#data-json').inputValue());
+  original.customer.name='<img src=x onerror="window.treeLeak=1">';
+  await page.locator('#data-json').fill(JSON.stringify({...original,items:{}}));const before=await page.locator('#revision').innerText();
+  await page.getByRole('button',{name:'Apply JSON data',exact:true}).click();await expect(page.locator('#revision')).not.toHaveText(before);
+  await expect(page.locator('[data-action=export]')).toBeDisabled();await page.locator('#database-workbench [data-db-group=items]').click();
+  await expect(page.locator('#database-workbench')).toContainText('/items must be an array');await expect(page.locator('[data-db-action=add-row]')).toBeDisabled();
+  await page.locator('#database-workbench [data-db-group=json]').click();await page.locator('#data-json').fill(JSON.stringify(original));
+  await edit(page,()=>page.getByRole('button',{name:'Apply JSON data',exact:true}).click());await page.locator('#database-workbench [data-db-group=schema]').click();
+  await expect(page.locator('.data-schema-tree')).toContainText(original.customer.name);await expect(page.locator('.data-schema-tree img')).toHaveCount(0);
+  expect(await page.evaluate(()=>window.treeLeak)).toBeUndefined();await page.screenshot({path:info.outputPath('Data-field-tree.png')});expect(errors).toEqual([]);
+});

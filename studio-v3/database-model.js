@@ -38,16 +38,16 @@ export function groupFields(data, group) {
   return Object.entries(data).filter(([key]) => !DATA_GROUPS.some(([id]) => id === key)).flatMap(([key,value]) => scalarFields(value,`/${encodeKey(key)}`));
 }
 export function itemColumns(data, design) {
-  const result = new Map();
+  const result = new Map(), rows = Array.isArray(data.items) ? data.items : [];
   for (const field of design.columns) {
     const pointer = field.pointer?.startsWith('./') ? field.pointer.slice(1) : null;
     if (pointer) {
-      const record = data.items?.find(row=>dataValue(row,pointer) !== undefined), value = record && dataValue(record,pointer);
+      const record = rows.find(row=>dataValue(row,pointer) !== undefined), value = record && dataValue(record,pointer);
       const type = typeof value === 'number' ? 'number' : typeof value === 'boolean' ? 'boolean' : value === undefined && ['number','currency','percent'].includes(field.format) ? 'number' : 'text';
       result.set(pointer,{pointer,label:field.label,type});
     }
   }
-  for (const row of data.items || []) for (const field of scalarFields(row)) {
+  for (const row of rows) for (const field of scalarFields(row)) {
     if (!result.has(field.pointer) && result.size < 30) result.set(field.pointer,{...field,label:field.pointer.slice(1)});
   }
   return [...result.values()];

@@ -109,6 +109,14 @@ body.hide-thumbnails #thumbnails { padding:0; border:0; visibility:hidden; }
 .database-groups [aria-current=page] { color:var(--blue); background:var(--blue-soft); border-color:#b8d4ff; }
 .database-row-tools { margin-bottom:10px; font-size:12px; }
 .database-row-tools span { margin-left:auto; color:var(--muted); }
+.data-schema-tree { display:grid; gap:10px; }
+.schema-branch { border:1px solid var(--line); border-radius:6px; padding:0 10px; }
+.schema-branch summary { padding:10px 0; }
+.schema-branch[open] > summary svg { transform:rotate(90deg); }
+.schema-leaf { display:grid; grid-template-columns:minmax(0,1fr) auto; gap:8px; padding:9px 0; border-bottom:1px solid var(--line); align-items:center; }
+.schema-leaf code,.schema-leaf small { display:block; overflow-wrap:anywhere; }
+.schema-leaf small { color:var(--muted); font-size:11px; margin-top:4px; }
+.schema-leaf button { font-size:11px; max-width:150px; overflow-wrap:anywhere; }
 .database-table-scroll { overflow:auto; max-width:100%; }
 .database-table { width:100%; border-collapse:collapse; font-size:12px; }
 .database-table th, .database-table td { padding:8px; border:1px solid var(--line); text-align:left; vertical-align:top; }

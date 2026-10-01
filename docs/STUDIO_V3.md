@@ -17,8 +17,11 @@ properties plus collapsible Quality on the right. Icons are inline SVG.
 - **Data:** set an absolute collection pointer (`/items`), row-relative field
   pointers (`./description`) or document pointers (`/customer/name`); apply
   sample JSON, locale and currency; switch isolated synthetic samples. The wide
-  workbench offers typed field tables, paged item editing, a path picker and
-  Advanced JSON with parse-error line/column positions.
+  workbench offers a collapsible field tree, typed field tables, paged item editing,
+  a path picker and
+  Advanced JSON with parse-error line/column positions. The field tree shows
+  document paths, array collection paths and first-record row paths; Use proposes
+  a compatible binding without committing until Apply binding/collection.
 - **Validate:** render 0/1/45/100/500-row and long bilingual samples; inspect
   missing fields, invalid numeric data, row identity/order, repeated headers,
   page/footer geometry and overflow. Sample-matrix results clear on edits.
