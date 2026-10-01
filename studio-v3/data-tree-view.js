@@ -24,7 +24,7 @@ export function dataTree(project,state) {
     }).join('');
   };
   const rows = resolvePointer(project.sampleData,design.collection);
-  let fields = scalarFields(rows?.[0] || {}).map(f=>({...f,pointer:`.${f.pointer}`}));
+  let fields = scalarFields(rows?.[0] || {}).filter(f=>f.pointer.startsWith('/')).map(f=>({...f,pointer:`.${f.pointer}`}));
   if (!fields.length) fields = design.columns.filter(f=>f.pointer).map(f=>({pointer:f.pointer,value:undefined,type:['number','currency','percent'].includes(f.format) ? 'number' : 'text'}));
   return `<div class="data-schema-tree"><h3>Document field tree</h3><p class="hint">Choose a form field in Design, then use a matching path here. Use changes the pending binding; Apply binding commits it.</p>${walk(project.sampleData)}<h3>Row fields · Collection ${escape(design.collection)}</h3><p class="hint">${rows?.length ? 'Values from the first record.' : 'Empty collection: paths from the template columns.'} Row paths use ./field, without a wildcard.</p>${fields.map(f=>leaf(f.pointer,f.value,'row',f.type)).join('')}<p class="hint muted">The tree shows up to 250 entries and 12 levels. Arrays are collection paths; row samples use the first record. Advanced JSON retains the complete data.</p></div>`;
 }

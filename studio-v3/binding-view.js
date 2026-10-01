@@ -17,7 +17,7 @@ function valueText(value) {
 }
 function pickerOptions(project,relative=false) {
   const rows = resolvePointer(project.sampleData,project.manifest.studioV3.collection);
-  let fields = relative ? scalarFields(rows?.[0] || {}).map(f=>({...f,pointer:`.${f.pointer}`})) : scalarFields(project.sampleData);
+  let fields = relative ? scalarFields(rows?.[0] || {}).filter(f=>f.pointer.startsWith('/')).map(f=>({...f,pointer:`.${f.pointer}`})) : scalarFields(project.sampleData);
   if (relative && !fields.length) fields = project.manifest.studioV3.columns.filter(f=>f.pointer).map(f=>({pointer:f.pointer,type:['number','currency','percent'].includes(f.format) ? 'number' : 'text',value:undefined}));
   return fields.map(f=>`<option value="${escape(f.pointer)}">${escape(f.pointer)} · ${f.type} · ${escape(valueText(f.value))}</option>`).join('');
 }

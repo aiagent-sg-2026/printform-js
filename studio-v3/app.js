@@ -18,9 +18,9 @@ let bus, displayed, zoom = 1, pageIndex = 0, editQueue = Promise.resolve();
 const database = new DemoDatabase({
   project:() => bus?.project, state:() => state, context:() => bus,
   render:renderPanels, busy:syncControls, download,
-  apply:async (data,reference,context,source = null) => {
+  apply:async (data,reference,context,source = null,title = undefined) => {
     if (context !== bus) throw new Error('Dataset was saved, but the document changed. Load it into the intended form again.');
-    state.dataDraft = null; await replaceData(bus,data,'erp',reference,source); await changed();
+    state.dataDraft = null; await replaceData(bus,data,'erp',reference,source,title); await changed();
   }
 });
 const drafts = new FormDrafts({
@@ -277,3 +277,6 @@ document.addEventListener('keydown', e => {
 });
 await database.init();
 const initial = database.starting(newProject()); install(initial.project,initial.reference,'builtin-demo');
+
+// Keep startup controls inactive until local dataset loading can no longer replace the document.
+document.body.inert = false; document.body.setAttribute('aria-busy','false');

@@ -38,3 +38,17 @@ describe('Studio v3 editing intent and data provenance',()=> {
     expect(()=>parseSampleJSON('{"x":"\\q","items":[]}')).toThrow('Invalid JSON');
   });
 });
+
+it('applied dataset names survive form history, explicit save/reopen and HTML metadata without database links',async()=>{
+  const {saveProject,readProject}=await import('../studio-v3/file-io.js');
+  const bus=createBus(newProject());
+  await replaceData(bus,bus.project.sampleData,'erp',null,null,'Portable dataset');
+  expect(bus.project.manifest.sampleDataTitle).toBe('Portable dataset');
+  const restored=readProject(saveProject(bus.project),'named.printform.json');
+  expect(restored.manifest.sampleDataTitle).toBe('Portable dataset');
+  expect(restored.studioV3Session).toBeUndefined();
+  await bus.navigateHistory('undo',bus.revision);expect(bus.project.manifest.sampleDataTitle).not.toBe('Portable dataset');
+  await bus.navigateHistory('redo',bus.revision);expect(bus.project.manifest.sampleDataTitle).toBe('Portable dataset');
+  const parsed=JSON.parse(saveProject(bus.project));parsed.project.manifest.sampleDataTitle={unsafe:true};
+  expect(()=>readProject(JSON.stringify(parsed))).toThrow('must be text');
+});

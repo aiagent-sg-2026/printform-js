@@ -129,6 +129,9 @@ test('Data field tree proposes document, collection and row paths; values stay i
   await page.getByRole('button',{name:'Apply JSON data',exact:true}).click();await expect(page.locator('#revision')).not.toHaveText(before);
   await expect(page.locator('[data-action=export]')).toBeDisabled();await page.locator('#database-workbench [data-db-group=items]').click();
   await expect(page.locator('#database-workbench')).toContainText('/items must be an array');await expect(page.locator('[data-db-action=add-row]')).toBeDisabled();
+  await page.locator('#database-workbench [data-db-group=json]').click();await page.locator('#data-json').fill(JSON.stringify({...original,items:[7]}));
+  await page.getByRole('button',{name:'Apply JSON data',exact:true}).click();await page.locator('#database-workbench [data-db-group=schema]').click();
+  await expect(page.getByRole('button',{name:'Use .',exact:true})).toHaveCount(0);await expect(page.locator('#right-panel option[value="."]')).toHaveCount(0);
   await page.locator('#database-workbench [data-db-group=json]').click();await page.locator('#data-json').fill(JSON.stringify(original));
   await edit(page,()=>page.getByRole('button',{name:'Apply JSON data',exact:true}).click());await page.locator('#database-workbench [data-db-group=schema]').click();
   await expect(page.locator('.data-schema-tree')).toContainText(original.customer.name);await expect(page.locator('.data-schema-tree img')).toHaveCount(0);

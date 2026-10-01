@@ -17,7 +17,7 @@ async function records(page) {
 }
 async function enter(page,group='items') {
   await page.locator('[data-mode=data]').click();
-  await page.locator(`[data-db-group=${group}]`).click();
+  await page.locator(`#database-workbench nav [data-db-group=${group}]`).click();
   await expect(page.locator('#database-workbench')).toBeVisible();
 }
 async function save(page,copy=false) {
@@ -143,4 +143,37 @@ test('dataset import/export, deletion persistence, reset cancellation and mobile
     await button(page,'preview').click(); await expect(page.locator('#database-workbench')).toBeHidden();
     await page.locator('#show-database').click(); await expect(page.locator('#database-workbench')).toBeVisible();
   }
+});
+
+test('dataset name Apply/Discard/Stay retains metadata until explicit save and survives form reopening',async({page},info)=>{
+  await enter(page,'customer');const initial=await page.locator('#database-name').inputValue();
+  await page.locator('#database-name').fill('Portable renamed dataset');await page.locator('[data-mode=design]').click();
+  await page.locator('[data-draft-choice=stay]').click();await expect(page.locator('#database-name')).toHaveValue('Portable renamed dataset');await expect(page.locator('#database-name')).toBeFocused();
+  await page.locator('[data-mode=design]').click();await page.locator('[data-draft-choice=apply]').click();await ready(page);
+  expect((await records(page)).find(r=>r.id==='starter:invoice').title).toBe(initial);
+  await page.locator('[data-action=undo]').click();await ready(page);await enter(page,'customer');await expect(page.locator('#database-name')).toHaveValue(initial);
+  await page.locator('[data-action=redo]').click();await ready(page);await expect(page.locator('#database-name')).toHaveValue('Portable renamed dataset');
+  await save(page);expect((await records(page)).find(r=>r.id==='starter:invoice').title).toBe('Portable renamed dataset');
+  await page.reload();await ready(page);await enter(page,'customer');await expect(page.locator('#database-name')).toHaveValue('Portable renamed dataset');
+  await page.locator('#database-name').fill('Discarded name');await page.locator('[data-mode=design]').click();await page.locator('[data-draft-choice=discard]').click();
+  await enter(page,'customer');await expect(page.locator('#database-name')).toHaveValue('Portable renamed dataset');
+  await page.locator('#database-name').fill('Applied file-only name');await page.locator('[data-mode=design]').click();await page.locator('[data-draft-choice=apply]').click();await ready(page);
+  const pending=page.waitForEvent('download');await page.locator('[data-action=save]').click();const file=info.outputPath('named-dataset.printform.json');await(await pending).saveAs(file);
+  await page.locator('[data-action=new]').click();await page.locator('[data-template=delivery]').click();await ready(page);
+  const chooser=page.waitForEvent('filechooser');await page.locator('[data-action=open]').click();await(await chooser).setFiles(file);await ready(page);await enter(page,'customer');
+  await expect(page.locator('#database-name')).toHaveValue('Applied file-only name');await expect(button(page,'save')).toBeDisabled();
+  expect((await records(page)).find(r=>r.id==='starter:invoice').title).toBe('Portable renamed dataset');
+});
+
+test('custom numeric errors block navigation Apply and survive another-row deletion before Save',async({page})=>{
+  await enter(page,'json');const data=JSON.parse(await page.locator('#data-json').inputValue());data.items[0].weight=5;data.items[1].weight=6;
+  await page.locator('#data-json').fill(JSON.stringify(data));await page.getByRole('button',{name:'Apply JSON data',exact:true}).click();await ready(page);
+  await enter(page,'items');await save(page,true);await page.getByLabel('/items/1/weight',{exact:true}).fill('');
+  const revision=await page.locator('#revision').innerText();await page.locator('[data-mode=design]').click();await page.locator('[data-draft-choice=apply]').click();
+  await expect(page.locator('[data-mode=data]')).toHaveAttribute('aria-current','page');await expect(page.locator('#database-notice')).toContainText('/items/1/weight');await expect(page.locator('#revision')).toHaveText(revision);
+  await page.getByRole('button',{name:'Delete 1',exact:true}).click();await expect(page.locator('#database-notice')).toContainText('/items/0/weight');
+  await expect(page.getByLabel('/items/0/weight',{exact:true})).toHaveAttribute('type','number');
+  await button(page,'save').click();await expect(page.locator('#database-notice')).toContainText('/items/0/weight');await expect(page.locator('#revision')).toHaveText(revision);
+  await page.getByLabel('/items/0/weight',{exact:true}).fill('8');await save(page);
+  const saved=await records(page);expect(saved.find(r=>r.data.items.length===44).data.items[0].weight).toBe(8);
 });

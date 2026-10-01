@@ -70,7 +70,12 @@ seeded once; deleting one does not silently recreate it on reload. Selection is
 remembered per document type. This is a browser-local demo database, with no ERP
 connection, credentials, financial calculation or remote data API.
 
-Table edits remain unapplied drafts until Apply or Save & apply. Save & apply
+Table values and the dataset name remain unapplied drafts until Apply or Save
+& apply. Apply retains the name as portable `manifest.sampleDataTitle` metadata
+in the form's history, Save file and exported HTML, without a database record
+link or implicit database write. Save & apply explicitly persists that name.
+Custom numeric fields keep their original type while invalid/empty; Apply and
+Save share validation, and deleting a row remaps outstanding numeric errors. Save & apply
 atomically writes the selected record plus selection, then updates the form.
 Save as new creates a separate record; imports also create new records and do
 not overwrite older datasets. Reload saved explicitly replaces the form data.
@@ -78,6 +83,9 @@ Restore starter datasets asks for confirmation and writes only the three known
 starter records; copies, current drafts and other browser storage are retained.
 Revision compare-and-swap blocks stale overwrites from another tab. Cross-tab
 notifications never replace an active form or draft automatically.
+
+Startup controls stay inactive until the dataset load finishes, preventing a
+late initial load from replacing a newly created form.
 
 If opening or seeding IndexedDB fails or is blocked, the UI explicitly offers
 tab-only storage and export. Later quota/transaction failures retain the draft

@@ -62,3 +62,18 @@ for (const failure of ['QuotaExceededError','UnknownError']) {
     await expect(preview(page)).toHaveText('Unapplied failure draft');
   });
 }
+
+
+test('stalled storage startup cannot overwrite an early template choice; fallback remains editable',async({page})=>{
+  page.on('dialog',d=>d.accept());
+  await page.addInitScript(()=>Object.defineProperty(window,'indexedDB',{value:{open:()=>({})},configurable:true}));
+  await page.goto('/studio-v3/',{waitUntil:'commit'});await page.locator('[data-action=new] svg').waitFor();
+  await expect(page.locator('body')).toHaveAttribute('inert','');
+  await page.locator('[data-action=new]').click({force:true});await expect(page.locator('#new-dialog')).toBeHidden();
+  await ready(page);await expect(page.locator('body')).not.toHaveAttribute('inert','');
+  await expect(page.locator('body')).toHaveAttribute('aria-busy','false');
+  await page.locator('[data-action=new]').click();await page.locator('[data-template=delivery]').click();await ready(page);
+  await expect(page.locator('#document-name')).toHaveValue('Delivery note template');
+  await expect(page.frameLocator('#preview-frame').locator('h1').first()).toHaveText('DELIVERY NOTE');
+  await page.locator('[data-mode=data]').click();await expect(page.locator('#database-workbench')).toContainText('Storage unavailable · this tab only');
+});

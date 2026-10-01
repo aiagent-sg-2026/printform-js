@@ -1,12 +1,14 @@
 import { CommandBus } from '../studio-v2/core/command-bus.js';
 import { compileProject, designOf, selectionField } from './model.js';
 import { validateDesign } from './file-io.js';
+import { datasetName, datasetTitleFor } from './database-model.js';
 import { dataSource } from './data-provenance.js';
 
 export function createBus(project, database = null, source = 'builtin-demo') {
   const initial = structuredClone(project);
   // Session data follows the same undo/redo snapshots as the active dataset.
   // It is excluded from the explicit save format and standalone serializer.
+  initial.manifest.sampleDataTitle = database?.title ? datasetName(database.title) : datasetTitleFor(initial);
   const origin = dataSource(database?.origin || source);
   initial.studioV3Session = {sample:'erp',erpData:structuredClone(initial.sampleData),database,source:origin,erpSource:origin};
   return new CommandBus(initial, {hydrateDurable:false,dataPolicy:{allowDurable:false},agentId:'studio-v3-human'});
@@ -20,11 +22,12 @@ export async function editProject(bus, operations, reason, dataSession = null) {
   if (dataSession) next.studioV3Session = structuredClone(dataSession);
   return bus.commit(next, reason, {expectedRevision:revision});
 }
-export async function replaceData(bus, data, sample = 'erp', database = undefined, sourceOverride = null) {
+export async function replaceData(bus, data, sample = 'erp', database = undefined, sourceOverride = null, title = undefined) {
   const session = bus.project.studioV3Session;
   const names = {'0':'Empty','1':'Single item','45':'Standard','100':'Multi-page','500':'Stress',long:'Long & bilingual'};
   const source = sourceOverride || (sample !== 'erp' ? dataSource('validation-sample',names[sample] || sample) : database === undefined ? session.erpSource : dataSource(database?.origin || 'imported-data'));
-  return editProject(bus,[{type:'replace_sample_data',value:data}],`data: ${sample}`,{
+  const name = title !== undefined ? datasetName(title) : database?.title ? datasetName(database.title) : datasetTitleFor(bus.project);
+  return editProject(bus,[{type:'replace_sample_data',value:data},{type:'set_manifest_value',path:'/sampleDataTitle',value:name}],`data: ${sample}`,{
     sample,erpData:sample === 'erp' ? data : session.erpData,
     database:database === undefined ? session.database : database,
     source,erpSource:sample === 'erp' ? source : session.erpSource

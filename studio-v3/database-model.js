@@ -52,9 +52,10 @@ export function itemColumns(data, design) {
   }
   return [...result.values()];
 }
-export function newItem(data, design) {
+export function newItem(data, design, types = new Map()) {
   const row = {};
   for (const column of itemColumns(data,design)) {
+    column.type = types.get(column.pointer) || column.type;
     const parts = pathParts(column.pointer), key = parts.pop(); let parent = row;
     for (const part of parts) parent = parent[part] ||= {};
     parent[key] = column.pointer === '/no' ? (data.items?.length || 0)+1 : column.type === 'number' ? 0 : column.type === 'boolean' ? false : '';
@@ -82,10 +83,29 @@ export function validateDataset(data) {
   if (new TextEncoder().encode(JSON.stringify(data)).length > 2*1024*1024) throw new Error('Dataset exceeds the 2 MB limit.');
   return structuredClone(data);
 }
+export function datasetName(value) {
+  if (typeof value !== 'string') throw new Error('Dataset name must be text.');
+  const name = value.trim();
+  if (!name || name.length > 100) throw new Error('Dataset name must contain 1–100 characters.');
+  return name;
+}
+export const datasetTitleFor = project => datasetName(project.manifest.sampleDataTitle ?? `${project.manifest.title || 'Print form'} · dataset`.slice(0,100));
+export function numericPaths(data) {
+  const paths = scalarFields(data).filter(f=>typeof f.value === 'number').map(f=>f.pointer);
+  for (const [index,row] of (Array.isArray(data.items) ? data.items : []).entries()) {
+    paths.push(...scalarFields(row,`/items/${index}`).filter(f=>typeof f.value === 'number').map(f=>f.pointer));
+  }
+  return new Set(paths);
+}
+export function removeRowPaths(paths,index) {
+  return new Set([...paths].flatMap(pointer=> {
+    const match = /^\/items\/(\d+)(\/.*)$/.exec(pointer); if (!match) return [pointer];
+    const row = Number(match[1]); return row === index ? [] : [row > index ? `/items/${row-1}${match[2]}` : pointer];
+  }));
+}
 export function datasetRecord(type, data, title, id = crypto.randomUUID()) {
   if (!DATA_TYPES.includes(type)) throw new Error('Unsupported dataset document type.');
-  const name = String(title || '').trim();
-  if (!name || name.length > 100) throw new Error('Dataset name must contain 1–100 characters.');
+  const name = datasetName(title);
   return {id,type,title:name,data:validateDataset(data),origin:'local-demo'};
 }
 export function starterRecords() {

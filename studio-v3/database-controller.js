@@ -1,5 +1,5 @@
 import { createDatabase, storageMessage, DATABASE_NAME } from './database-store.js';
-import { datasetRecord, exportDataset, importDataset, newItem, setDataValue, starterRecords, validateDataset } from './database-model.js';
+import { datasetRecord, datasetName, datasetTitleFor, dataValue, exportDataset, importDataset, itemColumns, newItem, numericPaths, removeRowPaths, setDataValue, starterRecords, validateDataset } from './database-model.js';
 import { designOf } from './model.js';
 import { databaseView } from './database-view.js';
 
@@ -36,8 +36,8 @@ export class DemoDatabase {
   ensureDraft() {
     if (!this.draft) {
       const reference = this.state.sample === 'erp' ? this.project.studioV3Session.database : null;
-      const record = this.records.find(r=>r.id === reference?.id);
-      this.draft = {data:structuredClone(this.project.sampleData),title:record?.title || `${this.project.manifest.title} · dataset`,reference:structuredClone(reference || null)};
+      const data = structuredClone(this.project.sampleData);
+      this.draft = {data,title:datasetTitleFor(this.project),reference:structuredClone(reference || null),numberPaths:numericPaths(data),columnTypes:new Map(itemColumns(data,designOf(this.project)).map(c=>[c.pointer,c.type]))};
     }
     return this.draft;
   }
@@ -47,12 +47,23 @@ export class DemoDatabase {
       const draft = this.ensureDraft(), pointer = target.dataset.dbPointer;
       const type = target.dataset.dbType;
       const value = type === 'boolean' ? target.checked : type === 'number' && target.value !== '' ? Number(target.value) : target.value;
+      if (type === 'number') draft.numberPaths.add(pointer);
       if (type === 'number' && (typeof value !== 'number' || !Number.isFinite(value))) this.errors.add(pointer); else this.errors.delete(pointer);
       setDataValue(draft.data,pointer,value);
     } else return;
     this.error = '';
     const status = document.querySelector('#db-draft-status'); if (status) status.textContent = 'Table draft · not applied';
     const notice = document.querySelector('#database-notice'); if (notice) notice.textContent = '';
+  }
+  draftErrors() {
+    this.errors = new Set([...this.draft?.numberPaths || []].filter(pointer=> {
+      const value = dataValue(this.draft.data,pointer); return typeof value !== 'number' || !Number.isFinite(value);
+    }));
+  }
+  validateDraft() {
+    const draft = this.ensureDraft(); this.draftErrors();
+    if (this.errors.size) throw new Error(`Enter a finite number for ${[...this.errors][0]}.`);
+    draft.title = datasetName(draft.title); validateDataset(draft.data); return draft;
   }
   render() {
     const target = document.querySelector('#database-workbench'); if (!target || !this.project) return;
@@ -81,9 +92,7 @@ export class DemoDatabase {
   }
   async save(copy) {
     if (this.state.dataDraft !== null) throw new Error('Apply your advanced JSON edits before saving the dataset.');
-    const draft = this.ensureDraft();
-    if (this.errors.size) throw new Error(`Enter a finite number for ${[...this.errors][0]}.`);
-    validateDataset(draft.data);
+    const draft = this.validateDraft();
     const reference = copy ? null : draft.reference;
     if (!copy && !reference) throw new Error('Save this form draft as a new dataset.');
     let title = draft.title;
@@ -130,19 +139,21 @@ export class DemoDatabase {
       const draft = this.ensureDraft();
       if (name === 'add-row') {
         if (draft.data.items.length >= 500) throw new Error('At most 500 item records are supported.');
-        draft.data.items.push(newItem(draft.data,designOf(this.project))); this.rowPage = Math.floor((draft.data.items.length-1)/25);
+        draft.data.items.push(newItem(draft.data,designOf(this.project),draft.columnTypes));
+        for (const pointer of numericPaths(draft.data)) draft.numberPaths.add(pointer); this.rowPage = Math.floor((draft.data.items.length-1)/25);
       } else {
-        draft.data.items.splice(Number(target.dataset.row),1);
-        this.rowPage = Math.min(this.rowPage,Math.max(0,Math.ceil(draft.data.items.length/25)-1)); this.errors.clear();
+        const index = Number(target.dataset.row); draft.data.items.splice(index,1);
+        draft.numberPaths = removeRowPaths(draft.numberPaths,index);
+        this.rowPage = Math.min(this.rowPage,Math.max(0,Math.ceil(draft.data.items.length/25)-1)); this.draftErrors();
       }
-      this.render(); return;
+      this.error = this.errors.size ? `Enter a finite number for ${[...this.errors][0]}.` : ''; this.render(); return;
     }
     this.context = this.callbacks.context();
     this.busy = true; this.error = ''; this.callbacks.busy(); this.render();
     try {
       if (name === 'apply-draft') {
         const draft = this.draft; if (draft) {
-          validateDataset(draft.data); await this.callbacks.apply(draft.data,draft.reference,this.context); this.resetDraft();
+          this.validateDraft(); await this.callbacks.apply(draft.data,draft.reference,this.context,null,draft.title); this.resetDraft();
           this.message = 'Table edits applied to the form draft. Save the database record explicitly to persist them.';
         }
       } else if (name === 'save' || name === 'copy') await this.save(name === 'copy');
@@ -154,7 +165,7 @@ export class DemoDatabase {
       else if (name === 'refresh') { await this.refresh(); this.message = 'Saved dataset list refreshed. Your form and draft are unchanged.'; }
       else if (name === 'export') {
         const draft = this.draft;
-        const record = datasetRecord(designOf(this.project).type,draft?.data || this.project.sampleData,draft?.title || this.project.manifest.title);
+        const record = datasetRecord(designOf(this.project).type,draft?.data || this.project.sampleData,draft?.title || datasetTitleFor(this.project));
         this.callbacks.download(exportDataset(record),'studio-v3-dataset.json','application/json');
       }
     } catch (error) { this.error = error.code === 'DATASET_CONFLICT' || error instanceof DOMException ? storageMessage(error) : error.message; throw error; }
