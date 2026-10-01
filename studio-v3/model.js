@@ -2,7 +2,7 @@ import { createEmptyProject } from '../studio-v2/core/project-model.js';
 import { createEmptyFormSpec } from '../studio-v2/core/form-spec.js';
 import { compileTemplate, documentTheme } from './template.js';
 
-export const STUDIO_V3_VERSION = '0.1.0';
+export const STUDIO_V3_VERSION = '0.2.0';
 export const BLOCKS = ['header', 'customer', 'items', 'totals', 'footer'];
 const field = (id, label, pointer, format = '') => ({ id, label, pointer, format });
 export function defaultDesign(type = 'invoice', blank = false) {

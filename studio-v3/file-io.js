@@ -1,6 +1,7 @@
 import { parseProjectHtml, createEmptyProject } from '../studio-v2/core/project-model.js';
 import { createStandaloneHtml } from '../studio-v2/core/exporter.js';
 import { compileProject, BLOCKS } from './model.js';
+import { datasetName } from './database-model.js';
 import { validPointer, inspectProject } from './validation.js';
 
 const FORMATS = ['', 'currency', 'number', 'percent'];
@@ -45,6 +46,7 @@ export function readProject(source, name = '') {
   if (!imported.sampleData || Array.isArray(imported.sampleData) || typeof imported.sampleData !== 'object') throw new Error('Sample data must be a JSON object.');
   const base = createEmptyProject();
   base.manifest = {...base.manifest,title:manifest.title,documentId:`v3-${crypto.randomUUID()}`,locale:manifest.locale,currency:manifest.currency};
+  if (manifest.sampleDataTitle !== undefined) base.manifest.sampleDataTitle = datasetName(manifest.sampleDataTitle);
   base.sampleData = structuredClone(imported.sampleData);
   base.schema = {type:'object',additionalProperties:true};
   base.revision = Number.isInteger(imported.revision) && imported.revision >= 0 ? imported.revision : 0;
