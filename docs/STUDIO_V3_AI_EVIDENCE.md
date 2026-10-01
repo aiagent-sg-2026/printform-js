@@ -42,8 +42,18 @@ Actual Chromium calls on 2026-10-01:
 | `http://127.0.0.1:4174` | `github-pages` | `https://gpt.yapweijun1996.com/demo/session` | HTTP 403, no token |
 | `https://yapweijun1996.github.io` | `github-pages` | same | HTTP 403, no token |
 
-These are real calls, not intercepted fixtures. No inference request or user
-business data was sent. Gateway registration/session access must be checked
+These are real calls from pages at the listed Origins, not intercepted
+fixtures and not forged Origin headers. No inference request or user business
+data was sent. The exact project ID comes from `studio-v2/ui/agent-demo-gateway.js:2`,
+`studio-v2/AGENT_SETUP.md` (Current browser Demo Gateway) and the historical
+read-only source record `docs/STUDIO_V2_S17_PI04_EVIDENCE.md:101`.
+KB retrieval returned older v2 provider/history memories, not a current live
+registration row. No gateway admin registration API/configuration was read.
+The probe retained HTTP status only, not the response message; the public
+probe parsed JSON but found no safe `error.code`/`code` value to report.
+HTTP 403 does not prove an unregistered origin: wrong project, disabled Demo,
+Turnstile or project/origin policy remain unclassified. No repeat denied
+request or alternate project ID guessing is authorized. Gateway registration/session access must be checked
 by its owner; earlier September registration success does not establish current
 availability. We did not alter the server or retry with a different project/key.
 Models/capabilities and inference success remain blocked by session issuance.

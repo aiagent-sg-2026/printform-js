@@ -4,7 +4,7 @@ import { inspectProject } from './validation.js';
 import { runLayoutHarness } from './ai-harness.js';
 
 const MESSAGES = {
-  DEMO_ORIGIN_NOT_REGISTERED:'Demo session rejected: this browser Origin is not registered for project github-pages. Request stopped. Ask the gateway owner to verify the existing registration.',
+  DEMO_SESSION_FORBIDDEN:'Demo session rejected (HTTP 403) for project github-pages and this browser Origin. Request stopped. The gateway owner must check the existing project and Demo access policy.',
   DEMO_SESSION_UNAVAILABLE:'Demo session unavailable. Check connection or existing origin registration.',
   DEMO_SESSION_EXPIRED:'Demo session expired after one refresh. Send again to retry.',
   DEMO_MODEL_UNAVAILABLE:'The selected Demo alias is unavailable. Discover models again.',

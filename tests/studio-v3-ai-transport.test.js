@@ -28,7 +28,7 @@ describe('v3 Demo wire contract',()=> {
   });
   it('fails closed for unregistered origin and repeated unauthorized token',async()=> {
     const denied = createDemoTransport({fetchImpl:async()=>json({},403)});
-    await expect(denied.discover()).rejects.toThrow('DEMO_ORIGIN_NOT_REGISTERED');
+    await expect(denied.discover()).rejects.toThrow('DEMO_SESSION_FORBIDDEN');
     let sessions = 0;
     const expired = createDemoTransport({fetchImpl:async url=>url.endsWith('/session') ? (sessions++,json({token:'dmo_synthetic123',expires_in:60})) : json({},401)});
     await expect(expired.discover()).rejects.toThrow('DEMO_SESSION_EXPIRED'); expect(sessions).toBe(2);
@@ -39,7 +39,7 @@ describe('v3 Demo wire contract',()=> {
       if (url.endsWith('/session')) return ++issued === 1 ? json({token:'dmo_synthetic123'}) : json({},403);
       dispatched++; return json({},401);
     }});
-    await expect(transport.plan('demo-fast','fictional')).rejects.toThrow('DEMO_ORIGIN_NOT_REGISTERED');
+    await expect(transport.plan('demo-fast','fictional')).rejects.toThrow('DEMO_SESSION_FORBIDDEN');
     expect(dispatched).toBe(1);
   });
   it.each([429,500])('sanitizes HTTP %i error bodies',async status=> {

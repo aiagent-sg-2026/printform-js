@@ -51,7 +51,7 @@ for (const [name,reply] of [['malformed','hello'],['unsafe',{summary:'Change mon
 }
 test('session registration blocker and token expiry retry are explicit',async({page})=> {
   await mock(page,{sessionStatus:403}); await openAI(page); await send(page);
-  await expect(page.locator('[data-ai-status]')).toContainText('not registered'); await expect(page.locator('#revision')).toHaveText('r0');
+  await expect(page.locator('[data-ai-status]')).toContainText('HTTP 403'); await expect(page.locator('#revision')).toHaveText('r0');
   await page.unrouteAll(); const m = await mock(page,{unauthorized:true}); await send(page);
   await expect(page.locator('[data-ai-proposal]')).toBeVisible(); expect(m.sessions()).toBe(2); expect(m.plans()).toBe(2);
 });

@@ -5,7 +5,7 @@ export const DEMO_ALIASES = ['demo-fast','demo-auto'];
 export function createDemoTransport({fetchImpl = (...args) => fetch(...args),now} = {}) {
   const session = createDemoGatewaySession({now,fetchImpl:async (url,options) => {
     const response = await fetchImpl(url,options);
-    if (String(url).endsWith('/demo/session') && response.status === 403) throw fail('DEMO_ORIGIN_NOT_REGISTERED');
+    if (String(url).endsWith('/demo/session') && response.status === 403) throw fail('DEMO_SESSION_FORBIDDEN');
     return response;
   }});
   async function json(path, options) {

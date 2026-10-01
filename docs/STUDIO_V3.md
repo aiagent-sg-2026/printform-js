@@ -89,8 +89,13 @@ from `http://127.0.0.1:4174` and `https://yapweijun1996.github.io` to the existi
 `github-pages` `/demo/session` returned HTTP 403. No model request was sent in
 these probes. This supersedes the older successful origin probes as evidence
 of current availability. No registration, grant, credential or gateway config
-was changed. The gateway owner must verify the existing registration before
-live alias/capability and inference success can be certified.
+was changed. The probes used real page Origins, without a manually set Origin header.
+Only status was retained; no diagnostic response message or live admin
+registration row was inspected. HTTP 403 alone does not distinguish a wrong
+project, disabled Demo, Turnstile or origin/project policy rejection. The
+gateway owner must inspect the existing registration/access policy before
+live alias/capability and inference success can be certified. No further
+denied requests or alternate project guesses are part of this probe.
 
 ## Source and runtime ownership
 
