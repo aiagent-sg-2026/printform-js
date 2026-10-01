@@ -34,9 +34,68 @@ properties plus collapsible Quality on the right. Icons are inline SVG.
 Desktop, tablet and mobile support editing. At widths up to 900 px, Structure
 and Properties open as drawers with Escape/backdrop close and focus return.
 Fit page, Fit width, 100%, incremental zoom and panel/thumbnail toggles affect
-only the editor view; horizontal paper panning never changes print geometry.
+only the editor view; the validated last zoom choice is kept in localStorage,
+defaulting to Fit page, and fit modes recompute when the viewport/panels change; horizontal paper panning never changes print geometry.
 The current-page indicator follows navigation and scrolling. The UI uses English; user data
 supports bilingual text and the existing five print locales.
+
+## AI layout editor
+
+The browser sidepanel uses the pinned upstream `AgentHarness` and
+`MemorySessionRepo` from `@earendil-works/pi-agent-core@0.85.1`, with a `pi-ai`
+provider extension. Pi is TypeScript/JavaScript. The coding-agent CLI's shell
+and filesystem are not installed or exposed. v2's embedded Designer remains
+AGRUN; its PI-00..04 qualification modules are useful prior art, not the v3 UI.
+This slice does not claim completion of v2's full direct-BYOK migration.
+
+The owner-selected GPT Server Demo is the only v3 provider. Existing
+`github-pages` registration is reused: browser CORS supplies the exact Origin;
+`POST /demo/session` issues a short-lived memory-only token, `/demo/v1/models`
+checks `demo-fast`/`demo-auto`, and `/demo/v1/chat/completions` returns one text
+JSON envelope. No native provider tools, arbitrary schema, files, background,
+web search, gateway key or private `/v1/*` request is sent. A first 401 refreshes
+once; no automatic model fallback or inference retry occurs.
+
+The panel displays the selected alias, recipient, current Origin/project,
+request and layout context. Send requires an explicit consent checkbox and
+user click. Context contains style tokens and column IDs/widths only: no data
+values, text/labels, bindings, company names or financial values. User-entered
+request text is shared, as stated in the UI. Unapplied drafts are excluded.
+Requests, proposals, tokens and Harness sessions are not persisted or exported.
+Model discovery does not send document data. Cancel/close abort the browser
+request; a dispatched provider request may already have been received.
+
+A closed parser limits a proposal to twelve unique edits: brand color, font,
+cell padding, table borders/stripes, repeat/page settings, or existing column
+widths. It cannot change labels/text, bindings, collections, data, money,
+formulas, block visibility or source HTML/CSS. The checked envelope is mapped
+to one local `preview_layout` Harness tool and terminates that run. The tool
+only builds a candidate; it cannot commit. This is a bounded layout agent,
+not an unrestricted Pi coding agent or AI visual-quality certification.
+
+The diff shows each before/after value. Preview runs the same A4 runtime on
+unchanged supplied data, without changing the template revision. Print/export
+are disabled while viewing an unapplied candidate. Apply requires a passing
+current browser render, draft Apply/Discard/Stay resolution, and the exact
+bus/revision/base design plus proposal identity/generation at queue execution.
+Apply creates one CommandBus history entry; Undo restores the previous layout.
+The brief commit phase prevents duplicate Apply and contradictory cancellation.
+Changes, new/imported documents and history navigation invalidate proposals
+and cancel pending requests. Malformed, unsafe, stale, expired and failed
+responses never apply automatically.
+
+Live compatibility remains blocked as of 2026-10-01: actual Chromium requests
+from `http://127.0.0.1:4174` and `https://yapweijun1996.github.io` to the existing
+`github-pages` `/demo/session` returned HTTP 403. No model request was sent in
+these probes. This supersedes the older successful origin probes as evidence
+of current availability. No registration, grant, credential or gateway config
+was changed. The probes used real page Origins, without a manually set Origin header.
+Only status was retained; no diagnostic response message or live admin
+registration row was inspected. HTTP 403 alone does not distinguish a wrong
+project, disabled Demo, Turnstile or origin/project policy rejection. The
+gateway owner must inspect the existing registration/access policy before
+live alias/capability and inference success can be certified. No further
+denied requests or alternate project guesses are part of this probe.
 
 ## Source and runtime ownership
 
@@ -44,7 +103,8 @@ supports bilingual text and the existing five print locales.
 projects that model to a canonical FormSpec with stable component IDs and to
 controlled HTML/CSS in `template.js`. `controller.js` previews operations and
 commits through the existing CommandBus. No arbitrary script, eval, formula
-engine, free-position canvas or AI provider is introduced.
+engine or free-position canvas is introduced. The AI editor uses the bounded
+layout proposal flow described below.
 
 Preview and export both call the existing `createStandaloneHtml` with the same
 `dist/printform.js` and `dist/printform-document.js`. Pagination measures actual

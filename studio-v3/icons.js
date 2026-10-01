@@ -22,6 +22,10 @@ const paths = {
   trash:'M4 6h16 M9 6V3h6v3 M6 6l1 15h10l1-15 M10 10v7 M14 10v7',
   eye:'M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0z',
   style:'M4 21 18 7 M15 4l5 5 M3 16l5 5',
+  structure:'M3 4h6v4H3z M15 10h6v4h-6z M15 18h6v4h-6z M6 8v12h9 M6 12h9',
+  properties:'M4 6h16 M4 12h16 M4 18h16 M8 3v6 M16 9v6 M10 15v6',
+  pages:'M8 3h10l3 3v13H8z M16 3v4h5 M4 7v15h12 M11 11h7 M11 15h7',
+  sparkles:'m12 3 2.5 6.5L21 12l-6.5 2.5L12 21l-2.5-6.5L3 12l6.5-2.5z M20 3v4 M18 5h4',
   close:'m5 5 14 14 M19 5 5 19'
 };
-export const icon = name => `<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="${paths[name] || paths.field}"/></svg>`;
+export const icon = name => `<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="${paths[name] || paths.field}"/></svg>`;

@@ -11,6 +11,9 @@ import { FormDrafts } from './form-drafts.js';
 import { sourceLabel } from './data-provenance.js';
 import { parseSampleJSON } from './json-error.js';
 import { CanvasControls } from './canvas-controls.js';
+import { AIPanel } from './ai-panel.js';
+import { restoreZoom, persistZoom } from './zoom-preference.js';
+import { assertPendingProposal } from './ai-edits.js';
 
 const $ = selector => document.querySelector(selector);
 const state = {mode:'design',selected:'items',tab:'properties',sample:'erp',report:null,matrix:{},dirty:false,dataDraft:null,running:false,runId:0,collapsed:{},search:'',jsonError:''};
@@ -30,6 +33,7 @@ const drafts = new FormDrafts({
   apply:snapshot => queueEdit(() => applyForm(snapshot)),
   applyExternal:() => queueDatabase('apply-draft',{}),
   stay:() => {
+    ai.suspend();
     if (drafts.focusMeta?.key === 'data:global') { database.group = 'json'; database.render(); drafts.restore(); }
     else if (drafts.focusMeta?.external && !drafts.focus?.isConnected) {
       const parts = (drafts.focusMeta.pointer || '').split('/'); database.group = parts[1] || 'items';
@@ -55,6 +59,11 @@ const paper = new PaperPreview($('#preview-frame'), (report,view) => {
   drafts.guard(() => { state.selected = selection.id; pageIndex = Math.max(0,selection.page); renderPanels(); canvas.selectionMade(); }).catch(e=>status(e.message));
 });
 const canvas = new CanvasControls({resize:resizePaper,guard:work => drafts.guard(work)});
+const ai = new AIPanel({bus:()=>bus,guard:work=>drafts.guard(work),sync:syncControls,
+  preview:async project=> { stopRun(); state.mode = 'design'; renderPanels(); return render(project); },restore:()=>render(),
+  commit:(proposal,generation)=>queueEdit(async()=> { assertPendingProposal(bus,proposal,ai,generation); await editProject(bus,designOperations(bus.project,proposal.design),'AI layout suggestion'); await changed(); },false)
+});
+restoreZoom($('#zoom'));
 
 function status(text) { $('#status').textContent = text; }
 function syncControls() {
@@ -62,7 +71,7 @@ function syncControls() {
   const q = inspectProject(bus.project,state.report);
   $('[data-action=undo]').disabled = !bus.history.canUndo;
   $('[data-action=redo]').disabled = !bus.history.canRedo;
-  for (const action of ['print','export']) $(`[data-action=${action}]`).disabled = !q.ready || state.running || database.busy || database.pending;
+  for (const action of ['print','export']) $(`[data-action=${action}]`).disabled = !q.ready || state.running || ai.viewing || database.busy || database.pending;
   $('#revision').textContent = `r${bus.revision}${state.dirty ? ' · unsaved template' : ''}`;
   $('#document-name').value = bus.project.manifest.title;
   $('#data-source').textContent = sourceLabel(bus.project);
@@ -108,13 +117,14 @@ async function render(project = bus.project) {
 }
 function stopRun() { state.runId += 1; state.running = false; }
 async function changed() {
-  stopRun(); state.sample = bus.project.studioV3Session.sample; state.dirty = true; state.matrix = {}; renderPanels(); syncControls(); await render();
+  ai.invalidate(); stopRun(); state.sample = bus.project.studioV3Session.sample; state.dirty = true; state.matrix = {}; renderPanels(); syncControls(); await render();
 }
 async function mutate(operations, reason) { await editProject(bus,operations,reason); await changed(); }
-function queueEdit(work) {
+function queueEdit(work,reportOnly = true) {
   const context = bus;
-  editQueue = editQueue.then(() => { if (bus !== context) throw new Error('A queued edit belonged to the previous document.'); return work(); }).catch(e => status(e.message));
-  return editQueue;
+  const result = editQueue.then(() => { if (bus !== context) throw new Error('A queued edit belonged to the previous document.'); return work(); });
+  editQueue = result.catch(e => status(e.message));
+  return reportOnly ? editQueue : result;
 }
 function queueDatabase(name,target) {
   if (database.pending) return;
@@ -124,7 +134,7 @@ function queueDatabase(name,target) {
   });
 }
 function install(project, reference = null, source = 'imported-data') {
-  stopRun(); bus?.deactivate(); paper.cancel(); bus = createBus(project,reference,source); database.resetDraft(); drafts.clear();
+  stopRun(); bus?.deactivate(); paper.cancel(); bus = createBus(project,reference,source); ai.invalidate(); database.resetDraft(); drafts.clear();
   Object.assign(state,{selected:'items',sample:'erp',report:null,matrix:{},dirty:false,dataDraft:null,collapsed:{},search:'',jsonError:''});
   pageIndex = 0; renderPanels(); syncControls(); render();
 }
@@ -137,7 +147,7 @@ async function switchSample(id) {
 }
 async function validateAll() {
   if (state.running) { stopRun(); paper.cancel(); renderPanels(); await render(); return; }
-  const run = ++state.runId; state.running = true; state.matrix = {}; renderPanels(); syncControls();
+  ai.invalidate(); const run = ++state.runId; state.running = true; state.matrix = {}; renderPanels(); syncControls();
   const base = structuredClone(bus.project);
   for (const [id] of SAMPLES.filter(([id]) => id !== 'erp')) {
     const candidate = {...base,sampleData:sampleData(designOf(base).type,id === 'long' ? 45 : Number(id),id === 'long')};
@@ -160,13 +170,13 @@ async function action(name) {
     if (bus !== context || bus.revision !== revision || state.running) throw new Error('The form changed while exporting. Export the current revision again.');
     download(result.html,`${filenameFor(project)}.html`,'text/html'); status('Exported standalone HTML. Review every page in native print preview.');
   }
-  else if (name === 'print') { if (inspectProject(bus.project,state.report).ready && !state.running) paper.send('print'); }
+  else if (name === 'print') { if (inspectProject(bus.project,state.report).ready && !state.running && !ai.viewing) paper.send('print'); }
   else if (name === 'preview') { document.body.classList.toggle('preview-only'); $('[data-action=preview]').setAttribute('aria-pressed',document.body.classList.contains('preview-only')); database.render(); resizePaper(); }
   else if (name === 'previous' || name === 'next') goPage(pageIndex + (name === 'next' ? 1 : -1));
   else if (name === 'go-data') { state.mode = 'data'; renderPanels(); }
   else if (name === 'go-style') { state.mode = 'design'; state.selected = 'global-style'; state.tab = 'properties'; renderPanels(); }
   else if (name === 'properties' || name === 'binding') { state.tab = name; renderPanels(); }
-  else if (name === 'rerender') { stopRun(); await render(); }
+  else if (name === 'rerender') { ai.invalidate(); stopRun(); await render(); }
   else if (name === 'validate-all') await validateAll();
   else if (['add-field','remove-field','move-up','move-down'].includes(name)) {
     const altered = alterFields(bus.project,state.selected,name); state.selected = altered.selected;
@@ -263,7 +273,7 @@ $('#open-file').addEventListener('change', async e => {
   const file = e.target.files[0], context = bus; e.target.value = ''; if (!file) return;
   try { const source = await file.text(); if (bus !== context || database.busy || database.pending) throw new Error('The document changed or a database save is active. Open it again.'); install(readProject(source,file.name)); status('Opened editable v3 form. Data is an unsaved draft; Save as new retains existing database records.'); } catch (error) { status(error.message); }
 });
-$('#zoom').onchange = resizePaper; window.addEventListener('resize',resizePaper);
+$('#zoom').onchange = () => { persistZoom($('#zoom')); resizePaper(); }; window.addEventListener('resize',resizePaper);
 $('#paper-scroll').addEventListener('scroll',()=> {
   const top = $('#paper-scroll').scrollTop/zoom;
   const current = paper.pages.findLastIndex(page=>page.top <= top+30);
