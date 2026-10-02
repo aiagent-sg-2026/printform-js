@@ -68,7 +68,7 @@ export class AIPanel {
   invalidate(message='Form changed. Send again for the current revision.') {
     const active = this.busy || this.proposal || this.viewing;
     if (!this.applying) this.cancel(active ? message : 'Ask about this layout, or review an edit proposal.');
-    this.conversation.expire(); this.proposal = null; this.viewing = false; this.checked = false; this.share(); this.update();
+    this.conversation.expire(); this.proposal = null; if (!this.applying) this.viewing = false; this.checked = false; this.share(); this.update();
   }
   begin() {
     this.cancel('Connecting to Demo gateway…'); this.busy = true;
@@ -118,13 +118,16 @@ export class AIPanel {
   async apply() {
     const proposal = this.proposal; this.assertCurrent(proposal); if (!this.checked || this.busy) throw fail('AI_RUN_FAILED');
     const card = this.conversation.messages.find(m=>m.id === proposal.cardId), generation = this.generation;
-    this.applying = true; this.busy = true; this.update();
+    this.applying = true; this.busy = true; this.update(); let canonical = false;
     try {
-      const applied = await this.commit(proposal,generation);
+      const applied = await this.commit(proposal,generation); canonical = true;
       if (card) Object.assign(card,{status:'applied',appliedBus:applied.bus,appliedRevision:applied.revision,appliedEpoch:proposal.epoch});
       this.message(applied.bus === this.getBus() ? `Applied ${proposal.alias} suggestion. Undo restores the previous layout.` : 'Applied to the previous form. Current form unchanged.');
-    } catch (error) { this.error(error); }
-    finally { this.applying = false; this.busy = false; this.proposal = null; this.checked = false; this.viewing = false; this.update(); this.share(); this.sync(); }
+    } catch (error) {
+      try { await this.restore(); canonical = true; this.error(error); }
+      catch { this.message('Apply failed. The candidate remains unapplied; restore the form before printing.'); }
+    }
+    finally { this.applying = false; this.busy = false; this.proposal = null; this.checked = false; this.viewing = !canonical; this.update(); this.share(); this.sync(); }
   }
   canUndo(card) { return card.appliedBus === this.getBus() && card.appliedRevision === this.getBus()?.revision && card.appliedEpoch === this.epoch && this.getBus()?.history.canUndo; }
   async undoCard(id) { const card = this.conversation.messages.find(m=>m.id === id); if (!card || !this.canUndo(card)) throw fail('STALE_PROPOSAL'); await this.undo(()=> { if (!this.canUndo(card)) throw fail('STALE_PROPOSAL'); }); card.status = 'expired'; this.message('Undid this layout edit. ERP data remains supplied by your dataset.'); this.update(); }

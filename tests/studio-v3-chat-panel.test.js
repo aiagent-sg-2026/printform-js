@@ -6,9 +6,9 @@ import {newProject} from '../studio-v3/model.js';
 import {createBus,editProject,designOperations} from '../studio-v3/controller.js';
 const html=fs.readFileSync('studio-v3/index.html','utf8');
 beforeEach(()=> {document.documentElement.innerHTML=html.replace(/<!doctype html>/i,'');document.body.inert=false;});
-function setup({facts=()=>[],commit,plan,reply={kind:'proposal',summary:'Navy',edits:[{target:'style',property:'color',value:'#163a65'}]}}={}) {
+function setup({facts=()=>[],commit,plan,restore=async()=>{},reply={kind:'proposal',summary:'Navy',edits:[{target:'style',property:'color',value:'#163a65'}]}}={}) {
   let bus=createBus(newProject()),calls=0,selected='items';
-  const panel=new AIPanel({bus:()=>bus,selection:()=>selected,facts,guard:work=>work(),preview:async()=>({status:'ready',validation:{errors:[],warnings:[]}}),restore:async()=>{},commit,sync:()=>{},transport:{clear:()=>{},discover:async()=>['demo-fast'],plan:async(...args)=> {calls++;return plan ? plan(...args) : {text:JSON.stringify(reply)};}}});
+  const panel=new AIPanel({bus:()=>bus,selection:()=>selected,facts,guard:work=>work(),preview:async()=>({status:'ready',validation:{errors:[],warnings:[]}}),restore,commit,sync:()=>{},transport:{clear:()=>{},discover:async()=>['demo-fast'],plan:async(...args)=> {calls++;return plan ? plan(...args) : {text:JSON.stringify(reply)};}}});
   panel.contextChanged();panel.node('#ai-prompt').value='Use navy accents.';panel.share();panel.node('#ai-consent').checked=true;
   return {panel,calls:()=>calls,changeBus:()=> {bus=createBus(newProject());panel.contextChanged();return bus;},select:id=> {selected=id;panel.contextChanged();}};
 }
@@ -40,8 +40,13 @@ it('rejects a late provider reply when selection changes away and back during a 
   expect(panel.proposal).toBeNull();expect(panel.getBus().revision).toBe(0);expect(panel.conversation.messages.some(m=>m.diff)).toBe(false);expect(panel.busy).toBe(false);
 });
 it('rechecks scope/selection when an Apply waits in the command queue',async()=> {
-  let release,started,panel;const held=new Promise(r=>release=r),ready=new Promise(r=>started=r);
-  const result=setup({commit:async(proposal,generation)=> {started();await held;panel.assertCurrent(proposal,generation);throw new Error('must not reach commit');}});panel=result.panel;
-  await panel.send();await panel.preview();const running=panel.apply();await ready;result.select('customer');release();await running;
-  expect(panel.getBus().revision).toBe(0);expect(panel.proposal).toBeNull();expect(panel.node('[data-ai-status]').textContent).toContain('Nothing changed');
+  let release,started,panel,restores=0;const held=new Promise(r=>release=r),ready=new Promise(r=>started=r);
+  const result=setup({restore:async()=> {restores++;},commit:async(proposal,generation)=> {started();await held;panel.assertCurrent(proposal,generation);throw new Error('must not reach commit');}});panel=result.panel;
+  await panel.send();await panel.preview();const running=panel.apply();await ready;result.select('customer');expect(panel.viewing).toBe(true);expect(panel.node('#ai-prompt').disabled).toBe(true);release();await running;
+  expect(panel.getBus().revision).toBe(0);expect(panel.proposal).toBeNull();expect(panel.node('[data-ai-status]').textContent).toContain('Nothing changed');expect(restores).toBe(1);expect(panel.viewing).toBe(false);
+});
+
+it('keeps the unapplied banner/print protection if canonical restoration itself fails',async()=> {
+  const {panel}=setup({commit:async()=> {throw new Error('blocked');},restore:async()=> {throw new Error('restore failed');}});
+  await panel.send();await panel.preview();await panel.apply();expect(panel.viewing).toBe(true);expect(document.querySelector('#ai-preview-banner').hidden).toBe(false);expect(panel.node('[data-ai-status]').textContent).toContain('restore the form before printing');expect(panel.getBus().revision).toBe(0);
 });
