@@ -26,6 +26,8 @@ const paths = {
   properties:'M4 6h16 M4 12h16 M4 18h16 M8 3v6 M16 9v6 M10 15v6',
   pages:'M8 3h10l3 3v13H8z M16 3v4h5 M4 7v15h12 M11 11h7 M11 15h7',
   sparkles:'m12 3 2.5 6.5L21 12l-6.5 2.5L12 21l-2.5-6.5L3 12l6.5-2.5z M20 3v4 M18 5h4',
+  send:'M12 20V4 m-7 7 7-7 7 7', stop:'M6 6h12v12H6z', more:'M5 11h1v2H5z M11 11h1v2h-1z M17 11h1v2h-1z',
+  back:'m10 5-7 7 7 7 M3 12h18',
   close:'m5 5 14 14 M19 5 5 19'
 };
 export const icon = name => `<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="${paths[name] || paths.field}"/></svg>`;

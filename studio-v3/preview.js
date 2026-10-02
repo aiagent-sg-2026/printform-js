@@ -2,6 +2,7 @@ import { createStandaloneHtml } from '../studio-v2/core/exporter.js';
 import { assertTrustedContent } from '../studio-v2/core/content-security.js';
 import { bindingValidation, validatePaperReport } from './validation.js';
 import { runtimeSources } from './runtime-assets.js';
+import { measureTypography, validateTypography } from './ai-typography.js';
 
 const SOURCE = 'printform-studio-v3-preview';
 const NONCE = 'cHJpbnRmb3JtLXN0dWRpby12Mw==';
@@ -9,6 +10,7 @@ function bridge(token) {
   return `<script nonce="${NONCE}">(() => {
     const token = ${token};
     const send = (type,payload) => parent.postMessage({source:'${SOURCE}',token,type,payload},'*');
+    const measureTypography = ${measureTypography.toString()};
     let pages = [];
     function select(id) {
       document.querySelectorAll('[data-v3-selection]').forEach(n => n.remove());
@@ -27,7 +29,7 @@ function bridge(token) {
     }
     window.addEventListener('printform:rendered', e => {
       pages = [...document.querySelectorAll('.printform_page')];
-      send('rendered', {report:e.detail, pages:pages.map(p => ({top:p.offsetTop,width:p.getBoundingClientRect().width,height:p.getBoundingClientRect().height,html:p.outerHTML})), styles:[...document.querySelectorAll('style')].map(n => n.textContent).join('\\n'), height:Math.max(1123,...pages.map(p => p.offsetTop + p.offsetHeight + 24))});
+      send('rendered', {typography:measureTypography(),report:e.detail, pages:pages.map(p => ({top:p.offsetTop,width:p.getBoundingClientRect().width,height:p.getBoundingClientRect().height,html:p.outerHTML})), styles:[...document.querySelectorAll('style')].map(n => n.textContent).join('\\n'), height:Math.max(1123,...pages.map(p => p.offsetTop + p.offsetHeight + 24))});
     });
     document.addEventListener('click', e => {
       const n = e.target.closest('[data-v3-id]');
@@ -44,13 +46,14 @@ function bridge(token) {
 
 export class PaperPreview {
   constructor(frame, onReport, onSelect) {
-    this.frame = frame; this.token = 0; this.onReport = onReport; this.onSelect = onSelect; this.pages = [];
+    this.frame = frame; this.token = 0; this.onReport = onReport; this.onSelect = onSelect; this.pages = []; this.committedFacts = null;
     window.addEventListener('message', e => {
       const d = e.data;
       if (e.source !== frame.contentWindow || d?.source !== SOURCE || d.token !== this.token) return;
       if (d.type === 'selection') onSelect(d.payload);
       if (d.type === 'rendered') {
         this.pages = d.payload.pages; this.height = d.payload.height;
+        if (this.measurement.committed && validatePaperReport(d.payload.report).status === 'ready') this.committedFacts = {...this.measurement,facts:validateTypography(d.payload.typography)};
         frame.style.height = `${this.height}px`;
         this.finish(validatePaperReport(d.payload.report), d.payload);
       }
@@ -62,9 +65,10 @@ export class PaperPreview {
     clearTimeout(this.timer); this.resolve?.(report); this.resolve = null;
     this.onReport(report, view);
   }
-  async render(project) {
+  async render(project,{committed=false}={}) {
     this.cancel();
-    const token = this.token;
+    const token = this.token; this.measurement = {committed,documentId:project.manifest.documentId,revision:project.revision,design:JSON.stringify(project.manifest.studioV3)};
+    if (committed) this.committedFacts = null;
     const resultPromise = new Promise(resolve => { this.resolve = resolve; });
     try {
       assertTrustedContent(project, {allowExternalHttps:false});
@@ -91,6 +95,7 @@ export class PaperPreview {
     }
     return resultPromise;
   }
+  factsFor(project) { const saved = this.committedFacts; return saved && saved.documentId === project.manifest.documentId && saved.revision === project.revision && saved.design === JSON.stringify(project.manifest.studioV3) ? saved.facts : []; }
   send(type, extra = {}) { this.frame.contentWindow?.postMessage({source:'printform-studio-v3',token:this.token,type,...extra}, '*'); }
   thumbnails(container, pages, styles, onPage) {
     container.replaceChildren();

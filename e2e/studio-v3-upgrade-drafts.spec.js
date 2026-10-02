@@ -66,7 +66,7 @@ for(const target of ['open-file','dataset-file']) {
   });
 }
 
-test('AI candidate/input recover without token or consent, require new preview, then bounded Apply/Undo',async({page})=> {
+test('AI conversation recovers without token or consent and old candidates remain expired',async({page})=> {
   const server=await upgradeServer();let calls=0;
   try {
     await demoMock(page,path=> {
@@ -78,11 +78,10 @@ test('AI candidate/input recover without token or consent, require new preview, 
     await page.locator('[data-ai-toggle]').click();await page.locator('#ai-prompt').fill('Fictional navy layout');await page.locator('#ai-consent').check();await page.locator('[data-ai-send]').click();
     await expect(page.locator('[data-ai-proposal]')).toBeVisible();await page.locator('[data-ai=preview]').click();await expect(page.locator('[data-ai=apply]')).toBeEnabled();
     await update(page,server);await ready(page);
-    await expect(page.locator('#ai-prompt')).toHaveValue('Fictional navy layout');await expect(page.locator('#ai-consent')).not.toBeChecked();
-    await expect(page.locator('[data-ai-proposal]')).toBeVisible();await expect(page.locator('[data-ai=apply]')).toBeDisabled();expect(calls).toBe(3);
+    await expect(page.locator('#ai-prompt')).toHaveValue('');await expect(page.locator('[data-ai-log]')).toContainText('Fictional navy layout');await expect(page.locator('#ai-consent')).not.toBeChecked();
+    await expect(page.locator('[data-ai-proposal]')).toHaveCount(0);await expect(page.locator('[data-ai=apply]')).toHaveCount(0);await expect(page.locator('[data-ai-log]')).toContainText('Expired');expect(calls).toBe(3);
     expect(await page.evaluate(()=>[...Object.keys(sessionStorage),...Object.keys(localStorage)].some(key=>/token|credential|demo-session/i.test(key)))).toBe(false);
-    await page.locator('[data-ai=preview]').click();await expect(page.locator('[data-ai=apply]')).toBeEnabled();await page.locator('[data-ai=apply]').click();await ready(page);
-    await expect(page.locator('#revision')).toContainText('r1');await page.locator('[data-action=undo]').click();await ready(page);expect(calls).toBe(3);
+    await expect(page.locator('[data-ai=preview]')).toHaveCount(0);await expect(page.locator('#revision')).toHaveText('r0');expect(calls).toBe(3);
   }finally{await server.close();}
 });
 
