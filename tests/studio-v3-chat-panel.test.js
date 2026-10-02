@@ -83,3 +83,11 @@ it('gives the PDF reading selector a stable accessible name independent of its o
  const {panel}=setup(),select=panel.referenceFiles.pdfMode;
  expect(select.getAttribute('aria-label')).toBe('PDF reading for new attachments');expect([...select.options].map(option=>option.value)).toEqual(['text','visual']);expect(select.value).toBe('text');
 });
+
+it('reveals the complete input group on prompt or Send focus without sending or moving other controls',()=>{
+ const {panel,calls}=setup(),input=panel.node('.ai-input');input.scrollIntoView=vi.fn();panel.node('.ai-composer').getBoundingClientRect=()=>({top:100,bottom:300});
+ for(const selector of ['#ai-prompt','[data-ai-send]'])panel.node(selector).getBoundingClientRect=()=>({top:280,bottom:350});
+ panel.node('#ai-prompt').dispatchEvent(new FocusEvent('focusin',{bubbles:true}));panel.node('[data-ai-send]').dispatchEvent(new FocusEvent('focusin',{bubbles:true}));
+ expect(input.scrollIntoView).toHaveBeenCalledTimes(2);expect(input.scrollIntoView).toHaveBeenLastCalledWith({block:'nearest',inline:'nearest'});
+ panel.node('#ai-scope').dispatchEvent(new FocusEvent('focusin',{bubbles:true}));panel.node('[data-ai-send]').getBoundingClientRect=()=>({top:200,bottom:240});panel.node('[data-ai-send]').dispatchEvent(new FocusEvent('focusin',{bubbles:true}));expect(input.scrollIntoView).toHaveBeenCalledTimes(2);expect(calls()).toBe(0);
+});
