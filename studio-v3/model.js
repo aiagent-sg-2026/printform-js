@@ -3,7 +3,9 @@ import { createEmptyFormSpec } from '../studio-v2/core/form-spec.js';
 import { compileTemplate, documentTheme } from './template.js';
 
 export const STUDIO_V3_VERSION = '0.2.0';
-export const BLOCKS = ['header', 'customer', 'items', 'totals', 'footer'];
+export { BLOCKS } from './design-authoring.js';
+import { BLOCKS, sectionOrder, pageSettings, fieldKind, labelSelection } from './design-authoring.js';
+import { validateDesign } from './design-validation.js';
 const field = (id, label, pointer, format = '') => ({ id, label, pointer, format });
 export function defaultDesign(type = 'invoice', blank = false) {
   const title = { invoice: 'INVOICE', purchase: 'PURCHASE ORDER', delivery: 'DELIVERY NOTE' }[type] || 'PRINT FORM';
@@ -42,21 +44,39 @@ export function sampleData(type = 'invoice', count = 45, long = false) {
 
 export function designOf(project) { return structuredClone(project.manifest.studioV3); }
 export function compileProject(project, design) {
+  validateDesign(design);
   const next = structuredClone(project);
   next.manifest.studioV3 = structuredClone(design);
   next.templateHtml = compileTemplate(design);
   next.themeCss = documentTheme(design);
   const spec = createEmptyFormSpec(design.type);
-  spec.tokens = { brand: design.color, fontPt: design.font };
-  spec.pagination = { ...spec.pagination, repeatDocumentHeader: design.blocks.header.enabled && design.repeatHeader, repeatTableHeader: design.repeatTable, pageNumbers: design.pageNumbers };
+  const page = pageSettings(design);
+  spec.document = {...spec.document,paper:page.paper,orientation:page.orientation,margins:page.margins};
+  spec.tokens = { brand: design.color, fontPt: design.font, cellPadding:design.padding };
+  spec.assets = (design.assets || []).map(a=>({id:a.id,alt:a.alt,mime:a.src.slice(5,a.src.indexOf(';')),embedded:true}));
+  spec.pagination = { ...spec.pagination, repeatDocumentHeader: design.blocks.header.enabled && design.repeatHeader, repeatTableHeader: design.repeatTable, pageNumbers: design.pageNumbers, keepTogether:BLOCKS.filter(id => design.blocks[id].enabled && design.blocks[id].keepTogether), pageBreakBefore:BLOCKS.filter(id => design.blocks[id].enabled && (design.blocks[id].breakBefore || (id === 'items' && design.breakBefore))) };
   const add = (id, label, type, role, binding, parent = null) => spec.components.push({ id, label, type, role, parent, sourceSelector: `[data-v3-id="${id}"]`, binding, tableId: role?.startsWith('table') ? 'items' : null });
-  BLOCKS.filter(id => design.blocks[id].enabled).forEach(id => {
+  sectionOrder(design).filter(id => design.blocks[id].enabled).forEach(id => {
     add(id, design.blocks[id].label, { header: 'DocumentHeader', customer: 'ProjectInfo', items: 'DataTable', totals: 'MoneySummary', footer: 'PageFooter' }[id], id === 'items' ? 'table-row' : id === 'header' ? 'document-header' : id, id === 'items' ? { each: design.collection } : null);
     const fields = id === 'items' ? design.columns : design[id];
-    fields.forEach(f => add(`${id}-${f.id}`, f.label, 'DocumentMeta', 'field', f.pointer ? { text: f.pointer } : null, id));
+    fields.forEach(f => {
+      add(`${id}-${f.id}`,f.label,'DocumentMeta','field',fieldKind(f) === 'bound' ? {text:f.pointer} : null,id);
+      Object.assign(spec.components.at(-1), {kind:fieldKind(f),labelStyle:structuredClone(f.labelStyle || {}),valueStyle:structuredClone(f.valueStyle || {}),showLabel:f.showLabel !== false, ...(id === 'items' ? {width:f.width} : {}), ...(fieldKind(f) === 'image' ? {assetId:f.assetId,width:f.width,height:f.height,fit:f.fit || 'contain'} : {})});
+    });
+    if (id === 'header') {
+      add('header-title','Document title','DocumentMeta','title',null,'header');
+      spec.components.at(-1).style = structuredClone(design.titleStyle || {});
+      add('header-logo','Header logo','DocumentMeta','asset',null,'header');
+      if (design.logo) Object.assign(spec.components.at(-1),structuredClone(design.logo));
+    }
     if (id === 'items') add('items-header','Table header','DataTable','table-header',null,'items');
-    spec.sections.push({ id, componentIds: spec.components.filter(c => c.id === id || c.parent === id).map(c => c.id) });
+    spec.components.find(c => c.id === id).keepTogether = Boolean(design.blocks[id].keepTogether);
+    spec.sections.push({ id, layout:structuredClone(design.blocks[id].layout || {}), componentIds: spec.components.filter(c => c.id === id || c.parent === id).map(c => c.id) });
   });
+  if (design.pageNumbers) {
+    add('page-number','Page number','PageFooter','footer',null);
+    spec.components.at(-1).style = structuredClone(design.pageNumberStyle || {});
+  }
   next.spec = spec;
   return next;
 }
@@ -72,6 +92,7 @@ export function newProject(type = 'invoice', blank = false) {
 }
 
 export function selectionField(design, id) {
+  id = labelSelection(id);
   for (const block of BLOCKS) {
     const fields = block === 'items' ? design.columns : design[block];
     const index = fields.findIndex(f => `${block}-${f.id}` === id);

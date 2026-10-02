@@ -1,5 +1,5 @@
 import { newProject, designOf, sampleData } from './model.js';
-import { createBus, editProject, replaceData, designOperations, formDesign, alterFields } from './controller.js';
+import { createBus, editProject, replaceData, designOperations, formDesign, alterFields, importRasterAsset } from './controller.js';
 import { icon } from './icons.js';
 import { leftView, rightView, SAMPLES } from './views.js';
 import { PaperPreview } from './preview.js';
@@ -12,10 +12,11 @@ import { sourceLabel } from './data-provenance.js';
 import { parseSampleJSON } from './json-error.js';
 import { CanvasControls } from './canvas-controls.js';
 import { AIPanel } from './ai-panel.js';
+import { AIElementTags } from './ai-element-tags.js';
 import { restoreZoom, persistZoom } from './zoom-preference.js';
 import { setupUpdates } from './update.js';
 import { createUpdateWork } from './update-work.js';
-
+import { pageDimensions, pageSettings } from './design-authoring.js';
 const $ = selector => document.querySelector(selector);
 const state = {mode:'design',selected:'items',tab:'properties',sample:'erp',report:null,matrix:{},dirty:false,dataDraft:null,running:false,runId:0,collapsed:{},search:'',jsonError:'',fileReads:0};
 let bus, displayed, zoom = 1, pageIndex = 0, editQueue = Promise.resolve();
@@ -59,15 +60,15 @@ const paper = new PaperPreview($('#preview-frame'), (report,view) => {
 }, selection => {
   drafts.guard(() => { state.selected = selection.id; pageIndex = Math.max(0,selection.page); renderPanels(); canvas.selectionMade(); }).catch(e=>status(e.message));
 });
-const canvas = new CanvasControls({resize:resizePaper,guard:work => drafts.guard(work)});
-const ai = new AIPanel({bus:()=>bus,selection:()=>state.selected,facts:()=>paper.factsFor(bus.project),guard:work=>drafts.guard(work),sync:syncControls,
+const canvas = new CanvasControls({resize:resizePaper,guard:work => drafts.guard(work),report:status,context:()=>bus,upload:(file,target)=> {const context = bus; ++state.fileReads; return queueEdit(async()=> {const design = await importRasterAsset(context.project,file,target); if (bus !== context) throw new Error('The document changed. Upload the image again.'); await mutate(designOperations(bus.project,design),'embedded image');}).finally(()=>--state.fileReads);}});
+const elementTags = new AIElementTags({bus:()=>bus,selection:()=>state.selected,guard:work=>drafts.guard(work),report:status,onChange:()=>ai.contextChanged(true),open:()=> {canvas.close(false); ai.show();},highlight:id=>canvas.highlightElement(paper,id || state.selected),select:id=> {state.selected = id; state.mode = 'design'; renderPanels(); goPage(canvas.elementPage(paper,id)); canvas.highlightElement(paper,id); if (innerWidth <= 900) ai.suspend();}});
+const ai = new AIPanel({bus:()=>bus,selection:()=>state.selected,elementTags,facts:()=>paper.factsFor(bus.project),guard:work=>drafts.guard(work),sync:syncControls,
   preview:async project=> { stopRun(); state.mode = 'design'; renderPanels(); return render(project); },restore:()=>render(),
   commit:(proposal,generation)=>queueEdit(async()=> { ai.assertCurrent(proposal,generation); const context = bus; await editProject(context,designOperations(context.project,proposal.design),'AI layout suggestion'); const revision = context.revision; if (bus === context) await changed(); return {bus:context,revision}; },false),
   undo:check=>queueEdit(async()=> { check(); await action('undo'); },false)
 });
 restoreZoom($('#zoom'));
 const updateWork = createUpdateWork({getBus:()=>bus,state,database,drafts,ai,install,renderPanels,syncControls,render,settle:()=>editQueue});
-
 function status(text) { $('#status').textContent = text; }
 function syncControls() {
   if (!bus) return;
@@ -82,7 +83,7 @@ function syncControls() {
   document.querySelectorAll('[data-template]').forEach(n => { n.disabled = database.busy || database.pending; });
 }
 function renderPanels() {
-  ai.contextChanged();
+  elementTags.contextChanged(); ai.contextChanged();
   const leftScroll = $('#left-panel').scrollTop, rightScroll = $('#right-panel').scrollTop;
   $('#left-panel').innerHTML = (state.mode === 'data' ? databaseList(database,bus.project) : '') + leftView(bus.project,state);
   $('#right-panel').innerHTML = rightView(bus.project,state);
@@ -90,6 +91,7 @@ function renderPanels() {
   database.render();
   drafts.restore();
   $('#left-panel').scrollTop = leftScroll; $('#right-panel').scrollTop = rightScroll;
+  elementTags.updateAddButtons();
 }
 function updateQuality() {
   const current = $('#right-panel details.quality-panel');
@@ -99,14 +101,14 @@ function updateQuality() {
   const next = holder.querySelector('details.quality-panel'); if (next) { next.open = open; current.replaceWith(next); }
 }
 function resizePaper() {
-  const choice = $('#zoom').value;
+  const choice = $('#zoom').value, design = displayed?.manifest.studioV3 || bus?.project.manifest.studioV3, {width,height} = design ? pageDimensions(design) : {width:794,height:1123};
   const available = $('#paper-scroll').clientWidth - (window.innerWidth < 850 ? 24 : 48);
-  zoom = choice === 'fit' ? Math.min(Math.max(.15,available/794), Math.max(.15,($('#paper-scroll').clientHeight - 48)/1123)) : choice === 'width' ? Math.max(.15,available/794) : Number(choice);
+  zoom = choice === 'fit' ? Math.min(Math.max(.15,available/width), Math.max(.15,($('#paper-scroll').clientHeight - 48)/height)) : choice === 'width' ? Math.max(.15,available/width) : Number(choice);
   zoom = Math.max(.15,Math.min(2,Number.isFinite(zoom) ? zoom : 1));
-  $('#preview-frame').style.transform = `scale(${zoom})`;
-  $('#preview-frame').dataset.zoom = String(zoom);
-  $('#paper-wrap').style.width = `${794 * zoom}px`;
-  $('#paper-wrap').style.height = `${(paper.height || 1123) * zoom}px`;
+  $('#preview-frame').style.transform = `scale(${zoom})`; $('#preview-frame').style.width = `${width}px`;
+  $('#preview-frame').dataset.zoom = String(zoom); $('#paper-kind').textContent = design ? pageSettings(design).paper : 'A4'; $('#paper-dimensions').textContent = `${Math.round(width/96*25.4)} × ${Math.round(height/96*25.4)} mm`;
+  $('#paper-wrap').style.width = `${width * zoom}px`;
+  $('#paper-wrap').style.height = `${(paper.height || height) * zoom}px`;
   if (paper.pages[pageIndex]) $('#paper-scroll').scrollTop = paper.pages[pageIndex].top*zoom;
 }
 function goPage(index, scroll = true) {
@@ -294,6 +296,5 @@ document.addEventListener('keydown', e => {
 await database.init();
 const initial = database.starting(newProject()); install(initial.project,initial.reference,'builtin-demo');
 await updateWork.restore(); setupUpdates(updateWork);
-
 // Keep startup controls inactive until local dataset loading can no longer replace the document.
 document.body.inert = false; document.body.setAttribute('aria-busy','false');

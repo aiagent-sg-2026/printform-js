@@ -6,7 +6,7 @@ const proposal = {summary:'Use navy and compact spacing',edits:[{target:'style',
 const frame = page=>page.frameLocator('#preview-frame');
 const ready = page=>expect(page.locator('[data-action=export]')).toBeEnabled({timeout:30000});
 async function openAI(page) { await page.locator('[data-ai-toggle]').click(); await page.locator('#ai-prompt').fill('Use navy #163a65 and padding 5 px.'); }
-async function send(page) { await page.locator('#ai-consent').check(); await page.locator('[data-ai-send]').click(); }
+async function send(page) {  await page.locator('[data-ai-send]').click(); }
 async function mock(page,{reply = proposal,status = 200,sessionStatus = 201,hold = null,unauthorized = false} = {}) {
   const calls = []; let sessions = 0,plans = 0;
   await page.route('https://gpt.yapweijun1996.com/demo/**',async route=> {
@@ -28,7 +28,7 @@ test('explicit sharing -> actual Harness local proposal -> real preview -> apply
   const m = await mock(page); const before = await frame(page).locator('.printform_page').first().evaluate(n=>({width:n.offsetWidth,height:n.offsetHeight}));
   const total = await frame(page).locator('[data-v3-id=totals-total]').textContent();
   await openAI(page); await expect(page.locator('#ai-share')).not.toContainText('ACME');
-  await page.locator('[data-ai-send]').click(); expect(m.calls).toHaveLength(0);
+  expect(m.calls).toHaveLength(0); await expect(page.locator('#ai-consent')).toHaveCount(0);
   await send(page); await expect(page.locator('[data-ai-proposal]')).toBeVisible();
   await expect(page.locator('[data-ai-status]')).toContainText('demo-fast'); await expect(page.locator('#revision')).toHaveText('r0');
   expect(m.plans()).toBe(1); expect(m.calls[0].payload).toEqual({project_id:'github-pages'}); expect(m.calls[0].auth).toBe(false);
@@ -66,7 +66,7 @@ test('cancel and a changed revision reject late responses; replaced form gets fr
   await send(page); await expect.poll(()=>m2.plans()).toBe(1);
   await page.locator('#document-name').fill('Fictional renamed form'); await page.locator('#document-name').press('Tab'); release2();
   await expect(page.locator('#revision')).toContainText('r1'); await expect(page.locator('[data-ai-proposal]')).toBeHidden();
-  await expect(page.locator('[data-ai-status]')).toContainText('Form changed'); await expect(page.locator('#ai-consent')).not.toBeChecked();
+  await expect(page.locator('[data-ai-status]')).toContainText('Form changed'); await expect(page.locator('#ai-consent')).toHaveCount(0);
   await page.locator('[data-action=new]').click(); await page.locator('[data-template=delivery]').click(); await ready(page);
   await expect(page.locator('#ai-share')).not.toContainText('items-amount');
 });
@@ -100,7 +100,7 @@ test('coherent accessible SVG controls and keyboard/mobile AI sidepanel',async({
   await page.keyboard.press('Escape'); await expect(page.locator('[data-ai-toggle]')).toBeFocused();
   await page.setViewportSize({width:390,height:844}); await page.locator('[data-ai-toggle]').click();
   const box = await page.locator('#ai-panel').boundingBox(); expect(box.x).toBeGreaterThanOrEqual(0); expect(box.x+box.width).toBeLessThanOrEqual(390);
-  await page.locator('[data-ai=paper]').focus(); await page.keyboard.press('Shift+Tab'); await expect(page.locator('#ai-consent')).toBeFocused();
+  await page.locator('[data-ai=paper]').focus(); await page.keyboard.press('Shift+Tab'); await expect(page.locator('.ai-sharing > summary')).toBeFocused();
   await page.screenshot({path:info.outputPath('ai-mobile.png')});
   await page.keyboard.press('Escape'); await expect(page.locator('[data-ai-toggle]')).toBeFocused();
 });

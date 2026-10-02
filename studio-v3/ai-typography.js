@@ -9,14 +9,14 @@ export function measureTypography() {
     seen.add(key); facts.push({id,role,pt});
   }
   for (const page of document.querySelectorAll('.printform_page')) {
-    for (const node of page.querySelectorAll('[data-v3-field] [data-v3-id],td [data-v3-id]')) add(node.dataset.v3Id,'value',node);
-    for (const [selector,role,id] of [['h1','title','header'],['.brand-mark','brand mark','header'],['.company-fields .label','label','header'],['.label','label',null],['thead th','column heading','items'],['tbody td','table cell','items']]) {
-      for (const node of page.querySelectorAll(selector)) add(id || node.closest('[data-v3-field]')?.dataset.v3Field || node.closest('[data-v3-id]')?.dataset.v3Id || 'document',role,node);
+    for (const node of page.querySelectorAll('[data-v3-role="value"]:not(img)')) add(node.dataset.v3Id,'value',node);
+    for (const [selector,role,id] of [['h1','title','header-title'],['.brand-mark','brand mark','header-logo'],['.label','label',null],['thead th','column heading','items'],['tbody td','table cell','items'],['.v3-page-number','page number','page-number']]) {
+      for (const node of page.querySelectorAll(selector)) add(id || node.dataset.v3Id || node.closest('[data-v3-field]')?.dataset.v3Field || node.closest('[data-v3-id]')?.dataset.v3Id || 'document',role,node);
     }
   }
   return facts;
 }
 export function validateTypography(facts) {
   if (!Array.isArray(facts) || facts.length > 80) return [];
-  return facts.filter(f=>typeof f.id === 'string' && /^[a-z0-9-]{1,100}$/i.test(f.id) && ['value','title','brand mark','label','column heading','table cell'].includes(f.role) && Number.isFinite(f.pt) && f.pt > 0 && f.pt <= 200).map(({id,role,pt})=>({id,role,pt}));
+  return facts.filter(f=>typeof f.id === 'string' && /^[a-z0-9-]{1,100}$/i.test(f.id) && ['value','title','brand mark','label','column heading','table cell','page number'].includes(f.role) && Number.isFinite(f.pt) && f.pt > 0 && f.pt <= 200).map(({id,role,pt})=>({id,role,pt}));
 }

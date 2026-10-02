@@ -2,13 +2,14 @@ import { AgentHarness, MemorySessionRepo, BACKGROUND_CONTEXT, withAbortSignal } 
 import { createModels, createProvider, createAssistantMessageEventStream, Type } from '@earendil-works/pi-ai';
 import { fail } from './ai-edits.js';
 import { parseChatReply } from './ai-chat-protocol.js';
+import { safeRunDiagnostics, repairRequest } from './ai-inspection.js';
 
 // Actual Harness + pi-ai extension. Demo cannot carry native tools:
 // one validated text envelope becomes one LOCAL proposal tool invocation.
-export async function runLayoutHarness({transport,alias,request,project,signal,chat={},onPhase = ()=>{}}) {
+async function runStepHarness({transport,alias,request,project,signal,chat={},inspectCandidate,assertContext=()=>{},onPhase = ()=>{}}) {
   signal.throwIfAborted();
   const context = withAbortSignal(signal,BACKGROUND_CONTEXT);
-  let proposal, usage, calls = 0, transportError, toolError;
+  let proposal, usage, inspection, envelope, calls = 0, transportError, toolError;
   const model = {id:alias,name:alias,provider:'printform-demo',api:'printform-demo-envelope',baseUrl:'https://gpt.yapweijun1996.com/demo/v1',reasoning:false,input:['text'],contextWindow:32000,maxTokens:4096,cost:{input:0,output:0,cacheRead:0,cacheWrite:0}};
   const stream = (_model,_context,options = {}) => {
     const events = createAssistantMessageEventStream();
@@ -16,8 +17,10 @@ export async function runLayoutHarness({transport,alias,request,project,signal,c
     void (async () => {
       try {
         if (++calls > 1) throw fail('AI_STEP_LIMIT');
+        assertContext();
         onPhase('Requesting layout suggestion');
         const reply = await transport.plan(alias,request,options.signal || signal);
+        envelope = reply.text;
         signal.throwIfAborted();
         const parsed = parseChatReply(reply.text,project,chat);
         output.content = [{type:'toolCall',id:crypto.randomUUID(),name:parsed.kind === 'answer' ? 'answer_layout' : 'preview_layout',arguments:{envelope:reply.text}}];
@@ -41,15 +44,23 @@ export async function runLayoutHarness({transport,alias,request,project,signal,c
   const session = await sessionRepo.create({},context);
   const tools = ['preview_layout','answer_layout'].map(name=>({name,label:name === 'preview_layout' ? 'Preview layout' : 'Answer layout',description:'Validate a bounded result locally; never apply.',replay:'never',parameters:Type.Object({envelope:Type.String({maxLength:20000})}),execute:async (_id,args) => {
     signal.throwIfAborted(); onPhase(name === 'preview_layout' ? 'Validating local proposal' : 'Reading current layout');
-    try { proposal = parseChatReply(args.envelope,project,chat); }
+    try {
+      proposal = parseChatReply(args.envelope,project,chat);
+      if (proposal.kind === 'proposal' && inspectCandidate) {
+        onPhase('Inspecting real print preview');
+        inspection = safeRunDiagnostics(await inspectCandidate(proposal),proposal.candidate);
+        signal.throwIfAborted();
+      }
+    }
     catch (error) { toolError = error; throw error; }
-    return {content:[{type:'text',text:proposal.kind === 'answer' ? 'Read-only answer ready.' : 'Proposal ready for human preview and apply.'}],details:{terminal:true},terminate:true};
+    return {content:[{type:'text',text:proposal.kind === 'answer' ? 'Read-only answer ready.' : 'Candidate authored and locally inspected; human Apply required.'}],details:{terminal:true,...(inspection ? {inspection} : {})},terminate:true};
   }}));
   const created = await AgentHarness.create({session,models,model,tools,activeToolNames:tools.map(t=>t.name),systemPrompt:'Use one local answer or preview tool and stop.',toolExecution:'sequential',retry:{enabled:false,maxRetries:0,baseDelayMs:0}},context);
   const harness = created.harness;
   const off = harness.hooks.on('after_tool',()=>({terminate:true}));
   try {
     signal.throwIfAborted();
+    assertContext();
     const lane = await harness.lane('layout',context);
     const onAbort = () => { void lane.abort(BACKGROUND_CONTEXT); };
     signal.addEventListener('abort',onAbort,{once:true});
@@ -59,7 +70,35 @@ export async function runLayoutHarness({transport,alias,request,project,signal,c
       if (transportError) throw transportError;
       if (toolError) throw toolError;
       if (!result.ok || !proposal) throw fail('AI_RUN_FAILED');
-      return {...proposal,alias,usage};
+      return {...proposal,alias,usage,inspection,envelope};
     } finally { signal.removeEventListener('abort',onAbort); }
   } finally { off(); await harness.close(BACKGROUND_CONTEXT); models.clearProviders(); }
+}
+
+export async function runLayoutHarness(options) {
+  const {signal,onPhase=()=>{},inspectCandidate,request,project} = options;
+  const totals = {input:0,output:0,total:0}; let previous, diagnostics, unknown = new Set();
+  const limit = inspectCandidate ? 3 : 1;
+  for (let attempt=1;attempt<=limit;attempt++) {
+    signal.throwIfAborted();
+    const currentRequest = attempt === 1 ? request : repairRequest(request,{attempt,envelope:previous?.envelope,diagnostics});
+    if (currentRequest.length > 65000) throw fail('AI_CONTEXT_LIMIT');
+    try {
+      const result = await runStepHarness({...options,request:currentRequest});
+      for (const key of Object.keys(totals)) {
+        if (Number.isFinite(result.usage?.[key])) totals[key] += result.usage[key]; else unknown.add(key);
+      }
+      previous = result; diagnostics = result.inspection;
+      if (result.kind === 'answer' || !diagnostics || diagnostics.ready || attempt === limit) {
+        return {...result,iterations:attempt,usage:Object.fromEntries(Object.keys(totals).map(key=>[key,unknown.has(key) ? null : totals[key]]))};
+      }
+    } catch (error) {
+      if (signal.aborted || !['MALFORMED_PROPOSAL','UNSAFE_PROPOSAL','UNSAFE_SCOPE','COLUMN_WIDTH_LIMIT','NO_CHANGES'].includes(error.code) || attempt === limit) throw error;
+      // Failed completions have unavailable usage; never report zero consumption.
+      for (const key of Object.keys(totals)) unknown.add(key);
+      diagnostics = safeRunDiagnostics({errors:[{code:error.code}]},project);
+    }
+    signal.throwIfAborted(); onPhase(`Repairing inspected candidate (${attempt+1}/${limit})`);
+  }
+  throw fail('AI_RUN_FAILED');
 }

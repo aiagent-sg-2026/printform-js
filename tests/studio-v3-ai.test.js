@@ -17,7 +17,8 @@ describe('bounded v3 AI design',()=> {
     const bus = createBus(newProject()), before = structuredClone(bus.project);
     const result = parseProposal(envelope([color,{target:'style',property:'padding',value:5},{target:'items-description',property:'width',value:35}]),bus.project);
     expect(bus.project).toEqual(before); expect(result.candidate.sampleData).toEqual(before.sampleData);
-    expect(result.candidate.spec.components).toEqual(before.spec.components);
+    expect(result.candidate.spec.components.map(({id,type,binding})=>({id,type,binding}))).toEqual(before.spec.components.map(({id,type,binding})=>({id,type,binding})));
+    expect(result.candidate.spec.components.find(c=>c.id === 'items-description').width).toBe(35);
     await editProject(bus,designOperations(bus.project,result.design),'AI layout'); expect(bus.revision).toBe(1);
     expect(bus.project.sampleData).toEqual(before.sampleData);
     await bus.navigateHistory('undo',bus.revision); expect(designOf(bus.project)).toEqual(designOf(before));
