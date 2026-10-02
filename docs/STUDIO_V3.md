@@ -57,21 +57,27 @@ web search, gateway key or private `/v1/*` request is sent. A first 401 refreshe
 once; no automatic model fallback or inference retry occurs.
 
 The panel displays the selected alias, recipient, current Origin/project,
-request and layout context. Send requires an explicit consent checkbox and
-user click. Context contains style tokens and column IDs/widths only: no data
+exact request context in folded sharing details. Send requires a fresh explicit
+consent checkbox and Send action (button or Enter). Context contains style
+tokens, column IDs/widths, numeric measured font facts and at most six recent
+messages (3,000 characters): no data
 values, text/labels, bindings, company names or financial values. User-entered
-request text is shared, as stated in the UI. Unapplied drafts are excluded.
+request and retained conversation text are shared, as stated in the UI. Unapplied drafts are excluded.
 Tokens and Harness sessions are not persisted or exported. The explicit
-Keep work & update action can temporarily retain input and bounded proposals
-locally for this tab's reload; see [PWA lifecycle](STUDIO_V3_PWA.md).
-Model discovery does not send document data. Cancel/close abort the browser
+Keep work & update action can temporarily retain input and the bounded
+conversation locally for this tab's reload; see [PWA lifecycle](STUDIO_V3_PWA.md).
+Model discovery does not send document data. Stop/close abort the browser
 request; a dispatched provider request may already have been received.
 
 A closed parser limits a proposal to twelve unique edits: brand color, font,
 cell padding, table borders/stripes, repeat/page settings, or existing column
 widths. It cannot change labels/text, bindings, collections, data, money,
 formulas, block visibility or source HTML/CSS. The checked envelope is mapped
-to one local `preview_layout` Harness tool and terminates that run. The tool
+to one local `preview_layout` Harness tool and terminates that run. A mutually
+exclusive answer envelope uses the read-only `answer_layout` local tool.
+Current font questions are grounded in computed styles from the trusted,
+sandboxed print-preview bridge, including fixed-size headings and actual
+field sizes; missing measurements are reported as unavailable. The tool
 only builds a candidate; it cannot commit. This is a bounded layout agent,
 not an unrestricted Pi coding agent or AI visual-quality certification.
 
@@ -79,12 +85,18 @@ The diff shows each before/after value. Preview runs the same A4 runtime on
 unchanged supplied data, without changing the template revision. Print/export
 are disabled while viewing an unapplied candidate. Apply requires a passing
 current browser render, draft Apply/Discard/Stay resolution, and the exact
-bus/revision/base design plus proposal identity/generation at queue execution.
+bus/revision/base design plus proposal identity/generation, selection and Scope
+at queue execution.
 Apply creates one CommandBus history entry; Undo restores the previous layout.
 The brief commit phase prevents duplicate Apply and contradictory cancellation.
 Changes, new/imported documents and history navigation invalidate proposals
-and cancel pending requests. Malformed, unsafe, stale, expired and failed
+and cancel pending requests. Selection or Scope changes also expire cards,
+even if the selection later returns to the same field. Recovered cards are
+read-only expired history and cannot Preview/Apply; send a new request. Malformed, unsafe, stale, expired and failed
 responses never apply automatically.
+
+The continuous chat UI, desktop resizing, mobile paper-return workflow and
+recovery rules are described in [Chat editor](STUDIO_V3_AI_CHAT.md).
 
 Earlier provisional probes returned HTTP 403 and were stopped without model
 inference. That dated blocker was superseded by the owner-approved PR3 release

@@ -28,6 +28,11 @@ describe('update recovery persistence',()=> {
     expect(project.manifest).toMatchObject(original.manifest); expect(project.sampleData).toEqual(original.sampleData);
     expect(project.revision).toBe(original.revision); expect(project.spec.components.find(c=>c.id==='totals-total').binding).toEqual({text:'/summary/total'});
   });
+  it('migrates the published v1 writer shape when AI was never opened',()=> {
+    const value=recovery();value.ai={prompt:'',alias:'demo-fast',proposal:null};
+    const saved=decodeRecovery(JSON.stringify(value));expect(saved.ai.open).toBe(false);expect(saved.project.sampleData).toEqual(JSON.parse(value.project.file).project.sampleData);
+    value.ai.open='false';expect(()=>decodeRecovery(JSON.stringify(value))).toThrow('INVALID_CHAT_RECOVERY');
+  });
   it('verifies exact readback and propagates quota/security failures before activation',()=> {
     const value=recovery(); let text;
     const storage={setItem:vi.fn((key,v)=> {expect(key).toBe(RECOVERY_KEY);text=v;}),getItem:()=>text};

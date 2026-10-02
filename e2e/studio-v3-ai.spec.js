@@ -55,14 +55,14 @@ for (const [name,reply] of [['malformed','hello'],['unsafe',{summary:'Change mon
 test('session registration blocker and token expiry retry are explicit',async({page})=> {
   await mock(page,{sessionStatus:403}); await openAI(page); await send(page);
   await expect(page.locator('[data-ai-status]')).toContainText('HTTP 403'); await expect(page.locator('#revision')).toHaveText('r0');
-  await page.unrouteAll(); const m = await mock(page,{unauthorized:true}); await send(page);
+  await page.unrouteAll(); const m = await mock(page,{unauthorized:true}); await page.locator('[data-ai=retry]').last().click(); await send(page);
   await expect(page.locator('[data-ai-proposal]')).toBeVisible(); expect(m.sessions()).toBe(2); expect(m.plans()).toBe(2);
 });
 test('cancel and a changed revision reject late responses; replaced form gets fresh disclosure',async({page})=> {
   let release; const hold = new Promise(r=>release=r); const m = await mock(page,{hold});
   await openAI(page); await send(page); await expect.poll(()=>m.plans()).toBe(1);
   await page.locator('[data-ai=cancel]').click(); release(); await expect(page.locator('[data-ai-status]')).toContainText('Cancelled');
-  await page.unrouteAll(); let release2; const hold2 = new Promise(r=>release2=r); const m2 = await mock(page,{hold:hold2});
+  await page.locator('[data-ai=retry]').last().click(); await page.unrouteAll(); let release2; const hold2 = new Promise(r=>release2=r); const m2 = await mock(page,{hold:hold2});
   await send(page); await expect.poll(()=>m2.plans()).toBe(1);
   await page.locator('#document-name').fill('Fictional renamed form'); await page.locator('#document-name').press('Tab'); release2();
   await expect(page.locator('#revision')).toContainText('r1'); await expect(page.locator('[data-ai-proposal]')).toBeHidden();
@@ -77,7 +77,7 @@ test('unapplied drafts stay protected across AI preview and cannot be silently o
   await page.locator('[data-ai=preview]').click(); await expect(page.locator('#draft-dialog')).toBeVisible();
   await page.locator('[data-draft-choice=stay]').click(); await expect(page.getByLabel('Label',{exact:true})).toHaveValue('Keep this draft');
   await page.locator('[data-ai-toggle]').click(); await page.locator('[data-ai=preview]').click(); await page.locator('[data-draft-choice=apply]').click();
-  await expect(page.locator('#revision')).toContainText('r1'); await expect(page.locator('[data-ai=apply]')).toBeDisabled(); await expect(page.locator('[data-ai-proposal]')).toBeHidden();
+  await expect(page.locator('#revision')).toContainText('r1'); await expect(page.locator('[data-ai=apply]')).toHaveCount(0); await expect(page.locator('[data-ai-proposal]')).toBeHidden();
   await ready(page);
 });
 test('Fit page defaults and preferences survive reload, panel/viewport refit and invalid stored values',async({page})=> {
@@ -100,7 +100,7 @@ test('coherent accessible SVG controls and keyboard/mobile AI sidepanel',async({
   await page.keyboard.press('Escape'); await expect(page.locator('[data-ai-toggle]')).toBeFocused();
   await page.setViewportSize({width:390,height:844}); await page.locator('[data-ai-toggle]').click();
   const box = await page.locator('#ai-panel').boundingBox(); expect(box.x).toBeGreaterThanOrEqual(0); expect(box.x+box.width).toBeLessThanOrEqual(390);
-  await page.locator('[data-ai=close]').focus(); await page.keyboard.press('Shift+Tab'); await expect(page.locator('[data-ai-send]')).toBeFocused();
+  await page.locator('[data-ai=paper]').focus(); await page.keyboard.press('Shift+Tab'); await expect(page.locator('#ai-consent')).toBeFocused();
   await page.screenshot({path:info.outputPath('ai-mobile.png')});
   await page.keyboard.press('Escape'); await expect(page.locator('[data-ai-toggle]')).toBeFocused();
 });

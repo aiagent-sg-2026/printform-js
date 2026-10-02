@@ -13,7 +13,6 @@ import { parseSampleJSON } from './json-error.js';
 import { CanvasControls } from './canvas-controls.js';
 import { AIPanel } from './ai-panel.js';
 import { restoreZoom, persistZoom } from './zoom-preference.js';
-import { assertPendingProposal } from './ai-edits.js';
 import { setupUpdates } from './update.js';
 import { createUpdateWork } from './update-work.js';
 
@@ -61,9 +60,10 @@ const paper = new PaperPreview($('#preview-frame'), (report,view) => {
   drafts.guard(() => { state.selected = selection.id; pageIndex = Math.max(0,selection.page); renderPanels(); canvas.selectionMade(); }).catch(e=>status(e.message));
 });
 const canvas = new CanvasControls({resize:resizePaper,guard:work => drafts.guard(work)});
-const ai = new AIPanel({bus:()=>bus,guard:work=>drafts.guard(work),sync:syncControls,
+const ai = new AIPanel({bus:()=>bus,selection:()=>state.selected,facts:()=>paper.factsFor(bus.project),guard:work=>drafts.guard(work),sync:syncControls,
   preview:async project=> { stopRun(); state.mode = 'design'; renderPanels(); return render(project); },restore:()=>render(),
-  commit:(proposal,generation)=>queueEdit(async()=> { assertPendingProposal(bus,proposal,ai,generation); await editProject(bus,designOperations(bus.project,proposal.design),'AI layout suggestion'); await changed(); },false)
+  commit:(proposal,generation)=>queueEdit(async()=> { ai.assertCurrent(proposal,generation); const context = bus; await editProject(context,designOperations(context.project,proposal.design),'AI layout suggestion'); const revision = context.revision; if (bus === context) await changed(); return {bus:context,revision}; },false),
+  undo:check=>queueEdit(async()=> { check(); await action('undo'); },false)
 });
 restoreZoom($('#zoom'));
 const updateWork = createUpdateWork({getBus:()=>bus,state,database,drafts,ai,install,renderPanels,syncControls,render,settle:()=>editQueue});
@@ -82,6 +82,7 @@ function syncControls() {
   document.querySelectorAll('[data-template]').forEach(n => { n.disabled = database.busy || database.pending; });
 }
 function renderPanels() {
+  ai.contextChanged();
   const leftScroll = $('#left-panel').scrollTop, rightScroll = $('#right-panel').scrollTop;
   $('#left-panel').innerHTML = (state.mode === 'data' ? databaseList(database,bus.project) : '') + leftView(bus.project,state);
   $('#right-panel').innerHTML = rightView(bus.project,state);
@@ -116,7 +117,7 @@ function goPage(index, scroll = true) {
 }
 async function render(project = bus.project) {
   displayed = structuredClone(project); state.report = null; syncControls(); status('Measuring the real HTML layout…');
-  return paper.render(displayed);
+  return paper.render(displayed,{committed:project === bus.project});
 }
 function stopRun() { state.runId += 1; state.running = false; }
 async function changed() {

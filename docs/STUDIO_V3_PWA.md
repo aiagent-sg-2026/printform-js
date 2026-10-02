@@ -38,7 +38,7 @@ The dialog always offers **Keep work & update**, **Discard work & update** and
 **Stay** (also Escape). Keep requires an explicit user choice to temporarily
 persist document data locally in this tab's sessionStorage. It stores the
 controlled template, active and baseline data/source, history, field/binding/
-style/locale/JSON/table drafts, AI input and bounded proposal. It contains no
+style/locale/JSON/table drafts, AI input and bounded conversation/diffs. It contains no
 Demo token, authorization header, model session, arbitrary executable markup
 or provider credential. It never saves or overwrites a database dataset.
 
@@ -46,9 +46,9 @@ Before activation, the bounded snapshot is serialized, written, read back
 byte-for-byte and decoded; every saved draft form/control must be rebuildable.
 Recovery regenerates controlled HTML/CSS/FormSpec and preserves revision and
 history. Saved datasets and their compare-and-swap revisions are untouched.
-Invalid JSON/table input stays an unapplied draft. Recovered AI proposals are
-validated again and require a new real preview before Apply; consent resets
-and no request resumes. Confirmed update cancels in-flight inference only
+Invalid JSON/table input stays an unapplied draft. Recovered AI diffs are validated and displayed as expired conversation history;
+legacy v1 proposals also become expired. They cannot Preview or Apply. Send a
+new request for the recovered form; consent resets and no request resumes. Confirmed update cancels in-flight inference only
 after persistence succeeds. Stay preserves the running request and work.
 
 Storage quota/security/verification errors block activation. Failed recovery

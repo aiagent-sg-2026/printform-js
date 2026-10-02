@@ -1,6 +1,7 @@
 import { readProject, saveProject } from './file-io.js';
 import { rightView } from './views.js';
 import { parseProposal } from './ai-edits.js';
+import { AIPanel } from './ai-panel.js';
 import { restoreDraftRecords } from './form-drafts.js';
 
 export const RECOVERY_KEY = 'printform-studio-v3:update-recovery';
@@ -35,6 +36,7 @@ export function decodeRecovery(text) {
   if (!Number.isInteger(saved.history.cursor) || saved.history.cursor < 0 || saved.history.cursor >= saved.history.entries.length) throw new Error('Invalid recovery history.');
   if (!saved.ui || !['design','data','validate'].includes(saved.ui.mode) || !Array.isArray(saved.forms) || saved.forms.length > 50) throw new Error('Invalid recovery workspace.');
   restoreDraftRecords(saved.forms,record=>recoveryForm(saved.project,saved.ui,record),null);
+  if (saved.ai) AIPanel.validateSnapshot(saved.ai);
   if (saved.ai?.proposal) saved.ai.parsed = parseProposal(JSON.stringify(saved.ai.proposal),saved.project);
   return saved;
 }
@@ -47,7 +49,7 @@ export function createUpdateWork({getBus,state,database,drafts,ai,install,render
       ui:{mode:state.mode,selected:state.selected,tab:state.tab,sample:state.sample,dirty:state.dirty,dataDraft:state.dataDraft,jsonError:state.jsonError},
       title:document.querySelector('#document-name').value,forms:[...drafts.drafts.values()].map(({key,kind,selected,values})=>({key,kind,selected,values})),
       database:{group:database.group,screen:database.screen,rowPage:database.rowPage,draft:draft ? {...draft,numberPaths:[...draft.numberPaths],columnTypes:[...draft.columnTypes]} : null},
-      ai:{open:ai.open,prompt:ai.node('#ai-prompt').value,alias:ai.node('#ai-model').value,proposal:ai.proposal ? {summary:ai.proposal.summary,edits:ai.proposal.diff.map(({target,property,after})=>({target,property,value:after}))} : null}};
+      ai:ai.snapshot()};
   }
   async function restore() {
     let text;
@@ -60,12 +62,7 @@ export function createUpdateWork({getBus,state,database,drafts,ai,install,render
       if (database.draft) { database.draft.numberPaths = new Set(database.draft.numberPaths); database.draft.columnTypes = new Map(database.draft.columnTypes); database.draftErrors(); }
       drafts.restoreRecords(saved.forms,record=>recoveryForm(bus.project,state,record));
       renderPanels(); syncControls(); await render();
-      if (saved.ai) {
-        ai.node('#ai-prompt').value = saved.ai.prompt; ai.node('#ai-model').value = ['demo-fast','demo-auto'].includes(saved.ai.alias) ? saved.ai.alias : 'demo-fast';
-        if (saved.ai.open) ai.show(); else ai.share();
-        if (saved.ai.parsed) { ai.proposal = {...saved.ai.parsed,alias:ai.node('#ai-model').value,bus,revision:bus.revision,baseDesign:JSON.stringify(bus.project.manifest.studioV3)}; ai.present(); ai.update(); }
-        ai.message('Recovered work after update. Requests were cancelled; preview any recovered suggestion again before Apply.');
-      }
+      if (saved.ai) ai.restoreSnapshot(saved.ai);
       document.querySelector('#document-name').value = saved.title;
       sessionStorage.removeItem(RECOVERY_KEY); return true;
     } catch {
@@ -96,7 +93,7 @@ export function createUpdateWork({getBus,state,database,drafts,ai,install,render
     checkBusy();
     if (!database.store.persistent) throw new Error('Database storage is tab-only. Export your datasets before leaving; update is blocked to protect them.');
     const dialog = document.querySelector('#update-dialog');
-    dialog.querySelector('[data-update-summary]').textContent = pending() ? 'This tab has unsaved work. Keep preserves the template, history, field/data drafts and AI input/proposal locally for this tab’s reload.' : 'Keep preserves this tab’s current template and active data for the reload.';
+    dialog.querySelector('[data-update-summary]').textContent = pending() ? 'This tab has unsaved work. Keep preserves the template, history, field/data drafts and AI input/conversation locally (old proposals expire) for this tab’s reload.' : 'Keep preserves this tab’s current template and active data for the reload.';
     dialog.returnValue = 'stay';
     const choice = await new Promise(resolve=> { dialog.addEventListener('close',()=>resolve(dialog.returnValue),{once:true}); dialog.showModal(); });
     if (choice === 'stay') return false;

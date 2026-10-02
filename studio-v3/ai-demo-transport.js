@@ -1,5 +1,6 @@
 import { createDemoGatewaySession, DEMO_GATEWAY_ENDPOINT } from '../studio-v2/ui/agent-demo-gateway.js';
-import { fail, PLANNER_PROMPT } from './ai-edits.js';
+import { fail } from './ai-edits.js';
+import { CHAT_PROMPT } from './ai-chat-protocol.js';
 
 export const DEMO_ALIASES = ['demo-fast','demo-auto'];
 export function createDemoTransport({fetchImpl = (...args) => fetch(...args),now} = {}) {
@@ -36,7 +37,7 @@ export function createDemoTransport({fetchImpl = (...args) => fetch(...args),now
       // Closed Demo wire contract; local tools and tokens never enter messages.
       const payload = await json('chat/completions',{
         method:'POST',signal,headers:{'content-type':'application/json'},
-        body:JSON.stringify({model:alias,stream:false,messages:[{role:'system',content:PLANNER_PROMPT},{role:'user',content:request}]})
+        body:JSON.stringify({model:alias,stream:false,messages:[{role:'system',content:CHAT_PROMPT},{role:'user',content:request}]})
       });
       const choice = payload.choices?.[0], message = choice?.message;
       if (choice?.finish_reason !== 'stop' || message?.tool_calls || typeof message?.content !== 'string') throw fail('MALFORMED_PROPOSAL');
