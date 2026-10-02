@@ -103,3 +103,8 @@ Gateway metadata field hierarchy remains unverified. The production capability d
 ### Frozen candidate 67b695f evidence
 
 `npm run build:site` passed 129 files / 835 tests and produced the complete site. Independent read-only delta review passed 48 focused checks, confirmed that the misleading aggregate-PDF pixel guarantee was removed and the production image capability gate remains closed. A follow-up ensures unsupported PDF text resources fail before either mode can return an attachment. All browser, visual quality, live model and physical printing gates remain open; test discovery is not browser execution.
+
+
+### Hosted PDF stream-error compatibility finding
+
+Hosted tests found that PDF.js 6.3.289 can resolve a render with partial/blank output after its worker rejects an oversized image. `stopAtErrors` and `maxImageSize` are still required but do not alone guarantee propagation in this pinned release. A narrowly scoped observer is registered on our dedicated Worker before PDF.js installs its message handler. It latches the first stream-error envelope, maps it to fixed local errors, races parsing/rendering and rechecks before accepting output. It removes listeners on termination, ignores normal cancellation-complete messages and never sends raw worker content elsewhere. This is a pinned internal wire compatibility guard, not a universal public-API guarantee; dependency upgrades must repeat real three-browser rejection and cancellation tests. Genuine blank visual PDFs remain allowed; failed renders are rejected. Image-to-AI sending remains disabled.
