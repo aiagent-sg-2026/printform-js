@@ -9,7 +9,13 @@ export const ALIGNMENTS = Object.freeze(['left', 'center', 'right']);
 export const FORMATS = Object.freeze(['', 'currency', 'number', 'percent']);
 export const fieldKind = field => field.kind || (field.pointer ? 'bound' : 'static');
 export const sectionOrder = design => design.sectionOrder || [...BLOCKS];
-export const usesFlowSections = design => Boolean(design.sectionOrder || BLOCKS.some(id => design.blocks[id].breakBefore));
+export function usesFlowSections(design) {
+  const page = pageSettings(design);
+  // Custom page geometry needs independently pageable body sections; legacy
+  // grouped final footers can exceed a short page after its repeated header.
+  const customPage = page.paper !== 'A4' || page.orientation !== 'portrait' || Object.values(page.margins).some(Boolean);
+  return Boolean(customPage || design.sectionOrder || BLOCKS.some(id => design.blocks[id].breakBefore));
+}
 export function pageSettings(design) {
   return { paper: design.page?.paper || 'A4', orientation: design.page?.orientation || 'portrait',
     margins: { top: 0, right: 0, bottom: 0, left: 0, ...design.page?.margins } };
