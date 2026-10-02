@@ -1,4 +1,4 @@
-import {beforeEach,it,expect} from 'vitest';
+import {beforeEach,it,expect,vi} from 'vitest';
 import fs from 'node:fs';
 import {AIPanel} from '../studio-v3/ai-panel.js';
 import {PaperPreview} from '../studio-v3/preview.js';
@@ -9,12 +9,12 @@ beforeEach(()=> {document.documentElement.innerHTML=html.replace(/<!doctype html
 function setup({facts=()=>[],commit,plan,restore=async()=>{},reply={kind:'proposal',summary:'Navy',edits:[{target:'style',property:'color',value:'#163a65'}]}}={}) {
   let bus=createBus(newProject()),calls=0,selected='items';
   const panel=new AIPanel({bus:()=>bus,selection:()=>selected,facts,guard:work=>work(),preview:async()=>({status:'ready',validation:{errors:[],warnings:[]}}),restore,commit,sync:()=>{},transport:{clear:()=>{},discover:async()=>['demo-fast'],plan:async(...args)=> {calls++;return plan ? plan(...args) : {text:JSON.stringify(reply)};}}});
-  panel.contextChanged();panel.node('#ai-prompt').value='Use navy accents.';panel.share();panel.node('#ai-consent').checked=true;
+  panel.contextChanged();panel.node('#ai-prompt').value='Use navy accents.';panel.share();
   return {panel,calls:()=>calls,changeBus:()=> {bus=createBus(newProject());panel.contextChanged();return bus;},select:id=> {selected=id;panel.contextChanged();}};
 }
 it('requires renewed review if measured facts change after consent, before any gateway call',async()=> {
   let facts=[];const {panel,calls}=setup({facts:()=>facts});
-  facts=[{id:'header',role:'title',pt:18}];await panel.send();expect(calls()).toBe(0);expect(panel.node('#ai-consent').checked).toBe(false);expect(panel.node('#ai-share').textContent).toContain('18');expect(panel.node('[data-ai-status]').textContent).toContain('updated');
+  facts=[{id:'header',role:'title',pt:18}];await panel.send();expect(calls()).toBe(0);expect(panel.node('#ai-consent')).toBeNull();expect(panel.node('#ai-share').textContent).toContain('18');expect(panel.node('[data-ai-status]').textContent).toContain('updated');
 });
 it('expires a response/card after selection moves away and back, preserving canonical revision',async()=> {
   const {panel,select}=setup();await panel.send();const bus=panel.getBus();expect(panel.proposal).toBeTruthy();select('customer');select('items');expect(panel.proposal).toBeNull();expect(bus.revision).toBe(0);expect(panel.conversation.messages.at(-1).status).toBe('expired');
@@ -49,4 +49,21 @@ it('rechecks scope/selection when an Apply waits in the command queue',async()=>
 it('keeps the unapplied banner/print protection if canonical restoration itself fails',async()=> {
   const {panel}=setup({commit:async()=> {throw new Error('blocked');},restore:async()=> {throw new Error('restore failed');}});
   await panel.send();await panel.preview();await panel.apply();expect(panel.viewing).toBe(true);expect(document.querySelector('#ai-preview-banner').hidden).toBe(false);expect(panel.node('[data-ai-status]').textContent).toContain('restore the form before printing');expect(panel.getBus().revision).toBe(0);
+});
+it('keeps candidate print protection when a new Send or Discard cannot restore canonical paper',async()=> {
+  const {panel,calls}=setup({restore:async()=>{throw new Error('restore failed');}});
+  await panel.send();expect(panel.viewing).toBe(true);panel.node('#ai-prompt').value='Another request';panel.share();await panel.send();
+  expect(calls()).toBe(1);expect(panel.viewing).toBe(true);expect(document.querySelector('#ai-preview-banner').hidden).toBe(false);
+  await panel.discard();expect(panel.viewing).toBe(true);expect(panel.node('[data-ai-status]').textContent).toContain('before printing');expect(panel.getBus().revision).toBe(0);
+});
+it('an older restoration cannot unlock Send while a newer selection restoration is still pending',async()=> {
+  let release1,release2,calls=0;const one=new Promise(r=>release1=r),two=new Promise(r=>release2=r);
+  const {panel,select}=setup({restore:()=>++calls===1 ? one : two});await panel.send();const stopped=panel.stop();select('customer');
+  release1();await stopped;expect(panel.restoring).toBe(true);expect(panel.node('[data-ai-send]').disabled).toBe(true);
+  release2();await new Promise(r=>setTimeout(r,0));expect(panel.restoring).toBe(false);expect(panel.viewing).toBe(false);
+});
+it('Clear keeps candidate print protection and does not reject if canonical restoration fails',async()=> {
+  const confirm=vi.spyOn(window,'confirm').mockReturnValue(true);
+  try {const {panel}=setup({restore:async()=>{throw new Error('restore failed');}});await panel.send();await expect(panel.clear()).resolves.toBeUndefined();expect(panel.viewing).toBe(true);expect(document.querySelector('#ai-preview-banner').hidden).toBe(false);expect(panel.conversation.messages).toHaveLength(0);expect(panel.node('[data-ai-status]').textContent).toContain('before printing');}
+  finally {confirm.mockRestore();}
 });
