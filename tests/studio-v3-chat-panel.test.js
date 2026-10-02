@@ -78,3 +78,8 @@ it('reference files never enter recovery snapshots and are removed when the form
  const {panel,changeBus}=setup();panel.referenceFiles.files=[{id:'reference-test',name:'fictional.pdf',kind:'pdf',mime:'application/pdf',pageCount:1,text:'fictional',pages:[{number:1,width:10,height:10,text:'fictional',textItems:[],preview:{dataUrl:'data:image/jpeg;base64,/9j/2Q=='}}],warnings:[]}];
  panel.referenceFiles.render();expect(JSON.stringify(panel.snapshot())).not.toContain('fictional.pdf');expect(JSON.stringify(panel.snapshot())).not.toContain('base64');changeBus();expect(panel.referenceFiles.files).toEqual([]);expect(panel.root.querySelectorAll('.ai-reference-card')).toHaveLength(0);
 });
+
+it('gives the PDF reading selector a stable accessible name independent of its option text',()=>{
+ const {panel}=setup(),select=panel.referenceFiles.pdfMode;
+ expect(select.getAttribute('aria-label')).toBe('PDF reading for new attachments');expect([...select.options].map(option=>option.value)).toEqual(['text','visual']);expect(select.value).toBe('text');
+});
