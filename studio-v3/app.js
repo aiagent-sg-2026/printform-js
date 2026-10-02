@@ -46,10 +46,10 @@ const drafts = new FormDrafts({
   }
 });
 const paper = new PaperPreview($('#preview-frame'), (report,view) => {
-  state.report = report;
+  state.report = report; resizePaper();
   if (report.status === 'ready') {
     paper.thumbnails($('#thumbnails'),view.pages,view.styles,goPage);
-    resizePaper(); goPage(Math.min(pageIndex,view.pages.length-1), false); paper.send('select',{id:state.selected});
+    goPage(Math.min(pageIndex,view.pages.length-1), false); paper.send('select',{id:state.selected});
   } else $('#thumbnails').replaceChildren();
   $('#page-count').textContent = report.status === 'ready' ? `Page ${pageIndex+1} / ${report.metrics.logicalPages}` : 'Render blocked';
   syncControls();
@@ -118,7 +118,7 @@ function goPage(index, scroll = true) {
   if (paper.pages.length) $('#page-count').textContent = `Page ${pageIndex+1} / ${paper.pages.length}`;
 }
 async function render(project = bus.project) {
-  displayed = structuredClone(project); state.report = null; syncControls(); status('Measuring the real HTML layout…');
+  displayed = structuredClone(project); state.report = null; resizePaper(); syncControls(); status('Measuring the real HTML layout…');
   return paper.render(displayed,{committed:project === bus.project});
 }
 function stopRun() { state.runId += 1; state.running = false; }

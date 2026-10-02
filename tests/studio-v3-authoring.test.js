@@ -5,7 +5,7 @@ import { bindingValidation, validPointer, validatePaperReport } from '../studio-
 import { bindTemplate } from '../studio-v2/core/binding.js';
 import { validateTrustedContent } from '../studio-v2/core/content-security.js';
 import { validateFormSpec } from '../studio-v2/core/form-spec.js';
-import { pageDimensions, contentDimensions } from '../studio-v3/design-authoring.js';
+import { pageDimensions, contentDimensions, usesFlowSections } from '../studio-v3/design-authoring.js';
 const PNG = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII=';
 const dom = project => { const t = document.createElement('template'); t.innerHTML = project.templateHtml; return t.content; };
 const field = (id,text) => ({id,label:'Static label',kind:'static',pointer:'',format:'',text});
@@ -89,10 +89,21 @@ describe('Studio v3 framework-native authoring contract',()=> {
     const c=compileProject(p,d),size=pageDimensions(d),inner=contentDimensions(d),root=dom(c);
     expect(c.spec.document).toMatchObject({paper,orientation:'landscape',margins:d.page.margins});
     expect(root.querySelector('.printform').dataset.papersizeHeight).toBe(String(inner.height));
+    expect(root.querySelector('.pheader')).not.toBeNull();
+    expect(root.querySelector('.pfooter, .pfooter002')).toBeNull();
+    expect(root.querySelector('[data-v3-id="totals"]').classList.contains('ptac-rowitem')).toBe(true);
+    expect(root.querySelector('[data-v3-id="footer"]').classList.contains('ptac-rowitem')).toBe(true);
+    expect(c.sampleData).toEqual(p.sampleData);
     expect(c.themeCss).toContain(`width:${size.width}px!important;padding:24px 12px 24px 12px`);
     const report={status:'ready',validation:{errors:[]},pageGeometry:[size]};
     expect(validatePaperReport(report,c).status).toBe('ready');
     expect(validatePaperReport({...report,pageGeometry:[{...size,height:size.height+10}]},c).status).toBe('blocked');
+  });
+  it('retains legacy default A4 footer placement even after explicit default page settings',()=> {
+    const p=newProject(),d=designOf(p);d.page={paper:'A4',orientation:'portrait',margins:{top:0,right:0,bottom:0,left:0}};
+    expect(usesFlowSections(d)).toBe(false);
+    const root=dom(compileProject(p,d));expect(root.querySelector('.pfooter')).not.toBeNull();expect(root.querySelector('.pfooter002')).not.toBeNull();
+    d.page.margins.top=1;expect(usesFlowSections(d)).toBe(true);
   });
   it('rejects unsupported properties, duplicate/reserved IDs, executable styles and remote assets',()=> {
     const p=newProject();
