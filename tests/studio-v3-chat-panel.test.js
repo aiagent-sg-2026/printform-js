@@ -67,3 +67,14 @@ it('Clear keeps candidate print protection and does not reject if canonical rest
   try {const {panel}=setup({restore:async()=>{throw new Error('restore failed');}});await panel.send();await expect(panel.clear()).resolves.toBeUndefined();expect(panel.viewing).toBe(true);expect(document.querySelector('#ai-preview-banner').hidden).toBe(false);expect(panel.conversation.messages).toHaveLength(0);expect(panel.node('[data-ai-status]').textContent).toContain('before printing');}
   finally {confirm.mockRestore();}
 });
+
+it('changing reference choices restores canonical paper and never unlocks candidate printing early',async()=>{
+ let release;const wait=new Promise(resolve=>release=resolve);const restore=vi.fn(()=>wait);const {panel}=setup({restore});
+ await panel.send();expect(panel.viewing).toBe(true);panel.referenceFiles.changed();
+ expect(panel.proposal).toBeNull();expect(panel.restoring).toBe(true);expect(panel.viewing).toBe(true);expect(restore).toHaveBeenCalledTimes(1);
+ release();await vi.waitFor(()=>expect(panel.restoring).toBe(false));expect(panel.viewing).toBe(false);
+});
+it('reference files never enter recovery snapshots and are removed when the form changes',()=>{
+ const {panel,changeBus}=setup();panel.referenceFiles.files=[{id:'reference-test',name:'fictional.pdf',kind:'pdf',mime:'application/pdf',pageCount:1,text:'fictional',pages:[{number:1,width:10,height:10,text:'fictional',textItems:[],preview:{dataUrl:'data:image/jpeg;base64,/9j/2Q=='}}],warnings:[]}];
+ panel.referenceFiles.render();expect(JSON.stringify(panel.snapshot())).not.toContain('fictional.pdf');expect(JSON.stringify(panel.snapshot())).not.toContain('base64');changeBus();expect(panel.referenceFiles.files).toEqual([]);expect(panel.root.querySelectorAll('.ai-reference-card')).toHaveLength(0);
+});

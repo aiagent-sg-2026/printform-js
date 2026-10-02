@@ -55,3 +55,17 @@ describe('v3 Demo wire contract',()=> {
     await expect(missing.discover()).rejects.toThrow('DEMO_MODEL_UNAVAILABLE');
   });
 });
+
+describe('v3 reference media capability boundary',()=>{
+ const media=[{type:'input_image',image_url:'data:image/jpeg;base64,/9j/AA=='}];
+ it('rejects unknown image capability before sending a reference',async()=>{
+  const calls=[],transport=createDemoTransport({fetchImpl:async(url)=>{calls.push(url);return url.endsWith('/session')?json({token:'dmo_synthetic123'}):json(models);}});
+  await transport.discover();await expect(transport.plan('demo-fast','reference',undefined,media)).rejects.toThrow('DEMO_IMAGE_CAPABILITY_UNVERIFIED');expect(calls.some(url=>url.endsWith('/responses'))).toBe(false);
+ });
+ it('uses only reviewed inline images in bounded Responses requests under an explicitly configured test capability contract',async()=>{
+  const calls=[],transport=createDemoTransport({capabilityReader:model=>model.input_modalities?.includes('image')===true,fetchImpl:async(url,init)=>{calls.push({url,init});return url.endsWith('/session')?json({token:'dmo_synthetic123'}):url.endsWith('/models')?json({data:[{id:'demo-fast',input_modalities:['text','image']}] }):json({status:'completed',output:[{type:'message',content:[{type:'output_text',text:'{"kind":"answer","message":"Synthetic reference read"}'}]}],usage:{input_tokens:12,output_tokens:8,total_tokens:20}});}});
+  await transport.discover();const result=await transport.plan('demo-fast','reviewed fictional reference',undefined,media);expect(result.usage.total_tokens).toBe(20);
+  const wire=JSON.parse(calls.at(-1).init.body);expect(calls.at(-1).url).toMatch(/\/responses$/);expect(Object.keys(wire).sort()).toEqual(['input','model','stream']);expect(wire.input[1].content[1]).toEqual(media[0]);expect(JSON.stringify(wire)).not.toContain('dmo_');
+  await expect(transport.plan('demo-fast','bad',undefined,[{type:'input_image',image_url:'https://external.example/private.png'}])).rejects.toThrow('UNSAFE_PROPOSAL');
+ });
+});
