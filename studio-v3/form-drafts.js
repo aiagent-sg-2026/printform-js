@@ -9,7 +9,7 @@ function restoreValues(form,values) {
 }
 export function restoreDraftRecords(records,formFor,context) {
   return records.map(record=> {
-    if (!['field','binding','block','style','collection','locale','data'].includes(record.kind) || typeof record.selected !== 'string' || !/^[a-z0-9-]+$/.test(record.selected)) throw new Error('Invalid recovery form.');
+    if (!['field','binding','block','style','collection','locale','data','logo'].includes(record.kind) || typeof record.selected !== 'string' || !/^[a-z0-9-]+$/.test(record.selected)) throw new Error('Invalid recovery form.');
     if (!record.values || Object.values(record.values).some(value=>!['string','boolean'].includes(typeof value))) throw new Error('Invalid recovery values.');
     const form = formFor(record), key = `${record.kind}:${['field','binding','block'].includes(record.kind) ? record.selected : 'global'}`;
     if (!form || key !== record.key) throw new Error('Unavailable recovery form.');

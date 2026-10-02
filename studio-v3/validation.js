@@ -2,18 +2,22 @@ import { validateProject } from '../studio-v2/core/acceptance.js';
 import { resolvePointer } from '../studio-v2/core/json.js';
 import { BLOCKS, designOf } from './model.js';
 
-export function validPointer(pointer, relative = false) {
-  if (typeof pointer !== 'string' || !pointer.startsWith(relative ? './' : '/') || pointer.length > 240) return false;
-  return !pointer.includes('*') && !pointer.split('/').some(t => ['__proto__', 'prototype', 'constructor'].includes(t));
-}
+export { validPointer } from './design-authoring.js';
+import { validPointer, fieldKind, pageDimensions, pageSettings } from './design-authoring.js';
+import { validateDesign } from './design-validation.js';
+
 export function bindingValidation(project) {
   const d = designOf(project);
   const errors = [];
   const issue = (code, path, message, component) => errors.push({ code, path, message, component, severity:'error' });
+  try { validateDesign(d); } catch (error) {
+    issue('INVALID_DESIGN','/manifest/studioV3',error.message,'document');
+    return {valid:false,errors,errorCount:errors.length};
+  }
   BLOCKS.filter(id => d.blocks[id].enabled).forEach(id => {
     if (id === 'items') return;
     d[id].forEach(f => {
-      if (!f.pointer) return;
+      if (fieldKind(f) !== 'bound') return;
       const component = `${id}-${f.id}`;
       if (!validPointer(f.pointer)) return issue('INVALID_POINTER', f.pointer, 'Use an absolute JSON pointer such as /customer/name.', component);
       check(resolvePointer(project.sampleData, f.pointer), f, f.pointer, component, issue);
@@ -23,7 +27,7 @@ export function bindingValidation(project) {
     const items = validPointer(d.collection) ? resolvePointer(project.sampleData, d.collection) : undefined;
     if (!Array.isArray(items)) issue('COLLECTION_NOT_ARRAY', d.collection, 'Collection must be an array. Use /items, without a wildcard.', 'items');
     else d.columns.forEach(f => {
-      if (!f.pointer) return;
+      if (fieldKind(f) !== 'bound') return;
       if (!validPointer(f.pointer, true)) return issue('INVALID_POINTER', f.pointer, 'Use a row-relative pointer such as ./description.', `items-${f.id}`);
       items.forEach((item, i) => check(resolvePointer(project.sampleData, f.pointer, item), f, `${d.collection}/${i}/${f.pointer.slice(2)}`, `items-${f.id}`, issue));
     });
@@ -41,15 +45,20 @@ function check(value, field, path, component, issue) {
 export function inspectProject(project, rendered = null) {
   const staticReport = validateProject(project);
   const bindings = bindingValidation(project);
-  const errors = [...staticReport.errors, ...bindings.errors, ...(rendered?.validation?.errors || [])];
+  const paper = rendered ? validatePaperReport(rendered,project) : null;
+  const errors = [...staticReport.errors, ...bindings.errors, ...(paper?.validation?.errors || [])];
   const warnings = [...staticReport.warnings, ...(rendered?.validation?.warnings || [])];
-  const ready = rendered?.status === 'ready' && !errors.length;
+  const ready = paper?.status === 'ready' && !errors.length;
   return { valid: !errors.length, ready, errors, warnings, metrics: rendered?.metrics || {}, bindingErrors: bindings.errorCount };
 }
 
-export function validatePaperReport(report) {
-  const oversized = (report.pageGeometry || []).filter(p => p.height > 1124 || p.width > 795);
+export function validatePaperReport(report, projectOrDesign = null) {
+  const design = projectOrDesign?.manifest?.studioV3 || projectOrDesign;
+  const {width,height} = design ? pageDimensions(design) : {width:794,height:1123};
+  const page = design ? pageSettings(design) : {paper:'A4',orientation:'portrait'};
+  const oversized = (report.pageGeometry || []).filter(p => p.height > height+1 || p.width > width+1);
   if (!oversized.length) return report;
-  const errors = oversized.map((p,i) => ({code:'PAPER_SIZE_OVERFLOW',path:`/pages/${p.pageIndex ?? i}`,message:`Page ${(p.pageIndex ?? i)+1} is ${p.width} × ${p.height}px and exceeds A4. Shorten the oversized content or reduce typography.`,component:'items',severity:'error'}));
-  return {...report,status:'blocked',validation:{...report.validation,valid:false,errors:[...(report.validation?.errors || []),...errors]},metrics:{...report.metrics,verticalOverflowPages:oversized.length}};
+  const prior = (report.validation?.errors || []).filter(e => e.code !== 'PAPER_SIZE_OVERFLOW');
+  const errors = oversized.map((p,i) => ({code:'PAPER_SIZE_OVERFLOW',path:`/pages/${p.pageIndex ?? i}`,message:`Page ${(p.pageIndex ?? i)+1} is ${p.width} × ${p.height}px and exceeds ${page.paper} ${page.orientation}. Shorten the oversized content or reduce typography.`,component:'items',severity:'error'}));
+  return {...report,status:'blocked',validation:{...report.validation,valid:false,errors:[...prior,...errors]},metrics:{...report.metrics,verticalOverflowPages:oversized.length}};
 }

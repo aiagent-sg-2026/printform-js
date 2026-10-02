@@ -53,9 +53,9 @@ export class PaperPreview {
       if (d.type === 'selection') onSelect(d.payload);
       if (d.type === 'rendered') {
         this.pages = d.payload.pages; this.height = d.payload.height;
-        if (this.measurement.committed && validatePaperReport(d.payload.report).status === 'ready') this.committedFacts = {...this.measurement,facts:validateTypography(d.payload.typography)};
+        if (this.measurement.committed && validatePaperReport(d.payload.report,this.renderedProject).status === 'ready') this.committedFacts = {...this.measurement,facts:validateTypography(d.payload.typography)};
         frame.style.height = `${this.height}px`;
-        this.finish(validatePaperReport(d.payload.report), d.payload);
+        this.finish(validatePaperReport(d.payload.report,this.renderedProject), d.payload);
       }
       if (d.type === 'error') this.finish({status:'blocked',validation:{errors:[{code:'RENDER_ERROR',message:d.payload.message}],warnings:[]}}, {});
     });
@@ -67,7 +67,7 @@ export class PaperPreview {
   }
   async render(project,{committed=false}={}) {
     this.cancel();
-    const token = this.token; this.measurement = {committed,documentId:project.manifest.documentId,revision:project.revision,design:JSON.stringify(project.manifest.studioV3)};
+    const token = this.token; this.renderedProject = project; this.measurement = {committed,documentId:project.manifest.documentId,revision:project.revision,design:JSON.stringify(project.manifest.studioV3)};
     if (committed) this.committedFacts = null;
     const resultPromise = new Promise(resolve => { this.resolve = resolve; });
     try {

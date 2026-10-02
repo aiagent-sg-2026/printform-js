@@ -1,6 +1,7 @@
 import { persistZoom } from './zoom-preference.js';
+import { labelSelection } from './design-authoring.js';
 export class CanvasControls {
-  constructor({resize,guard}) {
+  constructor({resize,guard,upload=()=>{},report=()=>{},context=()=>null}) {
     this.resize = resize; this.guard = guard; this.drawer = null; this.returnFocus = null;
     this.backdrop = document.querySelector('#drawer-backdrop');
     document.addEventListener('click',event=> {
@@ -12,6 +13,12 @@ export class CanvasControls {
       else this.guard(()=>this.toggle(name,button)).catch(()=>{});
     });
     this.backdrop.addEventListener('click',()=>this.close());
+    document.addEventListener('change',event=> {
+      const input = event.target.closest('[data-image-target]');
+      if (!input || !input.files?.length) return;
+      const file = input.files[0], target = input.dataset.imageTarget, original = context(); input.value = '';
+      void Promise.resolve().then(()=>this.guard(()=> { if (context() !== original) throw new Error('The document changed. Upload the image again.'); return upload(file,target); })).catch(error=>report(error.message));
+    });
     document.addEventListener('keydown',event=> {
       if (!this.drawer || document.querySelector('dialog[open]')) return;
       if (event.key === 'Escape') { event.preventDefault(); this.close(); }
@@ -52,6 +59,16 @@ export class CanvasControls {
   }
   selectionMade() {
     if (innerWidth <= 900) { this.close(false); document.body.classList.remove('preview-only'); this.open('properties'); }
+  }
+  highlightElement(paper,id) {
+    document.querySelectorAll('[data-select]').forEach(n=>n.classList.toggle('ai-target-highlight',n.dataset.select === labelSelection(id)));
+    paper.send('select',{id});
+  }
+  elementPage(paper,id) {
+    return Math.max(0,paper.pages.findIndex(page=> {
+      const template = document.createElement('template'); template.innerHTML = page.html;
+      return [...template.content.querySelectorAll('[data-v3-id]')].some(n=>n.dataset.v3Id === id);
+    }));
   }
   focusDraft(node) {
     const panel = node?.closest('.side-panel'); if (!panel) { node?.focus(); return; }

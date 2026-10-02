@@ -3,6 +3,7 @@ import { compileProject, designOf, selectionField } from './model.js';
 import { validateDesign } from './file-io.js';
 import { datasetName, datasetTitleFor } from './database-model.js';
 import { dataSource } from './data-provenance.js';
+import { sectionOrder } from './design-authoring.js';
 
 export function createBus(project, database = null, source = 'builtin-demo') {
   const initial = structuredClone(project);
@@ -44,26 +45,69 @@ export function formDesign(project, selected, form, kind) {
   const text = name => String(values.get(name) || '');
   const checked = name => values.has(name);
   const selection = selectionField(d,selected);
+  const fieldStyle = prefix => {
+    const style = {};
+    for (const property of ['fontSize','bold','color','align']) {
+      const value = text(`${prefix}.${property}`);
+      if (value) style[property] = property === 'fontSize' ? Number(value) : property === 'bold' ? value === 'true' : value;
+    }
+    return style;
+  };
   if (kind === 'style') {
     for (const key of ['color']) d[key] = text(key);
     for (const key of ['font','padding']) d[key] = Number(values.get(key));
     for (const key of ['striped','borders','pageNumbers']) d[key] = checked(key);
+    if (values.has('pageNumberStyle.fontSize')) { const style = fieldStyle('pageNumberStyle'); if (Object.keys(style).length) d.pageNumberStyle = style; else delete d.pageNumberStyle; }
+    if (values.has('paper')) d.page = {paper:text('paper'),orientation:text('orientation'),margins:Object.fromEntries(['top','right','bottom','left'].map(side=>[side,Number(values.get(`margin-${side}`))]))};
   } else if (kind === 'field' && selection) {
     for (const key of ['label','format']) if (values.has(key)) selection.field[key] = text(key);
     if (selection.block === 'items' && values.has('width')) selection.field.width = Number(values.get('width'));
+    if (values.has('showLabel-present')) selection.field.showLabel = checked('showLabel');
+    for (const prefix of ['labelStyle','valueStyle']) if (values.has(`${prefix}.fontSize`)) {
+      const style = fieldStyle(prefix); if (Object.keys(style).length) selection.field[prefix] = style; else delete selection.field[prefix];
+    }
   } else if (kind === 'binding' && selection) {
-    selection.field.lastPointer = text('pointer');
-    selection.field.pointer = text('bindingMode') === 'static' ? '' : text('pointer');
-    selection.field.text = text('text');
+    const mode = text('bindingMode'), f = selection.field;
+    f.lastPointer = text('pointer'); f.pointer = mode === 'bound' ? text('pointer') : ''; f.kind = mode;
+    if (mode === 'image') { f.assetId = text('assetId'); f.width = Number(values.get('imageWidth')); f.height = Number(values.get('imageHeight')); f.fit = text('imageFit'); f.text = ''; f.format = ''; }
+    else { f.text = text('text'); for (const key of ['assetId','height','fit']) delete f[key]; if (selection.block !== 'items') delete f.width; }
   } else if (kind === 'collection') {
     d.collection = text('collection');
   } else if (kind === 'block') {
-    const id = d.blocks[selected] ? selected : 'items';
+    const id = selected.startsWith('header-') && !selection ? 'header' : selected === 'items-header' ? 'items' : selected;
+    if (!d.blocks[id]) throw new Error('Select an existing section before Apply.');
     d.blocks[id].label = text('label'); d.blocks[id].enabled = checked('enabled');
     if (id === 'header') { d.title = text('title'); d.repeatHeader = checked('repeatHeader'); }
+    if (id === 'header' && values.has('titleStyle.fontSize')) { const style = fieldStyle('titleStyle'); if (Object.keys(style).length) d.titleStyle = style; else delete d.titleStyle; }
     if (id === 'items') { d.repeatTable = checked('repeatTable'); d.breakBefore = checked('breakBefore'); }
+    else if (values.has('layoutColumns')) {
+      if (text('layoutColumns') || text('layoutGap')) d.blocks[id].layout = {columns:Number(values.get('layoutColumns') || 1),gap:Number(values.get('layoutGap') || 0)}; else delete d.blocks[id].layout;
+      d.blocks[id].keepTogether = checked('keepTogether'); if (id !== 'header') d.blocks[id].breakBefore = checked('sectionBreakBefore');
+    }
+    if (values.has('sectionPosition')) {
+      const order = sectionOrder(d), position = Number(values.get('sectionPosition'));
+      if (!Number.isInteger(position) || position < 0 || position >= order.length) throw new Error('Invalid section position.');
+      if (order.indexOf(id) !== position) { d.sectionOrder = order.filter(block=>block !== id); d.sectionOrder.splice(position,0,id); }
+    }
+  } else if (kind === 'logo') {
+    if (checked('removeLogo')) delete d.logo;
+    else d.logo = {assetId:text('assetId'),width:Number(values.get('imageWidth')),height:Number(values.get('imageHeight')),fit:text('imageFit')};
   }
   return d;
+}
+export async function importRasterAsset(project,file,target) {
+  if (!file || !['image/png','image/jpeg','image/gif','image/webp'].includes(file.type) || file.size > 1024*1024) throw new Error('Choose a PNG, JPEG, GIF or WebP image under 1 MB.');
+  const source = await new Promise((resolve,reject)=> { const reader = new FileReader(); reader.onload = ()=>resolve(reader.result); reader.onerror = ()=>reject(new Error('Image file could not be read.')); reader.readAsDataURL(file); });
+  const d = designOf(project), assets = d.assets || [];
+  if (assets.length >= 10) throw new Error('Use at most ten embedded images.');
+  const id = `asset-${crypto.randomUUID().slice(0,8)}`; d.assets = [...assets,{id,src:source,alt:''}];
+  if (target === 'header-logo') d.logo = {assetId:id,width:52,height:52,fit:'contain'};
+  else {
+    const selected = selectionField(d,target);
+    if (!selected || selected.block === 'items') throw new Error('Select a non-table field for an image.');
+    const f = selected.field; f.lastPointer = f.pointer || f.lastPointer || ''; Object.assign(f,{kind:'image',pointer:'',text:'',format:'',assetId:id,width:80,height:60,fit:'contain'});
+  }
+  validateDesign(d); return d;
 }
 export function alterFields(project, selected, action) {
   const d = designOf(project);
