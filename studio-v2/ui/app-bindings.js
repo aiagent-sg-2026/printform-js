@@ -1,5 +1,6 @@
 import { bindHorizontalWheel } from "./preview-wheel.js";
 import { bindInspectorResize } from "./inspector-resize.js";
+import { focusInspectorElement } from "./inspector-focus.js";
 
 function bindLocaleMenu($, onLocaleChange) {
   const trigger = $("#ui-locale-button");
@@ -98,19 +99,16 @@ function bindEditorToggle($, t) {
   return { refresh: () => update(open) };
 }
 
-function focusInspectorElement(panel, target, shouldBeOpen) {
-  function focus() {
-    if (panel.classList.contains("is-open") !== shouldBeOpen || !target) return;
-    const visible = getComputedStyle(target).visibility !== "hidden" && target.getClientRects().length > 0;
-    if (visible) target.focus();
-  }
-  for (const delay of [50, 200, 400]) setTimeout(focus, delay);
-}
-
 function bindTabs($) {
   const tabs = Array.from(document.querySelectorAll(".inspector-tabs [role=tab]")); const panel = $(".inspector-panel"); const header = $(".inspector-header"); const toggle = $("#inspector-toggle"); const close = $("#inspector-close"); const launchers = [toggle].filter(Boolean); let restoreTarget = toggle;
+  let cancelFocus = () => {};
   [toggle, close].filter(Boolean).forEach((item) => item.addEventListener("mousedown", (event) => event.preventDefault()));
-  function setOpen(open, { restoreFocus = false, moveFocus = false, focusTarget = restoreTarget } = {}) { const next = Boolean(open); panel.classList.toggle("is-open", next); panel.classList.toggle("is-closed", !next); document.body.classList.toggle("inspector-closed", !next); panel.setAttribute("aria-hidden", String(!next)); if ("inert" in panel) panel.inert = !next; launchers.forEach((item) => item.setAttribute("aria-expanded", String(next))); if (next && moveFocus) { close?.focus(); focusInspectorElement(panel, close, true); } if (!next && restoreFocus) { focusTarget?.focus(); focusInspectorElement(panel, focusTarget, false); } }
+  function setOpen(open, { restoreFocus = false, moveFocus = false, focusTarget = restoreTarget } = {}) {
+    cancelFocus();
+    const next = Boolean(open); panel.classList.toggle("is-open", next); panel.classList.toggle("is-closed", !next); document.body.classList.toggle("inspector-closed", !next); panel.setAttribute("aria-hidden", String(!next)); if ("inert" in panel) panel.inert = !next; launchers.forEach((item) => item.setAttribute("aria-expanded", String(next)));
+    if (next && moveFocus) { close?.focus(); cancelFocus = focusInspectorElement(panel, close, true); }
+    if (!next && restoreFocus) { focusTarget?.focus(); cancelFocus = focusInspectorElement(panel, focusTarget, false); }
+  }
   function select(tab) { if (!tab) return; tabs.forEach((item) => { const selected = item === tab; item.setAttribute("aria-selected", String(selected)); $(`#${item.getAttribute("aria-controls")}`).hidden = !selected; }); header?.setAttribute("data-active-tab", tab.id); setOpen(true); }
   tabs.forEach((tab, index) => { tab.addEventListener("click", () => select(tab)); tab.addEventListener("keydown", (event) => { if (!["ArrowLeft", "ArrowRight"].includes(event.key)) return; event.preventDefault(); select(tabs[(index + (event.key === "ArrowRight" ? 1 : -1) + tabs.length) % tabs.length]); }); });
   function openAiDesigner(source) { const next = !panel.classList.contains("is-open"); if (next) { restoreTarget = source || toggle; select(tabs.find((item) => item.id === "ai-designer-tab") || tabs[0]); setOpen(true, { moveFocus: true }); } else setOpen(false, { restoreFocus: true, focusTarget: source }); }
