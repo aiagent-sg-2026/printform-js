@@ -75,10 +75,10 @@ test('AI conversation recovers without token or consent and old candidates remai
       return {status:path.endsWith('/session')?201:200,body};
     });
     await start(page,server);
-    await page.locator('[data-ai-toggle]').click();await page.locator('#ai-prompt').fill('Fictional navy layout');await page.locator('#ai-consent').check();await page.locator('[data-ai-send]').click();
+    await page.locator('[data-ai-toggle]').click();await page.locator('#ai-prompt').fill('Fictional navy layout');await page.locator('[data-ai-send]').click();
     await expect(page.locator('[data-ai-proposal]')).toBeVisible();await page.locator('[data-ai=preview]').click();await expect(page.locator('[data-ai=apply]')).toBeEnabled();
     await update(page,server);await expect(page.locator('#app-version')).toContainText(NEXT.slice(0,12));await ready(page);
-    await expect(page.locator('#ai-prompt')).toHaveValue('');await expect(page.locator('[data-ai-log]')).toContainText('Fictional navy layout');await expect(page.locator('#ai-consent')).not.toBeChecked();
+    await expect(page.locator('#ai-prompt')).toHaveValue('');await expect(page.locator('[data-ai-log]')).toContainText('Fictional navy layout');await expect(page.locator('#ai-consent')).toHaveCount(0);
     await expect(page.locator('[data-ai-proposal]')).toHaveCount(0);await expect(page.locator('[data-ai=apply]')).toHaveCount(0);await expect(page.locator('[data-ai-log]')).toContainText('Expired');expect(calls).toBe(3);
     expect(await page.evaluate(()=>[...Object.keys(sessionStorage),...Object.keys(localStorage)].some(key=>/token|credential|demo-session/i.test(key)))).toBe(false);
     await expect(page.locator('[data-ai=preview]')).toHaveCount(0);await expect(page.locator('#revision')).toHaveText('r0');expect(calls).toBe(3);
@@ -93,7 +93,7 @@ test('pending AI request is cancelled only on confirmed update and never resumes
       return {status:path.endsWith('/session')?201:200,body:path.endsWith('/session')?{token:'dmo_synthetic123456',expires_in:900}:{data:[{id:'demo-fast'}]}};
     });
     await start(page,server);
-    await page.locator('[data-ai-toggle]').click();await page.locator('#ai-prompt').fill('Fictional held request');await page.locator('#ai-consent').check();await page.locator('[data-ai-send]').click();
+    await page.locator('[data-ai-toggle]').click();await page.locator('#ai-prompt').fill('Fictional held request');await page.locator('[data-ai-send]').click();
     await expect.poll(()=>requests).toBe(1);server.publish();await page.locator('#update-button').click();await expect(page.locator('#update-button')).toContainText('Update to');
     await page.locator('#update-button').click();await page.locator('[data-update-choice=stay]').click();await expect(page.locator('[data-ai=cancel]')).toBeVisible();
     await page.locator('#update-button').click();await page.locator('[data-update-choice=keep]').click();await expect(page.locator('#app-version')).toContainText(NEXT.slice(0,12));await ready(page);release();
