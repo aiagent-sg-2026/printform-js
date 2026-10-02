@@ -6,7 +6,7 @@ const ready = page=>expect(page.locator('[data-action=export]')).toBeEnabled({ti
 async function start(page,server) {page.on('dialog',d=>d.accept());await page.goto(server.url);await ready(page);await page.waitForFunction(()=>Boolean(navigator.serviceWorker?.controller));}
 async function update(page,server) {
   server.publish();await page.locator('#update-button').click();await expect(page.locator('#update-button')).toHaveText(`Update to ${NEXT.slice(0,12)}`,{timeout:30000});
-  await page.locator('#update-button').click();await page.locator('[data-update-choice=keep]').click();
+  await page.locator('#update-button').click();await page.locator('[data-update-choice=keep]').click();await expect(page.locator('#app-version')).toContainText(NEXT.slice(0,12));
 }
 async function demoMock(page,reply) {
   // Keep real Service Workers enabled. Browser fetch interception cannot route
@@ -96,7 +96,7 @@ test('pending AI request is cancelled only on confirmed update and never resumes
     await page.locator('[data-ai-toggle]').click();await page.locator('#ai-prompt').fill('Fictional held request');await page.locator('#ai-consent').check();await page.locator('[data-ai-send]').click();
     await expect.poll(()=>requests).toBe(1);server.publish();await page.locator('#update-button').click();await expect(page.locator('#update-button')).toContainText('Update to');
     await page.locator('#update-button').click();await page.locator('[data-update-choice=stay]').click();await expect(page.locator('[data-ai=cancel]')).toBeVisible();
-    await page.locator('#update-button').click();await page.locator('[data-update-choice=keep]').click();await ready(page);release();
+    await page.locator('#update-button').click();await page.locator('[data-update-choice=keep]').click();await expect(page.locator('#app-version')).toContainText(NEXT.slice(0,12));await ready(page);release();
     await expect(page.locator('#ai-prompt')).toHaveValue('Fictional held request');await expect(page.locator('[data-ai=cancel]')).toBeHidden();await expect(page.locator('[data-ai-proposal]')).toBeHidden();
     expect(requests).toBe(1);await expect(page.locator('#revision')).toHaveText('r0');
   }finally{release();await server.close();}

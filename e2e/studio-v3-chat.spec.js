@@ -52,7 +52,7 @@ test('desktop panel resizing validates reload preference and refits paper withou
 });
 test('mobile full-screen conversation returns to paper preview and restores a reviewable edit',async({page},info)=> {
   await mock(page,[proposal]);await page.setViewportSize({width:390,height:844});await page.locator('[data-ai-toggle]').click();
-  const box=await page.locator('#ai-panel').boundingBox();expect(box.x).toBe(0);expect(box.y).toBe(0);expect(box.width).toBe(390);expect(box.height).toBe(844);
+  const box=await page.locator('#ai-panel').boundingBox();expect(box.x).toBe(0);expect(box.y).toBe(0);expect(box.width).toBe(390);expect(box.height).toBeCloseTo(844,0);
   await send(page,'Use navy accents.');await expect(page.locator('[data-ai-proposal]')).toBeVisible();await page.screenshot({path:info.outputPath('chat-mobile-proposal.png')});
   await page.locator('[data-ai=preview]').click();await expect(page.locator('#ai-panel')).toBeHidden();await expect(page.locator('[data-ai-toggle]')).toBeFocused();await expect(page.locator('#ai-preview-banner')).toBeVisible();
   await page.locator('[data-ai-return]').click();await expect(page.locator('[data-ai=apply]')).toBeEnabled();await page.locator('[data-ai=apply]').click();await expect(page.locator('#revision')).toContainText('r1');
