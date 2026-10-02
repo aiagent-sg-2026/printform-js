@@ -55,6 +55,11 @@ export function setupPanelLayout(panel) {
     const end = ()=> { separator.removeEventListener('pointermove',move); separator.removeEventListener('pointerup',end); separator.removeEventListener('pointercancel',end); save(); };
     separator.addEventListener('pointermove',move); separator.addEventListener('pointerup',end); separator.addEventListener('pointercancel',end);
   });
+  panel.root.addEventListener('focusin',event=> {
+    const input=event.target.closest('.ai-input');
+    if(!input)return;const bounds=event.target.getBoundingClientRect(),view=panel.node('.ai-composer').getBoundingClientRect();
+    if(bounds.top<view.top || bounds.bottom>view.bottom)input.scrollIntoView?.({block:'nearest',inline:'nearest'});
+  });
   panel.root.addEventListener('keydown',event=> {
     if (event.target.id === 'ai-prompt' && event.key === 'Enter' && !event.shiftKey && !event.isComposing) { event.preventDefault(); void panel.send(); }
   });

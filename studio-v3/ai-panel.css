@@ -77,7 +77,7 @@ body.ai-open.preview-only .studio-grid { grid-template-columns:0 minmax(0,1fr) v
 #ai-panel { display:flex; flex-direction:column; overflow:hidden; }
 .ai-heading { flex:none; }
 [data-ai-log] { flex:1; min-height:0; }
-.ai-composer { flex:none; max-height:60%; overflow:auto; }
+.ai-composer { flex:none; max-height:60%; overflow:auto; grid-auto-rows:max-content; align-content:start; }
 @media(max-width:900px) { .ai-composer { max-height:60dvh; overflow:auto; } }
 .paper-workspace { position:relative; }
 #ai-preview-banner { position:absolute; z-index:3; top:55px; left:16px; right:16px; display:flex; align-items:center; flex-wrap:wrap; gap:8px; padding:8px 10px; border:1px solid #b8ccef; border-radius:8px; background:#edf3fe; box-shadow:0 2px 8px #14233d14; font-size:12px; }
