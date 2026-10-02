@@ -55,14 +55,31 @@ for(const paper of ['A4','A5','LETTER','LEGAL']) {
     const p=newProject();p.sampleData=sampleData('invoice',20);p.manifest.title=`${paper} geometry`;
     const d=designOf(p);d.page={paper,orientation:'landscape',margins:{top:20,right:16,bottom:20,left:16}};
     const c=compileProject(p,d),physical=pageDimensions(d),inner=contentDimensions(d);await open(page,c);
+    await expect(page.locator('#paper-kind')).toHaveText(paper);
+    await expect(page.locator('#paper-dimensions')).toHaveText(`${Math.round(physical.width/96*25.4)} × ${Math.round(physical.height/96*25.4)} mm`);
     const rendered=await facts(page);
     expect(rendered.flatMap(p=>p.rows)).toEqual(Array.from({length:20},(_,i)=>i));
     expect(rendered.every(p=>Math.abs(p.width-inner.width)<=1 && Math.abs(p.height-inner.height)<=1)).toBe(true);
     const wrappers=await preview(page).locator('.physical_page_wrapper').evaluateAll(nodes=>nodes.map(n=>({width:Math.round(n.getBoundingClientRect().width),height:Math.round(n.getBoundingClientRect().height)})));
     expect(wrappers.every(p=>Math.abs(p.width-physical.width)<=1 && Math.abs(p.height-physical.height)<=1)).toBe(true);
+    await expect(preview(page).locator('[data-v3-id="totals"]')).toHaveCount(1);
+    await expect(preview(page).locator('[data-v3-id="footer"]')).toHaveCount(1);
     await fs.writeFile(info.outputPath(`${paper.toLowerCase()}-landscape-geometry.json`),JSON.stringify({physical,inner,rendered,wrappers},null,2));
   });
 }
+test('blocked custom geometry still shows its actual paper and keeps print/export locked',async({page})=> {
+  const p=newProject(),d=designOf(p);p.manifest.title='Oversized A5 footer';
+  d.page={paper:'A5',orientation:'landscape',margins:{top:20,right:16,bottom:20,left:16}};
+  d.footer[0].valueStyle={fontSize:72};
+  await page.locator('#open-file').setInputFiles({name:'blocked-a5.printform.json',mimeType:'application/json',buffer:Buffer.from(saveProject(compileProject(p,d)))});
+  await expect(page.locator('#document-name')).toHaveValue(p.manifest.title);
+  await expect(page.locator('#page-count')).toHaveText('Render blocked',{timeout:30000});
+  await expect(page.locator('#status')).toContainText('exceed');
+  await expect(page.locator('#paper-kind')).toHaveText('A5');
+  await expect(page.locator('#paper-dimensions')).toHaveText('210 × 148 mm');
+  await expect(page.locator('[data-action=print]')).toBeDisabled();
+  await expect(page.locator('[data-action=export]')).toBeDisabled();
+});
 test('non-repeating table heading survives ordered flow with no repeated or dropped rows',async({page})=> {
   const p=newProject();p.sampleData=sampleData('invoice',100);p.manifest.title='One-time heading ordered flow';
   const d=designOf(p);d.sectionOrder=['header','footer','items','customer','totals'];d.repeatTable=false;
