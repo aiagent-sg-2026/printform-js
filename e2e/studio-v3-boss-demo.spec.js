@@ -112,6 +112,7 @@ test('visual PDF mode renders fictional JPEG, PNG-style Flate, masks and multipl
   await expect(page.locator('.ai-reference-card')).toContainText('best-effort controls');await expect(page.locator('#ai-share')).toContainText('visual-pages');await expect(page.locator('[data-ai-send]')).toBeDisabled();await page.screenshot({path:info.outputPath(`local-${kind}-pdf-reference.png`)});await page.locator('.ai-reference-card button').click();
  }
  await page.getByLabel('Add reference PDF or image',{exact:true}).setInputFiles(rasterPdf('oversized'));await expect(page.locator('.ai-reference-files')).toContainText('12-million-pixel limit');await expect(page.locator('.ai-reference-card')).toHaveCount(0);expect(calls).toHaveLength(0);
+ await attach(page,syntheticPdf({pages:1,text:false,blank:true}));await expect(page.locator('.ai-reference-card img')).toHaveCount(1);await expect(page.locator('[data-ai-send]')).toBeDisabled();expect(calls).toHaveLength(0);
 });
 test('cancelled visual PDF worker can be replaced by a successful fresh read',async({page})=>{
  const {rasterPdf}=await import('./fixtures/raster-reference-documents.js');const calls=await mockProvider(page);await openReferences(page);await page.getByLabel('PDF reading for new attachments',{exact:true}).selectOption('visual');let release;const held=new Promise(resolve=>release=resolve);
