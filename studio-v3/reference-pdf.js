@@ -44,7 +44,7 @@ export async function parseReferencePdf(bytes,scope,{mode='text'}={}) {
     async fetch() { blockedResource=true; throw referenceError('PDF_UNSUPPORTED'); }
   }
   try {
-    const workerError=new Promise((_,reject)=>runtime.port.addEventListener('error',()=>reject(referenceError('PDF_WORKER')),{once:true}));
+    const workerError=runtime.errors.promise;
     loading=runtime.pdfjs.getDocument({
       data:bytes,worker:runtime.worker,verbosity:0,stopAtErrors:true,isEvalSupported:false,
       enableXfa:false,disableAutoFetch:true,disableStream:true,disableRange:true,
@@ -62,6 +62,7 @@ export async function parseReferencePdf(bytes,scope,{mode='text'}={}) {
       const {width,height}=viewport;
       if (![width,height].every(n=>Number.isFinite(n)&&n>0&&n<=L.maxPdfPageEdge)||width*height>L.maxPdfPageArea) throw referenceError('PDF_PAGE_SIZE');
       const extracted=await extractText(page,viewport,runtime.pdfjs,budget,scope);
+      runtime.errors.check();
       if (blockedResource) throw referenceError('PDF_UNSUPPORTED');
       if (extracted.truncated&&!warnings.includes('Text and geometry were truncated to the safe extraction limit.')) warnings.push('Text and geometry were truncated to the safe extraction limit.');
       if(mode==='text') {
@@ -71,6 +72,7 @@ export async function parseReferencePdf(bytes,scope,{mode='text'}={}) {
       canvas=document.createElement('canvas'); canvas.width=Math.max(1,Math.floor(renderViewport.width)); canvas.height=Math.max(1,Math.floor(renderViewport.height));
       render=page.render({canvas,viewport:renderViewport,background:'#fff',annotationMode:runtime.pdfjs.AnnotationMode.DISABLE});
       await scope.wait(Promise.race([render.promise,workerError])); scope.check();
+      runtime.errors.check();
       if (blockedResource) throw referenceError('PDF_UNSUPPORTED');
       pages.push({number,width,height,rotation:page.rotate,coordinateSystem:'pdf-viewport-points',text:extracted.text,textItems:extracted.textItems,preview:encodePreview(canvas)});
       canvas.width=canvas.height=0; canvas=null; render=null; page.cleanup();
