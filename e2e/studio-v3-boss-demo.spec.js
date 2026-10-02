@@ -119,3 +119,15 @@ test('cancelled visual PDF worker can be replaced by a successful fresh read',as
  await page.getByLabel('Add reference PDF or image',{exact:true}).setInputFiles(rasterPdf('jpeg'));await page.getByRole('button',{name:'Cancel reading',exact:true}).click();await expect(page.locator('.ai-reference-files')).toContainText('reading cancelled');release();await page.unroute('**/pdf.worker*.js');await expect(page.getByRole('button',{name:'Cancel reading',exact:true})).toBeHidden();
  await attach(page,rasterPdf('png'));await expect(page.locator('.ai-reference-card img')).toHaveCount(1);expect(calls).toHaveLength(0);
 });
+
+
+test('expanded references keep the prompt and Send reachable without collapsing the conversation',async({page},info)=>{
+ const calls=await mockProvider(page);
+ for(const size of [{width:1280,height:720},{width:1440,height:900},{width:390,height:844}]) {
+  await page.setViewportSize(size);await page.reload();await ready(page);await openReferences(page);await attach(page,syntheticPdf());
+  const panel=await page.locator('#ai-panel').boundingBox(),composer=await page.locator('.ai-composer').boundingBox(),log=await page.locator('[data-ai-log]').boundingBox();
+  expect(composer.y+composer.height).toBeLessThanOrEqual(panel.y+panel.height+1);const logPadding=await page.locator('[data-ai-log]').evaluate(node=>{const style=getComputedStyle(node);return parseFloat(style.paddingTop)+parseFloat(style.paddingBottom);});expect(log.height-logPadding).toBeGreaterThan(40);
+  await page.locator('#ai-prompt').focus();await page.locator('#ai-prompt').fill('Use navy accents from this fictional reference.');await expect(page.locator('#ai-prompt')).toBeInViewport({ratio:1});await expect(page.locator('[data-ai-send]')).toBeInViewport({ratio:1});await expect(page.locator('[data-ai-send]')).toBeEnabled();
+  await page.screenshot({path:info.outputPath(`reference-composer-${size.width}.png`)});expect(calls).toHaveLength(0);
+ }
+});
