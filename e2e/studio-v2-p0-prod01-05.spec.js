@@ -88,6 +88,7 @@ test.describe("Studio v2 PROD-01 01-05 indirect global effects", () => {
     const runRejected = async (operations, prompt) => {
       await page.evaluate((nextOperations) => { window.__p0Prod0105.control.nextOperations = nextOperations; }, operations);
       await page.locator("#ai-prompt").fill(prompt);
+      await expect(page.locator("#ai-prompt")).toHaveValue(prompt);
       await page.locator("#ai-send").click();
       await expect(page.locator(".ai-message.system").last()).toContainText("outside the selected scope", { timeout: 20_000 });
       await expect(page.locator("#ai-proposal-card")).toBeHidden();
@@ -108,6 +109,7 @@ test.describe("Studio v2 PROD-01 01-05 indirect global effects", () => {
       window.__p0Prod0105.control.nextOperations = [{ type: "set_pagination_rule", componentId: "table-a-header", rule: "repeatHeader", value: true }];
     });
     await page.locator("#ai-prompt").fill("Repeat only table A's header");
+    await expect(page.locator("#ai-prompt")).toHaveValue("Repeat only table A's header");
     await page.locator("#ai-send").click();
     await expect(page.locator("#ai-apply-proposal")).toBeVisible({ timeout: 20_000 });
     const frame = page.frameLocator("#preview-frame");
