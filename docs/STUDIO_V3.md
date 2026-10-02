@@ -51,52 +51,27 @@ This slice does not claim completion of v2's full direct-BYOK migration.
 The owner-selected GPT Server Demo is the only v3 provider. Existing
 `github-pages` registration is reused: browser CORS supplies the exact Origin;
 `POST /demo/session` issues a short-lived memory-only token, `/demo/v1/models`
-checks `demo-fast`/`demo-auto`, and `/demo/v1/chat/completions` returns one text
-JSON envelope. No native provider tools, arbitrary schema, files, background,
+checks `demo-fast`/`demo-auto`, and `/demo/v1/chat/completions` returns a text
+JSON envelope per bounded step. No native provider tools, arbitrary schema, files, background,
 web search, gateway key or private `/v1/*` request is sent. A first 401 refreshes
-once; no automatic model fallback or inference retry occurs.
+once; no model fallback occurs; authoring repair is capped and disclosed.
 
-The panel displays the selected alias, recipient, current Origin/project,
-exact request context in folded sharing details. Send requires a fresh explicit
-consent checkbox and Send action (button or Enter). Context contains style
-tokens, column IDs/widths, numeric measured font facts and at most six recent
-messages (3,000 characters): no data
-values, text/labels, bindings, company names or financial values. User-entered
-request and retained conversation text are shared, as stated in the UI. Unapplied drafts are excluded.
-Tokens and Harness sessions are not persisted or exported. The explicit
-Keep work & update action can temporarily retain input and the bounded
-conversation locally for this tab's reload; see [PWA lifecycle](STUDIO_V3_PWA.md).
-Model discovery does not send document data. Stop/close abort the browser
-request; a dispatched provider request may already have been received.
+The panel displays the selected alias, recipient and exact initial JSON.
+Send deliberately accepts the adjacent notice; there is no consent checkbox.
+The owner-requested framework-native authoring surface is described in
+[Authoring contract](STUDIO_V3_AUTHORING.md) and [Pi chat](STUDIO_V3_AI_CHAT.md).
+It includes stable element references/comments, label/value typography, structural
+fields/columns, bindings, section/page layout and embedded local raster assets.
 
-A closed parser limits a proposal to twelve unique edits: brand color, font,
-cell padding, table borders/stripes, repeat/page settings, or existing column
-widths. It cannot change labels/text, bindings, collections, data, money,
-formulas, block visibility or source HTML/CSS. The checked envelope is mapped
-to one local `preview_layout` Harness tool and terminates that run. A mutually
-exclusive answer envelope uses the read-only `answer_layout` local tool.
-Current font questions are grounded in computed styles from the trusted,
-sandboxed print-preview bridge, including fixed-size headings and actual
-field sizes; missing measurements are reported as unavailable. The tool
-only builds a candidate; it cannot commit. This is a bounded layout agent,
-not an unrestricted Pi coding agent or AI visual-quality certification.
-
-The diff shows each before/after value. Preview runs the same A4 runtime on
-unchanged supplied data, without changing the template revision. Print/export
-are disabled while viewing an unapplied candidate. Apply requires a passing
-current browser render, draft Apply/Discard/Stay resolution, and the exact
-bus/revision/base design plus proposal identity/generation, selection and Scope
-at queue execution.
-Apply creates one CommandBus history entry; Undo restores the previous layout.
-The brief commit phase prevents duplicate Apply and contradictory cancellation.
-Changes, new/imported documents and history navigation invalidate proposals
-and cancel pending requests. Selection or Scope changes also expire cards,
-even if the selection later returns to the same field. Recovered cards are
-read-only expired history and cannot Preview/Apply; send a new request. Malformed, unsafe, stale, expired and failed
-responses never apply automatically.
-
-The continuous chat UI, desktop resizing, mobile paper-return workflow and
-recovery rules are described in [Chat editor](STUDIO_V3_AI_CHAT.md).
+One explicit Send is bounded to three model requests and three real local
+preview inspections, with a code/geometry-only dynamic diagnostic boundary.
+The previous reviewed context and model proposal may be resent for repair.
+Questions remain read-only. Local tools build one unapplied candidate and a
+complete diff; Preview and explicit Apply remain required. CommandBus commits
+one revision with scoped Undo after current validation and draft protection.
+ERP data/calculations do not change, and existing financial-bound fields cannot
+be replaced by model-authored literal values. There is no model code, shell,
+filesystem, arbitrary HTML/CSS/JavaScript or automatic commit capability.
 
 Earlier provisional probes returned HTTP 403 and were stopped without model
 inference. That dated blocker was superseded by the owner-approved PR3 release
@@ -194,8 +169,8 @@ certification, or Production Ready release credit. Review all pages in native
 print preview and verify ERP values before actual use.
 
 Item rows stay intact. A row taller than an available page is blocked as an
-overflow issue; shorten it or adjust typography. Section order is the fixed
-ERP reading order. Fields and columns can be reordered. Footer blocks/totals
+overflow issue; shorten it or adjust typography. Supported section order is declarative and uses native flow rows; fields and
+columns also retain stable IDs when reordered. Footer blocks/totals
 use the existing engine's final-page flow and repeat page numbers.
 
 ## Verification and release

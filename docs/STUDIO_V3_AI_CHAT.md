@@ -1,86 +1,86 @@
-# Studio v3 continuous AI editor
+# Studio v3 framework-native Pi authoring
 
-The sidepanel keeps a bounded conversation and a bottom composer. Enter sends
-only after explicit sharing consent; Shift+Enter inserts a newline and IME
-composition never sends. Stop aborts the active browser request. Retry restores
-the failed message to the composer for review; it does not send automatically.
-The folded settings expose the actual Demo alias, discovery and Clear action.
+The sidepanel keeps a bounded conversation and composer. Send is the deliberate
+action accepting the adjacent recipient/context notice. No consent checkbox
+or background send is used. Enter sends; Shift+Enter and IME Enter do not.
+Exact initial JSON remains inspectable in Sharing details. If current context
+differs from the displayed request, Send refreshes it and stops before inference.
 
-## Questions and edits
+## Authoring and questions
 
-Ordinary questions use a closed `{kind:"answer",message}` envelope and are
-read-only. For current font sizes, the client replaces model number claims with
-actual measured facts from the committed print preview. The source identifies
-semantic field/section IDs and typography roles. For example, the default base
-font is 9 pt, the fixed title is 18 pt, company value 12 pt and table headings
-8 pt. These are measured values, not a claim that every node uses the base font.
-Paper Zoom does not change computed print font sizes. Missing facts are clearly
-unavailable, including hidden or unrendered fields.
+Ordinary questions use a closed answer envelope and remain read-only. Font
+questions use measured computed typography in the committed sandbox preview,
+with stable label/value/title/page-number IDs. Zoom is separate from print size.
+Missing measurements are explicitly unavailable.
 
-Edits use `{kind:"proposal",summary,edits}`. The existing bounded parser still
-owns the edit whitelist and produces actual Before/After values. Empty, mixed,
-malformed or unsupported patches fail without changing the form. Global accent
-color does not recolor every heading; base font does not change fixed titles.
+Edits use a proposal with either the legacy style/width edits or at most 24
+framework-native operations. The canonical design contract and capabilities are
+in [Authoring](STUDIO_V3_AUTHORING.md). Operations can add/remove/reorder fields
+and columns, author labels and nonfinancial static text, rebind supported source
+paths, set independent label/value styles, section layout/order/pagination,
+paper geometry and existing embedded raster assets. No arbitrary HTML, CSS,
+JavaScript, shell, filesystem, formula or model code runs.
 
-| Scope | Supported changes |
-| --- | --- |
-| Whole template (default) | Existing global style tokens and column widths |
-| Selected item column | That column's width only |
-| Selected items section | Existing item column widths only |
-| Other selected field/section | Read-only answers; use Whole for global styles |
+Existing numeric-bound fields cannot become static/image or receive replacement
+text/format. Financial-bound fields additionally retain their existing pointer.
+New static financial/number fields are rejected. Labels, styles and structural
+placement remain editable. ERP dataset values and calculations never change.
 
-Live selection is shown above the composer. Any selection, Scope, document or
-revision change expires the active proposal and invalidates late replies. An
-epoch prevents changing away and back from reviving it. Queue execution checks
-the exact proposal, selection, Scope, bus, revision, base design and generation.
+Whole template permits the supported design surface. Selected section permits
+its actual owned children. A selected field permits only itself and its exact
+label; label selection permits only label/showLabel/labelStyle. Similar ID
+prefixes do not establish ownership. Referenced selections can contain up to
+eight stable elements, each with up to 500 characters of user comments.
+Add to chat is available from paper, structure and properties. Chips support
+remove, highlight and locate. Deleted, older, cross-document or recovered tags
+block Send until explicitly removed and added again.
 
-Preview uses the same print runtime with unchanged ERP data and revision. Apply
-requires passing layout/data validation and existing draft protection. It makes
-one CommandBus history entry. The applied card offers Undo only while that exact
-edit remains current; the toolbar history remains the standard navigation path.
-A completed self-commit is recorded as Applied even though its canonical change
-invalidates pending AI work. No model code, financial calculation or auto-apply
-route is introduced.
+## Bounded inspected run
 
-## Provider and disclosure
+One Send uses the pinned real Pi AgentHarness/MemorySessionRepo and Demo provider
+extension. The gateway accepts ordinary text completions; local validated
+operations implement authoring. A run allows at most three model requests and
+three real isolated print-preview inspections, with Stop and a 60-second
+client timeout. Invalid proposals or blocked geometry can trigger a repair
+within that cap. A blocked final candidate is never reported as passing.
 
-This remains the real pinned upstream Pi AgentHarness/MemorySessionRepo with a
-browser provider extension. Each Send performs one ordinary Demo completion,
-then invokes one locally validated answer or preview tool and stops. Continuous
-conversation is bounded UI context, not an unrestricted autonomous coding CLI.
-There is no invented Python harness. Demo native tools, arbitrary schemas,
-files, background execution and web search remain disabled and absent from the
-wire. The existing github-pages project and browser-provided exact Origin are
-reused. No new registration, grant, key or gateway configuration is needed.
+Each repair resends the reviewed context and previous model proposal. Newly
+added local diagnostics are allowlisted error codes, known component IDs,
+geometry and numeric counts only. No rendered text, samples, amounts, raw
+images, selectors, files or diagnostic messages enter that dynamic boundary.
+Context identity, data, revision, selection, references and epoch are rechecked
+before each remote request and around every local inspection.
 
-Sharing details show the exact JSON: user input, style/column settings, numeric
-font facts and the last at most six eligible messages capped at 3,000 characters.
-User and assistant text is untrusted and never promoted to system/tool roles.
-Messages from another document are excluded from follow-ups. Business text,
-labels, bindings, sample data and amounts are excluded from automatic context.
-Anything the user types may contain private text, so each Send needs deliberate
-consent to the displayed payload. Provider usage is shown only when reported;
-missing usage is unavailable, not zero. Demo tokens and Pi sessions stay in
-memory and are cleared after runs. They are never exported or persisted.
+The final candidate has one complete Before/After diff, including implicit
+binding cleanup and added/removed field definitions. Local inspection never
+commits. The user must still choose Preview and then Apply. Apply requires
+current passing layout/data checks and draft Apply/Discard/Stay protection,
+then rechecks identity at CommandBus queue execution. It creates one history
+entry. Card Undo is bound to that exact bus/revision/epoch. Printing/exporting
+are disabled while an unapplied candidate is visible, including restore failures.
 
-## History, mobile and updates
+## Disclosure and storage
 
-The panel retains at most 12 messages, each at most 4,000 characters. Clear
-explicitly removes conversation; if input or active work exists it asks before
-discarding that work. Historical conversation alone is not an unsaved template.
-Only current input, an active proposal or request enters the update pending-work
-check. Close preserves conversation; Return to paper hides the panel. A mobile
-Preview returns to the paper automatically, and reopening AI retains that
-current preview for deliberate Apply. The mobile panel fills the viewport and
-traps keyboard focus; controls use coherent accessible SVGs.
+Initial automatic context contains stable IDs, types, style/structure numeric
+settings, measured font facts, known framework/declared-schema pointer paths
+and types, and at most six recent eligible messages capped at 3,000 characters.
+Raw dataset object keys are never enumerated for AI; custom paths explicitly
+typed in the request/comments can be resolved locally without exposing values.
+Row-relative candidates identify their collection, so collection and columns
+can change atomically. Secret-like declared keys are omitted.
 
-Desktop panel width can be changed with pointer drag or the keyboard separator
-(Arrow keys, Home/End). A validated 320..600 px preference is kept locally. The
-existing paper ResizeObserver recomputes Fit page; width/zoom never changes
-revision, print dimensions or data.
+Business labels/text, dataset values, amounts and asset bytes are not automatic
+context. User-entered requests/comments and eligible conversation are shared
+as disclosed. Recovered text stays untrusted. No gateway registration, grant,
+private key or provider native tool configuration changes. Discovery sends no
+document. Demo tokens and Pi sessions remain memory-only and are cleared.
+Usage is reported only when supplied; if any step lacks usage, aggregate usage
+is unavailable. A client timeout cannot undo a request already received remotely.
 
-Keep work & update explicitly backs up whitelisted conversation text and diffs
-along with existing protected drafts. Recovered diffs and legacy v1 proposals
-are expired history: no candidate, Preview, Apply, token or running session is
-restored. New requests require new consent. A failed recovery retains its
-backup under the existing download/confirmed-discard safeguards.
+Conversation retains 12 messages capped at 4,000 characters. Validated diff
+history shares the parser's 360-entry cap. Keep work & update retains only
+whitelisted text/diffs/input and inert references, within the existing 4 MiB
+verified local backup guard. Recovered proposals never regain Preview/Apply;
+references require fresh re-addition. Failed recovery keeps the protected backup.
+Desktop resizing, mobile paper-return and normal draft/database protections
+remain available. Native printer output and visual design still need owner review.
