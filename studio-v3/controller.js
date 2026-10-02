@@ -28,7 +28,9 @@ export async function replaceData(bus, data, sample = 'erp', database = undefine
   const names = {'0':'Empty','1':'Single item','45':'Standard','100':'Multi-page','500':'Stress',long:'Long & bilingual'};
   const source = sourceOverride || (sample !== 'erp' ? dataSource('validation-sample',names[sample] || sample) : database === undefined ? session.erpSource : dataSource(database?.origin || 'imported-data'));
   const name = title !== undefined ? datasetName(title) : database?.title ? datasetName(database.title) : datasetTitleFor(bus.project);
-  return editProject(bus,[{type:'replace_sample_data',value:data},{type:'set_manifest_value',path:'/sampleDataTitle',value:name}],`data: ${sample}`,{
+  const currency = data.document?.currency;
+  if (currency !== undefined && !['MYR','USD','SGD','EUR','CNY','JPY'].includes(currency)) throw new Error('Dataset currency is unsupported. Choose a supported dataset currency.');
+  return editProject(bus,[{type:'replace_sample_data',value:data},{type:'set_manifest_value',path:'/sampleDataTitle',value:name},...(currency ? [{type:'set_manifest_value',path:'/currency',value:currency}] : [])],`data: ${sample}`,{
     sample,erpData:sample === 'erp' ? data : session.erpData,
     database:database === undefined ? session.database : database,
     source,erpSource:sample === 'erp' ? source : session.erpSource

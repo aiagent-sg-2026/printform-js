@@ -1,3 +1,4 @@
+import { AIReferenceFiles } from './ai-reference-files.js';
 import { createDemoTransport } from './ai-demo-transport.js';
 import { assertProposalCurrent, fail } from './ai-edits.js';
 import { chatRequest } from './ai-chat-protocol.js';
@@ -13,7 +14,7 @@ export class AIPanel {
     Object.assign(this,{getBus:bus,getSelection:selection,getFacts:facts,elementTags,guard,renderPreview:preview,restore,commit,undo,sync,transport});
     this.root = document.querySelector('#ai-panel'); this.viewing = false; this.proposal = null; this.generation = 0; this.epoch = 0; this.conversation = new Conversation();
     this.root.addEventListener('submit',event=> { event.preventDefault(); void this.send(); });
-    this.root.addEventListener('input',event=> { if (['ai-prompt','ai-model'].includes(event.target.id)) this.share(); });
+    this.root.addEventListener('input',event=> { if (['ai-prompt','ai-model'].includes(event.target.id)) { this.share(); if (event.target.id === 'ai-model') this.update(); } });
     this.root.addEventListener('change',event=> { if (event.target.id === 'ai-scope') this.contextChanged(true); });
     this.root.addEventListener('click',event=> {
       const button = event.target.closest('[data-ai]'), action = button?.dataset.ai;
@@ -33,7 +34,7 @@ export class AIPanel {
     document.querySelector('#ai-preview-banner').addEventListener('click',event=> { if (this.applying) return; if (event.target.closest('[data-ai-return]')) this.show(); if (event.target.closest('[data-ai-discard]')) void this.discard(); });
     document.querySelector('[data-ai-toggle]').addEventListener('click',()=>this.open ? this.close() : this.show());
     this.node('[data-ai-origin]').textContent = `${location.origin} · project github-pages`;
-    setupPanelLayout(this); this.update();
+    this.referenceFiles = new AIReferenceFiles(this); setupPanelLayout(this); this.update();
   }
   node(selector) { return this.root.querySelector(selector); }
   message(text) { this.node('[data-ai-status]').textContent = text; }
@@ -43,7 +44,7 @@ export class AIPanel {
   payload() {
     const references = this.elementTags?.payload() || [];
     const input = this.node('#ai-prompt').value.trim(), request = input || (references.some(r=>r.comment) ? 'Apply the comments on the referenced elements.' : '');
-    return {request,scope:this.scope(),typography:this.getFacts(),conversation:this.conversation.context(this.documentKey()),references};
+    return {request,scope:this.scope(),typography:this.getFacts(),conversation:this.conversation.context(this.documentKey()),references,...(this.referenceFiles?.files.length ? {attachments:this.referenceFiles.projection().references} : {})};
   }
   request() { return this.getBus() ? chatRequest(this.getBus().project,this.payload()) : '{}'; }
   share() {
@@ -55,7 +56,7 @@ export class AIPanel {
   close() { if (this.applying) return; if (this.busy) void this.stop(); this.suspend(); document.querySelector('[data-ai-toggle]').focus(); }
   contextChanged(force=false) {
     const bus = this.getBus(), selected = this.getSelection();
-    this.elementTags?.contextChanged();
+    this.elementTags?.contextChanged(); this.referenceFiles?.contextChanged();
     this.node('[data-ai-selection]').textContent = `Selected: ${selected}`;
     if (force || bus !== this.contextBus || selected !== this.contextSelection) {
       this.contextBus = bus; this.contextSelection = selected; ++this.epoch;
@@ -102,20 +103,20 @@ export class AIPanel {
     catch (error) { if (id === this.generation) this.error(this.timedOut === id ? fail('AI_TIMEOUT') : error); }
     finally { if (id === this.generation) { this.transport.clear(); this.finish(); this.share(); } }
   }
-  setModels(aliases) { const select = this.node('#ai-model'); for (const option of select.options) option.disabled = !aliases.includes(option.value); if (!aliases.includes(select.value)) select.value = aliases[0]; }
+  setModels(aliases) { const select = this.node('#ai-model'); for (const option of select.options) option.disabled = !aliases.includes(option.value); if (!aliases.includes(select.value)) select.value = aliases[0]; this.referenceFiles?.capabilityChanged(); }
   finish() { clearTimeout(this.timer); this.controller = null; this.busy = false; this.pendingMessage = null; this.update(); }
   async send() {
     if (this.busy || this.applying || this.restoring) return;
     let payload, request;
-    try { payload = this.payload(); request = this.request(); } catch (error) { this.error(error); this.message(error.message); return; }
+    try { this.referenceFiles?.assertReady(); payload = this.payload(); request = this.request(); } catch (error) { this.error(error); this.message(error.message); return; }
     if (!payload.request) { this.message('Write a request or a comment on a referenced element before Send.'); return; }
     const alias = this.node('#ai-model').value;
     if (request !== this.node('#ai-share').textContent) { this.share(); this.message('Layout context updated. Review the updated sharing details, then Send again.'); return; }
     if (request.length > 40000) { this.message('The shared context is too large. Clear conversation or shorten the request.'); return; }
-    const bus = this.getBus(), revision = bus.revision, project = structuredClone(bus.project), baseDesign = JSON.stringify(project.manifest.studioV3), baseData = JSON.stringify(project.sampleData), epoch = this.epoch, selection = this.getSelection(), scope = JSON.stringify(this.scope()), references = JSON.stringify(payload.references);
+    const bus = this.getBus(), revision = bus.revision, project = structuredClone(bus.project), baseDesign = JSON.stringify(project.manifest.studioV3), baseData = JSON.stringify(project.sampleData), epoch = this.epoch, selection = this.getSelection(), scope = JSON.stringify(this.scope()), references = JSON.stringify(payload.references), attachmentVersion = this.referenceFiles?.version, media = this.referenceFiles?.projection().media || [];
     const assertContext = ()=> {
       assertProposalCurrent(this.getBus(),{bus,revision,baseDesign});
-      if (baseData !== JSON.stringify(bus.project.sampleData) || epoch !== this.epoch || selection !== this.getSelection() || scope !== JSON.stringify(this.scope()) || references !== JSON.stringify(this.elementTags?.payload() || [])) throw fail('STALE_PROPOSAL');
+      if (attachmentVersion !== this.referenceFiles?.version || baseData !== JSON.stringify(bus.project.sampleData) || epoch !== this.epoch || selection !== this.getSelection() || scope !== JSON.stringify(this.scope()) || references !== JSON.stringify(this.elementTags?.payload() || [])) throw fail('STALE_PROPOSAL');
       validateElementReferences(bus.project,payload.references,bus.revision);
     };
     const {id,signal} = this.begin(); this.conversation.expire(); this.proposal = null; this.checked = false;
@@ -123,8 +124,9 @@ export class AIPanel {
     try {
       if (this.viewing) { await this.restore(); this.viewing = false; }
       const aliases = await this.transport.discover(signal); if (!aliases.includes(alias)) throw fail('DEMO_MODEL_UNAVAILABLE'); this.setModels(aliases);
+      if (media.length && !this.transport.supportsImages?.(alias)) throw fail('DEMO_IMAGE_CAPABILITY_UNVERIFIED');
       assertContext();
-      const result = await runLayoutHarness({transport:this.transport,alias,request,project,signal,chat:payload,assertContext,
+      const result = await runLayoutHarness({transport:this.transport,alias,request,project,signal,chat:payload,assertContext,media,
         inspectCandidate:async proposal=> {
           assertContext(); this.viewing = true; this.update(); this.sync();
           const report = await this.renderPreview(proposal.candidate); assertContext(); signal.throwIfAborted();
@@ -168,7 +170,7 @@ export class AIPanel {
   retry(id) { if (this.busy || this.applying) return; const card = this.conversation.messages.find(m=>m.id === id); this.node('#ai-prompt').value = card?.request || [...this.conversation.messages].reverse().find(m=>m.role === 'user')?.text || ''; this.share(); this.node('#ai-prompt').focus(); }
   async clear() {
     if (this.applying || this.restoring || ((this.busy || this.proposal || this.node('#ai-prompt').value) && !confirm('Clear this conversation, input, element comments and unapplied AI suggestion? The form and datasets stay unchanged.'))) return;
-    const viewing = this.viewing; this.invalidate('Conversation cleared.'); this.conversation.messages = []; this.node('#ai-prompt').value = ''; this.elementTags?.clear(false); if (viewing) await this.restoreUnapplied(); this.share(); this.update();
+    const viewing = this.viewing; this.invalidate('Conversation cleared.'); this.conversation.messages = []; this.node('#ai-prompt').value = ''; this.elementTags?.clear(false); this.referenceFiles?.clear(); if (viewing) await this.restoreUnapplied(); this.share(); this.update();
   }
   snapshot() { return {open:Boolean(this.open),prompt:this.node('#ai-prompt').value || this.pendingMessage || '',alias:this.node('#ai-model').value,messages:this.conversation.snapshot(),references:this.elementTags?.snapshot() || []}; }
   restoreSnapshot(saved) {
@@ -182,8 +184,9 @@ export class AIPanel {
   update() {
     document.querySelector('#ai-preview-banner').hidden = !this.viewing;
     document.querySelector('[data-ai-toggle]').setAttribute('aria-expanded',String(Boolean(this.open)));
-    this.elementTags?.setBusy(Boolean(this.busy || this.applying || this.restoring));
-    for (const node of this.root.querySelectorAll('#ai-prompt,#ai-model,#ai-scope,[data-ai=models],[data-ai-send],[data-prompt]')) node.disabled = Boolean(this.busy || this.applying || this.restoring);
+    this.elementTags?.setBusy(Boolean(this.busy || this.applying || this.restoring)); this.referenceFiles?.setBusy(Boolean(this.busy || this.applying || this.restoring));
+    for (const node of this.root.querySelectorAll('#ai-prompt,#ai-model,#ai-scope,[data-ai=models],[data-ai-send],[data-prompt]')) node.disabled = Boolean(this.busy || this.applying || this.restoring || this.referenceFiles?.reading);
+    this.referenceFiles?.capabilityChanged(); if (this.referenceFiles?.imageBlocked()) this.node('[data-ai-send]').disabled=true;
     this.node('[data-ai=cancel]').hidden = !this.busy || Boolean(this.applying); this.node('[data-ai-send]').hidden = Boolean(this.busy);
     for (const node of this.root.querySelectorAll('[data-ai=close],[data-ai=paper],[data-ai=clear]')) node.disabled = Boolean(this.applying);
     renderConversation(this);

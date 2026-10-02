@@ -1,4 +1,4 @@
-import { newProject, designOf, sampleData } from './model.js';
+import { newProject, designOf, sampleData, newDemoProject, setupDemoTemplatePicker } from './demo-templates.js';
 import { createBus, editProject, replaceData, designOperations, formDesign, alterFields, importRasterAsset } from './controller.js';
 import { icon } from './icons.js';
 import { leftView, rightView, SAMPLES } from './views.js';
@@ -17,7 +17,7 @@ import { restoreZoom, persistZoom } from './zoom-preference.js';
 import { setupUpdates } from './update.js';
 import { createUpdateWork } from './update-work.js';
 import { pageDimensions, pageSettings } from './design-authoring.js';
-const $ = selector => document.querySelector(selector);
+const $ = selector => document.querySelector(selector); setupDemoTemplatePicker();
 const state = {mode:'design',selected:'items',tab:'properties',sample:'erp',report:null,matrix:{},dirty:false,dataDraft:null,running:false,runId:0,collapsed:{},search:'',jsonError:'',fileReads:0};
 let bus, displayed, zoom = 1, pageIndex = 0, editQueue = Promise.resolve();
 const database = new DemoDatabase({
@@ -211,8 +211,8 @@ document.addEventListener('click', e => {
   if (mode) { drafts.guard(() => { state.mode = mode.dataset.mode; if (state.mode === 'data') database.screen = 'database'; canvas.close(false); renderPanels(); }).catch(e=>status(e.message)); return; }
   const sample = e.target.closest('[data-sample]');
   if (sample) { drafts.guard(() => queueEdit(() => switchSample(sample.dataset.sample))).catch(e=>status(e.message)); return; }
-  const template = e.target.closest('[data-template]');
-  if (template && !template.disabled) { $('#new-dialog').close(); const next = database.starting(newProject(template.dataset.template === 'blank' ? 'invoice' : template.dataset.template,template.dataset.template === 'blank')); install(next.project,next.reference,'builtin-demo'); return; }
+  const template = e.target.closest('[data-template],[data-demo-template]');
+  if (template && !template.disabled) { $('#new-dialog').close(); const next = database.starting(template.dataset.demoTemplate ? newDemoProject(template.dataset.demoTemplate) : newProject(template.dataset.template === 'blank' ? 'invoice' : template.dataset.template,template.dataset.template === 'blank')); install(next.project,next.reference,'builtin-demo'); return; }
   const issue = e.target.closest('[data-issue]');
   if (issue) { if (issue.dataset.issue) drafts.guard(() => { state.selected = issue.dataset.issue; state.mode = 'design'; renderPanels(); paper.send('select',{id:state.selected}); }).catch(e=>status(e.message)); return; }
   const control = e.target.closest('[data-action]');

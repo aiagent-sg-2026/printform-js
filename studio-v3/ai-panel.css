@@ -84,3 +84,7 @@ body.ai-open.preview-only .studio-grid { grid-template-columns:0 minmax(0,1fr) v
 #ai-preview-banner[hidden] { display:none; }
 #ai-preview-banner span { flex:1; font-weight:600; }
 #ai-preview-banner button { min-height:28px; padding:4px 8px; font-size:11px; }
+.ai-reference-files{display:grid;gap:8px;padding:10px;border:1px dashed var(--border,#cdd5df);border-radius:9px;margin:8px 0;font-size:11px}.ai-reference-files label{display:block}.ai-reference-files input[type=file]{display:block;max-width:100%;margin-top:5px}.ai-reference-card{display:grid;grid-template-columns:44px 1fr auto;gap:7px;align-items:center;padding:6px 0}.ai-reference-card img{width:44px;height:54px;object-fit:contain;background:white;border:1px solid #dbe1ea}.ai-reference-card span{overflow-wrap:anywhere}.ai-reference-card small{grid-column:1/-1}.ai-reference-card button{font-size:11px;padding:4px}
+
+.ai-reference-files>summary{cursor:pointer;font-weight:600;padding:2px}.ai-reference-files:not([open]){display:block}.ai-reference-thumbnails{display:flex;gap:3px;max-width:100%;overflow:auto}.ai-reference-thumbnails img{flex:none}
+.ai-reference-excerpt{grid-column:1/-1;white-space:pre-wrap;overflow-wrap:anywhere;max-height:110px;overflow:auto;margin:0;padding:6px;background:#f7f8fa;font:11px/1.4 monospace}

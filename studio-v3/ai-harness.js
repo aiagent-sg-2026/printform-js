@@ -6,11 +6,11 @@ import { safeRunDiagnostics, repairRequest } from './ai-inspection.js';
 
 // Actual Harness + pi-ai extension. Demo cannot carry native tools:
 // one validated text envelope becomes one LOCAL proposal tool invocation.
-async function runStepHarness({transport,alias,request,project,signal,chat={},inspectCandidate,assertContext=()=>{},onPhase = ()=>{}}) {
+async function runStepHarness({transport,alias,request,project,signal,chat={},media=[],inspectCandidate,assertContext=()=>{},onPhase = ()=>{}}) {
   signal.throwIfAborted();
   const context = withAbortSignal(signal,BACKGROUND_CONTEXT);
   let proposal, usage, inspection, envelope, calls = 0, transportError, toolError;
-  const model = {id:alias,name:alias,provider:'printform-demo',api:'printform-demo-envelope',baseUrl:'https://gpt.yapweijun1996.com/demo/v1',reasoning:false,input:['text'],contextWindow:32000,maxTokens:4096,cost:{input:0,output:0,cacheRead:0,cacheWrite:0}};
+  const model = {id:alias,name:alias,provider:'printform-demo',api:'printform-demo-envelope',baseUrl:'https://gpt.yapweijun1996.com/demo/v1',reasoning:false,input:media.length ? ['text','image'] : ['text'],contextWindow:32000,maxTokens:4096,cost:{input:0,output:0,cacheRead:0,cacheWrite:0}};
   const stream = (_model,_context,options = {}) => {
     const events = createAssistantMessageEventStream();
     const output = {role:'assistant',content:[],api:model.api,provider:model.provider,model:alias,stopReason:'toolUse',timestamp:Date.now(),usage:{input:0,output:0,cacheRead:0,cacheWrite:0,totalTokens:0,cost:{input:0,output:0,cacheRead:0,cacheWrite:0,total:0}}};
@@ -19,7 +19,7 @@ async function runStepHarness({transport,alias,request,project,signal,chat={},in
         if (++calls > 1) throw fail('AI_STEP_LIMIT');
         assertContext();
         onPhase('Requesting layout suggestion');
-        const reply = await transport.plan(alias,request,options.signal || signal);
+        const reply = await transport.plan(alias,request,options.signal || signal,media);
         envelope = reply.text;
         signal.throwIfAborted();
         const parsed = parseChatReply(reply.text,project,chat);
