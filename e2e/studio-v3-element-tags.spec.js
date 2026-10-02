@@ -88,3 +88,25 @@ test('mobile Add from the inspector opens the composer and clicking a chip retur
   await page.locator('[data-ai-toggle]').click(); await expect(page.getByLabel('Comment for label-customer-bill',{exact:true})).toHaveValue('Increase this label to 12pt.');
   expect(calls).toHaveLength(0); await expect(page.locator('#revision')).toHaveText('r0');
 });
+
+test('plain-language selected label request supplies its exact target and stays label-only through Apply and Undo',async({page})=>{
+ const wording='Only make the Ship to label 12pt bold.';let captured;
+ await page.route('https://gpt.yapweijun1996.com/demo/**',async route=>{
+  const path=new URL(route.request().url()).pathname;let body;
+  if(path.endsWith('/session'))body={token:'dmo_synthetic123456',expires_in:900};
+  else if(path.endsWith('/models'))body={data:[{id:'demo-fast'}]};
+  else {
+   captured=JSON.parse(route.request().postDataJSON().messages[1].content);
+   expect(captured.request).toBe(wording);expect(captured.request).not.toContain('label-customer-ship');
+   const selected=captured.scopeAuthoringTargets.find(target=>target.target==='label-customer-ship');expect(selected?.typographyPatchKey).toBe('labelStyle');
+   body={choices:[{finish_reason:'stop',message:{content:JSON.stringify({kind:'proposal',summary:'Only the selected label becomes 12pt bold',operations:[{type:'set_field',target:selected.target,patch:{labelStyle:{fontSize:12,bold:true}}}]})}}]};
+  }
+  await route.fulfill({status:200,contentType:'application/json',body:JSON.stringify(body)});
+ });
+ const valueBefore=await frame(page).locator('[data-v3-id=customer-ship]').first().textContent();
+ await frame(page).locator('[data-v3-id=label-customer-ship]').first().click();await page.locator('.paper-toolbar [data-ai-add]').click();
+ await page.locator('#ai-scope').selectOption('selected');await page.locator('#ai-prompt').fill(wording);await page.locator('[data-ai-send]').click();await expect(page.locator('[data-ai-proposal]')).toBeVisible();
+ await page.locator('[data-ai=preview]').click();await expect(page.locator('[data-ai=apply]')).toBeEnabled();await page.locator('[data-ai=apply]').click();
+ await expect(frame(page).locator('[data-v3-id=label-customer-ship]').first()).toHaveCSS('font-size','16px');await expect(frame(page).locator('[data-v3-id=label-customer-ship]').first()).toHaveCSS('font-weight','700');
+ expect(await frame(page).locator('[data-v3-id=customer-ship]').first().textContent()).toBe(valueBefore);await page.locator('[data-ai=undo]').click();await ready(page);await expect(page.locator('#revision')).toContainText('r2');
+});
