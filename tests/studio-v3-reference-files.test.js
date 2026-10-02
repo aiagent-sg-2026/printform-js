@@ -2,6 +2,7 @@ import { Blob as NodeBlob } from 'node:buffer';
 import { afterEach,beforeEach,describe,expect,it,vi } from 'vitest';
 import { parseReferenceFile,parseReferenceFiles,REFERENCE_LIMITS as L,ReferenceFileError,referenceTotals } from '../studio-v3/reference-files.js';
 import { detectReferenceFormat,imageHeader } from '../studio-v3/reference-formats.js';
+import {observePdfWorkerErrors} from '../studio-v3/reference-pdf-errors.js';
 import { previewSize } from '../studio-v3/reference-limits.js';
 const runtimeState=vi.hoisted(()=>({value:null}));
 vi.mock('../studio-v3/reference-pdf-runtime.js',()=>({createPdfRuntime:()=>runtimeState.value}));
@@ -19,8 +20,8 @@ function pdfRuntime({items=[textItem()],width=200,height=300,pages=1,permissions
     render:vi.fn(()=>({promise:renderError ? Promise.reject(renderError) : Promise.resolve(),cancel:vi.fn()})),cleanup:vi.fn()};
   const pdf={numPages:pages,getPermissions:vi.fn(async()=>permissions),getPage:vi.fn(async()=>page)};
   const loading={promise:loadingError ? Promise.reject(loadingError) : Promise.resolve(pdf),destroy:vi.fn(async()=>{})};
-  const runtime={worker:{},port:{addEventListener:vi.fn()},destroy:vi.fn(),pdfjs:{getDocument:vi.fn(()=>loading),AnnotationMode:{DISABLE:0},Util:{transform:(a,b)=>[a[0]*b[0],0,0,a[3]*b[3],a[0]*b[4]+a[4],a[3]*b[5]+a[5]]}}};
-  runtimeState.value=runtime; return {runtime,page,pdf,loading};
+  const runtime={worker:{},port:new EventTarget(),destroy:vi.fn(),pdfjs:{getDocument:vi.fn(()=>loading),AnnotationMode:{DISABLE:0},Util:{transform:(a,b)=>[a[0]*b[0],0,0,a[3]*b[3],a[0]*b[4]+a[4],a[3]*b[5]+a[5]]}}};
+  runtime.errors=observePdfWorkerErrors(runtime.port);runtime.destroy=vi.fn(()=>runtime.errors.dispose());runtimeState.value=runtime; return {runtime,page,pdf,loading};
 }
 beforeEach(()=> {
   vi.stubGlobal('Blob',NodeBlob);
@@ -155,4 +156,14 @@ it.each(['text','visual'])('rejects swallowed external-resource fallback before 
  const {runtime,page}=pdfRuntime(),original=page.streamTextContent;
  page.streamTextContent=()=>{const Factory=runtime.pdfjs.getDocument.mock.calls[0][0].BinaryDataFactory;void new Factory().fetch().catch(()=>{});return original();};
  await expect(parseReferenceFile(file(pdfBytes(),'needs-font.pdf','application/pdf'),{pdfMode})).rejects.toMatchObject({code:'PDF_UNSUPPORTED'});expect(page.render).not.toHaveBeenCalled();expect(runtime.destroy).toHaveBeenCalled();
+});
+
+
+it.each([['Image exceeded maximum allowed size and was removed.','PDF_IMAGE_LIMIT'],['Malformed image data','FILE_CORRUPT']])('rejects worker stream failure even if PDF.js resolves render: %s',async(message,code)=>{
+ const {runtime,page}=pdfRuntime();const removed=vi.spyOn(runtime.port,'removeEventListener');
+ page.render.mockImplementation(()=>{runtime.port.dispatchEvent(new MessageEvent('message',{data:{stream:5,reason:{name:'UnknownErrorException',message}}}));return {promise:Promise.resolve(),cancel:vi.fn()};});
+ await expect(parseReferenceFile(file(pdfBytes(),'broken-image.pdf','application/pdf'),{pdfMode:'visual'})).rejects.toMatchObject({code});expect(runtime.destroy).toHaveBeenCalled();expect(removed).toHaveBeenCalledWith('message',expect.any(Function));
+});
+it('accepts a genuinely blank visual PDF without fabricating a worker error',async()=>{
+ pdfRuntime({items:[]});const result=await parseReferenceFile(file(pdfBytes(),'blank.pdf','application/pdf'),{pdfMode:'visual'});expect(result.text).toBe('');expect(result.pages[0].preview).toBeTruthy();
 });
