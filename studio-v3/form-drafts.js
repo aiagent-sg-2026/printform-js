@@ -7,6 +7,20 @@ function restoreValues(form,values) {
     if (node.type === 'checkbox') node.checked = values[key]; else node.value = values[key];
   }
 }
+export function restoreDraftRecords(records,formFor,context) {
+  return records.map(record=> {
+    if (!['field','binding','block','style','collection','locale','data'].includes(record.kind) || typeof record.selected !== 'string' || !/^[a-z0-9-]+$/.test(record.selected)) throw new Error('Invalid recovery form.');
+    if (!record.values || Object.values(record.values).some(value=>!['string','boolean'].includes(typeof value))) throw new Error('Invalid recovery values.');
+    const form = formFor(record), key = `${record.kind}:${['field','binding','block'].includes(record.kind) ? record.selected : 'global'}`;
+    if (!form || key !== record.key) throw new Error('Unavailable recovery form.');
+    const names = new Set([...form.elements].map(node=>node.name || node.id));
+    if (Object.keys(record.values).some(name=>!names.has(name))) throw new Error('Unavailable recovery control.');
+    restoreValues(form,record.values);
+    const restored = valuesOf(form);
+    if (Object.entries(record.values).some(([name,value])=>restored[name] !== value)) throw new Error('Recovery control no longer supports its saved value.');
+    return {...record,form,context};
+  });
+}
 export class FormDrafts {
   constructor(callbacks) {
     this.callbacks = callbacks; this.drafts = new Map(); this.baselines = new Map(); this.applying = new Set(); this.guarding = false;
@@ -63,6 +77,9 @@ export class FormDrafts {
     this.callbacks.render();
   }
   clear() { this.drafts.clear(); this.baselines.clear(); this.focus = null; this.focusMeta = null; this.callbacks.clearJSON(); }
+  restoreRecords(records,formFor) {
+    for (const record of restoreDraftRecords(records,formFor,this.callbacks.context())) this.drafts.set(record.key,record);
+  }
   async submit(snapshot) {
     const operation = this.callbacks.apply(snapshot); this.applying.add(operation);
     document.querySelectorAll('[data-form] input,[data-form] textarea,[data-form] select,[data-form] button').forEach(n=> { n.disabled = true; });

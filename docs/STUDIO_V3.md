@@ -61,7 +61,9 @@ request and layout context. Send requires an explicit consent checkbox and
 user click. Context contains style tokens and column IDs/widths only: no data
 values, text/labels, bindings, company names or financial values. User-entered
 request text is shared, as stated in the UI. Unapplied drafts are excluded.
-Requests, proposals, tokens and Harness sessions are not persisted or exported.
+Tokens and Harness sessions are not persisted or exported. The explicit
+Keep work & update action can temporarily retain input and bounded proposals
+locally for this tab's reload; see [PWA lifecycle](STUDIO_V3_PWA.md).
 Model discovery does not send document data. Cancel/close abort the browser
 request; a dispatched provider request may already have been received.
 
@@ -84,18 +86,16 @@ Changes, new/imported documents and history navigation invalidate proposals
 and cancel pending requests. Malformed, unsafe, stale, expired and failed
 responses never apply automatically.
 
-Live compatibility remains blocked as of 2026-10-01: actual Chromium requests
-from `http://127.0.0.1:4174` and `https://yapweijun1996.github.io` to the existing
-`github-pages` `/demo/session` returned HTTP 403. No model request was sent in
-these probes. This supersedes the older successful origin probes as evidence
-of current availability. No registration, grant, credential or gateway config
-was changed. The probes used real page Origins, without a manually set Origin header.
-Only status was retained; no diagnostic response message or live admin
-registration row was inspected. HTTP 403 alone does not distinguish a wrong
-project, disabled Demo, Turnstile or origin/project policy rejection. The
-gateway owner must inspect the existing registration/access policy before
-live alias/capability and inference success can be certified. No further
-denied requests or alternate project guesses are part of this probe.
+Earlier provisional probes returned HTTP 403 and were stopped without model
+inference. That dated blocker was superseded by the owner-approved PR3 release
+at main `f0e02d7`: on 2026-10-01 21:01 UTC, the real public page completed
+session 201, model discovery 200 and one fictional `demo-fast` inference 200,
+then preview/apply/undo/save/reopen. Exact main CI
+[36921811288](https://github.com/yapweijun1996/printform-js/actions/runs/36921811288)
+passed. This is dated release evidence, not a guarantee of future provider
+availability. The PWA slice changes no project/origin registration, grants,
+credentials or gateway configuration; its deterministic upgrade tests use
+synthetic transport without sending document data or model requests.
 
 ## Source and runtime ownership
 
@@ -190,7 +190,9 @@ use the existing engine's final-page flow and repeat page numbers.
 
 `npm run build:site` includes v3 and generates invoice/purchase/delivery samples
 at `studio-v3/samples/`. The source revision is stamped into the built v3
-index as `printform-source-revision`; no service worker caches v3.
+index as `printform-source-revision` and shown in the status bar. The isolated
+v3 PWA uses a complete verified shell and immutable release assets, with
+explicit protected updates; see [PWA lifecycle](STUDIO_V3_PWA.md).
 
 `tests/studio-v3*.test.js` covers canonical model/binding/history/import safety,
 typed dataset limits, independent ERP amounts and source/history behavior.

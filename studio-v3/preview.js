@@ -1,6 +1,7 @@
 import { createStandaloneHtml } from '../studio-v2/core/exporter.js';
 import { assertTrustedContent } from '../studio-v2/core/content-security.js';
 import { bindingValidation, validatePaperReport } from './validation.js';
+import { runtimeSources } from './runtime-assets.js';
 
 const SOURCE = 'printform-studio-v3-preview';
 const NONCE = 'cHJpbnRmb3JtLXN0dWRpby12Mw==';
@@ -74,7 +75,7 @@ export class PaperPreview {
         this.finish({status:'blocked',validation:{errors:bindings.errors,warnings:[]}}, {});
         return resultPromise;
       }
-      const result = await createStandaloneHtml(project, {requireTrusted:false,networkDisabled:true,scriptNonce:NONCE});
+      const result = await createStandaloneHtml(project, {runtimeSources:await runtimeSources(),requireTrusted:false,networkDisabled:true,scriptNonce:NONCE});
       if (token !== this.token) return {status:'superseded'};
       const at = result.html.lastIndexOf('</body>');
       this.frame.srcdoc = '';

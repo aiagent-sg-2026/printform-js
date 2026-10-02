@@ -1,0 +1,22 @@
+.update-tools { display:flex; align-items:center; gap:8px; flex-wrap:wrap; min-width:0; }
+#app-version { white-space:nowrap; font-variant-numeric:tabular-nums; }
+#update-button { min-height:28px; font-size:11px; padding:3px 7px; }
+#update-status { max-width:100%; overflow-wrap:anywhere; }
+.update-choices { display:flex; gap:8px; flex-wrap:wrap; }
+#update-dialog p { line-height:1.6; }
+@media(max-width:1100px) {
+  /* iOS focus zoom depends on editable text size, independent of paper Zoom.
+     Preserve browser/OS pinch zoom; do not restrict maximum-scale/user-scalable. */
+  body :is(input,select,textarea):not([type=checkbox]):not([type=color]) { font-size:16px; line-height:1.5; }
+  #ai-panel textarea { font-size:16px; }
+  .paper-toolbar label select { width:110px; }
+  .document-title input { width:100%; }
+}
+@media(max-width:680px) {
+  .status-bar { flex-wrap:wrap; gap:5px 10px; max-height:140px; overflow:auto; }
+  #status { flex-basis:100%; }
+  #data-source { margin-left:0; max-width:100%; }
+  .update-tools { flex-basis:100%; }
+  #update-status { flex-basis:100%; font-size:12px; }
+  #update-button { min-height:34px; font-size:12px; }
+}

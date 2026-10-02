@@ -13,6 +13,7 @@ import { buildPi02 } from "./build-pi-02.mjs";
 import { buildPi03 } from "./build-pi-03.mjs";
 import { buildPi04 } from "./build-pi-04.mjs";
 import { buildStudioV3 } from './build-studio-v3.mjs';
+import { finalizeStudioV3Pwa } from './studio-v3-pwa.mjs';
 
 const root = process.cwd();
 const output = path.resolve(root, "site-dist");
@@ -82,12 +83,6 @@ function finalizePwa() {
   console.log(`Service worker precache manifest: ${appShell.length} entries`);
 }
 
-function stampStudioV3() {
-  const filename = path.resolve(output, 'studio-v3/index.html');
-  const revision = process.env.GITHUB_SHA || 'local';
-  fs.writeFileSync(filename, fs.readFileSync(filename, 'utf8').replaceAll('__PRINTFORM_V3_REVISION__', revision));
-}
-
 prepareOutput();
 copyAllowlist();
 await writePilotExports();
@@ -98,5 +93,5 @@ await buildPi02({ root, output });
 await buildPi03({ root, output });
 await buildPi04({ root, output });
 finalizePwa();
-stampStudioV3();
+finalizeStudioV3Pwa(output);
 console.log(`GitHub Pages artifact ready: ${output}`);
