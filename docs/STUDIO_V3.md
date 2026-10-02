@@ -171,7 +171,8 @@ print preview and verify ERP values before actual use.
 Item rows stay intact. A row taller than an available page is blocked as an
 overflow issue; shorten it or adjust typography. Supported section order is declarative and uses native flow rows; fields and
 columns also retain stable IDs when reordered. Footer blocks/totals
-use the existing engine's final-page flow and repeat page numbers.
+use native pagination and repeat page numbers. Non-default page geometry uses
+independent flow blocks so totals and notes can continue on separate pages.
 
 ## Verification and release
 

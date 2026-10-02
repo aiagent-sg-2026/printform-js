@@ -112,7 +112,12 @@ and zero additional margins. Existing internal section padding is preserved.
 
 Margins reserve the framework's usable logical page dimensions; the physical
 wrapper supplies the declared outer whitespace. The print rule declares the
-selected paper and orientation. Overflow validation uses the current design,
+selected paper and orientation. Non-default paper, orientation, or margins use
+native flow rows for customer/totals/notes, so final sections move independently
+when a compact page cannot hold their combined height. Stable IDs, field order,
+repeat settings, and keep-together are preserved. A single oversized section
+still blocks export. Explicit default A4 portrait with zero margins retains
+legacy placement. Overflow validation uses the current design,
 not a fixed A4 width. `validatePaperReport(report, projectOrDesign)` accepts the
 current project or design; its legacy single-argument fallback remains A4.
 
