@@ -1,0 +1,11 @@
+{
+  "id": "./",
+  "name": "Printform Studio v3",
+  "short_name": "Printform",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#1763dc",
+  "icons": [{"src":"./icon.svg","sizes":"any","type":"image/svg+xml","purpose":"any"}]
+}

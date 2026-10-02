@@ -41,7 +41,7 @@ export async function createStandaloneHtml(project, options = {}) {
   const security = options.requireTrusted !== false
     ? assertTrustedContent(assets.project, { allowExternalHttps: assets.project.manifest.assets?.allowExternalHttps === true })
     : null;
-  const sources = await loadRuntimeSources();
+  const sources = options.runtimeSources || await loadRuntimeSources();
   options.assertCurrent?.();
   const runtimeHash = await sha256(`\n${sources.documentRuntime}\n`);
   const printformRuntimeHash = await sha256(`\n${sources.printform}\n`);

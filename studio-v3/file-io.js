@@ -3,6 +3,7 @@ import { createStandaloneHtml } from '../studio-v2/core/exporter.js';
 import { compileProject, BLOCKS } from './model.js';
 import { datasetName } from './database-model.js';
 import { validPointer, inspectProject } from './validation.js';
+import { runtimeSources } from './runtime-assets.js';
 
 const FORMATS = ['', 'currency', 'number', 'percent'];
 export function validateDesign(d) {
@@ -61,6 +62,6 @@ export const filenameFor = project => (project.manifest.title || 'printform').re
 export async function exportProject(project, report) {
   const quality = inspectProject(project, report);
   if (!quality.ready) throw new Error('Render and resolve the current data or layout errors before exporting.');
-  const result = await createStandaloneHtml(project, {validation:{...quality,valid:true,productionValid:true},requireTrusted:true,networkDisabled:true,revision:project.revision});
+  const result = await createStandaloneHtml(project, {runtimeSources:await runtimeSources(),validation:{...quality,valid:true,productionValid:true},requireTrusted:true,networkDisabled:true,revision:project.revision});
   return result;
 }

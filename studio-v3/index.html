@@ -5,11 +5,15 @@
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <meta name="description" content="Design, bind and validate ERP print forms with real A4 pagination.">
   <meta name="printform-source-revision" content="__PRINTFORM_V3_REVISION__">
+  <meta name="printform-assets" content="__PRINTFORM_V3_ASSETS__">
+  <meta name="theme-color" content="#1763dc">
   <title>Printform Studio v3</title>
   <link rel="icon" href="../studio-v2/icon.svg" type="image/svg+xml">
+  <link rel="manifest" href="./manifest.webmanifest">
   <link rel="stylesheet" href="tokens.css">
   <link rel="stylesheet" href="styles.css">
   <link rel="stylesheet" href="ai-panel.css">
+  <link rel="stylesheet" href="update.css">
   <script type="module" src="app.js"></script>
 </head>
 <body inert aria-busy="true">
@@ -62,12 +66,13 @@
       <section data-ai-proposal hidden aria-label="Unapplied AI proposal"><h3>Proposed changes</h3><p data-ai-summary></p><table class="ai-diff"><thead><tr><th>Setting</th><th>Before</th><th>After</th></tr></thead><tbody data-ai-diff></tbody></table><div class="ai-actions"><button data-ai="preview" disabled>Preview suggestion</button><button data-ai="apply" class="primary" disabled>Apply suggestion</button><button data-ai="discard">Discard</button></div><p>Preview uses the same print runtime. Apply creates one history entry; Undo restores the layout. ERP values stay supplied by your data.</p></section>
     </aside>
   </main>
-  <footer class="status-bar"><span id="status" role="status" aria-live="polite">Loading Studio…</span><span id="data-source" class="status-hint">Loading data source…</span><a href="../studio-v2/">Studio v2</a></footer>
+  <footer class="status-bar"><span id="status" role="status" aria-live="polite">Loading Studio…</span><span id="data-source" class="status-hint">Loading data source…</span><span class="update-tools"><span id="app-version" aria-label="Current app version"></span><button id="update-button" disabled>Check for updates</button><button id="recovery-download" hidden>Download recovery backup</button><button id="recovery-discard" hidden>Discard recovery backup</button><span id="update-status" role="status" aria-live="polite"></span></span><a href="../studio-v2/">Studio v2</a></footer>
   <input id="open-file" type="file" accept=".json,.html,text/html,application/json" hidden>
   <input id="dataset-file" type="file" accept=".json,application/json" hidden>
   <button id="drawer-backdrop" aria-label="Close panel backdrop" hidden></button>
   <dialog id="new-dialog" aria-labelledby="new-heading"><h2 id="new-heading">Start a print form</h2><p id="new-warning"></p><div class="template-options"><button data-template="blank">Blank form<span>Build your structure step by step</span></button><button data-template="invoice">Invoice<span>Customer, line items, supplied totals</span></button><button data-template="purchase">Purchase order<span>Supplier, delivery and approval</span></button><button data-template="delivery">Delivery note<span>Quantities, packages and receipt</span></button></div><button data-action="cancel-new">Cancel</button></dialog>
   <dialog id="draft-dialog" aria-labelledby="draft-heading"><h2 id="draft-heading">Unapplied edits</h2><p>These edits have not changed the print form. Apply commits them to the form; Discard restores current values; Stay keeps editing. Database saves and template-file saves remain explicit.</p><ul id="draft-list"></ul><div class="draft-dialog-actions"><button data-draft-choice="apply" class="primary">Apply</button><button data-draft-choice="discard">Discard</button><button data-draft-choice="stay" autofocus>Stay</button></div></dialog>
+  <dialog id="update-dialog" aria-labelledby="update-heading"><h2 id="update-heading">Update Studio</h2><p data-update-summary></p><p>Keep writes a verified, browser-local recovery backup in this tab’s session storage before reload, including document data and unapplied edits. It is removed after successful recovery. It never sends work to a server or saves database records. Pending AI requests are cancelled and consent resets. Saved datasets and paper Zoom stay unchanged.</p><div class="update-choices"><button data-update-choice="keep" class="primary">Keep work & update</button><button data-update-choice="discard">Discard work & update</button><button data-update-choice="stay" autofocus>Stay</button></div></dialog>
   <noscript>Studio requires JavaScript to design and paginate forms.</noscript>
 </body>
 </html>

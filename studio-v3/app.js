@@ -14,9 +14,11 @@ import { CanvasControls } from './canvas-controls.js';
 import { AIPanel } from './ai-panel.js';
 import { restoreZoom, persistZoom } from './zoom-preference.js';
 import { assertPendingProposal } from './ai-edits.js';
+import { setupUpdates } from './update.js';
+import { createUpdateWork } from './update-work.js';
 
 const $ = selector => document.querySelector(selector);
-const state = {mode:'design',selected:'items',tab:'properties',sample:'erp',report:null,matrix:{},dirty:false,dataDraft:null,running:false,runId:0,collapsed:{},search:'',jsonError:''};
+const state = {mode:'design',selected:'items',tab:'properties',sample:'erp',report:null,matrix:{},dirty:false,dataDraft:null,running:false,runId:0,collapsed:{},search:'',jsonError:'',fileReads:0};
 let bus, displayed, zoom = 1, pageIndex = 0, editQueue = Promise.resolve();
 const database = new DemoDatabase({
   project:() => bus?.project, state:() => state, context:() => bus,
@@ -64,6 +66,7 @@ const ai = new AIPanel({bus:()=>bus,guard:work=>drafts.guard(work),sync:syncCont
   commit:(proposal,generation)=>queueEdit(async()=> { assertPendingProposal(bus,proposal,ai,generation); await editProject(bus,designOperations(bus.project,proposal.design),'AI layout suggestion'); await changed(); },false)
 });
 restoreZoom($('#zoom'));
+const updateWork = createUpdateWork({getBus:()=>bus,state,database,drafts,ai,install,renderPanels,syncControls,render,settle:()=>editQueue});
 
 function status(text) { $('#status').textContent = text; }
 function syncControls() {
@@ -261,17 +264,19 @@ document.addEventListener('change', e => {
 });
 $('#dataset-file').addEventListener('change', async e => {
   const file = e.target.files[0], context = bus; e.target.value = ''; if (!file) return;
+  state.fileReads += 1;
   try {
     if (file.size > 2*1024*1024) throw new Error('Dataset exceeds the 2 MB limit.');
     const source = await file.text();
     if (context !== bus) throw new Error('The document changed. Import the dataset again.');
     queueDatabase('import-data',{source});
-  } catch (error) { status(error.message); }
+  } catch (error) { status(error.message); } finally { state.fileReads -= 1; }
 });
 $('#document-name').addEventListener('change', e => { const title = e.target.value.trim(); if (title) queueEdit(() => mutate([{type:'set_manifest_value',path:'/title',value:title}],'template name')); });
 $('#open-file').addEventListener('change', async e => {
   const file = e.target.files[0], context = bus; e.target.value = ''; if (!file) return;
-  try { const source = await file.text(); if (bus !== context || database.busy || database.pending) throw new Error('The document changed or a database save is active. Open it again.'); install(readProject(source,file.name)); status('Opened editable v3 form. Data is an unsaved draft; Save as new retains existing database records.'); } catch (error) { status(error.message); }
+  state.fileReads += 1;
+  try { const source = await file.text(); if (bus !== context || database.busy || database.pending) throw new Error('The document changed or a database save is active. Open it again.'); install(readProject(source,file.name)); status('Opened editable v3 form. Data is an unsaved draft; Save as new retains existing database records.'); } catch (error) { status(error.message); } finally { state.fileReads -= 1; }
 });
 $('#zoom').onchange = () => { persistZoom($('#zoom')); resizePaper(); }; window.addEventListener('resize',resizePaper);
 $('#paper-scroll').addEventListener('scroll',()=> {
@@ -279,7 +284,7 @@ $('#paper-scroll').addEventListener('scroll',()=> {
   const current = paper.pages.findLastIndex(page=>page.top <= top+30);
   if (current >= 0 && current !== pageIndex) goPage(current,false);
 });
-window.addEventListener('beforeunload', e => { if (state.dirty || database.draft || state.dataDraft !== null || drafts.drafts.size) { e.preventDefault(); e.returnValue = ''; } });
+window.addEventListener('beforeunload', e => { if (!updateWork.leaving() && updateWork.pending()) { e.preventDefault(); e.returnValue = ''; } });
 document.addEventListener('keydown', e => {
   if (!(e.metaKey || e.ctrlKey) || e.altKey || e.isComposing) return;
   if (e.key.toLowerCase() === 's') { e.preventDefault(); drafts.guard(() => queueEdit(() => action('save'))).catch(error=>status(error.message)); }
@@ -287,6 +292,7 @@ document.addEventListener('keydown', e => {
 });
 await database.init();
 const initial = database.starting(newProject()); install(initial.project,initial.reference,'builtin-demo');
+await updateWork.restore(); setupUpdates(updateWork);
 
 // Keep startup controls inactive until local dataset loading can no longer replace the document.
 document.body.inert = false; document.body.setAttribute('aria-busy','false');
