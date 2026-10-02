@@ -1,3 +1,5 @@
+import { compactA5Record } from './compact-a5-demo.js';
+import { demoStarterRecords } from './demo-catalog.js';
 import { sampleData } from './model.js';
 
 export const DATASET_FORMAT = 'printform-studio-v3-dataset';
@@ -64,6 +66,8 @@ export function newItem(data, design, types = new Map()) {
 }
 export function validateDataset(data) {
   if (!data || typeof data !== 'object' || Array.isArray(data)) throw new Error('Dataset must be a JSON object.');
+  if (data.document?.currency !== undefined && !['MYR','USD','SGD','EUR','CNY','JPY'].includes(data.document.currency)) throw new Error('Dataset currency is unsupported.');
+  if (data.document?.currency && data.summary?.currency && data.summary.currency !== data.document.currency) throw new Error('Document and totals currencies must match.');
   if (!Array.isArray(data.items) || data.items.length > 500) throw new Error('Dataset /items must be an array with at most 500 records.');
   if (data.items.some(row => !row || typeof row !== 'object' || Array.isArray(row))) throw new Error('Each item record must be an object.');
   let nodes = 0;
@@ -109,7 +113,7 @@ export function datasetRecord(type, data, title, id = crypto.randomUUID()) {
   return {id,type,title:name,data:validateDataset(data),origin:'local-demo'};
 }
 export function starterRecords() {
-  return DATA_TYPES.map(type => ({...datasetRecord(type,sampleData(type),`${{invoice:'Invoice',purchase:'Purchase order',delivery:'Delivery note'}[type]} · starter`, `starter:${type}`),origin:'builtin-demo'}));
+  return [...DATA_TYPES.map(type => ({...datasetRecord(type,sampleData(type),`${{invoice:'Invoice',purchase:'Purchase order',delivery:'Delivery note'}[type]} · starter`, `starter:${type}`),origin:'builtin-demo'})),...demoStarterRecords(),compactA5Record()];
 }
 export function exportDataset(record) {
   return JSON.stringify({format:DATASET_FORMAT,version:1,dataset:{type:record.type,title:record.title,data:record.data}},null,2);
@@ -125,3 +129,5 @@ export function importDataset(source, type) {
   return {...datasetRecord(type,parsed,'Imported sample'),origin:'imported-data'};
 }
 export const sameData = (a,b) => JSON.stringify(a) === JSON.stringify(b);
+
+export const datasetMatchesProject = (record,project) => record.type === project.manifest.studioV3.type && (!project.sampleData.document?.kind || record.data.document?.kind === project.sampleData.document.kind);

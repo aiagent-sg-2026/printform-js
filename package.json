@@ -10,7 +10,8 @@
   "dependencies": {
     "@earendil-works/pi-agent-core": "0.85.1",
     "@earendil-works/pi-ai": "0.85.1",
-    "jsdom": "^27.0.1"
+    "jsdom": "^27.0.1",
+    "pdfjs-dist": "6.3.289"
   },
   "scripts": {
     "build": "npm run test -- --run --maxWorkers=1 --no-file-parallelism && npm run build:assets && node scripts/postbuild-generate-preview.js",

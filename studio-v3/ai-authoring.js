@@ -1,3 +1,4 @@
+import { DEMO_BINDING_PATHS } from './demo-binding-paths.js';
 import { BLOCKS, selectionField, defaultDesign } from './model.js';
 import { validateDesign } from './file-io.js';
 import { resolvePointer } from '../studio-v2/core/json.js';
@@ -121,6 +122,7 @@ export function availableBindings(project,explicitPointers=[],effectiveCollectio
     const d=defaultDesign(type); add(d.collection);
     for (const id of BLOCKS) for (const f of fieldList(d,id)) if (f.pointer.startsWith('./')) for (const owner of collections) add(f.pointer,owner); else add(f.pointer);
   }
+  for (const pointer of DEMO_BINDING_PATHS) if (pointer.startsWith('./')) for (const owner of collections) add(pointer,owner); else add(pointer);
   const walkSchema = (schema,path='',depth=0,owner=collection)=> {
     if (depth > 4 || !schema || typeof schema !== 'object') return;
     if (schema.type === 'array') { add(path); if (collections.includes(path)) walkSchema(schema.items,'.',depth+1,path); }

@@ -1,5 +1,6 @@
+import { createLocalDatasetSource } from './data-source-adapter.js';
 import { createDatabase, storageMessage, DATABASE_NAME } from './database-store.js';
-import { datasetRecord, datasetName, datasetTitleFor, dataValue, exportDataset, importDataset, itemColumns, newItem, numericPaths, removeRowPaths, setDataValue, starterRecords, validateDataset } from './database-model.js';
+import { datasetRecord, datasetMatchesProject, datasetName, datasetTitleFor, dataValue, exportDataset, importDataset, itemColumns, newItem, numericPaths, removeRowPaths, setDataValue, starterRecords, validateDataset } from './database-model.js';
 import { designOf } from './model.js';
 import { databaseView } from './database-view.js';
 
@@ -13,7 +14,7 @@ export class DemoDatabase {
   get project() { return this.callbacks.project(); }
   get state() { return this.callbacks.state(); }
   async init() {
-    this.store = await createDatabase(); await this.refresh();
+    this.store = await createDatabase(); this.source = createLocalDatasetSource(this.store); await this.refresh();
     for (const type of ['invoice','purchase','delivery']) this.selected[type] = await this.store.selected(type);
     if (globalThis.BroadcastChannel && this.store.persistent) {
       this.channel = new BroadcastChannel(DATABASE_NAME);
@@ -24,9 +25,9 @@ export class DemoDatabase {
     }
   }
   starting(project) {
-    const type = designOf(project).type;
-    const record = this.records.find(r=>r.type === type && r.id === this.selected[type]) || this.records.find(r=>r.id === `starter:${type}`);
-    return record ? {project:{...project,sampleData:structuredClone(record.data)},reference:referenceFor(record)} : {project,reference:null};
+    const type = designOf(project).type, kind = project.sampleData.document?.kind;
+    const record = kind ? this.records.find(r=>r.type === type && r.data.document?.kind === kind && r.id === this.selected[type]) || this.records.find(r=>r.data.document?.kind === kind) : this.records.find(r=>r.type === type && r.id === this.selected[type]) || this.records.find(r=>r.id === `starter:${type}`);
+    return record ? {project:{...project,manifest:{...project.manifest,...(record.data.document?.currency ? {currency:record.data.document.currency} : {})},sampleData:structuredClone(record.data)},reference:referenceFor(record)} : {project,reference:null};
   }
   resetDraft() { this.draft = null; this.errors.clear(); this.rowPage = 0; this.error = ''; }
   guardDraft() {
@@ -86,9 +87,9 @@ export class DemoDatabase {
   async choose(id) {
     if (!id || !this.guardDraft()) return;
     await this.refresh(); const record = this.records.find(r=>r.id === id);
-    if (!record || record.type !== designOf(this.project).type) throw new Error('Choose a dataset for the current document type.');
+    if (!record || !datasetMatchesProject(record,this.project)) throw new Error('Choose a dataset for the current document type.');
     await this.store.select(record.type,record.id); this.selected[record.type] = record.id;
-    await this.apply(record); this.message = 'Loaded saved dataset into the form. Your template layout is retained.';
+    await this.apply(await this.source.read(record.id,{revision:record.revision})); this.message = 'Loaded saved dataset into the form. Your template layout is retained.';
   }
   async save(copy) {
     if (this.state.dataDraft !== null) throw new Error('Apply your advanced JSON edits before saving the dataset.');
@@ -110,6 +111,7 @@ export class DemoDatabase {
   }
   async import(source) {
     const record = importDataset(source,designOf(this.project).type);
+    if (!datasetMatchesProject(record,this.project)) throw new Error('Imported dataset must match the selected business document kind.');
     if (!this.guardDraft()) return;
     const [saved] = await this.store.write([{id:record.id,record,expectedRevision:null}],{key:`active:${record.type}`,value:record.id});
     await this.refresh(); this.selected[record.type] = record.id; this.channel?.postMessage({changed:true});
