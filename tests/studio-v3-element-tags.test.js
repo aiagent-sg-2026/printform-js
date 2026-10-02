@@ -4,21 +4,27 @@ import { newProject, designOf } from '../studio-v3/model.js';
 import { createBus, designOperations, editProject } from '../studio-v3/controller.js';
 
 beforeEach(()=> { document.body.innerHTML = '<button data-ai-add>Add to chat</button><div data-ai-element-tags hidden></div>'; });
-function setup() {
-  let bus = createBus(newProject()), selected = 'items-description';
+function setup(project = newProject()) {
+  let bus = createBus(project), selected = 'items-description';
   const changed = vi.fn(), highlight = vi.fn(), select = vi.fn(), open = vi.fn(), report = vi.fn();
   const tags = new AIElementTags({bus:()=>bus,selection:()=>selected,onChange:changed,highlight,select,open,report});
   return {tags,changed,highlight,select,open,report,get bus(){return bus;},choose:id=>selected=id,replace:value=>bus=value};
 }
 it('adds multiple stable semantic references and comments without business or binding content',()=> {
-  const {tags,bus,changed} = setup();
+  const project = newProject();
+  project.manifest.documentId = 'v3-0e1a5cd7-434d-47fe-a86e-84112512dae6';
+  const {tags,changed} = setup(project);
   tags.add('header-company'); tags.add('label-items-description'); tags.add('header-title');
   const input = document.querySelector('[data-ai-tag-comment="header-company"]'); input.value = 'Make this value 16pt and navy'; input.dispatchEvent(new Event('input',{bubbles:true}));
   const payload = tags.payload();
-  expect(payload[0]).toEqual({documentId:bus.project.manifest.documentId,revision:0,id:'header-company',kind:'field',block:'header',role:'value',comment:'Make this value 16pt and navy'});
-  expect(payload[1]).toMatchObject({id:'label-items-description',kind:'label',role:'label'});
-  expect(payload[2]).toMatchObject({id:'header-title',kind:'heading'});
-  for (const text of ['ACME','Industrial','Company','/company/name','125','Sterling']) expect(JSON.stringify(payload)).not.toContain(text);
+  expect(payload).toEqual([
+    {documentId:project.manifest.documentId,revision:0,id:'header-company',kind:'field',block:'header',role:'value',comment:'Make this value 16pt and navy'},
+    {documentId:project.manifest.documentId,revision:0,id:'label-items-description',kind:'label',block:'items',role:'label',comment:''},
+    {documentId:project.manifest.documentId,revision:0,id:'header-title',kind:'heading',block:'header',role:'heading',comment:''}
+  ]);
+  // Opaque identity may contain price digits; all other properties must stay metadata-only.
+  const semanticPayload = payload.map(({documentId,...reference})=>reference);
+  for (const text of ['ACME','Industrial','Company','/company/name','125','Sterling']) expect(JSON.stringify(semanticPayload)).not.toContain(text);
   expect(changed).toHaveBeenCalledTimes(4);
   expect(document.querySelector('[data-ai-element-tags]').hidden).toBe(false);
 });
