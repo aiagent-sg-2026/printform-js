@@ -55,9 +55,14 @@ npx playwright test e2e/studio-v3-a4-presets.spec.js --workers=1
 
 Each kind must pass these checks:
 
-1. Open its existing Business demo choice; confirm A4 and the actual first record.
-2. Edit a field label through the inspector. Use the 64-row campus dataset where
-   available; it must render on multiple pages with the exact source row sequence.
+1. Open its existing Business demo choice; confirm A4. Explicitly select the first
+   catalog fixture, assert the active dataset ID/name before Save, and compare the
+   complete saved data. New uses a compatible remembered dataset or the first
+   title-sorted record, which need not be the first catalog fixture.
+2. Edit a field label through the inspector. Select the campus dataset where
+   available, assert its active ID/name, and preserve the edited label and exact
+   source data. Real 64-row fixtures must span multiple pages in source row order;
+   bank campus fixtures retain their two supplied allocation rows.
 3. Reopen a long fictional company/customer-name variation after opening another
    form. All financial data and the edited design must survive unchanged.
 4. Keep totals and notes once, item headings once on each page carrying rows,
