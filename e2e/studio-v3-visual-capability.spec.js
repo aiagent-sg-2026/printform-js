@@ -42,12 +42,12 @@ for(const kind of ['image','scanned-pdf'])test(`verified ${kind} uses bounded Re
  expect(user.filter(p=>p.type==='input_image')).toHaveLength(1);expect(user[1].image_url).toMatch(/^data:image\/(png|jpeg|webp);base64,/);
  expect(JSON.stringify(wire)).not.toMatch(/ACME Industrial|Sterling Manufacturing|sampleData|dmo_synthetic/);
  expect(user[0].text).toContain('label-customer-ship');expect(user[0].text).toContain('visual-pages');
- await page.locator('[data-ai=preview]').click();await expect(page.locator('[data-ai=apply]')).toBeEnabled();
- await page.locator('[data-ai=apply]').click();await ready(page);await expect(page.locator('#revision')).toHaveText('r1');
+ await page.locator('[data-ai=preview]').click();await expect(page.locator('[data-ai=apply]')).toBeEnabled();await expect(page.locator('#revision')).toHaveText('r0');
+ await page.locator('[data-ai=apply]').click();await ready(page);await expect(page.locator('#revision')).toHaveText('r1 · unsaved template');
  expect(await paper(page).locator('[data-v3-id=totals-total]').textContent()).toBe(total);
- expect(await node().evaluate(n=>getComputedStyle(n).fontWeight)).toBe('700');
+ expect(await node().evaluate(n=>({font:getComputedStyle(n).fontSize,weight:getComputedStyle(n).fontWeight}))).toEqual({font:'16px',weight:'700'});
  await page.screenshot({path:info.outputPath(`${kind}-selected-label-applied.png`)});
- await page.locator('[data-ai=undo]').click();await ready(page);
+ await page.locator('[data-ai=undo]').click();await ready(page);await expect(page.locator('#revision')).toHaveText('r2 · unsaved template');
  expect(await node().evaluate(n=>({font:getComputedStyle(n).fontSize,weight:getComputedStyle(n).fontWeight}))).toEqual(before);
 });
 test('fresh discovery revocation blocks image inference after an earlier positive result',async({page})=>{

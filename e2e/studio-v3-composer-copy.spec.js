@@ -12,8 +12,9 @@ test('quiet composer retains accessible exact-request inspection and the complet
  await control.focus();await page.keyboard.press('Enter');await expect(details).toHaveAttribute('open','');await expect(page.locator('#ai-share')).toBeVisible();
  await page.locator('#ai-prompt').fill('Use navy accents.');await expect(page.locator('#ai-share')).toContainText('Use navy accents.');
  expect(await page.locator('#ai-share').textContent()).not.toMatch(/ACME Industrial|Sterling Manufacturing|12,150/);
- await expect(page.locator('footer #status')).toContainText('45 rows');await expect(page.locator('footer')).toContainText('current layout passed');
- await expect(page.locator('footer')).toContainText('Built-in demo');await expect(page.locator('#app-version')).toBeVisible();
+ const footer=page.locator('body > footer.status-bar');await expect(footer).toHaveCount(1);
+ await expect(footer.locator('#status')).toContainText('45 rows');await expect(footer).toContainText('current layout passed');
+ await expect(footer).toContainText('Built-in demo');await expect(page.locator('#app-version')).toBeVisible();
  await expect(page.getByRole('button',{name:'Check for updates',exact:true})).toBeVisible();await expect(page.locator('#update-status')).toHaveCount(1);
  await expect(page.getByRole('link',{name:'Studio v2',exact:true})).toBeVisible();expect(requests).toHaveLength(0);
 });

@@ -6,7 +6,9 @@ import {demoStarterRecords} from '../studio-v3/demo-catalog.js';
 
 // Runs under the repository's normal GitHub PR CI in all three browser engines.
 // No provider request or model output is represented by this layout acceptance test.
-test.use({serviceWorkers:'block'});test.setTimeout(120000);
+// Keep normal service-worker handling: Playwright's block shim reads the forbidden
+// serviceWorker getter inside the intentionally opaque preview sandbox.
+test.setTimeout(120000);
 const preview=page=>page.frameLocator('#preview-frame');
 const ready=page=>expect(page.locator('[data-action=export]')).toBeEnabled({timeout:30000});
 async function choose(page,kind) {
@@ -15,10 +17,21 @@ async function choose(page,kind) {
  if(await details.getAttribute('open')===null)await details.locator('summary').click();
  await page.locator(`[data-demo-template=${kind}]`).click();await ready(page);
 }
-async function save(page,info,name) {
+async function chooseDataset(page,record) {
+ await page.locator('[data-mode=data]').click();
+ await page.locator('#database-choice').selectOption(record.id);
+ await expect(page.locator('#database-choice')).toHaveValue(record.id);await ready(page);
+ await expect(page.locator('#db-draft-status')).toHaveText('Form matches saved dataset');
+}
+async function save(page,info,name,record) {
+ // Prove which dataset is active before downloading, then compare the complete saved data.
+ await expect(page.locator('#database-choice')).toHaveValue(record.id);
+ await expect(page.locator('#database-name')).toHaveValue(record.title);
  const downloading=page.waitForEvent('download');await page.locator('[data-action=save]').click();
  const download=await downloading,path=info.outputPath(`${name}.printform.json`);await download.saveAs(path);
- return {path,source:JSON.parse(await fs.readFile(path,'utf8'))};
+ const source=JSON.parse(await fs.readFile(path,'utf8'));
+ expect(JSON.stringify(source.project.sampleData)).toBe(JSON.stringify(record.data));
+ return {path,source};
 }
 async function facts(root) {
  return root.locator('.printform_page').evaluateAll(pages=>pages.map(p=>({
@@ -38,11 +51,15 @@ for(const preset of A4_PRESETS)test(`${preset.documentKind}: real data → edit 
  await choose(page,preset.documentKind);
  await expect(page.locator('#paper-kind')).toHaveText('A4');
  await expect(page.locator('#paper-dimensions')).toHaveText('210 × 297 mm');
- const records=demoStarterRecords(preset.documentKind),first=await save(page,info,`${preset.id}-original`);
+ // New uses the remembered compatible dataset or title-sorted fallback. Choose
+ // this fixture explicitly; catalog construction order is not the active dataset.
+ const records=demoStarterRecords(preset.documentKind);await chooseDataset(page,records[0]);
+ const first=await save(page,info,`${preset.id}-original`,records[0]);
  expect(first.source.project.sampleData).toEqual(records[0].data);
  expect(first.source.project.manifest.studioV3.layoutPreset).toBe(preset.id);
  await expect(preview(page).locator('.prowitem_processed')).toHaveCount(records[0].data.items.length);
  // The existing inspector edits the chosen design without a second layout picker.
+ await page.locator('[data-mode=design]').click();
  await page.locator('#left-panel [data-select=items-description]').click();
  await page.getByLabel('Label',{exact:true}).fill('Scope / 项目');
  const before=await page.locator('#revision').textContent();
@@ -50,10 +67,10 @@ for(const preset of A4_PRESETS)test(`${preset.documentKind}: real data → edit 
  await expect(page.locator('#revision')).not.toHaveText(before);await ready(page);
  const campus=records.find(record=>record.data.demo.scenario==='campus');
  if(campus) {
-  await page.locator('[data-mode=data]').click();await page.locator('#database-choice').selectOption(campus.id);await ready(page);
+  await chooseDataset(page,campus);
   await expect(preview(page).locator('.prowitem_processed')).toHaveCount(campus.data.items.length);
  }
- const chosen=campus || records[0],saved=await save(page,info,`${preset.id}-edited`);
+ const chosen=campus || records[0],saved=await save(page,info,`${preset.id}-edited`,chosen);
  expect(saved.source.project.sampleData).toEqual(chosen.data);
  expect(saved.source.project.manifest.studioV3.columns.find(f=>f.id==='description').label).toBe('Scope / 项目');
  // Fictional long-name variation changes only display strings, never a financial value.
@@ -67,7 +84,7 @@ for(const preset of A4_PRESETS)test(`${preset.documentKind}: real data → edit 
  await expect(page.locator('#document-name')).toHaveValue(long.project.manifest.title);await ready(page);
  await expect(preview(page).locator('[data-v3-id=header-company]').first()).toHaveText(long.project.sampleData.company.name);
  await expect(preview(page).locator('[data-v3-id=customer-bill]').first()).toHaveText(long.project.sampleData.customer.name);
- const reopened=await save(page,info,`${preset.id}-reopened`);
+ const reopened=await save(page,info,`${preset.id}-reopened`,{id:'',title:long.project.manifest.sampleDataTitle,data:long.project.sampleData});
  expect(reopened.source.project.sampleData).toEqual(long.project.sampleData);
  expect(reopened.source.project.manifest.studioV3).toEqual(long.project.manifest.studioV3);
  const rendered=await facts(preview(page));
@@ -75,7 +92,8 @@ for(const preset of A4_PRESETS)test(`${preset.documentKind}: real data → edit 
  expect(rendered.every(p=>p.width===750 && p.height===1079)).toBe(true);
  expect(rendered.filter(p=>p.rows.length).every(p=>p.headings===1)).toBe(true);
  expect(rendered.every(p=>p.pageNumbers===1)).toBe(true);
- if(campus)expect(rendered.length).toBeGreaterThan(1);
+ // Bank campus fixtures have two real allocation rows and remain short forms.
+ if(campus?.data.items.length===64)expect(rendered.length).toBeGreaterThan(1);
  await expect(preview(page).locator('[data-v3-id=totals]')).toHaveCount(1);
  await expect(preview(page).locator('[data-v3-id=footer]')).toHaveCount(1);
  const bodyOverflow=await preview(page).locator('.prowitem_processed td').evaluateAll(cells=>cells.filter(cell=>cell.scrollWidth>cell.clientWidth+1).length);

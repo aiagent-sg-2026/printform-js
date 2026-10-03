@@ -19,8 +19,10 @@ async function mock(page,replies){
   });return calls;
 }
 async function save(page,info,name){
+  const revision=(await page.locator('#revision').innerText()).match(/^r(\d+)(?: · unsaved template)?$/);expect(revision).not.toBeNull();
   const pending=page.waitForEvent('download');await page.locator('[data-action=save]').click();
   const download=await pending,path=info.outputPath(name);await download.saveAs(path);
+  await expect(page.locator('#revision')).toHaveText(`r${revision[1]}`);
   return {path,project:JSON.parse(await fs.readFile(path,'utf8')).project};
 }
 async function expectYellow(locator){
@@ -41,7 +43,7 @@ test('yellow rows are rendered across pages; Preview Apply Undo and save/reopen 
   await page.locator('[data-ai=preview]').click();await expect(page.locator('[data-ai=apply]')).toBeEnabled();
   await expectYellow(paper(page).locator('.prowitem_processed'));await expectYellow(paper(page).locator('.prowitem_processed tr'));await expectYellow(paper(page).locator('.prowitem_processed td'));
   await expect(page.locator('#revision')).toHaveText('r0');await page.screenshot({path:info.outputPath('yellow-table-row-preview.png')});
-  await page.locator('[data-ai=apply]').click();await ready(page);await expect(page.locator('#revision')).toHaveText('r1');
+  await page.locator('[data-ai=apply]').click();await ready(page);await expect(page.locator('#revision')).toHaveText('r1 · unsaved template');
   await expectYellow(paper(page).locator('.prowitem_processed tr'));await expectYellow(paper(page).locator('.prowitem_processed td'));
   await expect(paper(page).locator('.brand-mark').first()).toHaveCSS('color','rgb(23, 99, 220)');
   await expect(paper(page).locator('th').first()).toHaveCSS('background-color','rgb(233, 239, 248)');
@@ -54,7 +56,7 @@ test('yellow rows are rendered across pages; Preview Apply Undo and save/reopen 
   await expectYellow(printed.locator('.prowitem_processed'));await expectYellow(printed.locator('.prowitem_processed tr'));await expectYellow(printed.locator('.prowitem_processed td'));
   await expect(printed.locator('.prowitem_processed')).toHaveCount(before.project.sampleData.items.length);
   if(browserName==='chromium')await printed.pdf({path:info.outputPath('yellow-row-fill-A4.pdf'),preferCSSPageSize:true,printBackground:true});await printed.close();
-  await page.locator('[data-ai=undo]').click();await ready(page);await expect(page.locator('#revision')).toHaveText('r2');
+  await page.locator('[data-ai=undo]').click();await ready(page);await expect(page.locator('#revision')).toHaveText('r2 · unsaved template');
   expect(await paper(page).locator('.prowitem_processed tr').evaluateAll(nodes=>nodes.map(node=>getComputedStyle(node).backgroundColor))).toEqual(originalColors);
   const undone=await save(page,info,'undo-row-fill.printform.json');expect(undone.project.manifest.studioV3).toEqual(before.project.manifest.studioV3);expect(undone.project.sampleData).toEqual(before.project.sampleData);
   const chooser=page.waitForEvent('filechooser');await page.locator('[data-action=open]').click();await(await chooser).setFiles(authored.path);await ready(page);
@@ -83,7 +85,7 @@ test('padding-only and wrong-color results are repaired before a natural yellow-
  await expect(page.locator('[data-ai=apply]')).toBeDisabled();await expect(page.locator('#revision')).toHaveText('r0');
  await page.locator('[data-ai=preview]').click();await expect(page.locator('[data-ai=apply]')).toBeEnabled();
  await expectYellow(paper(page).locator('.prowitem_processed td'));await page.locator('[data-ai=apply]').click();await ready(page);
- await expect(page.locator('#revision')).toHaveText('r1');await expectYellow(paper(page).locator('.prowitem_processed td'));
+ await expect(page.locator('#revision')).toHaveText('r1 · unsaved template');await expectYellow(paper(page).locator('.prowitem_processed td'));
 });
 test('comments-only table requests reject unrelated field styling before previewing the requested fill',async({page})=>{
  const unrelated={kind:'proposal',summary:'Made data rows yellow',operations:[{type:'set_field',target:'items-description',patch:{valueStyle:{fontSize:12}}}]};
@@ -93,5 +95,5 @@ test('comments-only table requests reject unrelated field styling before preview
  await expect(page.locator('[data-ai-proposal]')).toBeVisible();expect(calls).toHaveLength(2);expect(JSON.stringify(calls[1])).toContain('TABLE_BACKGROUND_INTENT');
  await expect(page.locator('.ai-diff')).toContainText('tableStyle.rowBackground');await expect(page.locator('#revision')).toHaveText('r0');
  await page.locator('[data-ai=preview]').click();await expect(page.locator('[data-ai=apply]')).toBeEnabled();await expectYellow(paper(page).locator('.prowitem_processed td'));
- await page.locator('[data-ai=apply]').click();await ready(page);await expect(page.locator('#revision')).toHaveText('r1');await expectYellow(paper(page).locator('.prowitem_processed td'));
+ await page.locator('[data-ai=apply]').click();await ready(page);await expect(page.locator('#revision')).toHaveText('r1 · unsaved template');await expectYellow(paper(page).locator('.prowitem_processed td'));
 });
