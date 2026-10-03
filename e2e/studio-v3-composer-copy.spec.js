@@ -1,0 +1,19 @@
+import {test,expect} from '@playwright/test';
+test.use({serviceWorkers:'block'});
+test('quiet composer retains accessible exact-request inspection and the complete footer',async({page})=>{
+ const requests=[];await page.route('https://gpt.yapweijun1996.com/demo/**',route=>{requests.push(route.request().url());return route.abort();});
+ await page.goto('/studio-v3/');await expect(page.locator('[data-action=export]')).toBeEnabled({timeout:30000});
+ await page.locator('[data-ai-toggle]').click();
+ await expect(page.getByText('Send shares your message, comments and reviewed context with gpt.yapweijun1996.com and its model provider.',{exact:false})).toHaveCount(0);
+ await expect(page.getByText('Sharing details · review exact request',{exact:true})).toHaveCount(0);
+ await expect(page.getByText('Ask about this layout, or review an edit proposal.',{exact:true})).toHaveCount(0);
+ const details=page.locator('.ai-sharing'),control=details.locator('summary');
+ await expect(control).toHaveAttribute('aria-label','Inspect outgoing request');await expect(control.locator('svg')).toBeVisible();
+ await control.focus();await page.keyboard.press('Enter');await expect(details).toHaveAttribute('open','');await expect(page.locator('#ai-share')).toBeVisible();
+ await page.locator('#ai-prompt').fill('Use navy accents.');await expect(page.locator('#ai-share')).toContainText('Use navy accents.');
+ expect(await page.locator('#ai-share').textContent()).not.toMatch(/ACME Industrial|Sterling Manufacturing|12,150/);
+ await expect(page.locator('footer #status')).toContainText('45 rows');await expect(page.locator('footer')).toContainText('current layout passed');
+ await expect(page.locator('footer')).toContainText('Built-in demo');await expect(page.locator('#app-version')).toBeVisible();
+ await expect(page.getByRole('button',{name:'Check for updates',exact:true})).toBeVisible();await expect(page.locator('#update-status')).toHaveCount(1);
+ await expect(page.getByRole('link',{name:'Studio v2',exact:true})).toBeVisible();expect(requests).toHaveLength(0);
+});
