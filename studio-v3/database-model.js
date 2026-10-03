@@ -130,4 +130,9 @@ export function importDataset(source, type) {
 }
 export const sameData = (a,b) => JSON.stringify(a) === JSON.stringify(b);
 
-export const datasetMatchesProject = (record,project) => record.type === project.manifest.studioV3.type && (!project.sampleData.document?.kind || record.data.document?.kind === project.sampleData.document.kind);
+export function datasetMatchesProject(record,project) {
+  const type=project.manifest.studioV3.type,kind=project.sampleData.document?.kind,recordKind=record.data.document?.kind;
+  if(record.type!==type)return false;
+  if(kind)return recordKind===kind;
+  return !recordKind || recordKind==={invoice:'SalesInvoice',purchase:'PurchaseOrder',delivery:'DeliveryOrder'}[type];
+}

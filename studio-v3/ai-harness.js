@@ -93,7 +93,7 @@ export async function runLayoutHarness(options) {
         return {...result,iterations:attempt,usage:Object.fromEntries(Object.keys(totals).map(key=>[key,unknown.has(key) ? null : totals[key]]))};
       }
     } catch (error) {
-      if (signal.aborted || !['MALFORMED_PROPOSAL','UNSAFE_PROPOSAL','UNSAFE_SCOPE','COLUMN_WIDTH_LIMIT','NO_CHANGES'].includes(error.code) || attempt === limit) throw error;
+      if (signal.aborted || !['MALFORMED_PROPOSAL','UNSAFE_PROPOSAL','UNSAFE_SCOPE','COLUMN_WIDTH_LIMIT','NO_CHANGES','TABLE_BACKGROUND_INTENT'].includes(error.code) || attempt === limit) throw error;
       // Failed completions have unavailable usage; never report zero consumption.
       for (const key of Object.keys(totals)) unknown.add(key);
       diagnostics = safeRunDiagnostics({errors:[{code:error.code}]},project);

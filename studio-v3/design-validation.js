@@ -1,4 +1,5 @@
 import { BLOCKS, FIELD_STYLE_KEYS, FIELD_KINDS, PAPERS, ORIENTATIONS, ALIGNMENTS, FORMATS, validPointer, fieldKind, sectionOrder } from './design-authoring.js';
+import { A4_PRESET_IDS } from './a4-presets.js';
 const color = value => typeof value === 'string' && /^#[0-9a-f]{6}$/i.test(value);
 const number = (value,min,max) => typeof value === 'number' && Number.isFinite(value) && value >= min && value <= max;
 const identifier = value => typeof value === 'string' && /^[a-z0-9-]{1,60}$/.test(value);
@@ -86,10 +87,15 @@ function validateField(f,id,assets,ids) {
   if (id === 'items' && !number(f.width,1,100)) fail('Column width must be between 1 and 100%.');
 }
 export function validateDesign(d) {
-  exactDesignKeys(d,['version','title','type','color','font','padding','striped','borders','repeatHeader','repeatTable','pageNumbers','breakBefore','blocks','header','customer','collection','columns','totals','footer','sectionOrder','page','assets','logo','titleStyle','pageNumberStyle'],'design');
+  exactDesignKeys(d,['version','title','type','color','font','padding','striped','borders','repeatHeader','repeatTable','pageNumbers','breakBefore','blocks','header','customer','collection','columns','totals','footer','sectionOrder','page','assets','logo','titleStyle','pageNumberStyle','tableStyle','layoutPreset'],'design');
+  if (d.layoutPreset !== undefined && !A4_PRESET_IDS.includes(d.layoutPreset)) fail('Unsupported document layout preset.');
   if (d.version !== 1 || !['invoice','purchase','delivery'].includes(d.type)) fail('Unsupported v3 template version or document type.');
   if (!text(d.title,100)) fail('Document heading must contain at most 100 characters.');
   if (!color(d.color) || !number(d.font,6,14) || !number(d.padding,2,16)) fail('Invalid print style settings.');
+  if (d.tableStyle !== undefined) {
+    exactDesignKeys(d.tableStyle,['rowBackground'],'table style');
+    if (d.tableStyle.rowBackground !== undefined && !color(d.tableStyle.rowBackground)) fail('Table row background must be a six-digit hex color.');
+  }
   exactDesignKeys(d.blocks,BLOCKS,'blocks');
   const assets = validateAssets(d), ids = new Set();
   BLOCKS.forEach(id => {

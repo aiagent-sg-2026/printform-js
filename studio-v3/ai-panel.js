@@ -87,7 +87,7 @@ export class AIPanel {
   async discard() { const viewing = this.viewing; this.invalidate('Preview discarded.'); if (viewing) await this.restoreUnapplied(); }
   invalidate(message='Form changed. Send again for the current revision.') {
     const active = this.busy || this.proposal || this.viewing;
-    if (!this.applying) this.cancel(active ? message : 'Ask about this layout, or review an edit proposal.');
+    if (!this.applying) this.cancel(active ? message : '');
     this.conversation.expire(); this.proposal = null; if (!this.applying) this.viewing = false; this.checked = false; this.share(); this.update();
   }
   begin() {
@@ -101,7 +101,7 @@ export class AIPanel {
     const {id,signal} = this.begin();
     try { const aliases = await this.transport.discover(signal); if (id !== this.generation) return; this.setModels(aliases); this.message(`Available: ${aliases.join(', ')}. No document sent.`); }
     catch (error) { if (id === this.generation) this.error(this.timedOut === id ? fail('AI_TIMEOUT') : error); }
-    finally { if (id === this.generation) { this.transport.clear(); this.finish(); this.share(); } }
+    finally { if (id === this.generation) { this.transport.clearSession(); this.finish(); this.share(); } }
   }
   setModels(aliases) { const select = this.node('#ai-model'); for (const option of select.options) option.disabled = !aliases.includes(option.value); if (!aliases.includes(select.value)) select.value = aliases[0]; this.referenceFiles?.capabilityChanged(); }
   finish() { clearTimeout(this.timer); this.controller = null; this.busy = false; this.pendingMessage = null; this.update(); }
@@ -141,7 +141,7 @@ export class AIPanel {
       this.message(`${alias} · ${result.kind === 'answer' ? 'Read-only answer; form unchanged.' : `Candidate at r${revision}, ${result.iterations} inspection round(s). ${result.inspection?.ready ? 'Local checks passed.' : 'Local checks blocked.'} Preview before Apply.`} Tokens: ${result.usage?.total ?? 'unavailable'}.`);
     } catch (error) {
       if (id === this.generation) { const message = errorMessage(this.timedOut === id ? fail('AI_TIMEOUT') : error); this.conversation.add('assistant',message,error.name === 'AbortError' ? 'cancelled' : 'error',{request:payload.request,documentKey:this.documentKey()}); this.message(message); }
-    } finally { if (id === this.generation) { this.transport.clear(); this.finish(); this.share(); this.sync(); } }
+    } finally { if (id === this.generation) { this.transport.clearSession(); this.finish(); this.share(); this.sync(); } }
   }
   present() { this.update(); }
   async preview() {

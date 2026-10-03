@@ -17,6 +17,7 @@ import { restoreZoom, persistZoom } from './zoom-preference.js';
 import { setupUpdates } from './update.js';
 import { createUpdateWork } from './update-work.js';
 import { pageDimensions, pageSettings } from './design-authoring.js';
+import { syncPageControls, navigatePages } from './page-navigation.js';
 const $ = selector => document.querySelector(selector); setupDemoTemplatePicker();
 const state = {mode:'design',selected:'items',tab:'properties',sample:'erp',report:null,matrix:{},dirty:false,dataDraft:null,running:false,runId:0,collapsed:{},search:'',jsonError:'',fileReads:0};
 let bus, displayed, zoom = 1, pageIndex = 0, editQueue = Promise.resolve();
@@ -58,7 +59,7 @@ const paper = new PaperPreview($('#preview-frame'), (report,view) => {
   const q = inspectProject(displayed,report);
   status(q.ready ? `${q.metrics.rows} rows · ${q.metrics.logicalPages} pages · current layout passed` : q.errors[0]?.message || 'Render blocked');
 }, selection => {
-  drafts.guard(() => { state.selected = selection.id; pageIndex = Math.max(0,selection.page); renderPanels(); canvas.selectionMade(); }).catch(e=>status(e.message));
+  drafts.guard(() => { state.selected = selection.id; goPage(Math.max(0,selection.page),false); renderPanels(); canvas.selectionMade(); }).catch(e=>status(e.message));
 });
 const canvas = new CanvasControls({resize:resizePaper,guard:work => drafts.guard(work),report:status,context:()=>bus,upload:(file,target)=> {const context = bus; ++state.fileReads; return queueEdit(async()=> {const design = await importRasterAsset(context.project,file,target); if (bus !== context) throw new Error('The document changed. Upload the image again.'); await mutate(designOperations(bus.project,design),'embedded image');}).finally(()=>--state.fileReads);}});
 const elementTags = new AIElementTags({bus:()=>bus,selection:()=>state.selected,guard:work=>drafts.guard(work),report:status,onChange:()=>ai.contextChanged(true),open:()=> {canvas.close(false); ai.show();},highlight:id=>canvas.highlightElement(paper,id || state.selected),select:id=> {state.selected = id; state.mode = 'design'; renderPanels(); goPage(canvas.elementPage(paper,id)); canvas.highlightElement(paper,id); if (innerWidth <= 900) ai.suspend();}});
@@ -72,6 +73,7 @@ const updateWork = createUpdateWork({getBus:()=>bus,state,database,drafts,ai,ins
 function status(text) { $('#status').textContent = text; }
 function syncControls() {
   if (!bus) return;
+  syncPageControls(document,pageIndex,paper.pages.length,state.report?.status === 'ready');
   const q = inspectProject(bus.project,state.report);
   $('[data-action=undo]').disabled = !bus.history.canUndo;
   $('[data-action=redo]').disabled = !bus.history.canRedo;
@@ -112,10 +114,7 @@ function resizePaper() {
   if (paper.pages[pageIndex]) $('#paper-scroll').scrollTop = paper.pages[pageIndex].top*zoom;
 }
 function goPage(index, scroll = true) {
-  pageIndex = Math.max(0,Math.min(index,paper.pages.length-1));
-  if (scroll && paper.pages[pageIndex]) $('#paper-scroll').scrollTop = paper.pages[pageIndex].top * zoom;
-  document.querySelectorAll('[data-page]').forEach(n => { n.classList.toggle('active',Number(n.dataset.page) === pageIndex); n.setAttribute('aria-current',Number(n.dataset.page) === pageIndex ? 'page' : 'false'); });
-  if (paper.pages.length) $('#page-count').textContent = `Page ${pageIndex+1} / ${paper.pages.length}`;
+  pageIndex = navigatePages(document,paper.pages,index,{zoom,scroll,ready:state.report?.status === 'ready'});
 }
 async function render(project = bus.project) {
   displayed = structuredClone(project); state.report = null; resizePaper(); syncControls(); status('Measuring the real HTML layout…');

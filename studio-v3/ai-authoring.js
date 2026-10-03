@@ -3,6 +3,7 @@ import { BLOCKS, selectionField, defaultDesign } from './model.js';
 import { validateDesign } from './file-io.js';
 import { resolvePointer } from '../studio-v2/core/json.js';
 import { validPointer } from './design-authoring.js';
+import { TABLE_STYLE_KEYS, isHexColor } from './table-style.js';
 
 const unsafe = () => { throw Object.assign(new Error('UNSAFE_PROPOSAL'),{code:'UNSAFE_PROPOSAL'}); };
 const fieldKeys = ['label','pointer','format','kind','text','showLabel','labelStyle','valueStyle','width','assetId','height','fit'];
@@ -17,7 +18,7 @@ function reorder(list,order,ids) {
   if (!Array.isArray(order) || order.length !== list.length || new Set(order).size !== list.length || order.some(id=>!ids.includes(id))) unsafe();
   return order.map(id=>list[ids.indexOf(id)]);
 }
-export const AUTHORING_TYPES = ['set_element_style','set_style','set_field','add_field','remove_field','reorder_fields','set_section','reorder_sections','set_page','set_logo','set_collection','set_heading'];
+export const AUTHORING_TYPES = ['set_element_style','set_style','set_table_style','set_field','add_field','remove_field','reorder_fields','set_section','reorder_sections','set_page','set_logo','set_collection','set_heading'];
 export function applyAuthoring(design,operations,project,explicitPointers=[]) {
   if (!Array.isArray(operations) || !operations.length || operations.length > 24) unsafe();
   const diff = [], targets = [], seen = new Set();
@@ -36,6 +37,16 @@ export function applyAuthoring(design,operations,project,explicitPointers=[]) {
     } else if (op.type === 'set_style') {
       object(op,['type','patch']); object(op.patch,['color','font','padding','striped','borders','repeatHeader','repeatTable','pageNumbers','breakBefore']);
       for (const [key,value] of Object.entries(op.patch)) { record('style',key,design[key],value); design[key] = structuredClone(value); }
+    } else if (op.type === 'set_table_style') {
+      object(op,['type','target','patch']); object(op.patch,TABLE_STYLE_KEYS);
+      if (op.target !== 'items') unsafe();
+      for (const [key,value] of Object.entries(op.patch)) {
+        if (value !== null && !isHexColor(value)) unsafe();
+        record('items',`tableStyle.${key}`,design.tableStyle?.[key],value === null ? undefined : value);
+        if (value === null) { if (design.tableStyle) delete design.tableStyle[key]; }
+        else design.tableStyle = {...design.tableStyle,[key]:value};
+      }
+      if (design.tableStyle && !Object.keys(design.tableStyle).length) delete design.tableStyle;
     } else if (op.type === 'set_field') {
       object(op,['type','target','patch']); object(op.patch,fieldKeys);
       const selected = selectionField(design,op.target); if (!selected) unsafe();
@@ -135,7 +146,7 @@ export function shareAuthoring(project,context={}) {
   const d = project.manifest.studioV3;
   return {
     sections:BLOCKS.map(id=>({id,enabled:d.blocks[id].enabled,layout:d.blocks[id].layout || {},breakBefore:Boolean(d.blocks[id].breakBefore),keepTogether:Boolean(d.blocks[id].keepTogether),fields:fieldList(d,id).map(f=>({id:`${id}-${f.id}`,kind:f.kind || (f.pointer ? 'bound' : 'static'),format:f.format,width:f.width,labelStyle:f.labelStyle || {},valueStyle:f.valueStyle || {},showLabel:f.showLabel !== false}))})),
-    elements:[{id:'header-title',style:d.titleStyle || {}},{id:'page-number',style:d.pageNumberStyle || {}},{id:'header-logo',assetId:d.logo?.assetId || null}],sectionOrder:d.sectionOrder || BLOCKS,page:d.page || {paper:'A4',orientation:'portrait'},
+    elements:[{id:'header-title',style:d.titleStyle || {}},{id:'page-number',style:d.pageNumberStyle || {}},{id:'header-logo',assetId:d.logo?.assetId || null},{id:'items',style:d.tableStyle || {},styleOperation:'set_table_style'}],sectionOrder:d.sectionOrder || BLOCKS,page:d.page || {paper:'A4',orientation:'portrait'},
     assets:(d.assets || []).map(({id})=>({id})),bindings:availableBindings(project,explicitBindingPointers(context.request,context.references))
   };
 }

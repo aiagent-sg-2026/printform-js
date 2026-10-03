@@ -11,7 +11,7 @@ function exactKeys(value, keys) {
 // Excludes text, labels, bindings, collection, data, amounts and scripts.
 export function shareLayout(project) {
   const d = designOf(project);
-  return {style:Object.fromEntries(STYLE_KEYS.map(key => [key,d[key]])),columns:d.columns.map(c => ({id:`items-${c.id}`,width:c.width}))};
+  return {style:Object.fromEntries(STYLE_KEYS.map(key => [key,d[key]])),table:{target:'items',rowBackground:d.tableStyle?.rowBackground ?? null},columns:d.columns.map(c => ({id:`items-${c.id}`,width:c.width}))};
 }
 export function parseProposal(text, project,explicitPointers=[]) {
   if (typeof text !== 'string' || text.length > 20000) throw fail('MALFORMED_PROPOSAL');

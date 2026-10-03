@@ -13,6 +13,7 @@ const check = (label,name,checked) => `<label class="checkbox"><input name="${na
 const close = () => '<button type="button" class="drawer-close" data-layout="close" aria-label="Close panel">'+icon('close')+'</button>';
 const formats = value => `<label>Display format<select name="format">${[['','Plain text'],['number','Number'],['currency','Currency'],['percent','Percent']].map(([v,l])=>`<option value="${v}" ${value === v ? 'selected' : ''}>${l}</option>`).join('')}</select></label>`;
 const select = (label,name,value,choices) => `<label>${escape(label)}<select name="${name}">${choices.map(([v,l])=>`<option value="${v}" ${String(value ?? '') === v ? 'selected' : ''}>${l}</option>`).join('')}</select></label>`;
+const rowFill = design => `${input('Table row background','rowBackground',design.tableStyle?.rowBackground || '','text','pattern="#[0-9a-fA-F]{6}" placeholder="Default or #rrggbb" maxlength="7"')}<p class="hint">Use #ffff00 for yellow. A fill covers all data rows. Clear it to restore the alternate-row setting.</p>`;
 function typographyControls(label,prefix,style={},open=false) {
   return `<details ${open ? 'open' : ''}><summary>${label}</summary><div class="form-stack">${input(`${label} font (pt)`,`${prefix}.fontSize`,style.fontSize ?? '','number','min="6" max="72" step="0.5" placeholder="Inherit"')}
     ${select(`${label} weight`,`${prefix}.bold`,style.bold,[['','Inherit'],['false','Normal'],['true','Bold']])}${input(`${label} color`,`${prefix}.color`,style.color || '','text','pattern="#[0-9a-fA-F]{6}" placeholder="Inherit or #rrggbb" maxlength="7"')}
@@ -28,6 +29,7 @@ function styleForm(design) {
     ${input('Brand color','color',design.color,'color')}
     ${input('Font size (pt)','font',design.font,'number','min="6" max="14" step="0.5"')}
     ${input('Cell padding (px)','padding',design.padding,'number','min="2" max="16"')}
+    ${rowFill(design)}
     ${check('Alternate item rows','striped',design.striped)}${check('Table borders','borders',design.borders)}${check('Page numbers','pageNumbers',design.pageNumbers)}
     ${typographyControls('Page number','pageNumberStyle',design.pageNumberStyle)}
     <details><summary>Paper & margins</summary><div class="form-stack">${select('Paper size','paper',page.paper,['A4','A5','LETTER','LEGAL'].map(p=>[p,p]))}${select('Orientation','orientation',page.orientation,[['portrait','Portrait'],['landscape','Landscape']])}${['top','right','bottom','left'].map(side=>input(`${side[0].toUpperCase()+side.slice(1)} margin (px)`,`margin-${side}`,page.margins[side],'number','min="0" max="72"')).join('')}</div></details>
@@ -50,7 +52,7 @@ function blockProperties(design,id) {
     ${input('Section name','label',block.label,'text','maxlength="100"')}${check('Show section','enabled',block.enabled)}
     ${id === 'header' ? input('Document heading','title',design.title,'text','maxlength="100"')+check('Repeat header on every page','repeatHeader',design.repeatHeader) : ''}
     ${id === 'header' ? typographyControls('Heading','titleStyle',design.titleStyle,true) : ''}
-    ${id === 'items' ? check('Repeat table header','repeatTable',design.repeatTable)+check('Page break before items','breakBefore',design.breakBefore) : ''}
+    ${id === 'items' ? check('Repeat table header','repeatTable',design.repeatTable)+check('Page break before items','breakBefore',design.breakBefore)+rowFill(design) : ''}
     ${select('Section position','sectionPosition',order.indexOf(id),order.map((_,index)=>[String(index),String(index+1)]))}
     ${id !== 'items' ? `<details><summary>Section layout</summary><div class="form-stack">${input('Layout columns','layoutColumns',block.layout?.columns ?? '','number','min="1" max="4" placeholder="Template default"')}${input('Layout gap (px)','layoutGap',block.layout?.gap ?? '','number','min="0" max="48" placeholder="Template default"')}${check('Keep section together','keepTogether',block.keepTogether)}${id !== 'header' ? check('Page break before section','sectionBreakBefore',block.breakBefore) : ''}</div></details>` : ''}
     ${applyRow('Apply section')}

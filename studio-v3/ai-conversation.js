@@ -1,9 +1,11 @@
 import { STYLE_KEYS, MAX_AUTHORING_DIFFS, fail } from './ai-edits.js';
+import { isHexColor } from './table-style.js';
 export const HISTORY_LIMIT = 12;
 const roles = ['user','assistant'];
 const statuses = ['answer','ready','applied','expired','error','cancelled'];
 const authoringProperties = new Set(['id','lastPointer','label','kind','pointer','format','text','showLabel','labelStyle','valueStyle','width','assetId','height','fit','add_field','remove_field','field_order','enabled','layout','breakBefore','keepTogether','sectionOrder','page.paper','page.orientation','page.margins','logo','collection','title','typography']);
 function validAuthoringDiff(d) {
+  if (d.property === 'tableStyle.rowBackground') return d.target === 'items' && [d.before,d.after].every(v=>v === '(unset)' || isHexColor(v));
   const target = typeof d.target === 'string' && /^(document|page-number|header-logo|header-title|(?:label-)?(?:header|customer|items|totals|footer)(?:-[a-z0-9-]{1,60})?)$/.test(d.target);
   const scalar = v=>v === null || typeof v === 'boolean' || (typeof v === 'string' && v.length <= 10000) || (typeof v === 'number' && Number.isFinite(v) && Math.abs(v) <= 1000000);
   return target && authoringProperties.has(d.property) && scalar(d.before) && scalar(d.after);

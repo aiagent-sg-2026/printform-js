@@ -1,5 +1,7 @@
 import { PRINT_TYPOGRAPHY_CSS, setPrintTypographyBase } from '../studio-v2/core/typography.js';
 import { validateDesign } from './design-validation.js';
+import { tableBodyCss } from './table-style.js';
+import { a4PresetTheme } from './a4-theme.js';
 import { sectionOrder, usesFlowSections, fieldKind, styleCss, assetOf, pageSettings, pageDimensions, contentDimensions } from './design-authoring.js';
 export const escape = value => String(value ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const attr = (name, value) => ` ${name}="${escape(value)}"`;
@@ -93,7 +95,9 @@ ${d.striped ? '#pf-mount .prowitem_processed[data-pf-row-index]:nth-child(even) 
 #pf-mount .v3-notes .field { margin-bottom:8px; }
 #pf-mount .v3-page-number { margin:0 36px; padding:10px 0 16px; border-top:1px solid #bac8da; text-align:right; color:#566477; font-size:var(--pf-font-minus-1); }
 #pf-mount .v3-custom-layout .field { grid-column:auto;grid-row:auto; }
+${a4PresetTheme(d)}
 ${grid}
+${tableBodyCss(d)}
 @page { size:${page.paper === 'LETTER' ? 'letter' : page.paper === 'LEGAL' ? 'legal' : page.paper} ${page.orientation}; margin:0; }
 @media print { body { background:white; } #pf-mount .printform_page, #pf-mount .physical_page_wrapper {margin:0;box-shadow:none;} }`;
 }

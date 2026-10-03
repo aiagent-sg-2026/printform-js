@@ -1,6 +1,10 @@
-// No deployed Gateway metadata schema has been verified. Observation is not
-// authorization to infer image support; production stays closed until reviewed.
-export const imageCapability = () => false;
+// Verified public Demo Gateway contract: both Responses and multimodal input
+// must be explicitly advertised. Other metadata remains diagnostic only.
+export function imageCapability(model) {
+  const capabilities=model?.capabilities;
+  return Boolean(capabilities && typeof capabilities==='object' && !Array.isArray(capabilities)
+    && capabilities.responses===true && capabilities.multimodal===true);
+}
 const containers=new Set(['capabilities','modalities','input','output','endpoints','supported_endpoints','input_modalities','output_modalities','supported_api_variants']);
 const factKey=/^(?:supports?_)?(?:images?|vision|multimodal|responses|chat_completions|streaming|structured_output|tools|audio|files|json)$/;
 const values=new Set(['text','image','vision','audio','video','json','responses','chat','chat/completions','/responses','/chat/completions']);

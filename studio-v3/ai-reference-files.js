@@ -9,11 +9,12 @@ export class AIReferenceFiles {
     const label=node('label','Add reference PDF or image'); this.input=node('input'); this.input.type='file'; this.input.multiple=true; this.input.accept='application/pdf,image/png,image/jpeg,image/webp'; label.append(this.input);
     const modeLabel=node('label','PDF reading for new attachments');this.pdfMode=node('select');this.pdfMode.setAttribute('aria-label','PDF reading for new attachments');for(const [value,text] of [['text','Text & positions (lightweight)'],['visual','Visual pages (best-effort local preview)']]){const option=node('option',text);option.value=value;this.pdfMode.append(option);}modeLabel.append(this.pdfMode);
     this.list=node('div'); this.list.className='ai-reference-list';
-    this.notice=node('p','Files stay in memory. Text mode skips PDF appearance/images. Visual pages uses best-effort local limits; sharing pixels stays disabled until model capability is verified. If visual reading fails, choose Text & positions and attach again.');this.notice.className='hint';
+    this.notice=node('p','Files stay in memory. Text mode skips PDF appearance/images. Visual pages uses best-effort local limits. Use Check image support before sending pixels. If visual reading fails, choose Text & positions and attach again.');this.notice.className='hint';
     this.cancel=node('button','Cancel reading');this.cancel.type='button';this.cancel.hidden=true;this.cancel.addEventListener('click',()=>{this.controller?.abort();this.notice.textContent='Reference reading cancelled. Nothing was sent.';});
-    this.capability=node('p','Image input unverified. Use Check models before sending image-only references.');this.capability.className='hint';this.capability.setAttribute('role','status');
-    this.diagnostics=node('details');this.diagnostics.append(node('summary','Observed model capabilities (verification pending)'));this.diagnosticText=node('pre');this.diagnostics.append(this.diagnosticText);
-    this.root.append(modeLabel,label,this.cancel,this.list,this.capability,this.diagnostics,this.notice); panel.node('.ai-input')?.before(this.root);
+    this.capability=node('p');this.capability.className='hint';this.capability.setAttribute('role','status');
+    this.checkSupport=node('button','Check image support');this.checkSupport.type='button';this.checkSupport.addEventListener('click',()=>void this.checkImageSupport());
+    this.diagnostics=node('details');this.diagnostics.append(node('summary','Observed model capabilities'));this.diagnosticText=node('pre');this.diagnostics.append(this.diagnosticText);
+    this.root.append(modeLabel,label,this.cancel,this.list,this.capability,this.checkSupport,this.diagnostics,this.notice); panel.node('.ai-input')?.before(this.root);
     this.input.addEventListener('change',()=>{const files=[...this.input.files];this.input.value='';void this.add(files);});
     const dropTarget=panel.node('.ai-composer') || this.root;
     dropTarget.addEventListener('dragover',e=>{e.preventDefault();if(!this.locked)e.dataTransfer.dropEffect='copy';});
@@ -34,9 +35,23 @@ export class AIReferenceFiles {
   }
   changed() { ++this.version;this.panel.contextChanged(true);this.render(); }
   projection() { return referenceProjection(this.files); }
-  capabilityChanged(){const facts=this.panel.transport.capabilityDiagnostics?.() || [];this.diagnosticText.textContent=facts.length?JSON.stringify(facts,null,2):'Use Check models to inspect bounded public capability facts. No metadata schema is verified yet.';const allowed=this.panel.transport.supportsImages?.(this.panel.node('#ai-model').value)===true;this.capability.textContent=allowed?'Images available · advertised by selected model. Review every AI result.':'Image input unverified · the Gateway capability schema has not been verified. Text PDF extraction remains available; image and visual-PDF sending is disabled.';return allowed;}
-  imageBlocked(){return this.files.some(file=>file.kind==='image' || file.processing==='visual') && !this.capabilityChanged();}
-  assertReady() {if(this.reading)throw new Error('Wait for reference processing to finish.');if(this.imageBlocked())throw new Error('Image input is unverified. Check models, or remove image-only references. Choose Text & positions and reattach the PDF to send without images.');}
+  hasImages(){return this.files.some(file=>file.kind==='image' || file.processing==='visual');}
+  async checkImageSupport(){
+    if(this.locked || this.reading || this.checking)return;
+    this.checking=true;this.capabilityChanged();
+    try {await this.panel.discover();}
+    finally {this.checking=false;this.capabilityChanged();}
+  }
+  capabilityChanged(){
+    const facts=this.panel.transport.capabilityDiagnostics?.() || [],hasImages=this.hasImages();
+    this.diagnosticText.textContent=facts.length?JSON.stringify(facts,null,2):'Use Check image support or Discover available models to inspect bounded public capability facts.';
+    const allowed=this.panel.transport.supportsImages?.(this.panel.node('#ai-model').value)===true;
+    this.checkSupport.hidden=!hasImages || allowed;this.checkSupport.disabled=Boolean(this.locked || this.reading || this.checking);
+    this.capability.textContent=this.checking?'Checking image support. No reference files are shared by this check.':allowed?'Images available for this model. Review every AI result.':hasImages?'Image support is not confirmed for this model. Use Check image support to check or retry. The check shares no reference files.':'Image and visual-PDF references need confirmed image support.';
+    return allowed;
+  }
+  imageBlocked(){return this.hasImages() && !this.capabilityChanged();}
+  assertReady() {if(this.reading)throw new Error('Wait for reference processing to finish.');if(this.imageBlocked())throw new Error('Image support is not confirmed. Use Check image support, or remove image and visual-PDF references. Choose Text & positions and reattach the PDF to send without images.');}
   render() {
     this.list.replaceChildren();
     for(const file of this.files){
@@ -46,8 +61,9 @@ export class AIReferenceFiles {
       const remove=node('button','Remove');remove.type='button';remove.disabled=this.locked;remove.addEventListener('click',()=>{this.files=this.files.filter(f=>f.id!==file.id);this.changed();});
       card.append(preview,info,remove);for(const warning of file.warnings || [])card.append(node('small',warning));this.list.append(card);
     }
+    this.capabilityChanged();
   }
   contextChanged(){const key=this.panel.documentKey();if(key!==this.documentKey){this.documentKey=key;this.clear();}}
   clear(){this.controller?.abort();this.files=[];this.pdfMode.value='text';this.root.open=false;++this.version;this.render();}
-  setBusy(value){this.locked=value;for(const input of this.root.querySelectorAll('input,select,button'))input.disabled=value;}
+  setBusy(value){this.locked=value;for(const input of this.root.querySelectorAll('input,select,button'))input.disabled=value;this.checkSupport.disabled=Boolean(value || this.reading || this.checking);}
 }

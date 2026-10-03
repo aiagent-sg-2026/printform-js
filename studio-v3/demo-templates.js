@@ -2,6 +2,8 @@ import { newCompactA5Project } from './compact-a5-demo.js';
 export { newProject, designOf, sampleData } from './model.js';
 import { getDemoCatalog, demoRecordForKind } from './demo-catalog.js';
 import { newProject, compileProject, designOf } from './model.js';
+import { applyA4DemoDesign } from './a4-demo-designs.js';
+import { a4PresetForKind } from './a4-presets.js';
 const field=(id,label,pointer,format='')=>({id,label,pointer,format});
 const column=(id,label,pointer,width,format='')=>({...field(id,label,pointer,format),width});
 export function newDemoProject(kind) {
@@ -36,7 +38,7 @@ export function newDemoProject(kind) {
     design.columns=[column('no','#','./no',5),column('description','Work description','./description',35),column('previous','Previous','./previousWork',15,'currency'),column('current','Current','./currentWork',15,'currency'),column('cumulative','Cumulative','./cumulativeWork',15,'currency'),column('amount','Net amount','./amount',15,'currency')];
     design.totals=[field('previous','Previous claim (excl. tax)','/summary/previousClaim','currency'),field('current','Current claim (excl. tax)','/summary/currentClaim','currency'),field('cumulative','Cumulative claim (excl. tax)','/summary/cumulativeClaim','currency'),field('retention','Current retention','/summary/retention','currency'),...(kind==='CertifiedClaim'?[field('certified','Certified (excl. tax)','/summary/certifiedAmount','currency')]:[]),field('tax','Tax','/summary/tax','currency'),field('total','Current total (incl. tax)','/summary/total','currency')];
   }
-  return compileProject(project,design);
+  return compileProject(project,applyA4DemoDesign(design,kind));
 }
 export function setupDemoTemplatePicker() {
   const dialog=document.querySelector('#new-dialog'),holder=dialog?.querySelector('.template-options');if(!holder)return;
@@ -44,7 +46,8 @@ export function setupDemoTemplatePicker() {
   const list=document.createElement('div');list.className='demo-template-grid';
   for(const entry of [...getDemoCatalog(),{documentKind:'CompactA5Invoice',label:'Compact A5 invoice',status:'ready',scenarioCount:1,description:'45 rows · first-page company header, repeating table headings, 9pt text'}]) {
     const button=document.createElement('button');button.type='button';button.textContent=entry.label;button.disabled=entry.status!=='ready';
-    const hint=document.createElement('span');hint.textContent=entry.status==='ready'?`${entry.scenarioCount} fictional datasets · ${entry.description}`:'Definition pending confirmation';button.append(hint);
+    const preset=a4PresetForKind(entry.documentKind);
+    const hint=document.createElement('span');hint.textContent=entry.status==='ready'?`${preset ? `A4 · ${preset.label} · ` : ''}${entry.scenarioCount} fictional datasets · ${entry.description}`:'Definition pending confirmation';button.append(hint);
     if(entry.status==='ready')button.dataset.demoTemplate=entry.documentKind;
     list.append(button);
   }

@@ -26,7 +26,8 @@ export class DemoDatabase {
   }
   starting(project) {
     const type = designOf(project).type, kind = project.sampleData.document?.kind;
-    const record = kind ? this.records.find(r=>r.type === type && r.data.document?.kind === kind && r.id === this.selected[type]) || this.records.find(r=>r.data.document?.kind === kind) : this.records.find(r=>r.type === type && r.id === this.selected[type]) || this.records.find(r=>r.id === `starter:${type}`);
+    const compatible=this.records.filter(record=>datasetMatchesProject(record,project));
+    const record=compatible.find(record=>record.id===this.selected[type]) || (kind ? compatible[0] : compatible.find(record=>record.id===`starter:${type}`));
     return record ? {project:{...project,manifest:{...project.manifest,...(record.data.document?.currency ? {currency:record.data.document.currency} : {})},sampleData:structuredClone(record.data)},reference:referenceFor(record)} : {project,reference:null};
   }
   resetDraft() { this.draft = null; this.errors.clear(); this.rowPage = 0; this.error = ''; }

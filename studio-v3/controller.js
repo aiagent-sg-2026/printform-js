@@ -46,6 +46,12 @@ export function formDesign(project, selected, form, kind) {
   const values = new FormData(form);
   const text = name => String(values.get(name) || '');
   const checked = name => values.has(name);
+  const tableStyle = () => {
+    if (!values.has('rowBackground')) return;
+    const color = text('rowBackground').trim();
+    if (color) d.tableStyle = {...d.tableStyle,rowBackground:color};
+    else { if (d.tableStyle) delete d.tableStyle.rowBackground; if (d.tableStyle && !Object.keys(d.tableStyle).length) delete d.tableStyle; }
+  };
   const selection = selectionField(d,selected);
   const fieldStyle = prefix => {
     const style = {};
@@ -56,6 +62,7 @@ export function formDesign(project, selected, form, kind) {
     return style;
   };
   if (kind === 'style') {
+    tableStyle();
     for (const key of ['color']) d[key] = text(key);
     for (const key of ['font','padding']) d[key] = Number(values.get(key));
     for (const key of ['striped','borders','pageNumbers']) d[key] = checked(key);
@@ -81,7 +88,7 @@ export function formDesign(project, selected, form, kind) {
     d.blocks[id].label = text('label'); d.blocks[id].enabled = checked('enabled');
     if (id === 'header') { d.title = text('title'); d.repeatHeader = checked('repeatHeader'); }
     if (id === 'header' && values.has('titleStyle.fontSize')) { const style = fieldStyle('titleStyle'); if (Object.keys(style).length) d.titleStyle = style; else delete d.titleStyle; }
-    if (id === 'items') { d.repeatTable = checked('repeatTable'); d.breakBefore = checked('breakBefore'); }
+    if (id === 'items') { d.repeatTable = checked('repeatTable'); d.breakBefore = checked('breakBefore'); tableStyle(); }
     else if (values.has('layoutColumns')) {
       if (text('layoutColumns') || text('layoutGap')) d.blocks[id].layout = {columns:Number(values.get('layoutColumns') || 1),gap:Number(values.get('layoutGap') || 0)}; else delete d.blocks[id].layout;
       d.blocks[id].keepTogether = checked('keepTogether'); if (id !== 'header') d.blocks[id].breakBefore = checked('sectionBreakBefore');
