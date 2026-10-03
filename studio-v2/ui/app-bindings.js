@@ -92,7 +92,8 @@ function bindEditorToggle($, t) {
     panel.classList.toggle("is-closed", !open); document.body.classList.toggle("editor-closed", !open); panel.setAttribute("aria-hidden", String(!open));
     if ("inert" in panel) panel.inert = !open; toggle.setAttribute("aria-expanded", String(open)); toggle.setAttribute("aria-label", t(key)); toggle.setAttribute("title", t(key)); if (label) label.textContent = t(key);
     if (close) { close.textContent = t("editor.toggle.hide"); close.setAttribute("aria-label", t("editor.toggle.hide")); close.setAttribute("title", t("editor.toggle.hide")); }
-    if (open && moveFocus) setTimeout(() => close?.focus(), 50); if (!open && restoreFocus) setTimeout(() => focusTarget?.focus(), 50);
+    // The editor toggles display synchronously; delayed focus can steal a newer selection.
+    if (open && moveFocus) close?.focus(); if (!open && restoreFocus) focusTarget?.focus();
   }
   function flip() { update(!open, { moveFocus: !open, restoreFocus: open }); }
   toggle.addEventListener("click", flip); close?.addEventListener("click", flip); update(false);
