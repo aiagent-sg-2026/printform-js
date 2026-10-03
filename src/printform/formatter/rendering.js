@@ -3,6 +3,7 @@
 import { updatePageNumberContent, updatePhysicalPageNumberContent } from "../helpers.js";
 import { FOOTER_LOGO_VARIANT, FOOTER_PAGENUM_VARIANT } from "../config.js";
 import { DomHelpers } from "../dom.js";
+import { appendPageChromeOnce } from "./page-chrome.js";
 import { attachRowHeaderPolicyMethods } from "./row-header-policy.js";
 
 export function attachRenderingMethods(FormatterClass) {
@@ -11,22 +12,22 @@ export function attachRenderingMethods(FormatterClass) {
   FormatterClass.prototype.ensureFirstPageSections = function ensureFirstPageSections(container, sections, heights, logFn, skipRowHeader, tableId = "default") {
     let consumedHeight = 0;
     if (sections.header) {
-      DomHelpers.appendClone(container, sections.header, logFn, "pheader");
-      if (!this.config.repeatHeader) {
+      const clone = appendPageChromeOnce(container, sections.header, logFn, "pheader");
+      if (clone && !this.config.repeatHeader) {
         consumedHeight += heights.header;
       }
     }
     sections.docInfos.forEach((docInfo) => {
-      const clone = DomHelpers.appendClone(container, docInfo.element, logFn, docInfo.className);
+      const clone = appendPageChromeOnce(container, docInfo.element, logFn, docInfo.className);
       this.registerPageNumberClone(clone);
-      if (!this.config[docInfo.repeatFlag]) {
+      if (clone && !this.config[docInfo.repeatFlag]) {
         consumedHeight += heights.docInfos[docInfo.key] || 0;
       }
     });
     const rowHeader = this.getSectionRowHeader(sections, tableId);
     if (rowHeader && !skipRowHeader) {
-      DomHelpers.appendClone(container, rowHeader, logFn, "prowheader");
-      if (!this.isRowHeaderRepeated(sections, tableId)) {
+      const clone = appendPageChromeOnce(container, rowHeader, logFn, "prowheader");
+      if (clone && !this.isRowHeaderRepeated(sections, tableId)) {
         consumedHeight += heights.rowHeaders?.[tableId] ?? heights.rowHeader ?? 0;
       }
     }
@@ -35,17 +36,17 @@ export function attachRenderingMethods(FormatterClass) {
 
   FormatterClass.prototype.appendRepeatingSections = function appendRepeatingSections(container, sections, logFn, skipRowHeader, tableId = "default") {
     if (this.config.repeatHeader) {
-      DomHelpers.appendClone(container, sections.header, logFn, "pheader");
+      appendPageChromeOnce(container, sections.header, logFn, "pheader");
     }
     sections.docInfos.forEach((docInfo) => {
       if (this.config[docInfo.repeatFlag]) {
-        const clone = DomHelpers.appendClone(container, docInfo.element, logFn, docInfo.className);
+        const clone = appendPageChromeOnce(container, docInfo.element, logFn, docInfo.className);
         this.registerPageNumberClone(clone);
       }
     });
     const rowHeader = this.getSectionRowHeader(sections, tableId);
     if (this.isRowHeaderRepeated(sections, tableId) && rowHeader && !skipRowHeader) {
-      DomHelpers.appendClone(container, rowHeader, logFn, "prowheader");
+      appendPageChromeOnce(container, rowHeader, logFn, "prowheader");
     }
   };
 
@@ -57,7 +58,7 @@ export function attachRenderingMethods(FormatterClass) {
       (node) => this.getRowTableId(node) === tableId,
     );
     if (hasHeader) return null;
-    return DomHelpers.appendClone(container, rowHeader, logFn, "prowheader");
+    return appendPageChromeOnce(container, rowHeader, logFn, "prowheader");
   };
 
   FormatterClass.prototype.registerPageNumberClone = function registerPageNumberClone(node) {

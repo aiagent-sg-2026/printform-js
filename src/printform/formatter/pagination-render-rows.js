@@ -7,6 +7,7 @@ const ROW_HEIGHT_PREDICTION_SAFETY_MARGIN_PX = 50;
 
 export function renderRows(outputContainer, sections, heights, footerState, heightPerPage, footerSpacerTemplate, logFn) {
   let currentHeight = 0;
+  let firstPageInitialized = false;
   const pageContext = this.initializePageContext(heightPerPage);
   if (this.debug) {
     console.log(`[printform] ===== renderRows START =====`);
@@ -41,7 +42,10 @@ export function renderRows(outputContainer, sections, heights, footerState, heig
       continue;
     }
 
-    if (currentHeight === 0) {
+    // Body height may clamp to zero after chrome subtraction. It is not
+    // lifecycle state: continuation pages already receive chrome in prepareNextPage.
+    if (!firstPageInitialized) {
+      firstPageInitialized = true;
       this.refreshPageContextForRow(pageContext, row, heights, sections);
       const container = this.getCurrentPageContainer(outputContainer);
       this.ensureFirstPageSections(container, sections, heights, logFn, pageContext.skipRowHeader, pageContext.tableId);
