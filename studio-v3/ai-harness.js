@@ -67,8 +67,8 @@ async function runStepHarness({transport,alias,request,project,signal,chat={},me
     try {
       const result = await lane.prompt(request,context);
       signal.throwIfAborted();
-      if (transportError) throw transportError;
-      if (toolError) throw toolError;
+      if (transportError) { transportError.proposalEnvelope = envelope; throw transportError; }
+      if (toolError) { toolError.proposalEnvelope = envelope; throw toolError; }
       if (!result.ok || !proposal) throw fail('AI_RUN_FAILED');
       return {...proposal,alias,usage,inspection,envelope};
     } finally { signal.removeEventListener('abort',onAbort); }
@@ -93,10 +93,11 @@ export async function runLayoutHarness(options) {
         return {...result,iterations:attempt,usage:Object.fromEntries(Object.keys(totals).map(key=>[key,unknown.has(key) ? null : totals[key]]))};
       }
     } catch (error) {
-      if (signal.aborted || !['MALFORMED_PROPOSAL','UNSAFE_PROPOSAL','UNSAFE_SCOPE','COLUMN_WIDTH_LIMIT','NO_CHANGES','TABLE_BACKGROUND_INTENT'].includes(error.code) || attempt === limit) throw error;
+      if (signal.aborted || !['LOGO_ASSET_UNAVAILABLE','TABLE_SECTION_GRID_UNSUPPORTED','AUTHORING_OPERATION_LIMIT','GLOBAL_FONT_PROPERTY_UNSUPPORTED','MALFORMED_PROPOSAL','UNSAFE_PROPOSAL','UNSAFE_SCOPE','COLUMN_WIDTH_LIMIT','NO_CHANGES','TABLE_BACKGROUND_INTENT'].includes(error.code) || attempt === limit) throw error;
       // Failed completions have unavailable usage; never report zero consumption.
       for (const key of Object.keys(totals)) unknown.add(key);
-      diagnostics = safeRunDiagnostics({errors:[{code:error.code}]},project);
+      previous = {envelope:error.proposalEnvelope};
+      diagnostics = safeRunDiagnostics({errors:(error.diagnosticCodes || [error.code]).map(code=>({code})),metrics:error.metrics},project);
     }
     signal.throwIfAborted(); onPhase(`Repairing inspected candidate (${attempt+1}/${limit})`);
   }

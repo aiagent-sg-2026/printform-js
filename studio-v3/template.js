@@ -97,6 +97,9 @@ ${d.striped ? '#pf-mount .prowitem_processed[data-pf-row-index]:nth-child(even) 
 #pf-mount .v3-custom-layout .field { grid-column:auto;grid-row:auto; }
 ${a4PresetTheme(d)}
 ${grid}
+#pf-mount .v3-totals.v3-custom-layout .summary { width:100%; }
+#pf-mount .summary .label { overflow-wrap:normal; }
+#pf-mount [data-pf-format=currency] { white-space:nowrap;overflow-wrap:normal;flex-shrink:0; }
 ${tableBodyCss(d)}
 @page { size:${page.paper === 'LETTER' ? 'letter' : page.paper === 'LEGAL' ? 'legal' : page.paper} ${page.orientation}; margin:0; }
 @media print { body { background:white; } #pf-mount .printform_page, #pf-mount .physical_page_wrapper {margin:0;box-shadow:none;} }`;

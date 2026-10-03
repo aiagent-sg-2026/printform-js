@@ -2,7 +2,8 @@ import { designOf, compileProject, selectionField, BLOCKS } from './model.js';
 import { validateDesign } from './file-io.js';
 import { applyAuthoring } from './ai-authoring.js';
 
-export const STYLE_KEYS = ['color','font','padding','striped','borders','repeatHeader','repeatTable','pageNumbers','breakBefore'];
+export { GLOBAL_STYLE_KEYS as STYLE_KEYS } from './ai-authoring-contract.js';
+import { GLOBAL_STYLE_KEYS as STYLE_KEYS } from './ai-authoring-contract.js';
 export const MAX_AUTHORING_DIFFS = 360;
 export const fail = code => Object.assign(new Error(code), {code});
 function exactKeys(value, keys) {

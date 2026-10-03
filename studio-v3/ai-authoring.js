@@ -1,3 +1,4 @@
+import { MAX_AUTHORING_OPERATIONS, GLOBAL_STYLE_KEYS, AUTHORING_CONTRACT, contractError, assertOperationContract } from './ai-authoring-contract.js';
 import { DEMO_BINDING_PATHS } from './demo-binding-paths.js';
 import { BLOCKS, selectionField, defaultDesign } from './model.js';
 import { validateDesign } from './file-io.js';
@@ -20,7 +21,9 @@ function reorder(list,order,ids) {
 }
 export const AUTHORING_TYPES = ['set_element_style','set_style','set_table_style','set_field','add_field','remove_field','reorder_fields','set_section','reorder_sections','set_page','set_logo','set_collection','set_heading'];
 export function applyAuthoring(design,operations,project,explicitPointers=[]) {
-  if (!Array.isArray(operations) || !operations.length || operations.length > 24) unsafe();
+  if (!Array.isArray(operations) || !operations.length) unsafe();
+  if (operations.length > MAX_AUTHORING_OPERATIONS) throw contractError('AUTHORING_OPERATION_LIMIT',{operationCount:operations.length,maxOperations:MAX_AUTHORING_OPERATIONS});
+  assertOperationContract(operations,design);
   const diff = [], targets = [], seen = new Set();
   const record = (target,property,before,after) => {
     const key = `${target.replace(/^label-/,'')}:${property}`; if (seen.has(key)) unsafe(); seen.add(key);
@@ -35,7 +38,8 @@ export function applyAuthoring(design,operations,project,explicitPointers=[]) {
       const key = {'header-title':'titleStyle','page-number':'pageNumberStyle'}[op.target]; if (!key) unsafe();
       record(op.target,'typography',design[key],op.patch); design[key] = structuredClone(op.patch);
     } else if (op.type === 'set_style') {
-      object(op,['type','patch']); object(op.patch,['color','font','padding','striped','borders','repeatHeader','repeatTable','pageNumbers','breakBefore']);
+      object(op,['type','patch']);
+      object(op.patch,GLOBAL_STYLE_KEYS);
       for (const [key,value] of Object.entries(op.patch)) { record('style',key,design[key],value); design[key] = structuredClone(value); }
     } else if (op.type === 'set_table_style') {
       object(op,['type','target','patch']); object(op.patch,TABLE_STYLE_KEYS);
@@ -145,6 +149,7 @@ export function availableBindings(project,explicitPointers=[],effectiveCollectio
 export function shareAuthoring(project,context={}) {
   const d = project.manifest.studioV3;
   return {
+    contract:AUTHORING_CONTRACT,
     sections:BLOCKS.map(id=>({id,enabled:d.blocks[id].enabled,layout:d.blocks[id].layout || {},breakBefore:Boolean(d.blocks[id].breakBefore),keepTogether:Boolean(d.blocks[id].keepTogether),fields:fieldList(d,id).map(f=>({id:`${id}-${f.id}`,kind:f.kind || (f.pointer ? 'bound' : 'static'),format:f.format,width:f.width,labelStyle:f.labelStyle || {},valueStyle:f.valueStyle || {},showLabel:f.showLabel !== false}))})),
     elements:[{id:'header-title',style:d.titleStyle || {}},{id:'page-number',style:d.pageNumberStyle || {}},{id:'header-logo',assetId:d.logo?.assetId || null},{id:'items',style:d.tableStyle || {},styleOperation:'set_table_style'}],sectionOrder:d.sectionOrder || BLOCKS,page:d.page || {paper:'A4',orientation:'portrait'},
     assets:(d.assets || []).map(({id})=>({id})),bindings:availableBindings(project,explicitBindingPointers(context.request,context.references))
