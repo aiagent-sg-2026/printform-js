@@ -25,3 +25,14 @@ it('deleting another row remaps outstanding number errors and retains numeric ed
   expect(()=>database.validateDraft()).not.toThrow();await database.action('apply-draft',{});
   expect(bus.project.sampleData.items[0].weight).toBe(8);expect(database.draft).toBeNull();
 });
+it('legacy starters reject remembered datasets from a different business kind',()=>{
+  const {database}=setup(),legacy=newProject();
+  const starter={id:'starter:invoice',type:'invoice',title:'Invoice',revision:0,data:structuredClone(legacy.sampleData)};
+  const quotation={...starter,id:'demo:SalesQuotation:test',data:{...structuredClone(legacy.sampleData),document:{kind:'SalesQuotation'}}};
+  const invoice={...starter,id:'demo:SalesInvoice:test',data:{...structuredClone(legacy.sampleData),document:{kind:'SalesInvoice'}}};
+  database.records=[quotation,invoice,starter];database.selected.invoice=quotation.id;
+  expect(database.starting(legacy).reference.id).toBe(starter.id);
+  database.selected.invoice=invoice.id;expect(database.starting(legacy).reference.id).toBe(invoice.id);
+  const explicit=structuredClone(legacy);explicit.sampleData.document.kind='SalesQuotation';expect(database.starting(explicit).reference.id).toBe(quotation.id);
+  expect(database.records[0]).toBe(quotation);
+});

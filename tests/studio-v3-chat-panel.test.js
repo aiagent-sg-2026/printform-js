@@ -1,14 +1,15 @@
 import {beforeEach,it,expect,vi} from 'vitest';
 import fs from 'node:fs';
 import {AIPanel} from '../studio-v3/ai-panel.js';
+import {createDemoTransport} from '../studio-v3/ai-demo-transport.js';
 import {PaperPreview} from '../studio-v3/preview.js';
 import {newProject} from '../studio-v3/model.js';
 import {createBus,editProject,designOperations} from '../studio-v3/controller.js';
 const html=fs.readFileSync('studio-v3/index.html','utf8');
 beforeEach(()=> {document.documentElement.innerHTML=html.replace(/<!doctype html>/i,'');document.body.inert=false;});
-function setup({facts=()=>[],commit,plan,restore=async()=>{},reply={kind:'proposal',summary:'Navy',edits:[{target:'style',property:'color',value:'#163a65'}]}}={}) {
+function setup({facts=()=>[],commit,plan,transport,restore=async()=>{},reply={kind:'proposal',summary:'Navy',edits:[{target:'style',property:'color',value:'#163a65'}]}}={}) {
   let bus=createBus(newProject()),calls=0,selected='items';
-  const panel=new AIPanel({bus:()=>bus,selection:()=>selected,facts,guard:work=>work(),preview:async()=>({status:'ready',validation:{errors:[],warnings:[]}}),restore,commit,sync:()=>{},transport:{clear:()=>{},discover:async()=>['demo-fast'],plan:async(...args)=> {calls++;return plan ? plan(...args) : {text:JSON.stringify(reply)};}}});
+  const panel=new AIPanel({bus:()=>bus,selection:()=>selected,facts,guard:work=>work(),preview:async()=>({status:'ready',validation:{errors:[],warnings:[]}}),restore,commit,sync:()=>{},transport:transport || {clear:()=>{},clearSession:()=>{},discover:async()=>['demo-fast'],plan:async(...args)=> {calls++;return plan ? plan(...args) : {text:JSON.stringify(reply)};}}});
   panel.contextChanged();panel.node('#ai-prompt').value='Use navy accents.';panel.share();
   return {panel,calls:()=>calls,changeBus:()=> {bus=createBus(newProject());panel.contextChanged();return bus;},select:id=> {selected=id;panel.contextChanged();}};
 }
@@ -90,4 +91,67 @@ it('reveals the complete input group on prompt or Send focus without sending or 
  panel.node('#ai-prompt').dispatchEvent(new FocusEvent('focusin',{bubbles:true}));panel.node('[data-ai-send]').dispatchEvent(new FocusEvent('focusin',{bubbles:true}));
  expect(input.scrollIntoView).toHaveBeenCalledTimes(2);expect(input.scrollIntoView).toHaveBeenLastCalledWith({block:'nearest',inline:'nearest'});
  panel.node('#ai-scope').dispatchEvent(new FocusEvent('focusin',{bubbles:true}));panel.node('[data-ai-send]').getBoundingClientRect=()=>({top:200,bottom:240});panel.node('[data-ai-send]').dispatchEvent(new FocusEvent('focusin',{bubbles:true}));expect(input.scrollIntoView).toHaveBeenCalledTimes(2);expect(calls()).toBe(0);
+});
+
+function visualPanel(kind='image') {
+ const calls=[],state={enabled:true,status:200};
+ const json=(body,status=200)=>new Response(JSON.stringify(body),{status,headers:{'content-type':'application/json'}});
+ const transport=createDemoTransport({fetchImpl:async(url,init)=>{
+  calls.push({url,init});
+  if(url.endsWith('/session'))return json({token:'dmo_synthetic123'});
+  if(url.endsWith('/models')){if(state.hold)await state.hold;return json({data:[{id:'demo-fast',capabilities:{responses:true,multimodal:state.enabled}}]},state.status);}
+  return json({status:'completed',output:[{type:'message',content:[{type:'output_text',text:JSON.stringify({kind:'answer',message:'Fictional reference reviewed.'})}]}]});
+ }});
+ const {panel}=setup({transport});
+ panel.referenceFiles.files=[{id:'reference-visual',name:kind==='image'?'fictional.png':'fictional.pdf',kind,mime:kind==='image'?'image/png':'application/pdf',processing:'visual',pageCount:1,text:'',pages:[{number:1,width:10,height:10,text:'',textItems:[],preview:{dataUrl:'data:image/jpeg;base64,/9j/2Q=='}}],warnings:[]}];
+ panel.referenceFiles.root.open=true;panel.referenceFiles.changed();
+ return {panel,transport,calls,state};
+}
+it.each(['image','pdf'])('keeps discovered image permission after token cleanup and sends a %s reference only after fresh discovery',async kind=>{
+ const {panel,transport,calls}=visualPanel(kind);
+ expect(panel.node('[data-ai-send]').disabled).toBe(true);await panel.discover();
+ expect(transport.supportsImages('demo-fast')).toBe(true);expect(panel.node('[data-ai-send]').disabled).toBe(false);
+ expect(panel.referenceFiles.capability.textContent).toContain('Images available');expect(panel.referenceFiles.diagnosticText.textContent).toContain('capabilities.multimodal');
+ await panel.send();expect(calls.filter(c=>c.url.endsWith('/models'))).toHaveLength(2);expect(calls.filter(c=>c.url.endsWith('/responses'))).toHaveLength(1);
+ expect(calls.filter(c=>c.url.endsWith('/session'))).toHaveLength(2);expect(panel.conversation.messages.at(-1).text).toBe('Fictional reference reviewed.');
+ expect(panel.getBus().revision).toBe(0);expect(panel.proposal).toBeNull();expect(transport.supportsImages('demo-fast')).toBe(true);expect(panel.node('[data-ai-send]').disabled).toBe(false);
+ panel.cancel();expect(transport.supportsImages('demo-fast')).toBe(false);expect(panel.referenceFiles.diagnosticText.textContent).not.toContain('capabilities.multimodal');expect(panel.node('[data-ai-send]').disabled).toBe(true);
+});
+it('fresh capability revocation blocks attached pixels before any inference request',async()=>{
+ const {panel,calls,state}=visualPanel();await panel.discover();state.enabled=false;await panel.send();
+ expect(calls.some(c=>c.url.endsWith('/responses') || c.url.endsWith('/chat/completions'))).toBe(false);
+ expect(panel.node('[data-ai-send]').disabled).toBe(true);expect(panel.node('[data-ai-status]').textContent).toContain('Image analysis is unavailable');expect(panel.getBus().revision).toBe(0);
+});
+it('failed rediscovery closes image Send until a later successful check',async()=>{
+ const {panel,transport,state}=visualPanel();await panel.discover();state.status=500;await panel.discover();
+ expect(transport.capabilityDiagnostics()).toEqual([]);expect(panel.node('[data-ai-send]').disabled).toBe(true);
+ state.status=200;await panel.discover();expect(panel.node('[data-ai-send]').disabled).toBe(false);
+});
+
+it.each(['image','pdf'])('offers a metadata-only image support check beside a newly attached %s',async kind=>{
+ const {panel,calls}=visualPanel(kind),button=panel.referenceFiles.checkSupport,send=vi.spyOn(panel,'send');
+ expect(calls).toEqual([]);expect(button.textContent).toBe('Check image support');expect(button.type).toBe('button');expect(button.hidden).toBe(false);expect(button.disabled).toBe(false);expect(panel.referenceFiles.root.open).toBe(true);
+ button.click();expect(button.disabled).toBe(true);expect(panel.referenceFiles.capability.textContent).toContain('Checking image support');
+ await vi.waitFor(()=>expect(button.hidden).toBe(true));
+ expect(send).not.toHaveBeenCalled();expect(calls.map(c=>new URL(c.url).pathname)).toEqual(['/demo/session','/demo/v1/models']);
+ expect(calls[1].init.body).toBeUndefined();expect(JSON.stringify(calls)).not.toContain('data:image');expect(panel.node('[data-ai-send]').disabled).toBe(false);
+ const before=calls.length;panel.contextChanged(true);expect(button.hidden).toBe(false);expect(panel.node('[data-ai-send]').disabled).toBe(true);expect(calls).toHaveLength(before);
+ panel.referenceFiles.files=[];panel.referenceFiles.changed();expect(button.hidden).toBe(true);
+});
+it('keeps the support check disabled while reading or waiting for metadata, then offers retry after failure',async()=>{
+ const {panel,calls,state}=visualPanel(),files=panel.referenceFiles,button=files.checkSupport;
+ files.reading=true;panel.update();expect(button.disabled).toBe(true);button.click();expect(calls).toEqual([]);
+ files.reading=false;panel.update();let release;state.hold=new Promise(resolve=>release=resolve);state.status=500;
+ button.click();await vi.waitFor(()=>expect(calls.some(c=>c.url.endsWith('/models'))).toBe(true));
+ expect(button.disabled).toBe(true);button.click();expect(calls).toHaveLength(2);release();
+ await vi.waitFor(()=>expect(button.disabled).toBe(false));expect(button.hidden).toBe(false);expect(panel.node('[data-ai-send]').disabled).toBe(true);
+ expect(files.capability.getAttribute('role')).toBe('status');expect(files.capability.textContent).toContain('check or retry');expect(panel.node('[data-ai-status]').textContent).toContain('Demo request failed');
+ state.hold=null;state.status=200;button.click();await vi.waitFor(()=>expect(button.hidden).toBe(true));expect(panel.node('[data-ai-send]').disabled).toBe(false);
+});
+it('unknown support stays blocked after checking, and a revoked grant exposes the same check again',async()=>{
+ const {panel,calls,state}=visualPanel(),button=panel.referenceFiles.checkSupport;state.enabled=undefined;
+ button.click();await vi.waitFor(()=>expect(panel.busy).toBe(false));expect(button.hidden).toBe(false);expect(panel.node('[data-ai-send]').disabled).toBe(true);
+ state.enabled=true;button.click();await vi.waitFor(()=>expect(button.hidden).toBe(true));state.enabled=false;await panel.send();
+ expect(button.hidden).toBe(false);expect(button.disabled).toBe(false);expect(panel.node('[data-ai-send]').disabled).toBe(true);
+ expect(panel.node('[data-ai-status]').textContent).toContain('Check image support');expect(calls.every(c=>c.url.endsWith('/session') || c.url.endsWith('/models'))).toBe(true);
 });
