@@ -1,3 +1,5 @@
+import { inspectMonetaryTokens } from "./monetary-inspection.js";
+import { inspectPageChrome } from "./page-chrome-inspection.js";
 import { LIMITS, PROTOCOL_VERSION, TRUST, protocolMajor } from "./constants.js";
 import { validateData, validateSchemaProfile } from "./schema.js";
 import { validateAssetSlots } from "./assets.js";
@@ -99,6 +101,7 @@ function issueEntry(code, node, pageIndex) {
   const rect = node.getBoundingClientRect();
   const page = node.closest?.(".printform_page");
   const pageRect = page?.getBoundingClientRect?.() || { width: 0, height: 0 };
+  const available = code === "MONETARY_TOKEN_UNREADABLE" ? (node.closest('td,th,.field') || node.parentElement).getBoundingClientRect() : pageRect;
   const text = (node.textContent || "").trim().replace(/\s+/g, " ").slice(0, 60);
   return {
     code,
@@ -106,9 +109,9 @@ function issueEntry(code, node, pageIndex) {
     page: pageIndex + 1,
     component_id: node.getAttribute?.("data-pf-component-id") || node.getAttribute?.("data-pf-table-id") || node.id || null,
     measured_size: { width: Math.round(rect.width), height: Math.round(rect.height) },
-    available_size: { width: Math.round(pageRect.width), height: Math.round(pageRect.height) },
+    available_size: { width: Math.round(available.width), height: Math.round(available.height) },
     reason: code === "HORIZONTAL_OVERFLOW" ? "Element exceeds the logical page width" : "Rendered geometry exceeds the validated page boundary",
-    recommended_action: code === "HORIZONTAL_OVERFLOW" ? "Reduce column widths or typography and verify the paper width" : "Inspect the active section and keep it inside the page boundary",
+    recommended_action: code === "MONETARY_TOKEN_UNREADABLE" ? "Allocate more width or fewer columns so the full monetary token fits at the intended typography" : code === "HORIZONTAL_OVERFLOW" ? "Reduce column widths or typography and verify the paper width" : "Inspect the active section and keep it inside the page boundary",
     selector: cssPathWithinPage(node),
     rect: { x: Math.round(rect.x), y: Math.round(rect.y), width: Math.round(rect.width), height: Math.round(rect.height) },
     ...(text ? { text } : {})
@@ -173,7 +176,10 @@ export function inspectRenderedDocument(doc, manifest, options = {}) {
     }).map((node) => ({ node, pageIndex }));
   });
   if (overflow.length) errors.push(error("HORIZONTAL_OVERFLOW", `${overflow.length} rendered elements overflow horizontally`));
+  const unreadableMoney = inspectMonetaryTokens(doc);
+  if (unreadableMoney.length) errors.push(error("MONETARY_TOKEN_UNREADABLE", `${unreadableMoney.length} currency values wrap, overlap or exceed their cells; allocate more width or fewer columns at the intended typography`));
   const templateRoot = doc.getElementById("pf-template")?.content?.querySelector(".printform");
+  errors.push(...inspectPageChrome(pageList));
   // Repeated-region completeness: data-repeat-header/-docinfo are simple
   // page-wide flags with no per-row exception (unlike rowheader, which row
   // classes like without_prowheader can opt out of) — if the template
@@ -232,6 +238,7 @@ export function inspectRenderedDocument(doc, manifest, options = {}) {
   // Element-level details (selector + geometry) so agents can target fixes
   // without screenshots; capped per category to bound the report size.
   const issues = [
+    ...unreadableMoney.slice(0, MAX_ISSUE_DETAILS).map(node=>issueEntry("MONETARY_TOKEN_UNREADABLE",node,pageIndexOf(node))),
     ...overflow.slice(0, MAX_ISSUE_DETAILS).map(({ node, pageIndex }) => issueEntry("HORIZONTAL_OVERFLOW", node, pageIndex)),
     ...verticalOverflow.slice(0, MAX_ISSUE_DETAILS).map((page) => issueEntry("VERTICAL_OVERFLOW", page, pageIndexOf(page))),
     ...lowContrast.slice(0, MAX_ISSUE_DETAILS).map((node) => issueEntry("CONTRAST_FAILURE", node, pageIndexOf(node))),
