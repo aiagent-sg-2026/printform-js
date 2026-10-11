@@ -5,18 +5,21 @@ import { DEMO_CONFIG } from './ai-gateway-config.js';
 import { skillIndex, PLANNED_CAPABILITIES } from './agent-knowledge.js';
 import { LEDGER_WORKFLOWS } from './agent-workflows.js';
 import { CONTRACT_VERSION, TOOL_CONTRACTS, OPERATION_CONTRACTS, ANSWER_MAX } from './agent-contracts.js';
+import { SCENARIOS, SCENARIO_IDS, MAX_SCENARIOS } from './scenario-matrix.js';
 import { ERROR_CONTRACTS } from './agent-errors.js';
 
 const object = properties => Type.Object(properties,{additionalProperties:false});
 const summary = Type.String({minLength:1,maxLength:500});
-const definition = (name,description,parameters,effect,result) => Object.freeze({id:`printform.agent.${name}`,name,description,parameters,effect,result,contractVersion:CONTRACT_VERSION,...TOOL_CONTRACTS[name],skills:['form-authoring'],
-  sources:['studio-v3/agent-tools.js','studio-v3/agent-handlers.js','studio-v3/agent-effects.js','studio-v3/agent-registry.js','studio-v3/agent-contracts.js','studio-v3/agent-errors.js'],evaluations:['tests/studio-v3-agent-registry.test.js','tests/studio-v3-agent-loop.test.js','tests/studio-v3-agent-contracts.test.js','tests/studio-v3-run-grants.test.js']});
+const definition = (name,description,parameters,effect,result,evaluations = []) => Object.freeze({id:`printform.agent.${name}`,name,description,parameters,effect,result,contractVersion:CONTRACT_VERSION,...TOOL_CONTRACTS[name],skills:['form-authoring'],
+  sources:['studio-v3/agent-tools.js','studio-v3/agent-handlers.js','studio-v3/agent-effects.js','studio-v3/agent-registry.js','studio-v3/agent-contracts.js','studio-v3/agent-errors.js'],evaluations:['tests/studio-v3-agent-registry.test.js','tests/studio-v3-agent-loop.test.js','tests/studio-v3-agent-contracts.test.js','tests/studio-v3-run-grants.test.js',...evaluations]});
 export const AGENT_TOOL_DEFINITIONS = Object.freeze([
   definition('get_capabilities','Discover this release\'s tools, operation schemas, knowledge index and current run limits. Call this first.',object({}),'read','capability-catalog'),
   definition('read_skill','Read a bundled product guide by ID from the knowledge index before using its capabilities.',object({id:Type.String({minLength:1,maxLength:80})}),'read','skill-resource'),
   definition('get_context','Read the current form structure, binding catalog, authoring targets and request.',object({}),'read','semantic-context'),
   definition('apply_operations','Apply typed operations to the private draft. Combine all properties of one target in one patch.',object({summary,operations:Type.Array(Type.Union(Object.values(OPERATION_SCHEMAS)),{minItems:1,maxItems:MAX_AUTHORING_OPERATIONS})}),'draft','step-summary'),
   definition('inspect_draft','Render the draft in an isolated print preview; report pagination, overflow and quality issues.',object({}),'read','numeric-print-diagnostics'),
+  definition('validate_scenarios',`Check the draft against built-in synthetic row-count scenarios (${SCENARIOS.map(([id])=>id).join(', ')}) and report pagination and quality for each. Scenarios replace the data with built-in synthetic data, so this says nothing about the person's own data.`,
+    object({scenarios:Type.Optional(Type.Array(Type.Union(SCENARIO_IDS.map(id=>Type.Literal(id))),{minItems:1,maxItems:MAX_SCENARIOS,uniqueItems:true}))}),'read','scenario-diagnostics',['tests/studio-v3-scenario-matrix.test.js']),
   definition('undo_step','Remove the last applied step from the private draft.',object({}),'draft','step-summary'),
   definition('take_notes','Replace your bounded run-local notes; they remain visible after older steps are folded.',object({notes:Type.String({minLength:1,maxLength:DEMO_CONFIG.agent.maxNoteChars})}),'memory','acknowledgment'),
   definition('finish','Hand an edited, currently inspected ready draft to the person for Preview and Apply.',object({summary}),'proposal','proposal-handoff'),

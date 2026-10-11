@@ -1,5 +1,6 @@
 // Executes every registered tool/operation example through the real agent tool handlers (COV-04).
 // A broken example, an undeclared error code or a result outside its outputSchema fails the build.
+import { JSDOM } from 'jsdom';
 import { validateToolArguments } from '@earendil-works/pi-ai';
 import { AGENT_TOOL_DEFINITIONS, OPERATION_CAPABILITIES } from '../studio-v3/agent-registry.js';
 import { createAgentTools } from '../studio-v3/agent-tools.js';
@@ -9,6 +10,8 @@ import { chatRequest } from '../studio-v3/ai-chat-protocol.js';
 import { newProject } from '../studio-v3/demo-templates.js';
 import { DEMO_CONFIG } from '../studio-v3/ai-gateway-config.js';
 
+// The print validators parse HTML templates with DOMParser. Node has none, so borrow jsdom's, as the site build does.
+globalThis.DOMParser ??= new JSDOM('').window.DOMParser;
 const FIXTURES = Object.freeze({
   blank:() => newProject(),
   // Invoice rows carry financial bindings that keep their collection; a delivery note has none.

@@ -4,5 +4,88 @@
   "release": "a99c932e45a95d4d5b5c811e7dbc0db3256ddf99",
   "packageHash": "c472d0ca870e77f25b36f756b5171332f377122ac70d42422e152b27cfee03be"
  },
- "dispositions": []
+ "dispositions": [
+  {
+   "entries": {
+    "printform.agent.validate_scenarios": "9fe3a5fb2ad24d66a7c50af1d587c6386333768e6997eb23d62325f00a8ed050"
+   },
+   "disposition": "updated",
+   "justification": "New read tool backed by the shared scenario-matrix service that the Validate panel now also uses. It has a full contract: an output schema, accepted and rejected examples run through the real handler, a read effect that works under the read-only grant, and no effect on run.inspected.",
+   "evidence": [
+    "studio-v3/scenario-matrix.js",
+    "tests/studio-v3-scenario-matrix.test.js"
+   ]
+  },
+  {
+   "entries": {
+    "printform.agent.get_capabilities": "e40b775556fc6620a5310611a65c1a11a73ffe4df6e905058253c21a92eb10de"
+   },
+   "disposition": "updated",
+   "justification": "The capability catalog now lists the validate_scenarios tool and its parameter enum, derived from the registry.",
+   "evidence": [
+    "studio-v3/agent-registry.js"
+   ]
+  },
+  {
+   "entries": {
+    "printform.agent.read_skill": "ab99fa87fa80afdf561d4efcbe96adde96ffb4b96a640bf52e3a64b88d7297f0",
+    "printform.agent.get_context": "941962370b4701f87fea204b952e0676f202118fe844c889839cb7b71535ce55",
+    "printform.agent.apply_operations": "9d1370d68c68d158223f4691c8172f84c0d2cf74a4c6e88fa444f2f27dd94b8d",
+    "printform.agent.inspect_draft": "11c45cde1cdb953fbe80c72fbe785fef3070122cf7138004658a2aeebe35eb7b",
+    "printform.agent.undo_step": "642beb10c4bb85abbde06059dd8620df66fec8e48de56f7b97991693e39bc3c6",
+    "printform.agent.take_notes": "eaf83ef58c347d28b4062a6b7bc3af55420925fd766d8c2c658bfe35ace554e9",
+    "printform.agent.finish": "4320ccbca4892686df5fea2e549cca76d00aeccacb663f979eb54172d8b86d3a",
+    "printform.agent.finish_answer": "be7bd7dae44e8fc533beae40c63f84da7e11b84212703406ab8d29d7244fdd3c",
+    "printform.agent.report_blocked": "115cf9fa0463014149dbe36a664a23628ece92aa18c122148263c86d1a3200d3"
+   },
+   "disposition": "no-impact",
+   "justification": "Their digests moved only because shared modules (handlers, registry, contracts, knowledge) gained the new validate_scenarios tool. Their own handlers, schemas, error lists and examples are unchanged, and the conformance run still applies each of their examples through the real handlers.",
+   "evidence": [
+    "tests/studio-v3-agent-contracts.test.js"
+   ]
+  },
+  {
+   "entries": {
+    "printform.authoring.set_element_style": "ef4bb5fb406ee0989a17cd15a23a8d97c70a86a95f29e9dea5f20d2b9ee78ee6",
+    "printform.authoring.set_style": "aa65a1552abf4990b4ede99bcce59bc57aabb1e07a1b64ca2f2bebd94f4a6bcb",
+    "printform.authoring.set_table_style": "8562d86ea3a5f101409bc8140f2b6e94ee7ff802c917dd47b5c7ccf180181fb5",
+    "printform.authoring.set_field": "a99d6f30c22961d60f91e7fe4723d515d50443380543f62e2cb661747aa52168",
+    "printform.authoring.add_field": "8fa3cbcc9b24b0e698b170a0461a7e32247e5308daec8b3e68aa36520a711ae3",
+    "printform.authoring.remove_field": "a28a32958b351c1153ec94d66ff892e83f84ac77c3c8baf2ec6c3a90761ba4eb",
+    "printform.authoring.reorder_fields": "d1d2b3cadfaa7d073fe0faa8451232605b2162e295f4d4b6c4dc5d8af5e95ae6",
+    "printform.authoring.set_section": "0c23e276a41487764a104b63966b93702a67c87685a1cb10f3c3b0c389c63319",
+    "printform.authoring.reorder_sections": "2070ab279c62514c7713e7866cd314480de042c5acbd184d96153a471624a4d7",
+    "printform.authoring.set_page": "5a3b8b0d50c43b58870c15205d34d5029a42a447cacf00bca93596018eb2e7ef",
+    "printform.authoring.set_logo": "089fa0f8de34edb4c1fb2f677626b473905d9ab77cead3ca23d53f1dca3b5952",
+    "printform.authoring.set_collection": "d91c5b530ac0c7b4e2eda0acaa9a9025e480a8a5942dcff5307ae453b2f3e8df",
+    "printform.authoring.set_heading": "a97d9adc34f2a3e55b0b936da61a29277551dbbc585d2940a261b47c5cdc969d"
+   },
+   "disposition": "no-impact",
+   "justification": "The shared contracts module gained the validate_scenarios contract; no operation schema, error list or example changed, and the conformance run still applies every accepted and rejected operation example through the real handler.",
+   "evidence": [
+    "tests/studio-v3-agent-contracts.test.js"
+   ]
+  },
+  {
+   "entries": {
+    "printform.knowledge.form-authoring": "052e7c770221c467a5f1b41133f8101677cc0c6781a348802ca94ec6e89543ec"
+   },
+   "disposition": "updated",
+   "justification": "The guide now explains validate_scenarios: the scenario ids, that scenarios use built-in synthetic data so a pass says nothing about the person's own data, and that it is evidence for an answer but not an inspection of the exact draft.",
+   "evidence": [
+    "studio-v3/agent-knowledge.js"
+   ]
+  },
+  {
+   "entries": {
+    "printform.knowledge.product-workflows": "2a892e63c293a237c4e154eb99eeb3a60775c0482055d62ea51ba4a506c14819"
+   },
+   "disposition": "updated",
+   "justification": "The validation-matrix ledger row is now reachable, so the generated list of workflows the agent cannot perform no longer includes it; the guide text changed accordingly.",
+   "evidence": [
+    "docs/STUDIO_V3_FEATURE_LEDGER.csv",
+    "studio-v3/agent-workflows.js"
+   ]
+  }
+ ]
 }

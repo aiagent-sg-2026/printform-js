@@ -2,6 +2,7 @@ import { safeRunDiagnostics } from './ai-inspection.js';
 import { fail } from './ai-edits.js';
 import { capabilityCatalog } from './agent-registry.js';
 import { readSkill } from './agent-knowledge.js';
+import { runScenarioMatrix, canonicalScenario } from './scenario-matrix.js';
 
 export const reply = (value,extra = {}) => ({content:[{type:'text',text:typeof value === 'string' ? value : JSON.stringify(value)}],details:{},...extra});
 // Trusted, compiled handlers keyed by tool name. A feature adds its handler here next to its registry descriptor;
@@ -21,6 +22,14 @@ export const TOOL_HANDLERS = Object.freeze({
     run.signal.throwIfAborted();
     run.inspected = {candidate:run.draft.project,diagnostics:result}; run.evidence = true;
     return reply(result,{details:{detail:result.ready ? 'ready' : `${result.errors.length + result.issues.length} issues`}});
+  },
+  // Same service as the Validate panel. It does not set run.inspected: finish stays bound to inspect_draft on the exact draft.
+  validate_scenarios:async ({scenarios},run) => {
+    if (!run.inspect) return reply('Inspection is not available in this run.');
+    const result = await runScenarioMatrix({project:run.draft.project,ids:scenarios,signal:run.signal,render:async candidate => (await run.inspect({candidate})).report});
+    run.signal.throwIfAborted(); run.evidence = true;
+    const passed = result.scenarios.filter(scenario=>scenario.diagnostics.ready).length;
+    return reply({ready:result.ready,scenarios:result.scenarios.map(canonicalScenario)},{details:{detail:`${passed}/${result.scenarios.length} passed`}});
   },
   undo_step:async (_args,run) => {
     if (!run.draft.undo()) return reply('There is nothing to undo.');

@@ -5,8 +5,9 @@ import { inspectProject } from './validation.js';
 import { sourceLabel } from './data-provenance.js';
 import { applyRow, fieldBinding, collectionBinding, imageControls } from './binding-view.js';
 import { sectionOrder, pageSettings, fieldKind } from './design-authoring.js';
+import { SCENARIOS } from './scenario-matrix.js';
 
-export const SAMPLES = [['erp','Current document data','Restore original dataset'],['0','Empty','0 rows'],['1','Single item','1 row'],['45','Standard','45 rows'],['100','Multi-page','100 rows'],['500','Stress','500 rows'],['long','Long & bilingual','45 rows']];
+export const SAMPLES = [['erp','Current document data','Restore original dataset'],...SCENARIOS];
 const button = (action,text,symbol='',extra='') => `<button type="button" data-action="${action}" ${extra}>${symbol ? icon(symbol) : ''}${escape(text)}</button>`;
 const input = (label,name,value,type='text',extra='') => `<label>${escape(label)}<input name="${name}" type="${type}" value="${escape(value)}" ${extra}></label>`;
 const check = (label,name,checked) => `<label class="checkbox"><input name="${name}" type="checkbox" ${checked ? 'checked' : ''}>${escape(label)}</label>`;
