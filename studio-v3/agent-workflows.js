@@ -25,7 +25,6 @@ export const LEDGER_WORKFLOWS = Object.freeze([
   ["printform.dataset.delete","Delete saved record while retaining current form","human-mediated","Delete saved record"],
   ["printform.dataset.restore","Restore known starter records","human-mediated","Restore starter datasets"],
   ["printform.dataset.refresh","Refresh local list and cross-tab notices","not-yet-callable","Eligible; the Studio UI has this service but no agent adapter yet"],
-  ["printform.validation.matrix","Validate across multiple synthetic samples","not-yet-callable","Eligible; the Studio UI has this service but no agent adapter yet"],
   ["printform.workspace.mode","Design/Data/Validate and inspector tabs","intentionally-unavailable","Host mechanism or view preference; not a model capability"],
   ["printform.workspace.structure","Search/fold/select structure and locate elements","intentionally-unavailable","Host mechanism or view preference; not a model capability"],
   ["printform.workspace.pages","Paper zoom, page navigation and thumbnails","intentionally-unavailable","Host mechanism or view preference; not a model capability"],

@@ -1,7 +1,7 @@
 import { newProject, designOf, sampleData, newDemoProject, setupDemoTemplatePicker } from './demo-templates.js';
 import { createBus, editProject, replaceData, designOperations, formDesign, alterFields, importRasterAsset } from './controller.js';
 import { icon } from './icons.js';
-import { leftView, rightView, SAMPLES } from './views.js';
+import { leftView, rightView } from './views.js';
 import { PaperPreview } from './preview.js';
 import { readProject, saveProject, filenameFor, download, exportProject } from './file-io.js';
 import { inspectProject } from './validation.js';
@@ -18,6 +18,7 @@ import { setupUpdates } from './update.js';
 import { createUpdateWork } from './update-work.js';
 import { pageDimensions, pageSettings } from './design-authoring.js';
 import { syncPageControls, navigatePages } from './page-navigation.js';
+import { createValidateAll } from './validate-all.js';
 const $ = selector => document.querySelector(selector); setupDemoTemplatePicker();
 const state = {mode:'design',selected:'items',tab:'properties',sample:'erp',report:null,matrix:{},dirty:false,dataDraft:null,running:false,runId:0,collapsed:{},search:'',jsonError:'',fileReads:0};
 let bus, displayed, zoom = 1, pageIndex = 0, editQueue = Promise.resolve();
@@ -150,19 +151,7 @@ async function switchSample(id) {
   state.dataDraft = null;
   await replaceData(bus,data,id); await changed();
 }
-async function validateAll() {
-  if (state.running) { stopRun(); paper.cancel(); renderPanels(); await render(); return; }
-  ai.invalidate(); const run = ++state.runId; state.running = true; state.matrix = {}; renderPanels(); syncControls();
-  const base = structuredClone(bus.project);
-  for (const [id] of SAMPLES.filter(([id]) => id !== 'erp')) {
-    const candidate = {...base,sampleData:sampleData(designOf(base).type,id === 'long' ? 45 : Number(id),id === 'long')};
-    const report = await render(candidate);
-    if (run !== state.runId) return;
-    state.matrix[id] = inspectProject(candidate,report); renderPanels();
-  }
-  if (run !== state.runId) return;
-  state.running = false; renderPanels(); await render();
-}
+const validateAll = createValidateAll({state,project:() => bus.project,render:project => render(project),stopRun,cancelPaper:() => paper.cancel(),invalidateAI:() => ai.invalidate(),renderPanels:() => renderPanels(),syncControls:() => syncControls()});
 async function action(name) {
   if (name === 'undo' || name === 'redo') { if (!database.guardDraft()) return; await bus.navigateHistory(name,bus.revision); state.dataDraft = null; await changed(); }
   else if (name === 'new') { $('#new-warning').textContent = state.dirty || database.draft || state.dataDraft !== null ? 'Starting another form discards unsaved form, table and JSON edits. Save first to keep them.' : 'Choose a complete starter or a blank form.'; $('#new-dialog').showModal(); }
