@@ -69,7 +69,7 @@ Evidence for each G2 case: KNO-01/02/03/05 and the gate in `tests/studio-v3-agen
 
 `docs/studio-v3-agent-release/` holds the committed release state: `baseline-manifest.json` (and `baseline-index.json` once the live site publishes one) from the last successful publication, plus `review.json` with the owner dispositions. `buildStudioV3App`, which the site build and therefore the Pages deployment use, compares the generated package with that baseline and throws on any unreviewed, stale or unsupported change, so the deployment stops. `npm run check:studio-v3-agent` runs the same gate, and `tests/studio-v3-agent-release-gate.test.js` checks that the committed state passes on the current tree.
 
-The first baseline is the live release `11cab7b`, which predates the dependency index. Its 24 changes are covered by one `reconciled` disposition (the first full reconciliation). An edit to a shared module moves many digests at once: a single comment in `studio-v3/ai-authoring.js` invalidates 23 entries. One disposition record may list all of them.
+The first baseline was the live release `11cab7b`, which predated the dependency index, so its 24 changes were covered by one `reconciled` disposition (the first full reconciliation). The baseline was then re-recorded from release `0d023fc` (the first deployment through the gate), which publishes the dependency index: from there `reconciled` is rejected and `updated` must cite a file that actually changed. An edit to a shared module moves many digests at once: a single comment in `studio-v3/ai-authoring.js` invalidates 23 entries. One disposition record may list all of them.
 
 Runbook:
 

@@ -49,15 +49,21 @@ describe('Studio v3 publication gate (KNO-04)', () => {
   it('passes for the committed release state on the current tree', () => {
     const state = readReleaseState(), generated = generateAgentPackage({baseline:state.baseline,baselineIndex:state.baselineIndex});
     expect(state.baseline.release).toMatch(/^[a-f0-9]{40}$/);
+    // Full strength: with an index, `reconciled` is rejected and `updated` must cite a file that really changed.
+    expect(state.baselineIndex?.release).toBe(state.baseline.release);
     const result = assertReleaseReview(generated,{state});
     expect(result.reviewed).toBe(result.changes);
   });
   it('blocks publication with every unreviewed change and offers digest-bound drafts', () => {
-    const state = readReleaseState(), generated = generateAgentPackage({baseline:state.baseline,baselineIndex:state.baselineIndex});
-    const empty = {...state,review:{...state.review,dispositions:[]}};
-    expect(() => assertReleaseReview(generated,{state:empty})).toThrow(`release review failed (${generated.changes.changes.length})`);
+    // Independent of the committed baseline: derive a baseline from the current package, then alter three entries.
+    const current = generateAgentPackage({}), tampered = structuredClone(current.manifest);
+    tampered.entries[0].hash = 'f'.repeat(64); tampered.entries[1].hash = 'e'.repeat(64); tampered.entries.pop();
+    const generated = generateAgentPackage({baseline:tampered,baselineIndex:current.index}), pending = generated.changes.changes.length;
+    expect(pending).toBe(3);
+    const state = {baseline:tampered,baselineIndex:current.index,review:{version:1,baseline:generated.changes.baseline,dispositions:[]}};
+    expect(() => assertReleaseReview(generated,{state})).toThrow(`release review failed (${pending})`);
     const drafts = draftDispositions(generated), digest = id => generated.manifest.entries.find(entry => entry.id === id).hash;
-    expect(drafts).toHaveLength(generated.changes.changes.length);
-    for (const draft of drafts) { const [[id,hash]] = Object.entries(draft.entries); expect(hash).toBe(digest(id)); expect(draft.disposition).toMatch(/^TODO/); }
+    expect(drafts).toHaveLength(pending);
+    for (const draft of drafts) { const [[id,hash]] = Object.entries(draft.entries); expect(hash).toBe(digest(id)); expect(draft.disposition).toMatch(/^TODO/); expect(draft.causes).toBeDefined(); }
   });
 });

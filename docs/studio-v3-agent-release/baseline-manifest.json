@@ -1,129 +1,136 @@
 {
- "contractHash": "8f6f574d67138a16d76bbe10e4d5ad2d5e8244ee569baaa3b564f673422ff7ae",
+ "contractHash": "4075c5c2947d46fbf6ed3d3a4e789c3fbeeea8c21896c407593195d2745570d7",
  "entries": [
   {
-   "hash": "7c2c698a6c8a725b7b0d367512cd8489845976f80e91fc6e8ff0bf2648c4ef1a",
+   "hash": "97fcaf530d3fab4c273101d163ef273f135e57acc47c56eb8c9023077d72a384",
    "id": "printform.agent.get_capabilities",
    "status": "active"
   },
   {
-   "hash": "3d7127ae0dd4e43baa75a311208e506ff972597aa9df720ef50bc29c39d6804f",
+   "hash": "bae09839c82504c6acb87962eef6f21105eed36c4f05daf2fc4850ef4fb0acd7",
    "id": "printform.agent.read_skill",
    "status": "active"
   },
   {
-   "hash": "43a3638f5a2233b108be32024097b976fd3160159b12ea3139f8b552e2f8bf69",
+   "hash": "586942bc13500a807dcff090633ad2e7b862f5283c8f0f38912b70d45bc6bc18",
    "id": "printform.agent.get_context",
    "status": "active"
   },
   {
-   "hash": "cfd5689e39e0af180cf20aaae056503343c22e55c8bb04d0225a030308a6b566",
+   "hash": "32910d373a0ef80608ba1f4b906157a7c6fd0be8ddbfddfa0471330a20e8bb05",
    "id": "printform.agent.apply_operations",
    "status": "active"
   },
   {
-   "hash": "a94eb811c0cb69d0f943f8d4e557e0229b711f4de8adcfac7255fd7ae30087f3",
+   "hash": "c310dcd80a74f6fe77e9d98ed32b3f8f1615eba7e06c41cc50dc6dc67073d3fd",
    "id": "printform.agent.inspect_draft",
    "status": "active"
   },
   {
-   "hash": "57a7d73515bf6774f3e5e6840120627dbe2f48341d57430acca7e7626eb895c9",
+   "hash": "1fb9c773e329221dbe627434448a7c7319d6df7c308bf27082cef0aa99ed776c",
    "id": "printform.agent.undo_step",
    "status": "active"
   },
   {
-   "hash": "b99fee671d255b1c79529a9ddb89a3cfafdac97b64386c28925e5b857d361e08",
+   "hash": "af67e95a745e367bb9c8df19aabdbf4c3d2c7874fb4fe36b568a2ebce85054cd",
    "id": "printform.agent.take_notes",
    "status": "active"
   },
   {
-   "hash": "0ad3b2042ebb43419bb0f215be9d5ec5a0ff5c6e645c0ca410717c209124a52b",
+   "hash": "55ad3a59bbe3cd269d218aabf301974f299b371566e07256d6b60a6bac0576d8",
    "id": "printform.agent.finish",
    "status": "active"
   },
   {
-   "hash": "09dbdc3e41c1bf336733c046464a3b73386f228f3940195a9500901169410bbd",
+   "hash": "5f8ecdfc0e995652e09991396db3be7d612a42d5895939949f2d1928fb6b7cde",
    "id": "printform.agent.report_blocked",
    "status": "active"
   },
   {
-   "hash": "6be3cae44ae80c2c4d012639795c237aa62a7ef3c24b7f3d9d1d6d3283d0f999",
+   "hash": "43406dd44100271bc3d13f5f20174c3397eed9a6f554712638e12541b11b1567",
    "id": "printform.authoring.set_element_style",
    "status": "active"
   },
   {
-   "hash": "f21ca1b0473f7490b3b9f92d3ee91ef786238a386c7da42bb2f4c50ef4748230",
+   "hash": "26701efe03f38f92afb0b6b1a5be1c96ccbfb0dc75fb921f3a92283e7ba716d3",
    "id": "printform.authoring.set_style",
    "status": "active"
   },
   {
-   "hash": "cca0444be0905af0d0e72525e7d0326ccaa6119ba1b10dd86a1e537c84cd130b",
+   "hash": "0fcf330880d389422b20089b0df0e2e5b2c5c80ad1655f769fad48356cf43bb8",
    "id": "printform.authoring.set_table_style",
    "status": "active"
   },
   {
-   "hash": "27521742b7d5270af7481185f958048ee7c941fbe59c60137c4011e375d8ba9d",
+   "hash": "d807be3fa5643c8a58dac9d39345770f6c4230013a2b054c82f8e0195098836d",
    "id": "printform.authoring.set_field",
    "status": "active"
   },
   {
-   "hash": "5c9d693c34fad0ce174dc381722feade8d068fa8b0f4df4f98d5b4f14a60c58d",
+   "hash": "813b6a65486a029083c2b749098c570d1e815d8ae72845be80b413d356d00851",
    "id": "printform.authoring.add_field",
    "status": "active"
   },
   {
-   "hash": "3890b88ec707613e032a13b4107b173ac5d7df88318138a5e04049f74a326a98",
+   "hash": "8caf0018acf5f9a4f35113c475efab38fff93005ee4c56ee2849696fa0c5c52d",
    "id": "printform.authoring.remove_field",
    "status": "active"
   },
   {
-   "hash": "fbc9ef79d6a1ecf1ed77983461be8a4fef1be8d103dcf1163d1679d9a52b61d2",
+   "hash": "b3fddd0b5cdc29e48ed6ec05e01f90c313aef4d365713cd33957be9613d07fe3",
    "id": "printform.authoring.reorder_fields",
    "status": "active"
   },
   {
-   "hash": "aa591177445dfafed05f77bd58e629553e9164749ec45fb61d4cab728a081088",
+   "hash": "4c37dc77028959f6913ab6ab7ee630c38efa03e4b33651f51c7a52398e2a9e5f",
    "id": "printform.authoring.set_section",
    "status": "active"
   },
   {
-   "hash": "d02aea0eef7c57dc5b0b49b77965f96c23538d695bb2683d9ab610ea7600f726",
+   "hash": "cc94b522864716c49819e4b1fe0f3523f870588b14c4bfc6ea422e580c1f9ccf",
    "id": "printform.authoring.reorder_sections",
    "status": "active"
   },
   {
-   "hash": "d195e0d7226d3d497c650398f570899235f1feb668e4c8a88715c3a0b8008f7b",
+   "hash": "dd101dd0f62fca96b806602e2e61d30480359e4b3d900deec48887fe3a972cce",
    "id": "printform.authoring.set_page",
    "status": "active"
   },
   {
-   "hash": "c59160c28793e7b681012b17e44f707276d716514e3fd17f439079d45276ba42",
+   "hash": "68603f0e7627991e1ad8a5537bbe2d6a6959ad8dfc77e731688191f0195592a6",
    "id": "printform.authoring.set_logo",
    "status": "active"
   },
   {
-   "hash": "3cb620abcb8ad2fb0851b93495924406e644b2b9672728cd181b58e447ed0f21",
+   "hash": "2f0171937208bb4dc9221e906f5c3037830ad8ad50a3901a83f2bb7c97a53104",
    "id": "printform.authoring.set_collection",
    "status": "active"
   },
   {
-   "hash": "809b38b4c45ecdf14f5e622a126a8db89493d5f52d75f99211f6fff913ca4ada",
+   "hash": "2c4ec1c959e8aa289b42f1fec7ad0dcdffee50ac21a47bb281ceb8fcb2a3a456",
    "id": "printform.authoring.set_heading",
    "status": "active"
   },
   {
-   "hash": "2973a3de83a3b8b68236385e4044221e3f80498a8af4ab72c6a866383fcad021",
+   "hash": "a9519db951750c55aac6198c212cf1bbd325ebf1d84f93887f80337c785ca728",
    "id": "printform.knowledge.form-authoring",
+   "status": "active"
+  },
+  {
+   "hash": "b971e96f0d8e60066ca966784d0b62c92fbc2bb761a625ab5b386f7ff1f2f4bf",
+   "id": "printform.knowledge.product-workflows",
    "status": "active"
   }
  ],
  "files": {
-  "capabilities.json": "881c39d4df81ccf5208ca38d45788ad5480ddfa3646680ab59dcdfbfec92e70f",
-  "knowledge-index.json": "81c77713b681dc32a6ccf05429dc99047ae854bc1ff9705661aafbaf8ca8066e",
-  "resources/form-authoring.md": "7af70d00fc21535a6d8973e8d199da0f358f0fb22e65cae949fa27f45373ef57"
+  "capabilities.json": "5eedb0a04b6df8f12f12712999e24f80efe746609bd769d6e5f00a99154fe3b7",
+  "knowledge-index.json": "bfd074f0210589eafc1baff582dd2901ec24670bdecd1ce1d2953427c7559afa",
+  "resources/form-authoring.md": "0b2dadd0214b70990616bfc2922c888ef577d1ad6afefb67117b1750124ee7ef",
+  "resources/product-workflows.md": "640d5ca12c4aa8029dac72882d1016b158ca1503b9b8d6bf23a30a3ba82575dd"
  },
- "knowledgeHash": "3d0dcf4ae640de5ef2b71ee129193e324a5d5080cd648b78800cdf4760511970",
- "packageHash": "6040e3f5c12db2bdb87a2ee1663659a222b923c745b6bcaa37038d6624936d7c",
- "release": "11cab7b8d3c62ca99dd1d467ff486a0d4f72eb75",
+ "knowledgeHash": "ef80a809d8700b32fe5c03cfac92e7d77b5ad40aad8854c8fa689bf2e54f29f5",
+ "packageHash": "807137b99f3e27e73b5b05d3f78646d728580eeeb36443195114bbd7598dd68f",
+ "release": "0d023fc718782fb2ddadc04c63d4cb6da69d7709",
+ "tombstones": [],
  "version": 1
 }
