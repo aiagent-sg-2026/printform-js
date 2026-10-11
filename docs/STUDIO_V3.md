@@ -78,6 +78,7 @@ The panel displays the selected alias and recipient notice; there is no initial-
 Send deliberately accepts the adjacent notice; there is no consent checkbox.
 The owner-requested framework-native authoring surface is described in
 [Authoring contract](STUDIO_V3_AUTHORING.md) and [Pi chat](STUDIO_V3_AI_CHAT.md).
+The AI panel's open usability issues are tracked in [AI panel UX backlog](STUDIO_V3_AI_PANEL_UX.md).
 It includes stable element references/comments, label/value typography, structural
 fields/columns, bindings, section/page layout and embedded local raster assets.
 
