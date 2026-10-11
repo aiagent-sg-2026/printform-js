@@ -4,6 +4,7 @@ import { validateToolArguments } from '@earendil-works/pi-ai';
 import { AGENT_TOOL_DEFINITIONS, OPERATION_CAPABILITIES } from '../studio-v3/agent-registry.js';
 import { createAgentTools } from '../studio-v3/agent-tools.js';
 import { createDraft } from '../studio-v3/agent-draft.js';
+import { createGrant } from '../studio-v3/agent-effects.js';
 import { chatRequest } from '../studio-v3/ai-chat-protocol.js';
 import { newProject } from '../studio-v3/demo-templates.js';
 import { DEMO_CONFIG } from '../studio-v3/ai-gateway-config.js';
@@ -15,12 +16,12 @@ const FIXTURES = Object.freeze({
 });
 const INSPECTIONS = {ready:{report:{status:'ready'}},blocked:{report:{status:'blocked',issues:[{code:'OVERFLOW'}]}}};
 
-function harness({request = 'Change the form',fixture = 'blank',inspection = 'ready'} = {}) {
+function harness({request = 'Change the form',fixture = 'blank',inspection = 'ready',grant = 'design'} = {}) {
   if (!FIXTURES[fixture] || !INSPECTIONS[inspection]) throw new Error(`Unknown conformance fixture: ${fixture}/${inspection}.`);
   const project = FIXTURES[fixture](), draft = createDraft(project,{request});
   const context = (current,info) => chatRequest(current,{request,scope:{mode:'whole'},typography:[],conversation:[]},{mode:'steps',...info});
   const tools = createAgentTools({draft,context,inspect:async () => INSPECTIONS[inspection],signal:new AbortController().signal,outcome:{},
-    limits:{...DEMO_CONFIG.agent,maxRepeatedFailures:1000},identity:{release:'development',verified:false}});
+    limits:{...DEMO_CONFIG.agent,maxRepeatedFailures:1000},identity:{release:'development',verified:false},grant:createGrant(grant)});
   return Object.fromEntries(tools.map(tool => [tool.name,tool]));
 }
 async function call(tool,args) {

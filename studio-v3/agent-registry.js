@@ -4,13 +4,13 @@ import { MAX_AUTHORING_OPERATIONS } from './ai-authoring-contract.js';
 import { DEMO_CONFIG } from './ai-gateway-config.js';
 import { skillIndex, PLANNED_CAPABILITIES } from './agent-knowledge.js';
 import { LEDGER_WORKFLOWS } from './agent-workflows.js';
-import { CONTRACT_VERSION, TOOL_CONTRACTS, OPERATION_CONTRACTS } from './agent-contracts.js';
+import { CONTRACT_VERSION, TOOL_CONTRACTS, OPERATION_CONTRACTS, ANSWER_MAX } from './agent-contracts.js';
 import { ERROR_CONTRACTS } from './agent-errors.js';
 
 const object = properties => Type.Object(properties,{additionalProperties:false});
 const summary = Type.String({minLength:1,maxLength:500});
 const definition = (name,description,parameters,effect,result) => Object.freeze({id:`printform.agent.${name}`,name,description,parameters,effect,result,contractVersion:CONTRACT_VERSION,...TOOL_CONTRACTS[name],skills:['form-authoring'],
-  sources:['studio-v3/agent-tools.js','studio-v3/agent-handlers.js','studio-v3/agent-registry.js','studio-v3/agent-contracts.js','studio-v3/agent-errors.js'],evaluations:['tests/studio-v3-agent-registry.test.js','tests/studio-v3-agent-loop.test.js','tests/studio-v3-agent-contracts.test.js']});
+  sources:['studio-v3/agent-tools.js','studio-v3/agent-handlers.js','studio-v3/agent-effects.js','studio-v3/agent-registry.js','studio-v3/agent-contracts.js','studio-v3/agent-errors.js'],evaluations:['tests/studio-v3-agent-registry.test.js','tests/studio-v3-agent-loop.test.js','tests/studio-v3-agent-contracts.test.js','tests/studio-v3-run-grants.test.js']});
 export const AGENT_TOOL_DEFINITIONS = Object.freeze([
   definition('get_capabilities','Discover this release\'s tools, operation schemas, knowledge index and current run limits. Call this first.',object({}),'read','capability-catalog'),
   definition('read_skill','Read a bundled product guide by ID from the knowledge index before using its capabilities.',object({id:Type.String({minLength:1,maxLength:80})}),'read','skill-resource'),
@@ -20,6 +20,7 @@ export const AGENT_TOOL_DEFINITIONS = Object.freeze([
   definition('undo_step','Remove the last applied step from the private draft.',object({}),'draft','step-summary'),
   definition('take_notes','Replace your bounded run-local notes; they remain visible after older steps are folded.',object({notes:Type.String({minLength:1,maxLength:DEMO_CONFIG.agent.maxNoteChars})}),'memory','acknowledgment'),
   definition('finish','Hand an edited, currently inspected ready draft to the person for Preview and Apply.',object({summary}),'proposal','proposal-handoff'),
+  definition('finish_answer','Complete a question with a text answer grounded in what you read. No form change is proposed; use finish instead for an edit.',object({message:Type.String({minLength:1,maxLength:ANSWER_MAX})}),'answer','answer-handoff'),
   definition('report_blocked','Stop with the specific missing capability or reason the request cannot be met.',object({reason:summary}),'stop','blocked-handoff')
 ]);
 export const AGENT_TOOL_NAMES = Object.freeze(AGENT_TOOL_DEFINITIONS.map(tool=>tool.name));
@@ -34,9 +35,9 @@ export const OPERATION_CAPABILITIES = Object.freeze(Object.entries(OPERATION_SCH
 const modelView = ({outputSchema,invalid,examples,...entry}) => ({...entry,examples:examples.map(example=>example.args ?? example.operation)});
 const count = status => LEDGER_WORKFLOWS.filter(row=>row[2] === status).length;
 // `tools` is the set given to this run, so a newly registered feature appears without editing any list here.
-export function capabilityCatalog({identity={release:'development',verified:false},limits=DEMO_CONFIG.agent,tools=AGENT_TOOL_DEFINITIONS,tombstones=AGENT_TOMBSTONES}={}) {
+export function capabilityCatalog({identity={release:'development',verified:false},limits=DEMO_CONFIG.agent,tools=AGENT_TOOL_DEFINITIONS,tombstones=AGENT_TOMBSTONES,grant=null}={}) {
   return {version:1,identity,tools:tools.map(modelView),operations:OPERATION_CAPABILITIES.map(({errors,...entry})=>modelView(entry)),knowledge:skillIndex(),
-    run:{mode:'steps',maxToolCalls:limits.maxTurns,maxRunMs:limits.maxRunMs,maxRunTokens:limits.maxRunTokens,maxRepeatedFailures:limits.maxRepeatedFailures,imageTurns:limits.imageTurns,maxNoteChars:limits.maxNoteChars},
+    run:{mode:'steps',...(grant ? {profile:grant.profile} : {}),maxToolCalls:limits.maxTurns,maxRunMs:limits.maxRunMs,maxRunTokens:limits.maxRunTokens,maxRepeatedFailures:limits.maxRepeatedFailures,imageTurns:limits.imageTurns,maxNoteChars:limits.maxNoteChars},
     errors:ERROR_CONTRACTS,commit:'User Preview and Apply required',unsupported:PLANNED_CAPABILITIES.map(([name])=>name),removed:tombstones,
     workflows:{guide:'product-workflows',humanMediated:count('human-mediated'),notYetCallable:count('not-yet-callable'),intentionallyUnavailable:count('intentionally-unavailable')}};
 }

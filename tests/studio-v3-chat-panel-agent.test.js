@@ -39,14 +39,21 @@ describe('the panel working in steps',()=> {
     expect(panel.proposal).toBeNull(); expect(lastCard(panel).status).toBe('error'); expect(gateway.singleCalls()).toBe(0);
   });
 
-  it('keeps questions and the "work in steps" setting on the single-step flow',async()=> {
-    const question = scriptedGateway({single:[plain('{"kind":"answer","message":"Sizes below."}')]}), asked = setup({transport:question.transport});
-    ask(asked.panel,'What are the current font sizes?'); await asked.panel.send();
-    expect(question.agentCalls()).toBe(0); expect(question.singleCalls()).toBe(1);
+  it('runs a question in steps under a read-only grant, and keeps the single-step flow when steps are off or unavailable',async()=> {
+    const question = scriptedGateway({agent:[turn([reasoning(1),fn(1,'get_context',{})]),turn([reasoning(2),fn(2,'finish_answer',{message:'The footer holds the notes.'})])]}), asked = setup({transport:question.transport});
+    ask(asked.panel,'What is in the footer?'); await asked.panel.send();
+    expect(question.agentCalls()).toBe(2); expect(question.singleCalls()).toBe(0);
+    expect(asked.panel.proposal).toBeNull(); expect(lastCard(asked.panel).status).toBe('answer'); expect(lastCard(asked.panel).text).toBe('The footer holds the notes.');
+    expect(asked.panel.getBus().revision).toBe(0);
+    document.documentElement.innerHTML = html.replace(/<!doctype html>/i,'');
+    const unavailable = scriptedGateway({agent:[json({error:{code:'DEMO_AGENT_TOOLS_DISABLED',message:'agent tools are disabled'}},400)],single:[plain('{"kind":"answer","message":"Sizes below."}')]}), refused = setup({transport:unavailable.transport});
+    ask(refused.panel,'What are the current font sizes?'); await refused.panel.send();
+    expect(unavailable.agentCalls()).toBe(1); expect(unavailable.singleCalls()).toBe(1); expect(refused.panel.agentUnavailable).toBe(true);
     document.documentElement.innerHTML = html.replace(/<!doctype html>/i,'');
     setAgentEnabled(false);
-    const off = scriptedGateway({single:[plain(NAVY)]}), {panel} = setup({transport:off.transport});
+    const off = scriptedGateway({single:[plain(NAVY),plain('{"kind":"answer","message":"Sizes below."}')]}), {panel} = setup({transport:off.transport});
     await panel.send(); expect(off.agentCalls()).toBe(0); expect(off.singleCalls()).toBe(1); expect(panel.proposal).not.toBeNull();
+    ask(panel,'What are the current font sizes?'); await panel.send(); expect(off.agentCalls()).toBe(0); expect(off.singleCalls()).toBe(2);
   });
 
   it('does not work in steps for a request that carries images, which the step tools cannot see',()=> {

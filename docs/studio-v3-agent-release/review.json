@@ -4,5 +4,72 @@
   "release": "0d023fc718782fb2ddadc04c63d4cb6da69d7709",
   "packageHash": "807137b99f3e27e73b5b05d3f78646d728580eeeb36443195114bbd7598dd68f"
  },
- "dispositions": []
+ "dispositions": [
+  {
+   "entries": {
+    "printform.agent.get_capabilities": "ca0ec262355c37e649a971ee59379be6c9d0ef3caa3b1084578a9e47e1f93dd5",
+    "printform.agent.read_skill": "1d5240619ef1c4ac58555e56902b2f8ff997ae8c2cc93c92d4b4e0ad22e64b19",
+    "printform.agent.get_context": "72268411409bfa96cd02a54ccdd72c920f008c6c4ed5ab69b146925c45913cf7",
+    "printform.agent.apply_operations": "a43fde3bddefb3ecf53ff0ce5398dc004159d4cf52d9774a9d991c361f0f4272",
+    "printform.agent.inspect_draft": "4cfd4da81f47f63f4dd483fc9555a655c0ed896774aa3aec5620ee2f20178c3f",
+    "printform.agent.undo_step": "a991ee4657a95c618d7962d7eb03d242956ede6ae4afe59d9dbe5a008c6b8baa",
+    "printform.agent.take_notes": "6441dc3c8c2f1d50bc53c3305808d9cabc7d79bbe22bc6b1faa8909824c4abcb",
+    "printform.agent.finish": "fe4062b67fc8571497c6e55344bc96773cae1c582c74b2a834903395c7dc0171",
+    "printform.agent.finish_answer": "4e44c54808f53498562ec81bc1311e4c7df64dd5dfb322a0d8a32d8d721e6b71",
+    "printform.agent.report_blocked": "188af51451366c7fb8d0be9657c6cb946b5e7c3ffbf3e52f93927156910b4d6d"
+   },
+   "disposition": "updated",
+   "justification": "CA-03 adds host-built effect grants (read-only and design) enforced in every tool wrapper, the finish_answer tool with an evidence requirement, GRANT_DENIED and AGENT_EVIDENCE_REQUIRED, and a grant-aware catalog (get_capabilities contract 1.2.0). Contracts, conformance examples including denied-write examples, and the grant tests were updated together.",
+   "evidence": [
+    "studio-v3/agent-effects.js",
+    "studio-v3/agent-handlers.js",
+    "studio-v3/agent-contracts.js",
+    "tests/studio-v3-run-grants.test.js"
+   ]
+  },
+  {
+   "entries": {
+    "printform.authoring.set_element_style": "bbbcbee204bcb2f506fe215a39fbcd7396cf69059ad12492d04d9fd149322b84",
+    "printform.authoring.set_style": "611e25e715f4c2e2d6ec183b3d184ecb8ddaf6ce30d6ff0988d3f54a8b731961",
+    "printform.authoring.set_table_style": "fc1f1e83220805d8dfb1d7862b7a80ac1481e6797aa487f5e7b88dc8ddf0bbcd",
+    "printform.authoring.set_field": "fcc1bb4eb81bbe4db04866747dbd21cfe380a8e24a297e23527ffb17fa633b48",
+    "printform.authoring.add_field": "11a75164797d01b62948e38ce3d6887e8f825c79fd12889b8887c2bb30418842",
+    "printform.authoring.remove_field": "54946c608755ca00e7b4800d2a66efa894355b8d0ae61e2428c8b5483298cc34",
+    "printform.authoring.reorder_fields": "1ee5071e72c63db86f941bc0ed6fcbc15921baa2bf0063c0037c82e0a637445c",
+    "printform.authoring.set_section": "cd72a9b78ab0e2a0d1e1e234ff0af9a603293a86478df5d3db71cfe327c92fc3",
+    "printform.authoring.reorder_sections": "edbc48dfb6632207b5d31f4af1fc5828cc02af3da2265ee10594a205eff13a1f",
+    "printform.authoring.set_page": "1a79272eee2d07934e9b7d39917e9bc91b6c7e534cde663e2b367bfb7433e3be",
+    "printform.authoring.set_logo": "8db5081e07d33a9e293686ac52acb9c3482d4122716ce6257b6fe4b0b256e9ff",
+    "printform.authoring.set_collection": "71b944cf7c3a7451573acfde53b5edc115b3f4a77639d2c27b1bddbcf779e29c",
+    "printform.authoring.set_heading": "11423eb79264cf5fc303991f120d2aff05399128bb59ce4b2c2f33088d5432c8"
+   },
+   "disposition": "updated",
+   "justification": "Operations are only reachable through apply_operations, which now declares GRANT_DENIED; their error lists were updated and the conformance run still applies every accepted and rejected operation example through the real handler.",
+   "evidence": [
+    "studio-v3/agent-errors.js",
+    "studio-v3/agent-contracts.js",
+    "tests/studio-v3-agent-contracts.test.js"
+   ]
+  },
+  {
+   "entries": {
+    "printform.knowledge.form-authoring": "866e9c5e7f40f215d5f6e65b645e8906f8724981110301f095624647b7fc60b6"
+   },
+   "disposition": "updated",
+   "justification": "The guide said questions use a separate single-step lane. It now describes the read-only grant, finish_answer, the evidence requirement and host-authoritative print sizes, matching the implemented behavior.",
+   "evidence": [
+    "studio-v3/agent-knowledge.js"
+   ]
+  },
+  {
+   "entries": {
+    "printform.knowledge.product-workflows": "22a5e39692dd35d3c286ffdd8ec588a85e1dae40d4cdae5587451f03c95a6406"
+   },
+   "disposition": "no-impact",
+   "justification": "Its digest moved because the ledger CSV and the shared knowledge module changed (the question-route row became reachable). The generated workflow list and guide text are identical; the discovery test checks the module against the ledger.",
+   "evidence": [
+    "tests/studio-v3-agent-discovery.test.js"
+   ]
+  }
+ ]
 }

@@ -11,27 +11,32 @@ const text = Type.String({minLength:1,maxLength:400});
 const identity = open({release:Type.String()});
 const list = Type.Array(open({}));
 const ARGS = 'AGENT_ARGUMENTS_INVALID';
-const AUTHORING_ERRORS = [ARGS,'MALFORMED_PROPOSAL','AUTHORING_OPERATION_LIMIT','GLOBAL_FONT_PROPERTY_UNSUPPORTED','TABLE_SECTION_GRID_UNSUPPORTED','LOGO_ASSET_UNAVAILABLE','UNSAFE_PROPOSAL','UNSAFE_SCOPE','COLUMN_WIDTH_LIMIT','NO_CHANGES'];
+export const ANSWER_MAX = 4000;
+const AUTHORING_ERRORS = [ARGS,'GRANT_DENIED','MALFORMED_PROPOSAL','AUTHORING_OPERATION_LIMIT','GLOBAL_FONT_PROPERTY_UNSUPPORTED','TABLE_SECTION_GRID_UNSUPPORTED','LOGO_ASSET_UNAVAILABLE','UNSAFE_PROPOSAL','UNSAFE_SCOPE','COLUMN_WIDTH_LIMIT','NO_CHANGES'];
 const navy = {type:'set_style',patch:{color:'#163a65'}};
 const prepared = [['apply_operations',{summary:'Navy accents',operations:[navy]}],['inspect_draft',{}]];
 
 export const TOOL_CONTRACTS = Object.freeze({
-  // 1.1.0 adds the removed (tombstone) list and the ledger workflow summary; both are additive.
-  get_capabilities:{contractVersion:'1.1.0',outputSchema:closed({version:Type.Literal(1),identity,tools:list,operations:list,knowledge:list,run:open({mode:Type.String()}),
+  // 1.1.0 added the removed (tombstone) list and the ledger workflow summary; 1.2.0 adds run.profile (the effect grant).
+  get_capabilities:{contractVersion:'1.2.0',outputSchema:closed({version:Type.Literal(1),identity,tools:list,operations:list,knowledge:list,run:open({mode:Type.String()}),
     commit:Type.String(),unsupported:Type.Array(Type.String()),errors:open({}),removed:list,
     workflows:closed({guide:Type.String(),humanMediated:Type.Integer(),notYetCallable:Type.Integer(),intentionallyUnavailable:Type.Integer()})}),errors:[ARGS],examples:[{args:{}}],invalid:[{args:{extra:true},error:ARGS}]},
   read_skill:{outputSchema:closed({id:Type.String(),description:Type.String(),sources:Type.Array(Type.String()),evaluations:Type.Array(Type.String()),content:Type.String({minLength:1}),identity}),
     errors:[ARGS,'AGENT_SKILL_UNAVAILABLE'],examples:[{args:{id:'form-authoring'}}],invalid:[{args:{id:'missing'},error:'AGENT_SKILL_UNAVAILABLE'},{args:{id:''},error:ARGS}]},
   get_context:{outputSchema:open({request:Type.String(),scope:open({mode:Type.String()}),authoring:open({}),run:open({mode:Type.String()})}),errors:[ARGS],examples:[{args:{}}],invalid:[{args:{id:1},error:ARGS}]},
   apply_operations:{outputSchema:text,errors:AUTHORING_ERRORS,limits:{maxOperations:MAX_AUTHORING_OPERATIONS},examples:[{args:{summary:'Navy accents',operations:[navy]}}],
-    invalid:[{args:{summary:'Repeat',operations:[{type:'set_style',patch:{color:'#163a65'}}]},setup:prepared.slice(0,1),error:'NO_CHANGES'},{args:{summary:'Bad',operations:[{type:'set_style',patch:{font:'large'}}]},error:ARGS}]},
+    invalid:[{args:{summary:'Repeat',operations:[{type:'set_style',patch:{color:'#163a65'}}]},setup:prepared.slice(0,1),error:'NO_CHANGES'},{args:{summary:'Bad',operations:[{type:'set_style',patch:{font:'large'}}]},error:ARGS},
+      {args:{summary:'Navy accents',operations:[navy]},grant:'read-only',error:'GRANT_DENIED'}]},
   inspect_draft:{outputSchema:Type.Union([closed({ready:Type.Boolean(),errors:Type.Array(Type.String()),issues:list,metrics:open({}),pages:list}),text]),
     errors:[ARGS,'TOOL_FAILED'],examples:[{args:{},setup:prepared.slice(0,1)}],invalid:[{args:{now:true},error:ARGS}]},
-  undo_step:{outputSchema:text,errors:[ARGS],examples:[{args:{},setup:prepared.slice(0,1)},{args:{}}],invalid:[{args:{all:true},error:ARGS}]},
+  undo_step:{outputSchema:text,errors:[ARGS,'GRANT_DENIED'],examples:[{args:{},setup:prepared.slice(0,1)},{args:{}}],invalid:[{args:{all:true},error:ARGS},{args:{},grant:'read-only',error:'GRANT_DENIED'}]},
   take_notes:{outputSchema:text,errors:[ARGS],limits:{maxNoteChars:DEMO_CONFIG.agent.maxNoteChars},examples:[{args:{notes:'Header uses navy.'}}],invalid:[{args:{notes:''},error:ARGS}]},
-  finish:{outputSchema:text,errors:[ARGS,'NO_CHANGES','UNSAFE_PROPOSAL','TABLE_BACKGROUND_INTENT','AGENT_INSPECTION_REQUIRED','AGENT_INSPECTION_BLOCKED'],
+  finish:{outputSchema:text,errors:[ARGS,'GRANT_DENIED','NO_CHANGES','UNSAFE_PROPOSAL','TABLE_BACKGROUND_INTENT','AGENT_INSPECTION_REQUIRED','AGENT_INSPECTION_BLOCKED'],
     examples:[{args:{summary:'Navy accents'},setup:prepared}],invalid:[{args:{summary:'Navy'},setup:prepared.slice(0,1),error:'AGENT_INSPECTION_REQUIRED'},
-      {args:{summary:'Nothing'},error:'NO_CHANGES'},{args:{summary:'Blocked'},setup:prepared,inspection:'blocked',error:'AGENT_INSPECTION_BLOCKED'}]},
+      {args:{summary:'Nothing'},error:'NO_CHANGES'},{args:{summary:'Blocked'},setup:prepared,inspection:'blocked',error:'AGENT_INSPECTION_BLOCKED'},
+      {args:{summary:'Navy accents'},grant:'read-only',error:'GRANT_DENIED'}]},
+  finish_answer:{outputSchema:text,errors:[ARGS,'AGENT_EVIDENCE_REQUIRED'],limits:{maxAnswerChars:ANSWER_MAX},examples:[{args:{message:'The guide lists the tools for this release.'},setup:[['read_skill',{id:'form-authoring'}]],grant:'read-only'}],
+    invalid:[{args:{message:'It is fine.'},error:'AGENT_EVIDENCE_REQUIRED'},{args:{message:''},error:ARGS}]},
   report_blocked:{outputSchema:text,errors:[ARGS],examples:[{args:{reason:'Asset import is not a tool in this release.'}}],invalid:[{args:{reason:''},error:ARGS}]}
 });
 

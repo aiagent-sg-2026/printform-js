@@ -36,14 +36,14 @@ describe('Studio v3 agent discovery and lifecycle (COV-05)', () => {
     expect(catalog.knowledge.map(skill => skill.id)).toEqual(['form-authoring','product-workflows']);
   });
   it('requires deprecations and tombstones to point at an active replacement', () => {
-    const tools = AGENT_TOOL_DEFINITIONS, replace = (name,patch) => tools.map(entry => entry.name === name ? {...entry,...patch} : entry);
+    const tools = AGENT_TOOL_DEFINITIONS, total = validateRegistry().length, replace = (name,patch) => tools.map(entry => entry.name === name ? {...entry,...patch} : entry);
     expect(() => validateRegistry({tools:replace('take_notes',{status:'deprecated'})})).toThrow('needs an active replacement');
     expect(() => validateRegistry({tools:replace('take_notes',{status:'retired'})})).toThrow('Invalid capability status');
     const deprecated = replace('take_notes',{status:'deprecated',replacementId:'printform.agent.finish'});
-    expect(validateRegistry({tools:deprecated})).toHaveLength(22);
+    expect(validateRegistry({tools:deprecated})).toHaveLength(total);
     expect(capabilityCatalog({tools:deprecated}).tools.find(tool => tool.name === 'take_notes')).toMatchObject({status:'deprecated',replacementId:'printform.agent.finish'});
     const stone = {id:'printform.agent.old_notes',name:'old_notes',replacementId:'printform.agent.take_notes',removedIn:'2.0.0',advice:'Use take_notes.'};
-    expect(validateRegistry({tombstones:[stone]})).toHaveLength(22);
+    expect(validateRegistry({tombstones:[stone]})).toHaveLength(total);
     expect(capabilityCatalog({tombstones:[stone]}).removed).toEqual([stone]);
     for (const bad of [{...stone,replacementId:'printform.agent.missing'},{...stone,advice:''},{...stone,id:'printform.agent.finish'},{...stone,name:'finish'},{...stone,removedIn:'2'}])
       expect(() => validateRegistry({tombstones:[bad]})).toThrow('Invalid capability tombstone');
@@ -60,6 +60,7 @@ describe('Studio v3 agent discovery and lifecycle (COV-05)', () => {
     expect(deprecated[0]).toEqual({id:'kept',kind:'deprecated',reviewRequired:true,replacementId:'next'});
   });
   it('discovers, documents and uses a synthetic new feature without editing the core prompt or tool lists', async () => {
+    const total = validateRegistry().length;
     vi.resetModules();
     vi.doMock('../studio-v3/agent-knowledge.js',async original => {
       const actual = await original(), skills = [...actual.AGENT_SKILLS,guide];
@@ -76,7 +77,7 @@ describe('Studio v3 agent discovery and lifecycle (COV-05)', () => {
     });
     const {runAgentLoop} = await import('../studio-v3/agent-loop.js');
     const registry = await import('../studio-v3/agent-registry.js');
-    expect(registry.validateRegistry({tools:registry.AGENT_TOOL_DEFINITIONS})).toHaveLength(23);
+    expect(registry.validateRegistry({tools:registry.AGENT_TOOL_DEFINITIONS})).toHaveLength(total + 1);
     const faux = fauxProvider({provider:'discovery-faux',models:[{id:'discovery-faux'}]});
     let catalog, skill, value;
     faux.setResponses([call('get_capabilities'),context => { catalog = json(context.messages.at(-1)); return call('read_skill',{id:'synthetic-guide'}); },

@@ -3,12 +3,16 @@ import { createAgentMemory } from './agent-memory.js';
 import { fail } from './ai-edits.js';
 import { AGENT_TOOL_DEFINITIONS } from './agent-registry.js';
 import { TOOL_HANDLERS } from './agent-handlers.js';
+import { createGrant, assertEffect, grantedDefinitions } from './agent-effects.js';
 export { AGENT_TOOL_NAMES } from './agent-registry.js';
 
 // Registry metadata owns the model-visible contract; TOOL_HANDLERS own runtime effects and validation.
+// `grant` is host-built and frozen. Every registered tool is wrapped so its handler re-checks the grant, even though
+// the model is only shown the granted ones (`visible`); a hidden tool never reaches a handler.
 export function createAgentTools({draft,context,inspect,signal,outcome,limits,identity,stopRun=()=>{},memory = createAgentMemory(),onStep = () => {},
-  definitions = AGENT_TOOL_DEFINITIONS,handlers = TOOL_HANDLERS}) {
-  const run = {calls:0,failure:'',repeats:0,inspected:null,draft,context,inspect,signal,outcome,limits,identity,memory,definitions};
+  definitions = AGENT_TOOL_DEFINITIONS,handlers = TOOL_HANDLERS,grant = createGrant('design'),finalizeAnswer}) {
+  const visible = grantedDefinitions(grant,definitions);
+  const run = {calls:0,failure:'',repeats:0,inspected:null,evidence:false,draft,context,inspect,signal,outcome,limits,identity,memory,definitions,visible,grant,finalizeAnswer};
   const begin = name => {
     signal.throwIfAborted(); outcome.turns = ++run.calls;
     if (run.calls > limits.maxTurns) {
@@ -30,6 +34,7 @@ export function createAgentTools({draft,context,inspect,signal,outcome,limits,id
     return {name,label:name,description,parameters,replay:'never',
       prepareArguments:args=> {
         prepared = false; begin(name);
+        try { assertEffect(grant,definition); } catch (error) { return rejected(name,args,error); }
         try {
           const validated = validateToolArguments(definition,{name,id:'schema-check',arguments:args});
           // Pi may coerce primitives or optional nulls; the product accepts only the raw declared types.
@@ -40,6 +45,7 @@ export function createAgentTools({draft,context,inspect,signal,outcome,limits,id
       execute:async (_id,args) => {
         if (!prepared) begin(name); prepared = false;
         try {
+          assertEffect(grant,definition);
           const result = await handlers[name](args || {},run);
           run.failure = ''; run.repeats = 0; onStep({name,ok:true,detail:result.details?.detail}); return result;
         } catch (error) { return rejected(name,args,error); }

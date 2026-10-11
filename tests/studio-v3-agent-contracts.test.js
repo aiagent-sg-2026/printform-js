@@ -14,9 +14,11 @@ describe('Studio v3 agent executable contracts (COV-04)', () => {
 
   it('runs every tool and operation example through the real handlers', async () => {
     const result = await checkAgentConformance();
-    expect(result).toEqual({tools:9,operations:13,examples:49});
+    expect(result).toEqual({tools:AGENT_TOOL_DEFINITIONS.length,operations:OPERATION_CAPABILITIES.length,
+      examples:[...AGENT_TOOL_DEFINITIONS,...OPERATION_CAPABILITIES].reduce((n,entry) => n + entry.examples.length + entry.invalid.length,0)});
+    expect(AGENT_TOOL_DEFINITIONS.map(tool => tool.name)).toContain('finish_answer');
     for (const entry of validateRegistry()) {
-      expect(entry.contractVersion,entry.id).toBe(entry.name === 'get_capabilities' ? '1.1.0' : '1.0.0');
+      expect(entry.contractVersion,entry.id).toBe(entry.name === 'get_capabilities' ? '1.2.0' : '1.0.0');
       expect(entry.examples.length && entry.invalid.length,entry.id).toBeTruthy();
     }
   });

@@ -5,6 +5,7 @@ import { stepLabel } from './agent-step-labels.js';
 import { createDemoTransport } from './ai-demo-transport.js';
 import { assertProposalCurrent, fail } from './ai-edits.js';
 import { chatRequest,readOnlyRequest } from './ai-chat-protocol.js';
+import { profileFor } from './agent-effects.js';
 import { Conversation, cleanMessages } from './ai-conversation.js';
 import { renderConversation, setupPanelLayout } from './ai-chat-view.js';
 import { errorMessage } from './ai-messages.js';
@@ -140,8 +141,11 @@ export class AIPanel {
   setModels(aliases) { const kept = fillModels(this.node('#ai-model'),aliases); this.referenceFiles?.capabilityChanged(); return kept; }
   restoreAlias(alias) { const valid = isDemoAlias(alias) ? alias : DEMO_CONFIG.defaultAlias; showAlias(this.node('#ai-model'),valid); this.modelChosen = valid !== DEMO_CONFIG.defaultAlias; }
   finish() { clearTimeout(this.timer); this.controller = null; this.busy = false; this.pendingMessage = null; this.agentSteps = []; this.update(); }
-  // Work in steps unless it is off, known to be unavailable, or the request is a question. Images need confirmed support.
-  useSteps(payload,media,alias) { return agentEnabled() && !this.agentUnavailable && (!media.length || this.transport.supportsImages?.(alias) === true) && typeof this.transport.agentTurn === 'function' && !readOnlyRequest(payload.request,payload.conversation); }
+  // Work in steps unless it is off, known to be unavailable, or images lack confirmed support. A question runs the same
+  // way under a read-only grant (see grantProfile); with steps unavailable it keeps the single-step answer flow.
+  useSteps(payload,media,alias) { return agentEnabled() && !this.agentUnavailable && (!media.length || this.transport.supportsImages?.(alias) === true) && typeof this.transport.agentTurn === 'function'; }
+  // The effect grant comes from host state. The question check can only narrow it to read-only, never widen it.
+  grantProfile(payload) { return profileFor({question:readOnlyRequest(payload.request,payload.conversation)}); }
   stepDone(step,id) { if (id === this.generation) { this.agentSteps.push({text:stepLabel(step),ok:step.ok,code:step.code}); this.update(); } }
   async send() {
     if (this.busy || this.applying || this.restoring) return;
@@ -175,7 +179,7 @@ export class AIPanel {
       if (this.useSteps(payload,media,alias)) {
         this.setRunTimeout(id,DEMO_CONFIG.agent.maxRunMs,'AGENT_TIMEOUT');
         this.agentSteps = [];
-        try { result = await runPanelAgent({transport:this.transport,alias,payload,media,project,signal,assertContext,inspectCandidate,onPhase,onStep:step=>this.stepDone(step,id)}); }
+        try { result = await runPanelAgent({transport:this.transport,alias,payload,media,project,signal,assertContext,inspectCandidate,onPhase,onStep:step=>this.stepDone(step,id),profile:this.grantProfile(payload)}); }
         catch (error) {
           // The gateway refusing tools is remembered. A model that ignored the tools on its first turn is only skipped
           // this once. A run that already took steps and then ended without a result is reported, not restarted.

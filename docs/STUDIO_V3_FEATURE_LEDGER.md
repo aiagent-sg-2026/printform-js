@@ -14,7 +14,7 @@ Dispositions: `agent-callable` (eligible; may still lack a service/adapter), `hu
 | agent-callable | 48 |
 | human-mediated | 22 |
 | intentionally-unavailable | 9 |
-| Eligible gaps (agent-callable, not yet reachable) | 28 |
+| Eligible gaps (agent-callable, not yet reachable) | 27 |
 
 Origins: 66 rows from the historical inventory, 13 added by this reconciliation. `baseline_access` keeps the historical Tool/Limited/Unexposed/Host label; `eligible_gap=yes` marks agent-callable rows whose baseline was Unexposed or Limited.
 
@@ -38,7 +38,7 @@ The agent reads this ledger at runtime through the generated `studio-v3/agent-wo
 
 ## Eligible gaps by domain
 
-Data 10, Project 5, Observation 5, Authoring 4, References 3, Agent runtime 1. Highest-value first: create blank/starter/preset, locale and currency, rename; dataset list/read/schema/edit/load (draft versus save kept separate); scenario-matrix validation and issue locate; richer context and reference re-reading. Planned owners are `planned:CA-04` (service), `planned:CA-02` (knowledge/contract) and `planned:CA-09` (evaluation) until each capability gets its real owner. Source-workspace tools belong to CA-07 and are not Studio ledger rows.
+Data 10, Project 5, Observation 5, Authoring 4, References 3. Highest-value first: create blank/starter/preset, locale and currency, rename; dataset list/read/schema/edit/load (draft versus save kept separate); scenario-matrix validation and issue locate; richer context and reference re-reading. Planned owners are `planned:CA-04` (service), `planned:CA-02` (knowledge/contract) and `planned:CA-09` (evaluation) until each capability gets its real owner. Source-workspace tools belong to CA-07 and are not Studio ledger rows.
 
 ## UI entry mapping
 

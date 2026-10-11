@@ -17,6 +17,8 @@ export const TOOL_ERRORS = Object.freeze({
   AGENT_SKILL_UNAVAILABLE:entry('CAPABILITY_UNAVAILABLE','unavailable',true,'Use a guide id listed by get_capabilities.'),
   AGENT_INSPECTION_REQUIRED:entry('EVIDENCE_STALE','evidence',true,'Call inspect_draft on the exact final draft before finish.'),
   AGENT_INSPECTION_BLOCKED:entry('EVIDENCE_STALE','evidence',true,'Fix the reported print issues and inspect again before finish.'),
+  GRANT_DENIED:entry('SCOPE_DENIED','rejected',true,'This run does not grant that effect. Answer with finish_answer, or report_blocked if the request needs an edit.'),
+  AGENT_EVIDENCE_REQUIRED:entry('EVIDENCE_STALE','evidence',true,'Read a guide, the form context or an inspection before finish_answer, so the answer rests on evidence.'),
   TOOL_FAILED:entry('EFFECT_UNKNOWN','internal',false,'Do not repeat blindly; report_blocked with the failing step.')
 });
 
@@ -27,6 +29,8 @@ export const RUN_ERRORS = Object.freeze({
   AGENT_TOKEN_BUDGET:entry('QUOTA_EXCEEDED','budget',false,'The token budget is spent; the run stopped.'),
   AGENT_CONTEXT_LIMIT:entry('QUOTA_EXCEEDED','budget',false,'The context limit was reached; the run stopped.'),
   AGENT_TIMEOUT:entry('COMMAND_TIMEOUT','budget',false,'The run deadline passed; the run stopped.'),
+  GRANT_PROFILE_UNKNOWN:entry('SCOPE_DENIED','internal',false,'The host requested an effect profile that does not exist.'),
+  GRANT_PROFILE_UNAVAILABLE:entry('CAPABILITY_UNAVAILABLE','unavailable',false,'This effect profile has no tools in this release yet.'),
   AGENT_BLOCKED:entry('CAPABILITY_UNAVAILABLE','stopped',false,'The agent reported a missing capability.'),
   AGENT_RELEASE_MISMATCH:entry('RELEASE_MISMATCH','release',false,'Reload Studio so app and knowledge come from one release.'),
   AGENT_KNOWLEDGE_UNAVAILABLE:entry('KNOWLEDGE_STALE','release',false,'The release knowledge could not be verified; reload or retry later.'),

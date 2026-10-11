@@ -85,7 +85,7 @@ A single-step Send is bounded to three model requests and three real local
 preview inspections, with a code/geometry-only dynamic diagnostic boundary. Step-mode tools
 discover their actual limits and bundled guide from the [release-bound registry](STUDIO_V3_AGENT_REGISTRY.md).
 The previous reviewed context and model proposal may be resent for repair.
-Questions remain read-only. Local tools build one unapplied candidate and a
+Questions remain read-only, in steps under a read-only grant or in the single-step flow. Local tools build one unapplied candidate and a
 complete diff. Above 900 px the unapplied candidate is previewed on paper and
 locally checked automatically once the response arrives; at 900 px and below
 Preview stays a button because it reveals the full-screen paper. Apply is always an

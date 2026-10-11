@@ -19,7 +19,7 @@ const json = result=>JSON.parse(result.content[0].text);
 const contextArgs={request:'Use navy',scope:{mode:'whole'},typography:[],conversation:[]};
 describe('feature-owned registry and knowledge',()=> {
   it('has closed transport contracts, real source/evaluation references and one canonical operation list',()=> {
-    expect(validateRegistry()).toHaveLength(22);
+    expect(validateRegistry()).toHaveLength(23);
     expect(OPERATION_CAPABILITIES.map(op=>op.name)).toEqual(AUTHORING_TYPES);
     expect(Object.keys(GLOBAL_STYLE_SCHEMA.properties).sort()).toEqual([...GLOBAL_STYLE_KEYS].sort());
     const check=schema=> {
@@ -34,7 +34,7 @@ describe('feature-owned registry and knowledge',()=> {
   });
   it('can register a new read capability without changing the core prompt',()=> {
     const extra={...AGENT_TOOL_DEFINITIONS[0],id:'printform.agent.synthetic_read',name:'synthetic_read',description:'A synthetic new read capability.'};
-    expect(validateRegistry({tools:[...AGENT_TOOL_DEFINITIONS,extra]})).toHaveLength(23);
+    expect(validateRegistry({tools:[...AGENT_TOOL_DEFINITIONS,extra]})).toHaveLength(24);
     expect(AGENT_PROMPT).not.toContain('synthetic_read');
     expect(()=>validateRegistry({tools:[...AGENT_TOOL_DEFINITIONS,extra,extra]})).toThrow('Invalid');
     expect(()=>validateRegistry({tools:[{...extra,skills:['missing']}]})).toThrow('Invalid');
