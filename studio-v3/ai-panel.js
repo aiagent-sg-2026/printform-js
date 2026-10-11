@@ -6,6 +6,7 @@ import { createDemoTransport } from './ai-demo-transport.js';
 import { assertProposalCurrent, fail } from './ai-edits.js';
 import { chatRequest,readOnlyRequest } from './ai-chat-protocol.js';
 import { profileFor } from './agent-effects.js';
+import { createIntentLedger, newIntentKey } from './intent-ledger.js';
 import { Conversation, cleanMessages } from './ai-conversation.js';
 import { renderConversation, setupPanelLayout } from './ai-chat-view.js';
 import { errorMessage } from './ai-messages.js';
@@ -20,7 +21,7 @@ const RECIPIENT_NOTICE = 'Sent to the Demo gateway · use fictional data only';
 export class AIPanel {
   constructor({bus,selection=()=> 'items',facts=()=>[],elementTags,guard,preview,restore,commit,undo,sync,transport=createDemoTransport()}) {
     Object.assign(this,{getBus:bus,getSelection:selection,getFacts:facts,elementTags,guard,renderPreview:preview,restore,commit,undo,sync,transport});
-    this.root = document.querySelector('#ai-panel'); this.viewing = false; this.agentSteps = []; this.agentUnavailable = false; this.modelChosen = false; this.proposal = null; this.generation = 0; this.epoch = 0; this.conversation = new Conversation();
+    this.root = document.querySelector('#ai-panel'); this.viewing = false; this.agentSteps = []; this.agentUnavailable = false; this.modelChosen = false; this.proposal = null; this.generation = 0; this.epoch = 0; this.intents = createIntentLedger(); this.conversation = new Conversation();
     this.root.addEventListener('submit',event=> { event.preventDefault(); void this.send(); });
     this.node('#ai-agent').checked = agentEnabled();
     this.root.addEventListener('change',event=> { if (event.target.id === 'ai-agent') { setAgentEnabled(event.target.checked); this.agentUnavailable = false; }
@@ -34,7 +35,7 @@ export class AIPanel {
       if (action === 'cancel') void this.stop();
       if (action === 'discard') void this.discard();
       if (action === 'preview') void this.guard(()=>this.preview()).catch(error=>this.error(error));
-      if (action === 'apply') void this.guard(()=>this.apply()).catch(error=>this.error(error));
+      if (action === 'apply') { const intent = button.dataset.intent; void this.guard(()=>this.apply(intent)).catch(error=>this.error(error)); }
       if (action === 'undo') void this.guard(()=>this.undoCard(button.dataset.cardId)).catch(error=>this.error(error));
       if (action === 'models') void this.discover();
       if (action === 'clear') { this.node('.ai-settings').open = false; void this.clear(); }
@@ -195,7 +196,8 @@ export class AIPanel {
       assertProposalCurrent(this.getBus(),{bus,revision,baseDesign});
       if (epoch !== this.epoch || selection !== this.getSelection() || scope !== JSON.stringify(this.scope())) throw fail('STALE_PROPOSAL');
       const card = this.conversation.add('assistant',result.kind === 'answer' ? result.message : result.summary,result.kind === 'answer' ? 'answer' : 'ready',{documentKey:this.documentKey(),...(result.diff ? {diff:result.diff} : {})});
-      if (result.kind === 'proposal') this.proposal = {...result,bus,revision,baseDesign,epoch,selection,scope,cardId:card.id};
+      // The host mints one intent key per proposal; Apply is idempotent under it (see intent-ledger.js).
+      if (result.kind === 'proposal') this.proposal = {...result,bus,revision,baseDesign,epoch,selection,scope,cardId:card.id,intentKey:newIntentKey()};
       if (result.kind === 'answer' && this.viewing) { await this.restore(); this.viewing = false; }
       // Wide screens preview the unapplied candidate right away; narrow screens keep the Preview button (it hides the full-screen panel).
       const auto = result.kind === 'proposal' && innerWidth > 900, next = auto && result.inspection?.ready ? 'Review the paper preview, then Apply.' : 'Preview before Apply.';
@@ -215,12 +217,18 @@ export class AIPanel {
     this.update(); this.sync();
     if (innerWidth <= 900) { this.suspend(); document.querySelector('[data-ai-toggle]').focus(); }
   }
-  async apply() {
+  // A duplicate Apply for a key already seen (a second click, a queued repeat) waits for the original outcome and does
+  // nothing more: one commit, no stale-proposal or busy error for the harmless repeat.
+  async apply(intentKey = this.proposal?.intentKey) {
+    const duplicate = this.intents.replay(intentKey);
+    if (duplicate) { await duplicate.catch(() => {}); return; }
+    // A key that is neither known nor the current proposal's belongs to something else; it never commits this proposal.
+    if (intentKey !== this.proposal?.intentKey) throw fail('STALE_PROPOSAL');
     const proposal = this.proposal; this.assertCurrent(proposal); if (!this.checked || this.busy) throw fail('AI_RUN_FAILED');
     const card = this.conversation.messages.find(m=>m.id === proposal.cardId), generation = this.generation;
     this.applying = true; this.busy = true; this.update(); let canonical = false;
     try {
-      const applied = await this.commit(proposal,generation); canonical = true;
+      const applied = await this.intents.run(proposal.intentKey,JSON.stringify([proposal.revision,proposal.baseDesign,proposal.design]),() => this.commit(proposal,generation)); canonical = true;
       if (card) Object.assign(card,{status:'applied',appliedBus:applied.bus,appliedRevision:applied.revision,appliedEpoch:proposal.epoch});
       // The references pointed at the revision just replaced; keeping them would block the next Send as outdated.
       if (applied.bus === this.getBus()) { this.elementTags?.consume(); this.showScopeHint(); }

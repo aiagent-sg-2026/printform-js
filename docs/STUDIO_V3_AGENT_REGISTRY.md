@@ -44,6 +44,10 @@ Enforcement has two layers. The model is shown only the granted tools and a prom
 
 The grant is chosen from host state in the panel: a request the host classifies as a question gets `read-only`, anything else `design`. The classifier can only narrow. `finish_answer` completes a run with text only. It needs a prior read of `read_skill`, `get_context` or `inspect_draft`, since `get_capabilities` alone is not evidence, and the result is kind `answer` with no proposal and no draft step. Measured print sizes stay host-authoritative: the panel replaces the model's words with the committed-preview measurements, as the single-step flow does. A step run that cannot start (steps off, tools refused, images unsupported) still uses the single-step flow.
 
+### G3 evidence register
+
+`docs/studio-v3-run-evidence.json` maps each G3 case to the tests that prove it, and `tests/studio-v3-run-reliability.test.js` fails if a cited test no longer exists. RUN-01 to RUN-05 and RUN-07 are covered; the token limit is a bounded overshoot (checked before each request, one response may cross it), not a hard ceiling. **RUN-06 is partial**: stop during a read, edit, render or Apply and the unsaved-work protection on update are proven, while test/build/output preparation, disconnect and unknown-effect reconciliation wait for the runner (CA-07) and output services (CA-06). **RUN-08 is open**: no durable session resume exists, so nothing consumes grant, revision, release and retention validation yet.
+
 ## Discovery, workflows and lifecycle (CA-02)
 
 `createAgentTools` takes its definitions and handlers from the registry and `TOOL_HANDLERS`, and `get_capabilities` lists exactly the tools given to the run. A new feature adds a descriptor, a contract, a handler and a guide; the core prompt and handler wiring stay unchanged. A test proves this end to end: a synthetic tool and guide are discovered, read and called through a Pi run without editing `agent-loop.js` or `agent-tools.js`.

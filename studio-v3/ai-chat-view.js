@@ -29,7 +29,7 @@ export function renderConversation(panel) {
       if (active) {
         const actions = node('div','ai-actions');
         for (const [action,label,disabled] of [['preview',previewed ? 'Preview again' : 'Preview on page',panel.busy],['apply','Apply',!panel.checked || panel.busy],['discard','Discard',panel.applying]]) {
-          const button = node('button',action === 'apply' ? 'primary' : '',label); button.type = 'button'; button.dataset.ai = action; button.disabled = Boolean(disabled || panel.applying); actions.append(button);
+          const button = node('button',action === 'apply' ? 'primary' : '',label); button.type = 'button'; button.dataset.ai = action; if (action === 'apply') button.dataset.intent = panel.proposal?.intentKey || ''; button.disabled = Boolean(disabled || panel.applying); actions.append(button);
         }
         card.append(actions);
       } else if (message.status === 'applied' && panel.canUndo(message)) {

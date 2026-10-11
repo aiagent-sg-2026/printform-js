@@ -104,6 +104,12 @@ gets the design grant (private draft plus a proposal for Preview and Apply). The
 grant; it never widens it, and no argument, model text or reference text can change it. Data and coding grants exist
 by name only and fail as unavailable until their tools are added.
 
+Apply is idempotent. The host mints one intent key per proposal (never from the model) and the Apply button carries it.
+A second click, a queued repeat or a late repeat for a key already seen waits for the original outcome and does nothing
+more, so there is one commit and no error for the harmless repeat. The same key with different content is rejected
+(`INTENT_CONFLICT`); a new proposal gets a new key. A failed outcome is replayed, never retried blindly. The ledger keeps
+the last 64 keys in memory only.
+
 Ordinary questions use a closed answer envelope in the single-step flow and remain read-only. Font
 questions use measured computed typography in the committed sandbox preview,
 with stable label/value/title/page-number IDs. Zoom is separate from print size.

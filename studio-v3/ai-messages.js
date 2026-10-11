@@ -34,6 +34,8 @@ export const AI_MESSAGES = {
   COLUMN_WIDTH_LIMIT:'Proposed column widths exceed 100%. Nothing changed.',
   NO_CHANGES:'The suggestion contains no layout changes. Nothing changed.',
   STALE_PROPOSAL:'Form changed, or the selection/scope changed. Send a new request. Nothing changed.',
+  INTENT_CONFLICT:'This suggestion changed after it was prepared. Send a new request. Nothing changed.',
+  INTENT_KEY_INVALID:'This suggestion cannot be applied. Send a new request. Nothing changed.',
   AI_TIMEOUT:'The AI service is slow and the request timed out. Use Edit & resend to try again. Nothing changed.',
   AI_RUN_FAILED:'Pi could not complete a validated answer or proposal. Nothing changed.'
 };

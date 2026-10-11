@@ -1,0 +1,213 @@
+{
+ "version": 1,
+ "gate": "G3",
+ "cases": [
+  {
+   "id": "RUN-01",
+   "status": "covered",
+   "note": "Questions run in steps under a read-only grant and end with finish_answer.",
+   "evidence": [
+    {
+     "file": "tests/studio-v3-run-grants.test.js",
+     "test": "answers a product question in the common orchestration with reads only"
+    },
+    {
+     "file": "tests/studio-v3-run-grants.test.js",
+     "test": "does not accept an answer before any evidence was read"
+    },
+    {
+     "file": "tests/studio-v3-run-grants.test.js",
+     "test": "inspects without advancing the revision"
+    },
+    {
+     "file": "tests/studio-v3-run-grants.test.js",
+     "test": "keeps measured print sizes host-authoritative"
+    },
+    {
+     "file": "e2e/studio-v3-agent-registry.spec.js",
+     "test": "answers a question in steps under a read-only grant with no proposal and no revision change"
+    }
+   ]
+  },
+  {
+   "id": "RUN-02",
+   "status": "covered",
+   "note": "Grants are host-built and frozen; the question check can only narrow; data and coding are unavailable until they have tools.",
+   "evidence": [
+    {
+     "file": "tests/studio-v3-run-grants.test.js",
+     "test": "builds frozen host grants"
+    },
+    {
+     "file": "tests/studio-v3-run-grants.test.js",
+     "test": "derives the profile from the host check"
+    },
+    {
+     "file": "tests/studio-v3-run-grants.test.js",
+     "test": "rejects every write tool under a read-only grant"
+    },
+    {
+     "file": "tests/studio-v3-run-grants.test.js",
+     "test": "rejects a forged call to a tool the run was not shown"
+    }
+   ]
+  },
+  {
+   "id": "RUN-03",
+   "status": "covered",
+   "note": "Scope escape, forged approval, financial binding replacement and reference injection fail with the project unchanged.",
+   "evidence": [
+    {
+     "file": "tests/studio-v3-run-grants.test.js",
+     "test": "rejects an edit outside the selected scope"
+    },
+    {
+     "file": "tests/studio-v3-run-grants.test.js",
+     "test": "rejects a forged approval or extra authority"
+    },
+    {
+     "file": "tests/studio-v3-run-grants.test.js",
+     "test": "rejects replacing an original financial binding"
+    },
+    {
+     "file": "tests/studio-v3-run-grants.test.js",
+     "test": "treats instructions inside references as data"
+    }
+   ]
+  },
+  {
+   "id": "RUN-04",
+   "status": "covered",
+   "note": "Stale revision, replaced document, changed selection, late reply and double Apply reject or reconcile; one commit at most.",
+   "evidence": [
+    {
+     "file": "tests/studio-v3-ai.test.js",
+     "test": "rejects changed revision, replaced document and altered base design"
+    },
+    {
+     "file": "tests/studio-v3-chat-panel.test.js",
+     "test": "rejects a late provider reply when selection changes away and back during a request"
+    },
+    {
+     "file": "tests/studio-v3-chat-panel.test.js",
+     "test": "rechecks scope/selection when an Apply waits in the command queue"
+    },
+    {
+     "file": "tests/studio-v3-chat-panel.test.js",
+     "test": "keeps a completed edit attached to its captured bus when navigation replaces the document during render"
+    },
+    {
+     "file": "tests/studio-v3-run-reliability.test.js",
+     "test": "turns a double Apply, a queued repeat and a late repeat into one commit"
+    },
+    {
+     "file": "tests/studio-v3-run-reliability.test.js",
+     "test": "still rejects a stale proposal the first time"
+    }
+   ]
+  },
+  {
+   "id": "RUN-05",
+   "status": "covered",
+   "note": "Tool-call, repeated-failure and token budgets stop runs; unknown usage stops them. The token limit is checked before each request, so one response can cross it: a bounded overshoot, not a hard ceiling.",
+   "evidence": [
+    {
+     "file": "tests/studio-v3-agent-loop.test.js",
+     "test": "stops when the turn budget is used up"
+    },
+    {
+     "file": "tests/studio-v3-agent-loop.test.js",
+     "test": "stops when the same failure keeps coming back"
+    },
+    {
+     "file": "tests/studio-v3-agent-registry.test.js",
+     "test": "counts schema-rejected calls and stops at the configured"
+    },
+    {
+     "file": "tests/studio-v3-agent-gateway-loop.test.js",
+     "test": "stops before a request that would start past the token budget"
+    },
+    {
+     "file": "tests/studio-v3-agent-usage.test.js",
+     "test": "marks cumulative usage unavailable when a later response omits it"
+    },
+    {
+     "file": "tests/studio-v3-run-reliability.test.js",
+     "test": "starts no request once accounted usage reaches the limit exactly"
+    },
+    {
+     "file": "tests/studio-v3-run-reliability.test.js",
+     "test": "allows a request that starts one token under the limit"
+    }
+   ]
+  },
+  {
+   "id": "RUN-06",
+   "status": "partial",
+   "note": "Stop during a read, edit, render or Apply, and the unsaved-work protection on update, are proven. Test, build and output preparation, disconnect, and unknown-effect reconciliation wait for the runner (CA-07) and output services (CA-06).",
+   "evidence": [
+    {
+     "file": "tests/studio-v3-chat-panel-agent.test.js",
+     "test": "can be stopped, and then has no proposal"
+    },
+    {
+     "file": "tests/studio-v3-agent-gateway-loop.test.js",
+     "test": "stops at once when the person stops it while a request is open"
+    },
+    {
+     "file": "tests/studio-v3-chat-panel-deadlines.test.js",
+     "test": "Stop immediately cancels the extended run"
+    },
+    {
+     "file": "tests/studio-v3-ai.test.js",
+     "test": "cancels an active Harness request and discards a response that arrives after abort"
+    },
+    {
+     "file": "tests/studio-v3-chat-panel.test.js",
+     "test": "keeps the unapplied banner/print protection if canonical restoration itself fails"
+    },
+    {
+     "file": "e2e/studio-v3-upgrade.spec.js",
+     "test": "with unsaved work the approval dialog opens by itself"
+    }
+   ]
+  },
+  {
+   "id": "RUN-07",
+   "status": "covered",
+   "note": "Host-minted intent key per proposal; Apply is idempotent under it.",
+   "evidence": [
+    {
+     "file": "tests/studio-v3-run-reliability.test.js",
+     "test": "runs one effect for a key even when callers race"
+    },
+    {
+     "file": "tests/studio-v3-run-reliability.test.js",
+     "test": "rejects the same key with a different input"
+    },
+    {
+     "file": "tests/studio-v3-run-reliability.test.js",
+     "test": "replays a failed outcome under the same key"
+    },
+    {
+     "file": "tests/studio-v3-run-reliability.test.js",
+     "test": "binds the Apply button to the proposal key"
+    },
+    {
+     "file": "tests/studio-v3-run-reliability.test.js",
+     "test": "turns a double Apply, a queued repeat and a late repeat into one commit"
+    },
+    {
+     "file": "tests/studio-v3-run-reliability.test.js",
+     "test": "never commits the current proposal under a key that belongs to another one"
+    }
+   ]
+  },
+  {
+   "id": "RUN-08",
+   "status": "open",
+   "reason": "No durable session resume exists (notes and drafts are per run), so there is no consumer for grant, revision, release and retention validation. It is added with the first resumable session.",
+   "evidence": []
+  }
+ ]
+}
