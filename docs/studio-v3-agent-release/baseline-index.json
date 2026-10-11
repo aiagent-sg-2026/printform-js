@@ -4,7 +4,8 @@
    "evaluations": [
     "tests/studio-v3-agent-contracts.test.js",
     "tests/studio-v3-agent-loop.test.js",
-    "tests/studio-v3-agent-registry.test.js"
+    "tests/studio-v3-agent-registry.test.js",
+    "tests/studio-v3-run-grants.test.js"
    ],
    "files": [
     "src/printform/helpers.js",
@@ -36,6 +37,7 @@
     "studio-v3/a4-theme.js",
     "studio-v3/agent-binding-invariants.js",
     "studio-v3/agent-contracts.js",
+    "studio-v3/agent-effects.js",
     "studio-v3/agent-errors.js",
     "studio-v3/agent-handlers.js",
     "studio-v3/agent-knowledge.js",
@@ -75,7 +77,8 @@
    "evaluations": [
     "tests/studio-v3-agent-contracts.test.js",
     "tests/studio-v3-agent-loop.test.js",
-    "tests/studio-v3-agent-registry.test.js"
+    "tests/studio-v3-agent-registry.test.js",
+    "tests/studio-v3-run-grants.test.js"
    ],
    "files": [
     "src/printform/helpers.js",
@@ -107,6 +110,80 @@
     "studio-v3/a4-theme.js",
     "studio-v3/agent-binding-invariants.js",
     "studio-v3/agent-contracts.js",
+    "studio-v3/agent-effects.js",
+    "studio-v3/agent-errors.js",
+    "studio-v3/agent-handlers.js",
+    "studio-v3/agent-knowledge.js",
+    "studio-v3/agent-memory.js",
+    "studio-v3/agent-operation-schemas.js",
+    "studio-v3/agent-registry.js",
+    "studio-v3/agent-tools.js",
+    "studio-v3/agent-workflows.js",
+    "studio-v3/ai-authoring-contract.js",
+    "studio-v3/ai-authoring.js",
+    "studio-v3/ai-edits.js",
+    "studio-v3/ai-gateway-config.js",
+    "studio-v3/ai-inspection.js",
+    "studio-v3/compact-a5-demo.js",
+    "studio-v3/database-model.js",
+    "studio-v3/demo-binding-paths.js",
+    "studio-v3/demo-catalog.js",
+    "studio-v3/demo-claims.js",
+    "studio-v3/demo-document-kinds.js",
+    "studio-v3/demo-fixture-math.js",
+    "studio-v3/demo-master-data.js",
+    "studio-v3/demo-records.js",
+    "studio-v3/design-authoring.js",
+    "studio-v3/design-validation.js",
+    "studio-v3/file-io.js",
+    "studio-v3/model.js",
+    "studio-v3/runtime-assets.js",
+    "studio-v3/table-style.js",
+    "studio-v3/template.js",
+    "studio-v3/validation.js"
+   ],
+   "skills": [
+    "form-authoring"
+   ]
+  },
+  "printform.agent.finish_answer": {
+   "evaluations": [
+    "tests/studio-v3-agent-contracts.test.js",
+    "tests/studio-v3-agent-loop.test.js",
+    "tests/studio-v3-agent-registry.test.js",
+    "tests/studio-v3-run-grants.test.js"
+   ],
+   "files": [
+    "src/printform/helpers.js",
+    "studio-v2/core/acceptance.js",
+    "studio-v2/core/assets.js",
+    "studio-v2/core/branding.js",
+    "studio-v2/core/business-rules.js",
+    "studio-v2/core/constants.js",
+    "studio-v2/core/content-security.js",
+    "studio-v2/core/contrast.js",
+    "studio-v2/core/data-policy.js",
+    "studio-v2/core/evidence-pack.js",
+    "studio-v2/core/exporter.js",
+    "studio-v2/core/form-spec-markup.js",
+    "studio-v2/core/form-spec.js",
+    "studio-v2/core/i18n.js",
+    "studio-v2/core/json.js",
+    "studio-v2/core/monetary-inspection.js",
+    "studio-v2/core/operation-schemas.js",
+    "studio-v2/core/operations.js",
+    "studio-v2/core/page-chrome-inspection.js",
+    "studio-v2/core/project-model.js",
+    "studio-v2/core/render-diagnostics.js",
+    "studio-v2/core/row-limits.js",
+    "studio-v2/core/schema.js",
+    "studio-v2/core/typography.js",
+    "studio-v2/ui/agent-demo-gateway.js",
+    "studio-v3/a4-presets.js",
+    "studio-v3/a4-theme.js",
+    "studio-v3/agent-binding-invariants.js",
+    "studio-v3/agent-contracts.js",
+    "studio-v3/agent-effects.js",
     "studio-v3/agent-errors.js",
     "studio-v3/agent-handlers.js",
     "studio-v3/agent-knowledge.js",
@@ -146,7 +223,8 @@
    "evaluations": [
     "tests/studio-v3-agent-contracts.test.js",
     "tests/studio-v3-agent-loop.test.js",
-    "tests/studio-v3-agent-registry.test.js"
+    "tests/studio-v3-agent-registry.test.js",
+    "tests/studio-v3-run-grants.test.js"
    ],
    "files": [
     "src/printform/helpers.js",
@@ -178,6 +256,7 @@
     "studio-v3/a4-theme.js",
     "studio-v3/agent-binding-invariants.js",
     "studio-v3/agent-contracts.js",
+    "studio-v3/agent-effects.js",
     "studio-v3/agent-errors.js",
     "studio-v3/agent-handlers.js",
     "studio-v3/agent-knowledge.js",
@@ -217,7 +296,8 @@
    "evaluations": [
     "tests/studio-v3-agent-contracts.test.js",
     "tests/studio-v3-agent-loop.test.js",
-    "tests/studio-v3-agent-registry.test.js"
+    "tests/studio-v3-agent-registry.test.js",
+    "tests/studio-v3-run-grants.test.js"
    ],
    "files": [
     "src/printform/helpers.js",
@@ -249,6 +329,7 @@
     "studio-v3/a4-theme.js",
     "studio-v3/agent-binding-invariants.js",
     "studio-v3/agent-contracts.js",
+    "studio-v3/agent-effects.js",
     "studio-v3/agent-errors.js",
     "studio-v3/agent-handlers.js",
     "studio-v3/agent-knowledge.js",
@@ -288,7 +369,8 @@
    "evaluations": [
     "tests/studio-v3-agent-contracts.test.js",
     "tests/studio-v3-agent-loop.test.js",
-    "tests/studio-v3-agent-registry.test.js"
+    "tests/studio-v3-agent-registry.test.js",
+    "tests/studio-v3-run-grants.test.js"
    ],
    "files": [
     "src/printform/helpers.js",
@@ -320,6 +402,7 @@
     "studio-v3/a4-theme.js",
     "studio-v3/agent-binding-invariants.js",
     "studio-v3/agent-contracts.js",
+    "studio-v3/agent-effects.js",
     "studio-v3/agent-errors.js",
     "studio-v3/agent-handlers.js",
     "studio-v3/agent-knowledge.js",
@@ -359,7 +442,8 @@
    "evaluations": [
     "tests/studio-v3-agent-contracts.test.js",
     "tests/studio-v3-agent-loop.test.js",
-    "tests/studio-v3-agent-registry.test.js"
+    "tests/studio-v3-agent-registry.test.js",
+    "tests/studio-v3-run-grants.test.js"
    ],
    "files": [
     "src/printform/helpers.js",
@@ -391,6 +475,7 @@
     "studio-v3/a4-theme.js",
     "studio-v3/agent-binding-invariants.js",
     "studio-v3/agent-contracts.js",
+    "studio-v3/agent-effects.js",
     "studio-v3/agent-errors.js",
     "studio-v3/agent-handlers.js",
     "studio-v3/agent-knowledge.js",
@@ -430,7 +515,8 @@
    "evaluations": [
     "tests/studio-v3-agent-contracts.test.js",
     "tests/studio-v3-agent-loop.test.js",
-    "tests/studio-v3-agent-registry.test.js"
+    "tests/studio-v3-agent-registry.test.js",
+    "tests/studio-v3-run-grants.test.js"
    ],
    "files": [
     "src/printform/helpers.js",
@@ -462,6 +548,7 @@
     "studio-v3/a4-theme.js",
     "studio-v3/agent-binding-invariants.js",
     "studio-v3/agent-contracts.js",
+    "studio-v3/agent-effects.js",
     "studio-v3/agent-errors.js",
     "studio-v3/agent-handlers.js",
     "studio-v3/agent-knowledge.js",
@@ -501,7 +588,8 @@
    "evaluations": [
     "tests/studio-v3-agent-contracts.test.js",
     "tests/studio-v3-agent-loop.test.js",
-    "tests/studio-v3-agent-registry.test.js"
+    "tests/studio-v3-agent-registry.test.js",
+    "tests/studio-v3-run-grants.test.js"
    ],
    "files": [
     "src/printform/helpers.js",
@@ -533,6 +621,7 @@
     "studio-v3/a4-theme.js",
     "studio-v3/agent-binding-invariants.js",
     "studio-v3/agent-contracts.js",
+    "studio-v3/agent-effects.js",
     "studio-v3/agent-errors.js",
     "studio-v3/agent-handlers.js",
     "studio-v3/agent-knowledge.js",
@@ -572,7 +661,8 @@
    "evaluations": [
     "tests/studio-v3-agent-contracts.test.js",
     "tests/studio-v3-agent-loop.test.js",
-    "tests/studio-v3-agent-registry.test.js"
+    "tests/studio-v3-agent-registry.test.js",
+    "tests/studio-v3-run-grants.test.js"
    ],
    "files": [
     "src/printform/helpers.js",
@@ -604,6 +694,7 @@
     "studio-v3/a4-theme.js",
     "studio-v3/agent-binding-invariants.js",
     "studio-v3/agent-contracts.js",
+    "studio-v3/agent-effects.js",
     "studio-v3/agent-errors.js",
     "studio-v3/agent-handlers.js",
     "studio-v3/agent-knowledge.js",
@@ -1539,8 +1630,8 @@
   }
  },
  "files": {
-  "docs/STUDIO_V3_FEATURE_LEDGER.csv": "921281d0bab9e300e7c76f3a76c2ac2a89c8eb8ae4b02e1cc93db7bb612d415a",
-  "e2e/studio-v3-agent-registry.spec.js": "b811c783f80fff441bd1cb082e2de126616d80ae0280a1a9d0b65969e3a4a7ac",
+  "docs/STUDIO_V3_FEATURE_LEDGER.csv": "4c26710e1d511c66b2782c1bb4d3b280f72a50c5a2a361e09e8571eff8e8ec3c",
+  "e2e/studio-v3-agent-registry.spec.js": "7492351dd2cb44b1874e13c2aa3d8553d569fbe8e0cd0e6035e75ad6178c8eca",
   "scripts/generate-studio-v3-workflows.mjs": "0c2e0a7ddadeded778afe8a4f619d410fb6060dbcda0359cd6073292cf9c4a35",
   "scripts/studio-v3-task-register.mjs": "efa5d1d0248ff63d2a8ed42069873aa0686e8d1074b163e1222ce939f2f310a5",
   "src/printform/helpers.js": "06a577a8a6f60af51ede0aad875e22625b5ab9643b32c1572fa30421b8d3b860",
@@ -1571,14 +1662,15 @@
   "studio-v3/a4-presets.js": "1d80cdef6092e73bf7b736f8497ec18043e8a30a397ec4ae62bd2f1ab6d673cc",
   "studio-v3/a4-theme.js": "80c67ae931e378f63da6e2f655d0b2a7b5f4df4f118e75b385631a8c9bc66771",
   "studio-v3/agent-binding-invariants.js": "869d7b67673c2bc13e3abc8074e5e6d6c861e4a71f4283925cc0176c521c0d25",
-  "studio-v3/agent-contracts.js": "271f8c981161fa40fc93efa6b51e63068facf0250ec9d4ea418a944120563b72",
-  "studio-v3/agent-errors.js": "2c1ed48c7d019050f131f6385ac7240ad0b473fccb5dc2346f5180fad7e7f165",
-  "studio-v3/agent-handlers.js": "703970cb99b0520f9a08591e42b056bbe8d7e4d40b418ef3952955270e17b279",
-  "studio-v3/agent-knowledge.js": "d9df34b9676df43ae0d2b198df508778b1a4d07d33ead9c4b45c3c8b3a0d7c53",
+  "studio-v3/agent-contracts.js": "55a3ef0a8ed52b35beb1f62c45276bd11e61b0bccf7bd4cc35e7a64cb9d96a77",
+  "studio-v3/agent-effects.js": "d9a788c93bcfe880258d161a8d520a6d0bf61b4588f1831e126feda498932ed5",
+  "studio-v3/agent-errors.js": "c631e0b5e1f48e6559613c9e2462062a5f4b72df1de352eeb921b908c54e5f8a",
+  "studio-v3/agent-handlers.js": "dcc4941d8dacf448655b4785d67a801622d4b859f0a3712939b7cc4923470b98",
+  "studio-v3/agent-knowledge.js": "01d4bf4793f235f5d7a690a06eaed893cbb8416c1c57b37740780e12aa85eac6",
   "studio-v3/agent-memory.js": "2079544587330c91e15bb8f8afbf6ff3a056c378829aa0c8cf194893e78bf7f3",
   "studio-v3/agent-operation-schemas.js": "27ba0a2b6d7a31c5f07ef79c78ab038db850ed112ee82c83bc7f8103e7e9914d",
-  "studio-v3/agent-registry.js": "3168e7bd588464212f0b3dc2bda6963d1575a2dba182a7ae0f009bf275ec1684",
-  "studio-v3/agent-tools.js": "574e3801cca38f3d4dc1f2923fadc71795639e2a705bfaa62053ed39f6d626e5",
+  "studio-v3/agent-registry.js": "f4a57252421db69564749fbc609d1418221a31774962722469c3bd3f2a48b3ca",
+  "studio-v3/agent-tools.js": "c751b9f7b06c3c777354daab702ed2aa28712372ba4c618fd49c67b6c5a9c510",
   "studio-v3/agent-workflows.js": "24c0ff3cf8181cec6fc370108b8067a3efc22504548128d79b535fb687b41f9a",
   "studio-v3/ai-authoring-contract.js": "85ab060d0923e48108fce9bdcb7ca39674648b43b3e3fe2436d588b25eaf4c86",
   "studio-v3/ai-authoring.js": "bc0e43d8562d7412a87781136e87fe44e7a20a38c67952fc8788f2b865221429",
@@ -1603,14 +1695,15 @@
   "studio-v3/template.js": "6646ef6df93bc952fdc32b6ebbcd262fd9514936dab81bcc7a8b5e6ccce298cc",
   "studio-v3/validation.js": "5582568209f4fb6c1b17d9ad090e46516b11d43f3a2d31b23a432abb9bb3a5b9",
   "tests/studio-v3-agent-binding-invariants.test.js": "0cbeb7e60d8e34a4312b3802360ad009b7a2a562299fbcbe59f39fedb14b29cb",
-  "tests/studio-v3-agent-contracts.test.js": "2e14a3b9a66be6ec37e408e995324eceac088d2d695aa495157d3ce8e9cd83dc",
-  "tests/studio-v3-agent-discovery.test.js": "1401addce3a83c995cc7ef4e5c30886793de2ba9dd2e9ae765d542eb469dfa65",
+  "tests/studio-v3-agent-contracts.test.js": "b62adbfdf8a8424db4fa32105e98a52449cc407253e5b4e97f3d2055b92d3f8f",
+  "tests/studio-v3-agent-discovery.test.js": "02c2b151fd5ac5dee9d8459016d5b1d57e20550c32150f24ce0e20921ec50381",
   "tests/studio-v3-agent-loop.test.js": "9fdea9a4592d61b5b326dcbb630fa20bcae229d75e5daf7cc821c062dbe5d748",
-  "tests/studio-v3-agent-registry.test.js": "e04fae27febdadca9d6e753adbead9098d0d7fde5359d07740fc25c3b5b605cc",
+  "tests/studio-v3-agent-registry.test.js": "b923d5c9ea9cf65c3686dff0b428286964627d0f8051e2462d8458dcccbf07e4",
   "tests/studio-v3-ai-authoring.test.js": "a7b42d591de11e5e03c2ef7667c6d0414af83b83791b7afc90f728ead7b43008",
-  "tests/studio-v3-feature-ledger.test.js": "c4cec8375aa088b8efc019896ae0f50a0bd39686e16e06dbf6d94808c3ce01d4"
+  "tests/studio-v3-feature-ledger.test.js": "c4cec8375aa088b8efc019896ae0f50a0bd39686e16e06dbf6d94808c3ce01d4",
+  "tests/studio-v3-run-grants.test.js": "27aa7450efbf580703a962ce0e7b277e489346178e2b61c8277878cbda20f0d4"
  },
- "release": "0d023fc718782fb2ddadc04c63d4cb6da69d7709",
+ "release": "a99c932e45a95d4d5b5c811e7dbc0db3256ddf99",
  "untracked": [],
  "version": 1
 }
