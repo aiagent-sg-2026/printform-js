@@ -222,6 +222,8 @@ export class AIPanel {
   async apply(intentKey = this.proposal?.intentKey) {
     const duplicate = this.intents.replay(intentKey);
     if (duplicate) { await duplicate.catch(() => {}); return; }
+    // A key that is neither known nor the current proposal's belongs to something else; it never commits this proposal.
+    if (intentKey !== this.proposal?.intentKey) throw fail('STALE_PROPOSAL');
     const proposal = this.proposal; this.assertCurrent(proposal); if (!this.checked || this.busy) throw fail('AI_RUN_FAILED');
     const card = this.conversation.messages.find(m=>m.id === proposal.cardId), generation = this.generation;
     this.applying = true; this.busy = true; this.update(); let canonical = false;

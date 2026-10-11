@@ -63,6 +63,12 @@ describe('Studio v3 Apply commits at most once (RUN-04, RUN-07)', () => {
     panel.node('#ai-prompt').value = 'Use navy accents again.'; panel.share(); await panel.send();
     expect(panel.proposal.intentKey).not.toBe(key); expect(panel.node('[data-ai=apply]').dataset.intent).toBe(panel.proposal.intentKey);
   });
+  it('never commits the current proposal under a key that belongs to another one', async () => {
+    let commits = 0; const {panel} = setup({commit:async () => { commits++; return {}; }});
+    await panel.send(); await panel.preview();
+    for (const wrong of [newIntentKey(),'','00000000-0000-4000-8000-000000000000']) await expect(panel.apply(wrong), wrong).rejects.toMatchObject({code:'STALE_PROPOSAL'});
+    expect(commits).toBe(0); expect(panel.getBus().revision).toBe(0); expect(panel.proposal).not.toBeNull();
+  });
   it('still rejects a stale proposal the first time, with the committed form untouched', async () => {
     let commits = 0; const {panel,changeBus} = setup({commit:async () => { commits++; return {}; }});
     await panel.send(); await panel.preview(); const key = panel.proposal.intentKey; changeBus();
