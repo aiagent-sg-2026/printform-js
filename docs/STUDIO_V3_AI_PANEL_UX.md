@@ -1,6 +1,6 @@
 # Studio v3 AI panel: usability backlog
 
-Status: **proposal, not accepted work.** Written 2026-10-08 from one owner screenshot (panel about 400 px wide, a step run in progress, one image attached) cross-checked against the source. Nothing here changes behavior. Wording and layout changes alter the product's look, so each slice needs the owner's go-ahead before implementation (see [Decisions needed](#decisions-needed)).
+Status: **proposal, not accepted work.** Written 2026-10-08 from one owner screenshot (panel about 400 px wide, a step run in progress, one image attached) cross-checked against the source. Nothing here changes behavior. Wording and layout changes alter the product's look, so each slice needs the owner's go-ahead before implementation (see [Decisions](#decisions-owner-2026-10-08)).
 
 Evidence tags: **[code]** the string or behavior was found in the source; **[shot]** seen only in the screenshot, not reproduced in a browser run.
 
