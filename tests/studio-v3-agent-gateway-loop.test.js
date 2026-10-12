@@ -80,9 +80,11 @@ describe('a tool run over the Demo gateway',()=> {
   });
 
   it('stops before the next request when the live form changed under the run',async()=> {
-    let turns = 0;
-    const {promise,bodies} = setup([turn([reasoning(1),fn(1,'get_context',{})],10),turn([reasoning(2),fn(2,'finish',{summary:'x'})],10)],{assertContext:()=> { if (++turns === 2) throw Object.assign(new Error('STALE_PROPOSAL'),{code:'STALE_PROPOSAL'}); }});
+    let changed = false; const accounted = [];
+    const first = ()=> { changed = true; return turn([reasoning(1),fn(1,'get_context',{})],10); };
+    const {promise,bodies} = setup([first,turn([reasoning(2),fn(2,'finish',{summary:'x'})],10)],{onTurn:info=>accounted.push(info.totals.total),assertContext:()=> { if (changed) throw Object.assign(new Error('STALE_PROPOSAL'),{code:'STALE_PROPOSAL'}); }});
     expect((await failure(promise)).code).toBe('STALE_PROPOSAL'); expect(bodies).toHaveLength(1);
+    expect(accounted).toEqual([12]);
   });
 
   it('fails clearly when the model answers in words and calls no tool',async()=> {

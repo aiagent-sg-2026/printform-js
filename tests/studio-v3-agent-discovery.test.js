@@ -30,7 +30,7 @@ describe('Studio v3 agent discovery and lifecycle (COV-05)', () => {
     const count = status => LEDGER_WORKFLOWS.filter(row => row[2] === status).length;
     expect(catalog.workflows).toEqual({guide:'product-workflows',humanMediated:count('human-mediated'),notYetCallable:count('not-yet-callable'),intentionallyUnavailable:count('intentionally-unavailable')});
     expect(catalog.workflows.humanMediated + catalog.workflows.notYetCallable + catalog.workflows.intentionallyUnavailable).toBe(LEDGER_WORKFLOWS.length);
-    expect(catalog.unsupported).toEqual(['source/shell execution','preview pixels']);
+    expect(catalog.unsupported).toEqual(['source/shell execution','sensitive pixel evidence']);
     for (const [,feature,,path] of LEDGER_WORKFLOWS) expect(content).toContain(`- ${feature}: ${path}`);
     expect(content).toContain('Open editable v3 JSON or exported HTML: Open button');
     expect(catalog.knowledge.map(skill => skill.id)).toEqual(['form-authoring','product-workflows']);

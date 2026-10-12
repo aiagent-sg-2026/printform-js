@@ -15,12 +15,13 @@ import { runLayoutHarness } from './ai-harness.js';
 import { AIElementTags, validateElementReferences } from './ai-element-tags.js';
 import { DEMO_CONFIG, isDemoAlias } from './ai-gateway-config.js';
 import { fillModels, showAlias } from './ai-model-select.js';
+import { AIObservationAuthorization } from './ai-observation-authorization.js';
 // Shown under the message box whenever Send works; it is the recipient notice Send accepts.
 const RECIPIENT_NOTICE = 'Sent to the Demo gateway · use fictional data only';
 
 export class AIPanel {
-  constructor({bus,selection=()=> 'items',facts=()=>[],elementTags,guard,preview,restore,commit,undo,sync,transport=createDemoTransport()}) {
-    Object.assign(this,{getBus:bus,getSelection:selection,getFacts:facts,elementTags,guard,renderPreview:preview,restore,commit,undo,sync,transport});
+  constructor({bus,selection=()=> 'items',facts=()=>[],elementTags,guard,preview,capturePixels,restore,commit,undo,sync,transport=createDemoTransport()}) {
+    Object.assign(this,{getBus:bus,getSelection:selection,getFacts:facts,elementTags,guard,renderPreview:preview,capturePixels,restore,commit,undo,sync,transport});
     this.root = document.querySelector('#ai-panel'); this.viewing = false; this.agentSteps = []; this.agentUnavailable = false; this.modelChosen = false; this.proposal = null; this.generation = 0; this.epoch = 0; this.intents = createIntentLedger(); this.conversation = new Conversation();
     this.root.addEventListener('submit',event=> { event.preventDefault(); void this.send(); });
     this.node('#ai-agent').checked = agentEnabled();
@@ -46,6 +47,7 @@ export class AIPanel {
     document.querySelector('#ai-preview-banner').addEventListener('click',event=> { if (this.applying) return; if (event.target.closest('[data-ai-return]')) this.show(); if (event.target.closest('[data-ai-discard]')) void this.discard(); });
     document.querySelector('[data-ai-toggle]').addEventListener('click',()=>this.open ? this.close() : this.show());
     this.node('[data-ai-origin]').textContent = `${location.origin} · project github-pages`;
+    this.observationAccess = new AIObservationAuthorization(this);
     this.referenceFiles = new AIReferenceFiles(this); setupPanelLayout(this); this.update();
   }
   node(selector) { return this.root.querySelector(selector); }
@@ -96,6 +98,7 @@ export class AIPanel {
   }
   cancel(message='Cancelled. Nothing changed.') {
     if (this.applying) return;
+    this.observationAccess?.end();
     ++this.generation; this.controller?.abort(); this.transport.clear(); this.controller = null;
     clearTimeout(this.timer); this.busy = false;
     const logged = Boolean(this.pendingMessage);
@@ -141,7 +144,7 @@ export class AIPanel {
   // a model the user chose never changes silently (see send()).
   setModels(aliases) { const kept = fillModels(this.node('#ai-model'),aliases); this.referenceFiles?.capabilityChanged(); return kept; }
   restoreAlias(alias) { const valid = isDemoAlias(alias) ? alias : DEMO_CONFIG.defaultAlias; showAlias(this.node('#ai-model'),valid); this.modelChosen = valid !== DEMO_CONFIG.defaultAlias; }
-  finish() { clearTimeout(this.timer); this.controller = null; this.busy = false; this.pendingMessage = null; this.agentSteps = []; this.update(); }
+  finish() { this.observationAccess?.end(); clearTimeout(this.timer); this.controller = null; this.busy = false; this.pendingMessage = null; this.agentSteps = []; this.update(); }
   // Work in steps unless it is off, known to be unavailable, or images lack confirmed support. A question runs the same
   // way under a read-only grant (see grantProfile); with steps unavailable it keeps the single-step answer flow.
   useSteps(payload,media,alias) { return agentEnabled() && !this.agentUnavailable && (!media.length || this.transport.supportsImages?.(alias) === true) && typeof this.transport.agentTurn === 'function'; }
@@ -165,6 +168,8 @@ export class AIPanel {
     const {id,signal} = this.begin(); this.conversation.expire(); this.proposal = null; this.checked = false;
     this.pendingMessage = payload.request; this.conversation.add('user',[payload.request,...payload.references.filter(r=>r.comment).map(r=>`${r.id}: ${r.comment}`)].join('\n'),'answer',{documentKey:this.documentKey()}); this.node('#ai-prompt').value = ''; this.share(); this.update();
     try {
+      const runId = crypto.randomUUID(), readObservationHost = ()=>this.observationAccess.state(runId);
+      const observationAuthorization = await this.observationAccess.consume(runId); assertContext(); signal.throwIfAborted();
       if (this.viewing) { await this.restore(); this.viewing = false; }
       const aliases = await this.transport.discover(signal);
       if (!this.setModels(aliases)) { if (this.modelChosen) throw fail('DEMO_MODEL_UNAVAILABLE'); alias = this.node('#ai-model').value; }
@@ -180,7 +185,7 @@ export class AIPanel {
       if (this.useSteps(payload,media,alias)) {
         this.setRunTimeout(id,DEMO_CONFIG.agent.maxRunMs,'AGENT_TIMEOUT');
         this.agentSteps = [];
-        try { result = await runPanelAgent({transport:this.transport,alias,payload,media,project,signal,assertContext,inspectCandidate,onPhase,onStep:step=>this.stepDone(step,id),profile:this.grantProfile(payload)}); }
+        try { result = await runPanelAgent({transport:this.transport,alias,payload,media,project,signal,assertContext,inspectCandidate,capturePixels:async(...args)=> { assertContext(); const image=await this.capturePixels?.(...args); assertContext(); return image; },onPhase,onStep:step=>this.stepDone(step,id),profile:this.grantProfile(payload),baseRevision:revision,runId,observationAuthorization,readObservationHost}); }
         catch (error) {
           // The gateway refusing tools is remembered. A model that ignored the tools on its first turn is only skipped
           // this once. A run that already took steps and then ended without a result is reported, not restarted.
@@ -195,7 +200,7 @@ export class AIPanel {
       if (id !== this.generation) return;
       assertProposalCurrent(this.getBus(),{bus,revision,baseDesign});
       if (epoch !== this.epoch || selection !== this.getSelection() || scope !== JSON.stringify(this.scope())) throw fail('STALE_PROPOSAL');
-      const card = this.conversation.add('assistant',result.kind === 'answer' ? result.message : result.summary,result.kind === 'answer' ? 'answer' : 'ready',{documentKey:this.documentKey(),...(result.diff ? {diff:result.diff} : {})});
+      const card = this.conversation.add('assistant',result.kind === 'answer' ? result.message : result.summary,result.kind === 'answer' ? 'answer' : 'ready',{documentKey:this.documentKey(),observationProtected:observationAuthorization.text || observationAuthorization.values,...(result.diff ? {diff:result.diff} : {})});
       // The host mints one intent key per proposal; Apply is idempotent under it (see intent-ledger.js).
       if (result.kind === 'proposal') this.proposal = {...result,bus,revision,baseDesign,epoch,selection,scope,cardId:card.id,intentKey:newIntentKey()};
       if (result.kind === 'answer' && this.viewing) { await this.restore(); this.viewing = false; }
@@ -244,10 +249,11 @@ export class AIPanel {
   retry(id) { if (this.busy || this.applying) return; const card = this.conversation.messages.find(m=>m.id === id); this.node('#ai-prompt').value = card?.request || [...this.conversation.messages].reverse().find(m=>m.role === 'user')?.text || ''; this.share(); this.node('#ai-prompt').focus(); }
   async clear() {
     if (this.applying || this.restoring || ((this.busy || this.proposal || this.node('#ai-prompt').value) && !confirm('Clear this conversation, input, element comments and unapplied AI suggestion? The form and datasets stay unchanged.'))) return;
-    const viewing = this.viewing; this.invalidate('Conversation cleared.'); this.conversation.messages = []; this.node('#ai-prompt').value = ''; this.elementTags?.clear(false); this.referenceFiles?.clear(); if (viewing) await this.restoreUnapplied(); this.share(); this.update();
+    const viewing = this.viewing; this.invalidate('Conversation cleared.'); this.observationAccess.reset(); this.conversation.messages = []; this.node('#ai-prompt').value = ''; this.elementTags?.clear(false); this.referenceFiles?.clear(); if (viewing) await this.restoreUnapplied(); this.share(); this.update();
   }
   snapshot() { return {open:Boolean(this.open),prompt:this.node('#ai-prompt').value || this.pendingMessage || '',alias:this.node('#ai-model').value,messages:this.conversation.snapshot(),references:this.elementTags?.snapshot() || []}; }
   restoreSnapshot(saved) {
+    this.observationAccess.reset();
     this.conversation.restore(saved.messages || [],this.documentKey()); this.node('#ai-prompt').value = saved.prompt; this.restoreAlias(saved.alias);
     this.elementTags?.restoreSnapshot(saved.references || []);
     if (saved.parsed) this.conversation.add('assistant',saved.parsed.summary,'expired',{diff:saved.parsed.diff,documentKey:this.documentKey()});
@@ -270,6 +276,6 @@ export class AIPanel {
   showSendReason() {
     const files = this.referenceFiles, node = this.node('[data-ai-send-reason]');
     const reason = files?.reading ? 'Reading references… Send unlocks when they are ready.' : files?.imageBlocked() ? 'Send is off: image support is not confirmed for this model. Use Check image support, or remove the image.' : '';
-    node.textContent = reason || RECIPIENT_NOTICE; node.dataset.kind = reason ? 'reason' : 'notice';
+    node.textContent = reason || `${RECIPIENT_NOTICE}. ${this.observationAccess?.notice() || ''}`; node.dataset.kind = reason ? 'reason' : 'notice';
   }
 }

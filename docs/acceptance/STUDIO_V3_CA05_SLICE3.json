@@ -1,0 +1,284 @@
+{
+ "date": "2026-10-12",
+ "status": "Ready for review: approved fictional slice 3 only",
+ "gateG4": "Open",
+ "branch": "codex/studio-v3-ca05-observation",
+ "head": "774db9283b444d5e75aa13e529856dfe8347e402",
+ "authorization": "Direct human approval of default-off single-run fictional page/crop consent; existing text/value protections retained. No real-data transmission or paid provider use.",
+ "preconditions": "CA-04 remains partial. Parallel authoring parity gaps do not block current preview observation; no CA-04 service/register changes in this slice.",
+ "identity": {
+  "release": "local",
+  "contractHash": "4fcda4ac93deb4bc96ec243fcca26ccf75611c7b0b49b8c16ff56db750dff87b",
+  "knowledgeHash": "f7c76533aff5b4850f651d6fb352c533203c550c9a856c8e95601ed9ab08f32d",
+  "packageHash": "212f0a9f9b05036f32cff363aeb709b97105be667e9802fb2756cc2f8d4abf81",
+  "appHash": "65834f5bed0948996fd99504ddaa14504e741edcf3e38b808f2d57b331b938a5",
+  "manifestHash": "79eb484ddabfd15d994dcd9a165662edd4889becb22943d0e7aba6fd5c2043cb"
+ },
+ "units": {
+  "new": 38,
+  "pixel": 25,
+  "wire": 7,
+  "consent": 6,
+  "focusedFiles": 6,
+  "focusedPassed": 71,
+  "fullFiles": 204,
+  "fullPassed": 1752
+ },
+ "browser": {
+  "passed": 9,
+  "newPixelPaths": 3,
+  "engines": [
+   {
+    "browser": "chromium",
+    "version": "151.0.7922.34",
+    "pixels": {
+     "blue": 1426,
+     "difference": 0,
+     "page": {
+      "width": 794,
+      "height": 1099
+     }
+    }
+   },
+   {
+    "browser": "firefox",
+    "version": "153.0",
+    "pixels": {
+     "blue": 1426,
+     "difference": 0,
+     "page": {
+      "width": 794,
+      "height": 1099
+     }
+    }
+   },
+   {
+    "browser": "webkit",
+    "version": "26.5",
+    "pixels": {
+     "blue": 1423,
+     "difference": 0,
+     "page": {
+      "width": 794,
+      "height": 1099
+     }
+    }
+   }
+  ],
+  "report": ".printform-studio/ca05-slice3/browser-published-json.report.json"
+ },
+ "wireAudit": {
+  "requests": 114,
+  "receipts": 42,
+  "evidence": 9,
+  "imageRequests": 15,
+  "resourceHashes": 8,
+  "dependencyHashes": 138,
+  "path": ".printform-studio/ca05-slice3/audit-published.json"
+ },
+ "mutation": {
+  "positive": 0,
+  "removedImagePayload": 1,
+  "recovery": 0,
+  "productionSourceUnmodifiedByMutation": true
+ },
+ "commands": {
+  "focused-published": {
+   "command": [
+    "npx",
+    "vitest",
+    "run",
+    "tests/studio-v3-pixel-observation.test.js",
+    "tests/studio-v3-pixel-wire.test.js",
+    "tests/studio-v3-pixel-authorization-ui.test.js",
+    "tests/studio-v3-semantic-observation.test.js",
+    "tests/studio-v3-observation-authorization-ui.test.js",
+    "tests/studio-v3-agent-contracts.test.js",
+    "--maxWorkers=1",
+    "--no-file-parallelism"
+   ],
+   "exitCode": 0,
+   "durationMs": 6688
+  },
+  "full-vitest-published": {
+   "command": [
+    "npx",
+    "vitest",
+    "run",
+    "--maxWorkers=1",
+    "--no-file-parallelism"
+   ],
+   "exitCode": 0,
+   "durationMs": 214870
+  },
+  "build-site-verified": {
+   "command": [
+    "npm",
+    "run",
+    "build:site"
+   ],
+   "exitCode": 0,
+   "durationMs": 188586
+  },
+  "metadata-check": {
+   "command": [
+    "npx",
+    "vitest",
+    "run",
+    "tests/studio-v3-feature-ledger.test.js",
+    "tests/studio-v3-feature-ledger-selectors.test.js",
+    "tests/studio-v3-feature-ledger-register.test.js",
+    "tests/studio-v3-service-parity.test.js",
+    "tests/studio-v3-agent-contracts.test.js",
+    "--maxWorkers=1",
+    "--no-file-parallelism"
+   ],
+   "exitCode": 0,
+   "durationMs": 8952
+  },
+  "metadata-build": {
+   "command": [
+    "node",
+    "scripts/build-site.mjs"
+   ],
+   "exitCode": 0,
+   "durationMs": 5881
+  },
+  "browser-published-json": {
+   "command": [
+    "npx",
+    "playwright",
+    "test",
+    "e2e/studio-v3-pixel-observation.spec.js",
+    "e2e/studio-v3-observation-receipt.spec.js",
+    "e2e/studio-v3-semantic-observation.spec.js",
+    "--workers=1",
+    "--reporter=json",
+    "--output=.printform-studio/ca05-slice3/browser-published"
+   ],
+   "exitCode": 0,
+   "durationMs": 80417
+  },
+  "wire-verified-positive": {
+   "command": [
+    "node",
+    ".printform-studio/ca05-slice3/wire-mutation.mjs"
+   ],
+   "exitCode": 0,
+   "durationMs": 868
+  },
+  "wire-verified-rejected": {
+   "command": [
+    "node",
+    ".printform-studio/ca05-slice3/wire-mutation.mjs",
+    "mutant"
+   ],
+   "exitCode": 1,
+   "durationMs": 1097
+  },
+  "wire-verified-recovery": {
+   "command": [
+    "node",
+    ".printform-studio/ca05-slice3/wire-mutation.mjs"
+   ],
+   "exitCode": 0,
+   "durationMs": 829
+  }
+ },
+ "failures": [
+  {
+   "stage": "Initial focused tests",
+   "passed": 40,
+   "failed": 1,
+   "total": 41,
+   "durationSeconds": 4.43,
+   "cause": "Pixel current() masked the current host revision with the captured base revision.",
+   "recovery": "Read actual host state; later revision rejection/fresh recovery passes.",
+   "custody": "Original exec output retained in task transcript."
+  },
+  {
+   "stage": "Initial browser setup",
+   "executed": 0,
+   "planned": 3,
+   "exitCode": 1,
+   "cause": "Playwright CJS fixture imported the ESM-only Pi package through a combined helper.",
+   "recovery": "Split a pure static-project fixture.",
+   "log": ".printform-studio/ca05-slice3/browser.log"
+  },
+  {
+   "stage": "Initial browser assertions",
+   "passed": 0,
+   "failed": 3,
+   "total": 3,
+   "cause": "Crop re-rasterization changed pixels; Firefox actual height differed from a hardcoded paper height.",
+   "recovery": "Raster whole page then crop; compare dimensions with actual diagnostics.",
+   "log": ".printform-studio/ca05-slice3/browser-recovery.log"
+  },
+  {
+   "stage": "Crop recovery assertions",
+   "passed": 0,
+   "failed": 3,
+   "total": 3,
+   "cause": "UI revision assertion omitted the actual unsaved-template suffix.",
+   "recovery": "Assert the complete r1 display; receipt revision remains exactly 1.",
+   "log": ".printform-studio/ca05-slice3/browser-crop-recovery.log"
+  },
+  {
+   "stage": "Independent PNG inflate",
+   "exitCode": 1,
+   "cause": "The original 1px unit fixture had corrupt compressed data.",
+   "recovery": "Use browser-generated PNG; independent Node inflate checks RGBA and runtime verifies chunk CRC/integrity."
+  },
+  {
+   "stage": "Initial raw-wire audit",
+   "exitCode": 1,
+   "cause": "List reporter retained body-only pixel attachments only in memory and duplicated path attachments.",
+   "recovery": "Native JSON reporter retains body attachments; audit selects primary/deduplicated packets."
+  }
+ ],
+ "remaining": [
+  "Full G4 is open: final comparison/latest-observation citation and deliberate missing-section/text/width/alignment/pagination checks are not implemented here.",
+  "DOM raster capture is qualified only for these fictional static fixtures; native-print fidelity and general documents are unqualified.",
+  "All sensitive assets and real-classified content remain blocked. Real/Unknown bound values require existing explicit host policy; host pixel-deny cannot be overridden.",
+  "No live/downstream-provider qualification, retention verification, deployment, commit, push, PR or merge."
+ ],
+ "reportFormat": "Requested .agent/rules/03-verification.md is absent; exact commands, failures/recovery, identity and limits follow the available verification module.",
+ "sourceHashes": {
+  "TASK.md": "146a3b7e3d99ce696ed4a5375da39a681102c5e6c1ac530c8ccdd672845b5138",
+  "docs/STUDIO_V3_AGENT_REGISTRY.md": "621e8a2efc510ea836f132f4f7d4de24519fd09d0e84a33c3f7c7bd666987435",
+  "docs/STUDIO_V3_FEATURE_LEDGER.csv": "ad0ad03926b5c8d4978f092e1774337e1019737d8f1b52f651a7631ec8448287",
+  "docs/STUDIO_V3_FEATURE_LEDGER.md": "f9eb35091503f8b377ba8a6193b297987581ee34bfbbed6befa32dbc7992b6e8",
+  "docs/studio-v3-agent-release/review.json": "de2f35f0bee96bd97f44dcb46cb9e9f8bec13dfc3f85a3d2dbc93beb523f1cfd",
+  "scripts/studio-v3-agent-conformance.mjs": "12c5567653130deec610c779f98dac0273c8bbf010d4346f5106119fc7c8c8d7",
+  "studio-v3/agent-contracts.js": "42debe85ab191580f2ea06360d2167e937bd10bce100807cc4934a7db4686779",
+  "studio-v3/agent-errors.js": "42435d18a0f0b1d3ef007dc77c7ceb930091178eab8d07d2f6812935b99a2c7c",
+  "studio-v3/agent-handlers.js": "02b20f260ae56a67eba7b03e51075e043fa876340f011f30022fb5f5a842fe57",
+  "studio-v3/agent-knowledge.js": "23852b5bc40b100262c71dad5e2ac6756dc9aa251611ac64ed280b461c0459b4",
+  "studio-v3/agent-loop.js": "70081db0813a53972f2d3956e2ba691f871f74a942612774ba5dde5f00c94fc1",
+  "studio-v3/agent-provider.js": "7ca579f91589f426a979b88feaf1cdb8adb130c3ef698564b48d0ed4bcaf3179",
+  "studio-v3/agent-registry.js": "c6f32d7cc0c505d95608a2149ef94b8568cf10a4d53672ab4866b174de1b99c0",
+  "studio-v3/agent-step-labels.js": "c2de5f8d2233e655f10490db4ad9be3abd1f0fdeb87a667201b8f0c0ee59fb3a",
+  "studio-v3/agent-tools.js": "7dc7d24ecf8a8c4cf9a9592d493b0bbc1cf6182163dedab98dc43c981e022fb6",
+  "studio-v3/agent-wire.js": "133b77709bf358008640707309417d15a9f79948d2181d3a17106d117c049694",
+  "studio-v3/ai-agent-run.js": "05e479a29ab284e43f035171c203fd7a5e688550d6d65e1a08cd0b743e596c27",
+  "studio-v3/ai-demo-transport.js": "11d888145b55277276cee80787dc0b408b07c2cfeedab95e810a6ca476f9432a",
+  "studio-v3/ai-panel.js": "bf6b35a8910da8fd53a0ff5b73d4b678273f9de399623d761154d651e3e11c77",
+  "studio-v3/app.js": "fce8b7cff95ce3ed743a83e2b44435d4f34cd87c11112f83abe4c01ebb3382a8",
+  "studio-v3/index.html": "7c8247a54c83ba5523a78eb112f44f68934d2adfd73cee075b45fe0dfd146abd",
+  "studio-v3/preview.js": "5ad1c50bea41fe7469fc5ee819f1d7fdf329337c2e41a1264fbe351b08038b3e",
+  "tests/studio-v3-agent-contracts.test.js": "a5207f0011545e5891e2a03b34270b83ef287bd0444eb8b63ca180f02cd59a27",
+  "tests/studio-v3-agent-discovery.test.js": "eecf9b30a389f2fd46d1365df0a75c696ffd84bbaae223b2f9d9bb7f0fa2ebbf",
+  "e2e/studio-v3-pixel-observation.spec.js": "3a02723e3d7dbad4f4783f9f515522eadc3adba9acee34e8b45b646bab6d3355",
+  "studio-v3/ai-observation-authorization.js": "6b7d65200a6b8d5dc001234cf2efc578e2859bc152127213a029487be3e797b6",
+  "studio-v3/observation-pixels.js": "65a2e79f1a4fb2b8a3eeea56d87f548ade1a8d7fbda28efd1f8bc43615111b7d",
+  "studio-v3/observation-policy.js": "8cf07372809ec4db4d982defe1786e3cd7211a6f4b49f4765efdad84b2de996b",
+  "studio-v3/observation-records.js": "8ff0a3f342356c2196228760f5ada8b9fb83e2329ad648aceb1a936635967db2",
+  "studio-v3/preview-pixels.js": "be50f38d0dc4584f5338ae8a66d8fb01a2f8c7ae04372d7f378a6c5871701525",
+  "tests/studio-v3-observation-authorization-ui.test.js": "68da9fb48d8490e66a7e6fe5db66f658093c01383faebb6a32ddf752368b38bb",
+  "tests/studio-v3-pixel-authorization-ui.test.js": "b835f8c4db7260cd0d925b2dd157303319bf2d84478c7cdd3dd898cd73a25b47",
+  "tests/studio-v3-pixel-observation.test.js": "22d5a5470576f53d3b2102fd873358588c037476e6c9d769ac000a0158023953",
+  "tests/studio-v3-pixel-wire.test.js": "92cd1da1f331307aad6785a428753c97ef11c26fbb4bc36b733307869a764ed5",
+  "tests/support/pixel-observation.js": "aae6717924541b6f05ac5dc84f5e9c509a4e3917e5b371c313843141f1ab49a6",
+  "tests/support/static-observation-fixture.js": "d55c186f3962c7b100bb7e090968bf7273eaa03b2fe1dd96ccf2e0106ad08943"
+ }
+}

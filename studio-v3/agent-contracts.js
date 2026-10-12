@@ -1,6 +1,8 @@
 import { Type } from '@earendil-works/pi-ai';
 import { MAX_AUTHORING_OPERATIONS } from './ai-authoring-contract.js';
 import { DEMO_CONFIG } from './ai-gateway-config.js';
+import { OBSERVATION_CONTEXT_BYTES } from './observation-context.js';
+import { REFERENCE_LIMITS } from './reference-limits.js';
 
 // Executable contracts for the registered tools and operations. Examples are run through the real handlers by
 // scripts/studio-v3-agent-conformance.mjs; a broken example or an undeclared result/error fails the build.
@@ -15,6 +17,14 @@ export const ANSWER_MAX = 4000;
 const AUTHORING_ERRORS = [ARGS,'GRANT_DENIED','MALFORMED_PROPOSAL','AUTHORING_OPERATION_LIMIT','GLOBAL_FONT_PROPERTY_UNSUPPORTED','TABLE_SECTION_GRID_UNSUPPORTED','LOGO_ASSET_UNAVAILABLE','UNSAFE_PROPOSAL','UNSAFE_SCOPE','COLUMN_WIDTH_LIMIT','NO_CHANGES'];
 const navy = {type:'set_style',patch:{color:'#163a65'}};
 const prepared = [['apply_operations',{summary:'Navy accents',operations:[navy]}],['inspect_draft',{}]];
+const digest = Type.String({pattern:'^[a-f0-9]{64}$'});
+export const OBSERVATION_SCHEMA = closed({id:Type.String({pattern:'^observation-[a-f0-9-]+$'}),runId:Type.String({minLength:1}),releaseIdentity:identity,
+  documentId:Type.String({minLength:1}),baseRevision:Type.Integer({minimum:0}),candidateVersion:Type.Integer({minimum:0}),
+  candidateDigest:digest,scenarioDigest:digest,kind:Type.Union([Type.Literal('print-diagnostics'),Type.Literal('semantic-context'),Type.Literal('page-pixels')]),capturedAt:Type.Integer({minimum:0}),
+  policyDigest:digest,contentDigest:digest,evidenceRefs:Type.Array(Type.String(),{maxItems:1})});
+export const PIXEL_CROP_SCHEMA = closed({x:Type.Integer({minimum:0}),y:Type.Integer({minimum:0}),width:Type.Integer({minimum:1}),height:Type.Integer({minimum:1})});
+const pixelEvidence = closed({id:Type.String(),mediaType:Type.Literal('image/png'),bytes:Type.Integer({minimum:1,maximum:REFERENCE_LIMITS.maxPreviewBytes}),contentDigest:digest,selectionDigest:digest,
+  width:Type.Integer({minimum:1,maximum:REFERENCE_LIMITS.maxPreviewEdge}),height:Type.Integer({minimum:1,maximum:REFERENCE_LIMITS.maxPreviewEdge}),scale:Type.Number({exclusiveMinimum:0,maximum:1}),pageIndex:Type.Integer({minimum:0}),crop:PIXEL_CROP_SCHEMA,renderer:Type.Literal('dom-raster/v1')});
 
 export const TOOL_CONTRACTS = Object.freeze({
   // 1.1.0 added the removed (tombstone) list and the ledger workflow summary; 1.2.0 adds run.profile (the effect grant).
@@ -27,8 +37,21 @@ export const TOOL_CONTRACTS = Object.freeze({
   apply_operations:{outputSchema:text,errors:AUTHORING_ERRORS,limits:{maxOperations:MAX_AUTHORING_OPERATIONS},examples:[{args:{summary:'Navy accents',operations:[navy]}}],
     invalid:[{args:{summary:'Repeat',operations:[{type:'set_style',patch:{color:'#163a65'}}]},setup:prepared.slice(0,1),error:'NO_CHANGES'},{args:{summary:'Bad',operations:[{type:'set_style',patch:{font:'large'}}]},error:ARGS},
       {args:{summary:'Navy accents',operations:[navy]},grant:'read-only',error:'GRANT_DENIED'}]},
-  inspect_draft:{outputSchema:Type.Union([closed({ready:Type.Boolean(),errors:Type.Array(Type.String()),issues:list,metrics:open({}),pages:list}),text]),
-    errors:[ARGS,'TOOL_FAILED'],examples:[{args:{},setup:prepared.slice(0,1)}],invalid:[{args:{now:true},error:ARGS}]},
+  inspect_draft:{contractVersion:'1.2.0',outputSchema:Type.Union([closed({ready:Type.Boolean(),errors:Type.Array(Type.String()),issues:list,metrics:open({}),pages:list,observation:OBSERVATION_SCHEMA}),text]),
+    errors:[ARGS,'TOOL_FAILED','EVIDENCE_STALE'],examples:[{args:{},setup:prepared.slice(0,1)}],invalid:[{args:{now:true},error:ARGS},{args:{},inspection:'stale',error:'EVIDENCE_STALE'}]},
+  observe_context:{contractVersion:'1.1.0',outputSchema:closed({version:Type.Literal(1),disclosure:closed({text:Type.Boolean(),values:Type.Boolean(),pixels:Type.Literal(false)}),
+    selectedTargets:list,scenario:closed({id:Type.Literal('active'),rowCount:Type.Integer({minimum:0})}),layout:open({}),fields:list,diagnostics:open({}),
+    heading:Type.Optional(Type.String()),collection:Type.Optional(Type.String()),observation:OBSERVATION_SCHEMA}),
+    errors:[ARGS,'TOOL_FAILED','EVIDENCE_STALE','OBSERVATION_DISCLOSURE_REQUIRED','OBSERVATION_AUTHORIZATION_STALE','OBSERVATION_CONTENT_UNSUPPORTED','OBSERVATION_CONTEXT_LIMIT'],
+    limits:{maxContextBytes:OBSERVATION_CONTEXT_BYTES},examples:[{args:{},authorization:'text'}],invalid:[{args:{},error:'OBSERVATION_DISCLOSURE_REQUIRED'},
+      {args:{},authorization:'text',setup:prepared.slice(0,1),error:'OBSERVATION_AUTHORIZATION_STALE'},{args:{text:true},error:ARGS}]},
+  retrieve_page:{outputSchema:closed({version:Type.Literal(1),sourceObservationId:Type.String(),evidence:pixelEvidence,observation:OBSERVATION_SCHEMA}),
+    errors:[ARGS,'EVIDENCE_STALE','OBSERVATION_AUTHORIZATION_STALE','OBSERVATION_PIXELS_REQUIRED','OBSERVATION_PIXELS_POLICY_DENIED','OBSERVATION_PIXELS_VALUES_DENIED','OBSERVATION_PIXELS_SENSITIVE','OBSERVATION_PIXELS_LIMIT','OBSERVATION_PIXELS_BOUNDS','OBSERVATION_PIXELS_UNSUPPORTED'],
+    limits:{maxImageBytes:REFERENCE_LIMITS.maxPreviewBytes,maxEdge:REFERENCE_LIMITS.maxPreviewEdge,maxPixels:REFERENCE_LIMITS.maxPreviewPixels},
+    examples:[{args:{observationId:'$latest',pageIndex:0},fixture:'static',authorization:'pixels',latestObservation:true,setup:[['inspect_draft',{}]]}],
+    invalid:[{args:{observationId:'$latest',pageIndex:0},fixture:'static',latestObservation:true,setup:[['inspect_draft',{}]],error:'OBSERVATION_PIXELS_REQUIRED'},
+      {args:{observationId:'foreign',pageIndex:0},fixture:'static',authorization:'pixels',error:'EVIDENCE_STALE'},
+      {args:{observationId:'$latest',pageIndex:'0'},error:ARGS}]},
   validate_scenarios:{outputSchema:Type.Union([closed({ready:Type.Boolean(),scenarios:Type.Array(open({id:Type.String(),label:Type.String(),ready:Type.Boolean(),errors:Type.Array(Type.String()),issues:list,metrics:open({})}))}),text]),
     errors:[ARGS,'TOOL_FAILED'],limits:{maxScenarios:6},examples:[{args:{}},{args:{scenarios:['0','500']}}],
     invalid:[{args:{scenarios:['999']},error:ARGS},{args:{scenarios:[]},error:ARGS},{args:{scenarios:['0','0']},error:ARGS}]},
@@ -37,9 +60,15 @@ export const TOOL_CONTRACTS = Object.freeze({
   finish:{outputSchema:text,errors:[ARGS,'GRANT_DENIED','NO_CHANGES','UNSAFE_PROPOSAL','TABLE_BACKGROUND_INTENT','AGENT_INSPECTION_REQUIRED','AGENT_INSPECTION_BLOCKED'],
     examples:[{args:{summary:'Navy accents'},setup:prepared}],invalid:[{args:{summary:'Navy'},setup:prepared.slice(0,1),error:'AGENT_INSPECTION_REQUIRED'},
       {args:{summary:'Nothing'},error:'NO_CHANGES'},{args:{summary:'Blocked'},setup:prepared,inspection:'blocked',error:'AGENT_INSPECTION_BLOCKED'},
+      {args:{summary:'Reverted'},setup:[...prepared,['apply_operations',{summary:'Red accents',operations:[{type:'set_style',patch:{color:'#a82938'}}]}],['undo_step',{}]],error:'AGENT_INSPECTION_REQUIRED'},
       {args:{summary:'Navy accents'},grant:'read-only',error:'GRANT_DENIED'}]},
-  finish_answer:{outputSchema:text,errors:[ARGS,'AGENT_EVIDENCE_REQUIRED'],limits:{maxAnswerChars:ANSWER_MAX},examples:[{args:{message:'The guide lists the tools for this release.'},setup:[['read_skill',{id:'form-authoring'}]],grant:'read-only'}],
-    invalid:[{args:{message:'It is fine.'},error:'AGENT_EVIDENCE_REQUIRED'},{args:{message:''},error:ARGS}]},
+  finish_answer:{contractVersion:'1.1.0',outputSchema:text,errors:[ARGS,'AGENT_EVIDENCE_REQUIRED','EVIDENCE_STALE','AGENT_ANSWER_LIMIT'],limits:{maxAnswerChars:ANSWER_MAX},
+    examples:[{args:{message:'The guide lists the tools for this release.'},setup:[['read_skill',{id:'form-authoring'}]],grant:'read-only'},
+      {args:{message:'Current inspection.',observationId:'$latest'},fixture:'static',latestObservation:true,setup:[['inspect_draft',{}]],grant:'read-only'}],
+    invalid:[{args:{message:'It is fine.'},error:'AGENT_EVIDENCE_REQUIRED'},{args:{message:''},error:ARGS},
+      {args:{message:'Wrong receipt.',observationId:'foreign'},fixture:'static',setup:[['inspect_draft',{}]],error:'EVIDENCE_STALE'},
+      {args:{message:'Stale receipt.'},fixture:'static',setup:[['inspect_draft',{}],...prepared.slice(0,1)],error:'EVIDENCE_STALE'},
+      {args:{message:'x'.repeat(ANSWER_MAX)},fixture:'static',setup:[['inspect_draft',{}]],error:'AGENT_ANSWER_LIMIT'}]},
   report_blocked:{outputSchema:text,errors:[ARGS],examples:[{args:{reason:'Asset import is not a tool in this release.'}}],invalid:[{args:{reason:''},error:ARGS}]}
 });
 

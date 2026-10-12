@@ -1,0 +1,276 @@
+{
+  "version": 1,
+  "date": "2026-10-12",
+  "status": "Partial; bounded slice ready for review; CA-04 and G4 open",
+  "base": "774db9283b444d5e75aa13e529856dfe8347e402",
+  "branch": "codex/studio-v3-ca05-observation",
+  "release": "local",
+  "contractHash": "43519df3272c1ac61244f9ff3f3c3b680f22b6afc68bc97312bedf73e710ac79",
+  "knowledgeHash": "fc48205b274ccc370e205bd6d1da613ac2ad4c43c1be2381d896811ba6508495",
+  "packageHash": "d1361af68b92c4cfd8596360bcc6aed7a4f10ed793bb2c8c93b5720a6b7fa620",
+  "appHash": "dc07c21d110156cc2ae23af96b5385ce745079214f258017f37f612be3ac7764",
+  "manifestHash": "5c08fb6adb6d9ca9e91679a86a53d85a969f0c3918351c7bcb7c1393fa34b981",
+  "sourceHashes": {
+    "studio-v3/observation-records.js": "08967c16f462a3287d49029d5bb47564a903268df8acd5e5f9ccc07d91e5d1b3",
+    "studio-v3/observation-policy.js": "ada02e7dbffe4b727a9a53ebd381cbe125a65730c10f8fb599ca81d9f040e601",
+    "studio-v3/observation-context.js": "84d7d9c38d0b130b9f65287dbaf75ae4cef3859658b02415d10885ab6ea210c4",
+    "studio-v3/ai-observation-authorization.js": "2d5c76f2778172c4e59c84c98a123175a00d5aeb8b05cf679b4fd093ee247845",
+    "studio-v3/ai-panel.js": "443df34c8224d5488bdc2c4942eadbe226bceec270af4d17bb9f966538c1356d",
+    "studio-v3/ai-conversation.js": "a9927d5780cf94f9800282a5018eefb8b894ecba5c584de33167e1d49281675d",
+    "studio-v3/agent-provider.js": "05525886dd1a8497157e948e116a7d3d2afb4096fd39a47d0c15a9f410601227",
+    "studio-v3/ai-demo-transport.js": "5ca6d0a51a2f24529cca02d4154b7693d205494ee484772e16f27d8a3f7081a4",
+    "studio-v3/agent-handlers.js": "0b2b15404b06c129d939246bf5d6c43985ffdba9411c609218952f8adac8cf27",
+    "studio-v3/agent-contracts.js": "dc8f2b875efab4052bed993971741e8cbfb4b62101ecaffc6ea409c61b21b7b9",
+    "studio-v3/agent-registry.js": "5f23085be25bd323aea43bcda4d0b88bef406e1f5d20f79fe6b9a8b02ea499f9",
+    "studio-v3/agent-knowledge.js": "ba1e70d09b947f2f538e193d89e2dd6e1e4b082f6e4b0f3184cbfac557425117",
+    "docs/STUDIO_V3_FEATURE_LEDGER.csv": "4cf8b77d68ef23e541844a25141703ad696987ba616f9f0ae7df88d88e9458fe",
+    "docs/studio-v3-agent-release/review.json": "dbe3fda2ccfd862a0c85009de2f58f2021be6e9bc2c6e113d527f15e7cf472b9"
+  },
+  "wires": [
+    {
+      "kind": "numeric",
+      "browser": "chromium",
+      "version": "151.0.7922.34",
+      "requests": 11,
+      "receipts": 4,
+      "baseRevisions": [
+        0,
+        0,
+        0,
+        1
+      ],
+      "wireHash": "6374e084061e4f858801c4a3a229ba40b8723725985757e253041258ae84e1b2",
+      "wireFile": "test-results/studio-v3-observation-rece-dd5f2-evived-evidence-and-recover-chromium/observation-provider-wire.json",
+      "retainedFile": ".printform-studio/ca05-evidence/slice2/test-results/studio-v3-observation-rece-dd5f2-evived-evidence-and-recover-chromium/observation-provider-wire.json"
+    },
+    {
+      "kind": "numeric",
+      "browser": "firefox",
+      "version": "153.0",
+      "requests": 11,
+      "receipts": 4,
+      "baseRevisions": [
+        0,
+        0,
+        0,
+        1
+      ],
+      "wireHash": "421f9bd8936883030c357f8ab872b5e82a21312920555f4cceda7405810b553c",
+      "wireFile": "test-results/studio-v3-observation-rece-dd5f2-evived-evidence-and-recover-firefox/observation-provider-wire.json",
+      "retainedFile": ".printform-studio/ca05-evidence/slice2/test-results/studio-v3-observation-rece-dd5f2-evived-evidence-and-recover-firefox/observation-provider-wire.json"
+    },
+    {
+      "kind": "numeric",
+      "browser": "webkit",
+      "version": "26.5",
+      "requests": 11,
+      "receipts": 4,
+      "baseRevisions": [
+        0,
+        0,
+        0,
+        1
+      ],
+      "wireHash": "e2c71eb8f3af763022d3e657c055df08f639791635d25c2d8a79587f0123e860",
+      "wireFile": "test-results/studio-v3-observation-rece-dd5f2-evived-evidence-and-recover-webkit/observation-provider-wire.json",
+      "retainedFile": ".printform-studio/ca05-evidence/slice2/test-results/studio-v3-observation-rece-dd5f2-evived-evidence-and-recover-webkit/observation-provider-wire.json"
+    },
+    {
+      "kind": "semantic",
+      "browser": "chromium",
+      "version": "151.0.7922.34",
+      "requests": 10,
+      "receipts": 2,
+      "baseRevisions": [
+        0,
+        0
+      ],
+      "wireHash": "c2d6f3d467860b8ae5070840499805f5e35776e780ae54c012d8b5f6151d5298",
+      "wireFile": "test-results/studio-v3-semantic-observa-dc107-t-authorization-and-recover-chromium/semantic-provider-wire.json",
+      "retainedFile": ".printform-studio/ca05-evidence/slice2/test-results/studio-v3-semantic-observa-dc107-t-authorization-and-recover-chromium/semantic-provider-wire.json"
+    },
+    {
+      "kind": "semantic",
+      "browser": "firefox",
+      "version": "153.0",
+      "requests": 10,
+      "receipts": 2,
+      "baseRevisions": [
+        0,
+        0
+      ],
+      "wireHash": "c8ddbbbe476893a4ab0e4f59ff232a70f91f04a2b03205ae8226a193fe067d4c",
+      "wireFile": "test-results/studio-v3-semantic-observa-dc107-t-authorization-and-recover-firefox/semantic-provider-wire.json",
+      "retainedFile": ".printform-studio/ca05-evidence/slice2/test-results/studio-v3-semantic-observa-dc107-t-authorization-and-recover-firefox/semantic-provider-wire.json"
+    },
+    {
+      "kind": "semantic",
+      "browser": "webkit",
+      "version": "26.5",
+      "requests": 10,
+      "receipts": 2,
+      "baseRevisions": [
+        0,
+        0
+      ],
+      "wireHash": "acbd9845295123bf4becc979b045a3b46c9e3ef007a8cd17c1bf0bec9bf98d2d",
+      "wireFile": "test-results/studio-v3-semantic-observa-dc107-t-authorization-and-recover-webkit/semantic-provider-wire.json",
+      "retainedFile": ".printform-studio/ca05-evidence/slice2/test-results/studio-v3-semantic-observa-dc107-t-authorization-and-recover-webkit/semantic-provider-wire.json"
+    }
+  ],
+  "mutation": {
+    "file": ".printform-studio/ca05-evidence/semantic-wire-mutation.json",
+    "hash": "6316d8a86071829def042ad8f399b8c660943e65b4e55c7a84b5331ce5916c4b",
+    "script": ".printform-studio/ca05-evidence/semantic-wire-mutation.mjs",
+    "scriptHash": "c62bc7c21eedb6dfe0b9705848ad3f81d07294bce6666964f2547cdaa91dd678",
+    "sourcePreserved": true,
+    "exitCodes": [
+      0,
+      1
+    ]
+  },
+  "historicalFailure": {
+    "wireFile": ".printform-studio/ca05-evidence/history-repro/provider-wire.json",
+    "wireHash": "596f5043b9cc25a481f9c0582798ddf0a9c02ec784739acca28e9659697bfee5",
+    "manifestFile": ".printform-studio/ca05-evidence/history-repro/agent-manifest.json",
+    "manifestHash": "786e811c7f69f841ff13051249b50a52a995d11f58e662ba208ac0069fe335aa",
+    "releaseIdentity": "c1282f2be4c35b9a50c81b444cc1dd003243d9cd9b1813ba96628ced28690db1"
+  },
+  "checks": [
+    {
+      "name": "explicit-full",
+      "command": "npx vitest run --maxWorkers=1 --no-file-parallelism",
+      "exitCode": 0,
+      "logFile": ".printform-studio/ca05-evidence/slice2/checks/explicit-full.json",
+      "hash": "2d00c812b89521dd3ab3d5bf5eb5f7e2b838efe8808ffee8472816cd820c13d5"
+    },
+    {
+      "name": "final-build",
+      "command": "npm run build:site",
+      "exitCode": 0,
+      "logFile": ".printform-studio/ca05-evidence/slice2/checks/final-build.json",
+      "hash": "6dc8e651a1b9d64dbfad203c96cbe93d67881cf2d29ba7e67271118db7ee7a53"
+    },
+    {
+      "name": "agent-gate",
+      "command": "npm run check:studio-v3-agent",
+      "exitCode": 0,
+      "logFile": ".printform-studio/ca05-evidence/slice2/checks/agent-gate.json",
+      "hash": "ed9232221e350bd11831f78ba5ee5594a1ae3349ad9551ed6fb89738b885b15d"
+    },
+    {
+      "name": "browser",
+      "command": "npx playwright test e2e/studio-v3-observation-receipt.spec.js e2e/studio-v3-semantic-observation.spec.js --workers=1",
+      "exitCode": 0,
+      "logFile": ".printform-studio/ca05-evidence/slice2/checks/browser.json",
+      "hash": "04082c9bc3d5e0f5ba61e3947567c7f60debc24956ec4c61fd853ece59423f00"
+    },
+    {
+      "name": "focused",
+      "command": "npx vitest run tests/studio-v3-agent-gateway-loop.test.js tests/studio-v3-semantic-wire.test.js tests/studio-v3-observation-authorization-ui.test.js --maxWorkers=1 --no-file-parallelism",
+      "exitCode": 0,
+      "logFile": ".printform-studio/ca05-evidence/slice2/checks/focused.json",
+      "hash": "9ab1818fbb6a6f78d9947805d02c3ae4a610bb83c2f7748b2968c386bae105aa"
+    },
+    {
+      "name": "history-repro",
+      "command": "npx playwright test e2e/studio-v3-semantic-observation.spec.js --project=chromium --workers=1",
+      "exitCode": 1,
+      "logFile": ".printform-studio/ca05-evidence/slice2/checks/history-repro.json",
+      "hash": "c484460203ed60391382d23cd6a470ec31b2c29a5df7aeae89da04280064cfc0"
+    },
+    {
+      "name": "history-recovery",
+      "command": "npx playwright test e2e/studio-v3-semantic-observation.spec.js --workers=1",
+      "exitCode": 0,
+      "logFile": ".printform-studio/ca05-evidence/slice2/checks/history-recovery.json",
+      "hash": "d27bb6bb60032b186c374df20304ab00f6dbc1e0c1a46947999e88fb1ba5190d"
+    },
+    {
+      "name": "early-full",
+      "command": "npx vitest run --maxWorkers=1 --no-file-parallelism",
+      "exitCode": 1,
+      "logFile": ".printform-studio/ca05-evidence/slice2/checks/early-full.json",
+      "hash": "98560ac6ae4b7163710438e3bc9f45406751d48780fcec0551a3ee3cb3d8e50c"
+    },
+    {
+      "name": "review-fix-full",
+      "command": "npx vitest run --maxWorkers=1 --no-file-parallelism",
+      "exitCode": 0,
+      "logFile": ".printform-studio/ca05-evidence/slice2/checks/review-fix-full.json",
+      "hash": "5b1f92a575f7c77bf69190fb7c3a270bd10f246de5ce5b1f2ebfff0c8682be3a"
+    },
+    {
+      "name": "review-fix-build",
+      "command": "npm run build:site",
+      "exitCode": 0,
+      "logFile": ".printform-studio/ca05-evidence/slice2/checks/review-fix-build.json",
+      "hash": "24e5b752670b3ca569d1961ab3de6861890f5b98ec317f48ef255995e0a9df5c"
+    },
+    {
+      "name": "review-fix-agent",
+      "command": "npm run check:studio-v3-agent",
+      "exitCode": 0,
+      "logFile": ".printform-studio/ca05-evidence/slice2/checks/review-fix-agent.json",
+      "hash": "5013ce752f6d2b05c4686421717e6e83f4757ec2368fd79b2482f598e2aef859"
+    },
+    {
+      "name": "review-fix-focused",
+      "command": "npx vitest run tests/studio-v3-observation-authorization-ui.test.js tests/studio-v3-semantic-observation.test.js tests/studio-v3-semantic-wire.test.js tests/studio-v3-chat-panel-send-reason.test.js --maxWorkers=1 --no-file-parallelism",
+      "exitCode": 0,
+      "logFile": ".printform-studio/ca05-evidence/slice2/checks/review-fix-focused.json",
+      "hash": "57c53515c83f4c7a8b3d345b0fa50b46b431403850e19eab94a8d65a7590741c"
+    },
+    {
+      "name": "review-fix-browser",
+      "command": "npx playwright test e2e/studio-v3-observation-receipt.spec.js e2e/studio-v3-semantic-observation.spec.js --workers=1",
+      "exitCode": 0,
+      "logFile": ".printform-studio/ca05-evidence/slice2/checks/review-fix-browser.json",
+      "hash": "aada05c438a641570fad331ce855eedcb86fc57b27d7b8a28297c927a98d5cae"
+    }
+  ],
+  "environment": {
+    "os": "Darwin",
+    "osRelease": "27.0.0",
+    "arch": "arm64",
+    "node": "v23.10.0",
+    "providerRoute": "recording stub via real Pi/Demo Responses transport",
+    "runner": "browser; no coding runner"
+  },
+  "wireUnitMutation": {
+    "file": ".printform-studio/ca05-evidence/slice2/wire-unit-mutation.json",
+    "hash": "04165921c5ff2e4f8e13e0e8e095e2ce65e1a6ece829d038e442950ffa73d3f2",
+    "positive": {
+      "exitCode": 0,
+      "testsPassed": 6
+    },
+    "mutant": {
+      "exitCode": 1,
+      "testsFailed": 5,
+      "testsPassed": 1
+    },
+    "sourcePreserved": true,
+    "isolatedCopyRemoved": true
+  },
+  "mutationEnvironmentFailure": {
+    "file": ".printform-studio/ca05-evidence/slice2/mutation-environment-failure.json",
+    "hash": "7cd748c9ce9730202d1b8f6ff73ad7e7efdbd8dab8f8518124e65ec1da060731",
+    "reason": "Isolated source copy initially omitted src/printform/helpers.js; no tests collected; corrected copy includes src"
+  },
+  "treeChecks": {
+    "changedOrNewFiles": 42,
+    "maximumLines": 281,
+    "whitespace": true,
+    "localDocumentationLinks": true,
+    "CA04ParallelRows": 18
+  },
+  "independentReview": {
+    "reviewer": "/root/ca05_slice2_review",
+    "context": "independent context; no implementation participation; read-only production tree",
+    "finding": "P2 ended/cancelled host grant remained valid",
+    "disposition": "fixed; same independent lifecycle reproduction rejects saved-object replay with zero outgoing requests",
+    "reviewFile": "docs/acceptance/STUDIO_V3_CA05_SLICE2_REVIEW.md",
+    "evidenceDirectory": ".printform-studio/ca05-evidence/slice2-independent-review",
+    "preReviewArchive": ".printform-studio/ca05-evidence/slice2-before-review"
+  }
+}

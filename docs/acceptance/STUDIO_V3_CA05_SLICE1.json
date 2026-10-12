@@ -1,0 +1,59 @@
+{
+  "release": "local",
+  "contractHash": "a8b27d5494d875bdd4845856a5ed8bd35fc805592b58feccae0f26b6577532f4",
+  "knowledgeHash": "8fc257993a8977de20551f49e3e8ddb95cfe2c53e17eb598f5479e55ff3855c5",
+  "packageHash": "00574355200a6b86f5a46c2a2f1e93599b8fbd599a77d94f3f0b13df6e6247ea",
+  "appHash": "a98115c9284d8dc90f754f944fc1d7fb97e0f6057abe664402786130c463a593",
+  "browsers": [
+    {
+      "browser": "chromium",
+      "requests": 11,
+      "receipts": 4,
+      "baseRevisions": [
+        0,
+        0,
+        0,
+        1
+      ],
+      "wireHash": "b73f4f737f50c6905fd18b3364724caba6e77039b4b1d3fd393c00190fb4bcee",
+      "wireFile": "test-results/studio-v3-observation-rece-dd5f2-evived-evidence-and-recover-chromium/observation-provider-wire.json",
+      "version": "151.0.7922.34"
+    },
+    {
+      "browser": "firefox",
+      "requests": 11,
+      "receipts": 4,
+      "baseRevisions": [
+        0,
+        0,
+        0,
+        1
+      ],
+      "wireHash": "27c57831025a4d2dc98ff7349ce5c8a00e8623c6079e2a7d89de184c5430fe4c",
+      "wireFile": "test-results/studio-v3-observation-rece-dd5f2-evived-evidence-and-recover-firefox/observation-provider-wire.json",
+      "version": "153.0"
+    },
+    {
+      "browser": "webkit",
+      "requests": 11,
+      "receipts": 4,
+      "baseRevisions": [
+        0,
+        0,
+        0,
+        1
+      ],
+      "wireHash": "b5697a76f32de5f0604d0a4f889c3c2e19705ee5245f866e094ff15ef0fe5afe",
+      "wireFile": "test-results/studio-v3-observation-rece-dd5f2-evived-evidence-and-recover-webkit/observation-provider-wire.json",
+      "version": "26.5"
+    }
+  ],
+  "environment": {
+    "os": "Darwin",
+    "osRelease": "27.0.0",
+    "arch": "arm64",
+    "node": "v23.10.0",
+    "providerRoute": "recording stub via Demo Responses transport",
+    "runner": "browser; no coding runner"
+  }
+}

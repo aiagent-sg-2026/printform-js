@@ -4,6 +4,9 @@ import { bindingValidation, validatePaperReport } from './validation.js';
 import { runtimeSources } from './runtime-assets.js';
 import { measureTypography, validateTypography } from './ai-typography.js';
 import { PreviewLaunch } from './preview-launch.js';
+import { capturePagePixels } from './preview-pixels.js';
+import { fail } from './ai-edits.js';
+import { REFERENCE_LIMITS } from './reference-limits.js';
 
 const SOURCE = 'printform-studio-v3-preview';
 const NONCE = 'cHJpbnRmb3JtLXN0dWRpby12Mw==';
@@ -12,6 +15,8 @@ function bridge(token) {
     const token = ${token};
     const send = (type,payload) => parent.postMessage({source:'${SOURCE}',token,type,payload},'*');
     const measureTypography = ${measureTypography.toString()};
+    const capturePagePixels = ${capturePagePixels.toString()};
+    const pixelLimits = ${JSON.stringify(REFERENCE_LIMITS)};
     let pages = [];
     send('hello');
     function select(id) {
@@ -37,10 +42,14 @@ function bridge(token) {
       const n = e.target.closest('[data-v3-id]');
       if (n) { e.preventDefault(); select(n.dataset.v3Id); send('selection',{id:n.dataset.v3Id,page:pages.indexOf(n.closest('.printform_page'))}); }
     });
-    window.addEventListener('message', e => {
+    window.addEventListener('message', async e => {
       if (e.source !== parent || e.data?.source !== 'printform-studio-v3' || e.data.token !== token) return;
       if (e.data.type === 'select') select(e.data.id);
       if (e.data.type === 'print') { select(''); window.print(); }
+      if (e.data.type === 'pixels') {
+        try { const image = await capturePagePixels(e.data.region,pages,pixelLimits); send('pixels',{requestId:e.data.requestId,image}); }
+        catch (error) { send('pixels',{requestId:e.data.requestId,error:error.code || 'OBSERVATION_PIXELS_UNSUPPORTED'}); }
+      }
     });
     window.addEventListener('error', e => send('error',{message:e.message}));
   })();</script>`;
@@ -48,11 +57,12 @@ function bridge(token) {
 
 export class PaperPreview {
   constructor(frame, onReport, onSelect) {
-    this.frame = frame; this.token = 0; this.onReport = onReport; this.onSelect = onSelect; this.pages = []; this.committedFacts = null; this.launch = new PreviewLaunch(frame);
+    this.frame = frame; this.token = 0; this.onReport = onReport; this.onSelect = onSelect; this.pages = []; this.committedFacts = null; this.launch = new PreviewLaunch(frame); this.pixelRequests = new Map();
     window.addEventListener('message', e => {
       const d = e.data;
       if (e.source !== frame.contentWindow || d?.source !== SOURCE || d.token !== this.token) return;
       if (d.type === 'hello') this.launch.hello();
+      if (d.type === 'pixels') this.pixelRequests.get(d.payload?.requestId)?.finish(d.payload);
       if (d.type === 'selection') onSelect(d.payload);
       if (d.type === 'rendered' && !this.reported) {
         this.reported = true; this.pages = d.payload.pages; this.height = d.payload.height;
@@ -63,7 +73,7 @@ export class PaperPreview {
       if (d.type === 'error') this.finish({status:'blocked',validation:{errors:[{code:'RENDER_ERROR',message:d.payload.message}],warnings:[]}}, {});
     });
   }
-  cancel() { this.token += 1; this.launch.stop(); this.resolve?.({status:'superseded'}); this.resolve = null; }
+  cancel() { this.token += 1; this.launch.stop(); this.resolve?.({status:'superseded'}); this.resolve = null; for (const request of this.pixelRequests.values()) request.finish({error:'EVIDENCE_STALE'}); }
   finish(report, view) {
     this.launch.stop(); this.resolve?.(report); this.resolve = null;
     this.onReport(report, view);
@@ -96,6 +106,17 @@ export class PaperPreview {
     return resultPromise;
   }
   factsFor(project) { const saved = this.committedFacts; return saved && saved.documentId === project.manifest.documentId && saved.revision === project.revision && saved.design === JSON.stringify(project.manifest.studioV3) ? saved.facts : []; }
+  async pixels(project,region,signal) {
+    signal.throwIfAborted(); const report = await this.render(project); signal.throwIfAborted();
+    if (report.status !== 'ready') throw fail('OBSERVATION_PIXELS_UNSUPPORTED');
+    const requestId = crypto.randomUUID();
+    return new Promise((resolve,reject)=> {
+      const abort = ()=>finish({error:'EVIDENCE_STALE'}), timer = setTimeout(()=>finish({error:'OBSERVATION_PIXELS_UNSUPPORTED'}),25_000);
+      const finish = ({image,error})=> { clearTimeout(timer); signal.removeEventListener('abort',abort); this.pixelRequests.delete(requestId); error ? reject(fail(error)) : resolve(image); };
+      this.pixelRequests.set(requestId,{finish}); signal.addEventListener('abort',abort,{once:true});
+      this.send('pixels',{requestId,region});
+    });
+  }
   send(type, extra = {}) { this.frame.contentWindow?.postMessage({source:'printform-studio-v3',token:this.token,type,...extra}, '*'); }
   thumbnails(container, pages, styles, onPage) {
     container.replaceChildren();

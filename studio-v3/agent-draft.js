@@ -20,21 +20,22 @@ function mergeDiff(entries) {
 // the previous step's result, and the live form is never touched: only a human Apply of the final proposal changes it.
 export function createDraft(project,{scope = {mode:'whole'},request = '',references = []} = {}) {
   const steps = [], explicit = explicitBindingPointers(request,references), baseline = protectedBindings(project.manifest.studioV3);
-  let current = project;
+  let current = project, version = 0;
   return {
     get project() { return current; },
+    get version() { return version; },
     get count() { return steps.length; },
     apply(summary,operations) {
       const step = parseProposal(JSON.stringify({summary,operations}),current,explicit);
       assertScope(step,scope);
       assertProtectedBindings(baseline,step.design);
-      steps.push({before:current,...step}); current = step.candidate;
+      steps.push({before:current,...step}); current = step.candidate; version += 1;
       return step;
     },
     undo() {
       const last = steps.pop();
       if (!last) return false;
-      current = last.before;
+      current = last.before; version += 1;
       return true;
     },
     // The whole run as one proposal for the existing Preview / Apply / Undo flow.

@@ -52,7 +52,7 @@ describe('Studio v3 feature ledger (COV-01 integrity)', () => {
     const count = key => ROWS.filter(row => row.disposition === key).length;
     expect(LEDGER_MD).toContain(`| Ledger rows | ${ROWS.length} |`);
     for (const key of DISPOSITIONS) expect(LEDGER_MD).toContain(`| ${key} | ${count(key)} |`);
-    expect(LEDGER_MD).toContain(`| Eligible gaps (agent-callable, not yet reachable) | ${ROWS.filter(row => row.eligible_gap === 'yes').length} |`);
+    expect(LEDGER_MD).toContain(`| Eligible gaps (missing or limited agent paths) | ${ROWS.filter(row => row.eligible_gap === 'yes').length} |`);
   });
   it('keeps both ledger files within the 300-line limit', () => {
     expect(LEDGER_MD.split('\n').length).toBeLessThanOrEqual(300);

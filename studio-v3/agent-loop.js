@@ -23,7 +23,7 @@ export const AGENT_PROMPT = promptFor(createGrant('design'));
 
 // Runs one authoring task as a tool loop on a draft. Resolves to a proposal shaped like the single-step flow's, so
 // the existing Preview / Apply / Undo takes it unchanged; rejects with a coded error otherwise.
-export async function runAgentLoop({models,model,project,request,scope = {mode:'whole'},references = [],context,inspect,signal,media = [],memory = createAgentMemory(),failure = () => null,onStep = () => {},limits = DEMO_CONFIG.agent,profile = 'design',systemPrompt,finalizeAnswer,verifyRelease = verifyAgentRelease}) {
+export async function runAgentLoop({models,model,project,request,scope = {mode:'whole'},references = [],context,inspect,signal,media = [],memory = createAgentMemory(),failure = () => null,onStep = () => {},limits = DEMO_CONFIG.agent,profile = 'design',systemPrompt,finalizeAnswer,verifyRelease = verifyAgentRelease,baseRevision = 0,assertCurrent = () => {},runId,observationAuthorization,readObservationHost,capturePixels}) {
   signal.throwIfAborted();
   assertImageParts(media);
   const images = media.map(part=> { const [,mimeType,data] = /^data:(image\/[a-z]+);base64,(.+)$/.exec(part.image_url); return {type:'image',data,mimeType}; });
@@ -32,7 +32,7 @@ export async function runAgentLoop({models,model,project,request,scope = {mode:'
   const identity = await verifyRelease({signal:stop});
   // The grant comes from the host (profile is chosen by the caller from host state), never from the model.
   const grant = createGrant(profile,{scope});
-  const tools = createAgentTools({draft,context,inspect,signal:stop,outcome,limits,identity,stopRun:()=>halt.abort(),memory,onStep,grant,finalizeAnswer});
+  const tools = createAgentTools({draft,context,inspect,signal:stop,outcome,limits,identity,stopRun:()=>halt.abort(),memory,onStep,grant,finalizeAnswer,baseRevision,assertCurrent,runId,observationAuthorization,readObservationHost,capturePixels});
   const shown = new Set(grantedDefinitions(grant,AGENT_TOOL_DEFINITIONS).map(tool=>tool.name));
   const ctx = withAbortSignal(stop,BACKGROUND_CONTEXT);
   const session = await new MemorySessionRepo().create({},ctx);
@@ -50,5 +50,5 @@ export async function runAgentLoop({models,model,project,request,scope = {mode:'
     if (outcome.proposal) return {...outcome.proposal,turns:outcome.turns,iterations:outcome.turns,steps:draft.count};
     if (outcome.blocked) throw Object.assign(fail(outcome.blocked.code),outcome.blocked.reason ? {reason:outcome.blocked.reason} : {});
     throw fail('AI_RUN_FAILED');
-  } finally { await harness.close(BACKGROUND_CONTEXT); }
+  } finally { memory.latestVisual = ()=>null; await harness.close(BACKGROUND_CONTEXT); }
 }

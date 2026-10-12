@@ -16,9 +16,23 @@ export const TOOL_ERRORS = Object.freeze({
   TABLE_BACKGROUND_INTENT:entry('SCOPE_DENIED','rejected',true,'Change the table background only when the request asks for it.'),
   AGENT_SKILL_UNAVAILABLE:entry('CAPABILITY_UNAVAILABLE','unavailable',true,'Use a guide id listed by get_capabilities.'),
   AGENT_INSPECTION_REQUIRED:entry('EVIDENCE_STALE','evidence',true,'Call inspect_draft on the exact final draft before finish.'),
+  EVIDENCE_STALE:entry('EVIDENCE_STALE','evidence',true,'The observed state changed. Inspect the current candidate again; start a new run if the host revision changed.'),
+  OBSERVATION_DISCLOSURE_REQUIRED:entry('APPROVAL_REQUIRED','rejected',true,'No text/value disclosure is authorized. Use numeric inspect_draft or ask the person to authorize a new run.'),
+  OBSERVATION_AUTHORIZATION_STALE:entry('EVIDENCE_STALE','evidence',true,'Document, content, revision, run or policy changed. A new run needs fresh host authorization; undo cannot revive it.'),
+  OBSERVATION_CONTENT_UNSUPPORTED:entry('SCOPE_DENIED','rejected',true,'Encoded pixel content is outside semantic authorization. Remove it from the requested text or use numeric inspection.'),
+  OBSERVATION_CONTEXT_LIMIT:entry('QUOTA_EXCEEDED','rejected',true,'Authorized context exceeds 32000 bytes. Reduce the form/data or use numeric inspection; no content is silently omitted.'),
+  OBSERVATION_PIXELS_REQUIRED:entry('APPROVAL_REQUIRED','rejected',true,'A new run requires explicit fictional page-pixel consent and text consent. Numeric diagnostics remain available.'),
+  OBSERVATION_PIXELS_POLICY_DENIED:entry('SCOPE_DENIED','rejected',true,'Host policy explicitly denies pixels. A run checkbox cannot override that policy; use numeric/semantic inspection.'),
+  OBSERVATION_PIXELS_VALUES_DENIED:entry('SCOPE_DENIED','rejected',true,'The document contains bound values denied by host policy. Cropping cannot authorize them.'),
+  OBSERVATION_PIXELS_SENSITIVE:entry('SCOPE_DENIED','rejected',true,'Real-classified documents, encoded pixels and embedded images/signatures are blocked. Synthetic text cannot sanitize them.'),
+  OBSERVATION_PIXELS_LIMIT:entry('QUOTA_EXCEEDED','rejected',true,'PNG bytes or dimensions exceed the capture budget, or the image is invalid. Inspect and capture a smaller valid region.'),
+  OBSERVATION_PIXELS_BOUNDS:entry(null,'invalid-input',true,'Use an existing zero-based page and an integer crop fully inside its bounds.'),
+  OBSERVATION_PIXELS_UNSUPPORTED:entry('ENVIRONMENT_UNSUPPORTED','unavailable',true,'The qualified DOM raster capture is unavailable or failed. Use semantic/numeric inspection; visual evidence was not produced.'),
+  OBSERVATION_PIXELS_PAIR_REQUIRED:entry('EVIDENCE_STALE','evidence',true,'The actual capture tool call and result must accompany the host image input. Start a fresh observed run.'),
   AGENT_INSPECTION_BLOCKED:entry('EVIDENCE_STALE','evidence',true,'Fix the reported print issues and inspect again before finish.'),
   GRANT_DENIED:entry('SCOPE_DENIED','rejected',true,'This run does not grant that effect. Answer with finish_answer, or report_blocked if the request needs an edit.'),
   AGENT_EVIDENCE_REQUIRED:entry('EVIDENCE_STALE','evidence',true,'Read a guide, the form context or an inspection before finish_answer, so the answer rests on evidence.'),
+  AGENT_ANSWER_LIMIT:entry('QUOTA_EXCEEDED','rejected',true,'Shorten the answer so it and the host-authored latest observation citation fit within 4000 characters; nothing is silently omitted.'),
   TOOL_FAILED:entry('EFFECT_UNKNOWN','internal',false,'Do not repeat blindly; report_blocked with the failing step.')
 });
 

@@ -10,7 +10,7 @@ const ZERO = {input:0,output:0,cacheRead:0,cacheWrite:0};
 // this only turns a turn into a request and the answer back into an assistant message. Keys never enter: the transport
 // holds the short-lived session. `failure()` is the error of a failed turn, so the loop can report its real code.
 export function createGatewayModel({transport,alias,signal,assertContext = () => {},maxTokens = DEMO_CONFIG.agent.maxRunTokens,memory,onTurn = () => {},onPhase = () => {}}) {
-  const model = {id:alias,name:alias,provider:'printform-demo',api:'printform-demo-agent',baseUrl:'https://gpt.yapweijun1996.com/demo/v1',reasoning:true,input:['text'],contextWindow:128000,maxTokens:16384,cost:{...ZERO}};
+  const model = {id:alias,name:alias,provider:'printform-demo',api:'printform-demo-agent',baseUrl:'https://gpt.yapweijun1996.com/demo/v1',reasoning:true,input:transport.supportsImages?.(alias) ? ['text','image'] : ['text'],contextWindow:128000,maxTokens:16384,cost:{...ZERO}};
   const totals = {input:0,output:0,total:0};
   let failed = null, turns = 0;
   const stream = (_model,context,options = {}) => {
@@ -22,11 +22,12 @@ export function createGatewayModel({transport,alias,signal,assertContext = () =>
         if (totals.total === null) throw fail('AGENT_USAGE_UNAVAILABLE');
         if (totals.total >= maxTokens) throw fail('AGENT_TOKEN_BUDGET');
         onPhase('Waiting for the AI service');
-        const turn = await transport.agentTurn(alias,context,options.signal || signal,{memory,onProgress:progress=>onPhase(progressText(progress),{progress:true})});
+        const turn = await transport.agentTurn(alias,context,options.signal || signal,{memory,assertCurrent:assertContext,onProgress:progress=>onPhase(progressText(progress),{progress:true})});
         const usage = agentUsage(turn.usage);
         addAgentUsage(totals,usage);
         onTurn({turn:++turns,totals:{...totals}});
         if (totals.total === null) throw fail('AGENT_USAGE_UNAVAILABLE');
+        assertContext();
         output.content = assistantContent(turn.output);
         output.stopReason = output.content.some(block=>block.type === 'toolCall') ? 'toolUse' : 'stop';
         // Pi requires numeric message fields; the host usage projection preserves unavailable components as null.

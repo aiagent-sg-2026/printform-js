@@ -1,0 +1,284 @@
+{
+  "version": 1,
+  "recordedAt": "2026-10-12T05:17:48.817Z",
+  "scope": "CA-05 slice 1 recheck only; existing mixed-tree work preserved",
+  "status": "Verified slice; CA-05/G4 Partial/open; stopped for review",
+  "branch": "codex/studio-v3-ca05-observation",
+  "sourceCommit": "774db9283b444d5e75aa13e529856dfe8347e402",
+  "fetchedMain": "774db9283b444d5e75aa13e529856dfe8347e402",
+  "identity": {
+    "release": "local",
+    "contractHash": "befd783aa9ff1c9501a6b7bac582ff9d8b68388c9f9220a07703144267032379",
+    "knowledgeHash": "fb163609231a86dadca6da60885c1a48ad73a7c67bfcbf9d468c36cdc9abbf51",
+    "packageHash": "b50addc9b6ca13700842020c4d3efdd4b8570eea94c08e9f3cbc9c0d3386aa4a"
+  },
+  "appHash": "9620bb4601c88cc87285cb7b99cc636457b762df25bef8fd41ee6d54908ae740",
+  "manifestHash": "425ffb8d3423f9433845422cc4e0c32cefeb67000a8d321165ded88f9795d12d",
+  "dependencyFiles": 93,
+  "resources": 4,
+  "browser": [
+    {
+      "browser": "chromium",
+      "requests": 11,
+      "receipts": 4,
+      "baseRevisions": [
+        0,
+        0,
+        0,
+        1
+      ],
+      "candidateVersions": [
+        0,
+        1,
+        3,
+        0
+      ],
+      "wireFile": ".printform-studio/ca05-slice1-recheck/wire-chromium.json",
+      "original": ".printform-studio/ca04-element-style/browser-final/studio-v3-observation-rece-dd5f2-evived-evidence-and-recover-chromium/observation-provider-wire.json",
+      "sha256": "363099850503254b02fba71bd4190e4b8fde8d2273dabb04f4e814d79eaed7c8"
+    },
+    {
+      "browser": "firefox",
+      "requests": 11,
+      "receipts": 4,
+      "baseRevisions": [
+        0,
+        0,
+        0,
+        1
+      ],
+      "candidateVersions": [
+        0,
+        1,
+        3,
+        0
+      ],
+      "wireFile": ".printform-studio/ca05-slice1-recheck/wire-firefox.json",
+      "original": ".printform-studio/ca04-element-style/browser-final/studio-v3-observation-rece-dd5f2-evived-evidence-and-recover-firefox/observation-provider-wire.json",
+      "sha256": "ce78f5545034988e0d258f8c9b22d8a710ca62fea52623b1f30018b3e5552703"
+    },
+    {
+      "browser": "webkit",
+      "requests": 11,
+      "receipts": 4,
+      "baseRevisions": [
+        0,
+        0,
+        0,
+        1
+      ],
+      "candidateVersions": [
+        0,
+        1,
+        3,
+        0
+      ],
+      "wireFile": ".printform-studio/ca05-slice1-recheck/wire-webkit.json",
+      "original": ".printform-studio/ca04-element-style/browser-final/studio-v3-observation-rece-dd5f2-evived-evidence-and-recover-webkit/observation-provider-wire.json",
+      "sha256": "59da39ac6f860c367f936ef0109da2f99266d8290fbec6b974238ac7ec9c8cd3"
+    }
+  ],
+  "checks": [
+    {
+      "id": "receipt-units",
+      "result": "Pass",
+      "path": ".printform-studio/ca05-slice1-recheck/receipt-unit-positive.log",
+      "sha256": "1622243aed5111de6dc4e5a2c408a35dd6e6666b391ca044596ba75768b7ee66"
+    },
+    {
+      "id": "receipt-wire-mutation",
+      "result": "Pass (expected rejection)",
+      "path": ".printform-studio/ca05-slice1-recheck/receipt-wire-mutation.log",
+      "sha256": "a5feb742079683188b84fdc26674feca7eeaf942c1e2e2649aee2e874f9e4636"
+    },
+    {
+      "id": "receipt-wire-recovery",
+      "result": "Pass",
+      "path": ".printform-studio/ca05-slice1-recheck/receipt-wire-recovery.log",
+      "sha256": "dc7a54d4516c1f3f25c43a075a0ac4fcac2e43ae39abf1f1e42a58863b01154a"
+    },
+    {
+      "id": "full-vitest",
+      "result": "Pass",
+      "path": ".printform-studio/ca04-element-style/full-vitest.log",
+      "sha256": "7efa353643b3cc1bde2dc4f4eef66135e892f28a15ff8ac737f52d74f32bc580"
+    },
+    {
+      "id": "agent-review",
+      "result": "Pass",
+      "path": ".printform-studio/ca05-slice1-recheck/agent-final.log",
+      "sha256": "65b545927153d868b9737c3519475ecad504c44547fdcceac69010aa34125727"
+    },
+    {
+      "id": "browser-receipts",
+      "result": "Pass",
+      "path": ".printform-studio/ca04-element-style/browser-final.log",
+      "sha256": "576a44186e3e7e5092c61ea18c982c51603e8a8e746e8e4caf8a61c87f0cad65"
+    },
+    {
+      "id": "site-build",
+      "result": "Pass",
+      "path": ".printform-studio/ca05-slice1-recheck/build-site.log",
+      "sha256": "4879ecde57aa65dfd016397da8da2238c051f1ef57d9fac0353d1103727b2fa8"
+    }
+  ],
+  "mutation": {
+    "mutation": "Remove only the inspection receipt from the actual handler output in a private source copy.",
+    "positive": {
+      "exit": 0,
+      "summary": "Test Files  3 passed (3)\n      Tests  22 passed (22)"
+    },
+    "rejected": {
+      "exit": 1,
+      "summary": "Test Files  1 failed (1)\n      Tests  1 failed (1)"
+    },
+    "recovery": {
+      "exit": 0,
+      "summary": "Test Files  1 passed (1)\n      Tests  1 passed (1)"
+    },
+    "source": "studio-v3/agent-handlers.js",
+    "before": "0b2b15404b06c129d939246bf5d6c43985ffdba9411c609218952f8adac8cf27",
+    "after": "0b2b15404b06c129d939246bf5d6c43985ffdba9411c609218952f8adac8cf27",
+    "temporaryCopyRemoved": true
+  },
+  "sourceFiles": [
+    {
+      "path": "studio-v3/observation-records.js",
+      "sha256": "08967c16f462a3287d49029d5bb47564a903268df8acd5e5f9ccc07d91e5d1b3"
+    },
+    {
+      "path": "studio-v3/agent-draft.js",
+      "sha256": "ca42588f4ef541128a81c2ccb2e00d19043ea19e60026034130205633c7a0aec"
+    },
+    {
+      "path": "studio-v3/agent-handlers.js",
+      "sha256": "0b2b15404b06c129d939246bf5d6c43985ffdba9411c609218952f8adac8cf27"
+    },
+    {
+      "path": "studio-v3/agent-tools.js",
+      "sha256": "4068493d2fd78c748524ad1f4f1cfad7e257fcc244a69323dc8e9f23dbc0ada0"
+    },
+    {
+      "path": "studio-v3/agent-loop.js",
+      "sha256": "d48e53d5b4cd759f440750a4f0bb52e02fa87fcc94b242979f9265fd16b98699"
+    },
+    {
+      "path": "studio-v3/ai-agent-run.js",
+      "sha256": "ade81f9352e513f2ffcfd570ea1a3a65b2fe5615a59ee224ae75389ddc85bd10"
+    },
+    {
+      "path": "studio-v3/agent-wire.js",
+      "sha256": "8f012bb029dce832a4e7fd17cbb31529f3776c5f28a286a80ad1fc36996a03f9"
+    },
+    {
+      "path": "studio-v3/ai-demo-transport.js",
+      "sha256": "5ca6d0a51a2f24529cca02d4154b7693d205494ee484772e16f27d8a3f7081a4"
+    },
+    {
+      "path": "studio-v3/agent-contracts.js",
+      "sha256": "4821dd9028a9f204f9d00acdf835ae64294b84514ec27f6b5e8d0a5b014413ab"
+    },
+    {
+      "path": "studio-v3/agent-registry.js",
+      "sha256": "c3a3b96b03eeb202244c968e457fd1ee876d266e48890ab7c2dca605ce1f0c3a"
+    },
+    {
+      "path": "tests/studio-v3-observation-records.test.js",
+      "sha256": "be456f77175f49a6f7bc53dcb04f37583a2ad59956a2557a983d8f49d85769e6"
+    },
+    {
+      "path": "tests/studio-v3-observation-tools.test.js",
+      "sha256": "a92ca5fa2abc0633d81fe93d25c854c214ccc7296de7ace0c4b92364f4b8d97e"
+    },
+    {
+      "path": "tests/studio-v3-observation-wire.test.js",
+      "sha256": "4a74f164ad6932dfd494b5b9fe9795fc0041f2ecdd3498d9ebfd8e465090868b"
+    },
+    {
+      "path": "e2e/studio-v3-observation-receipt.spec.js",
+      "sha256": "262af6301102a07da27b621eb610751f5f4efb088d6ff505f6d8d841b7d6bf97"
+    }
+  ],
+  "historicalReports": [
+    {
+      "path": "docs/acceptance/STUDIO_V3_CA04_ROW_FILL.json",
+      "sha256": "e32124fc09d092377dd4d64c9570a5468d3f49108a4ee2d16a3694b0f6e27118"
+    },
+    {
+      "path": "docs/acceptance/STUDIO_V3_CA04_ROW_FILL.md",
+      "sha256": "f48d232e23f871758c150d591df5eac99fcdd38d7b05f69d98f56db89715f88b"
+    },
+    {
+      "path": "docs/acceptance/STUDIO_V3_CA05_SLICE1.json",
+      "sha256": "e6215b5c6ae85bb8c633b3fdc934e23db6102a63bb54f92ccf3cfedd1e3ace81"
+    },
+    {
+      "path": "docs/acceptance/STUDIO_V3_CA05_SLICE1.md",
+      "sha256": "3fd63996451631da501bf67e272a675b98d5b8b0f95ae2d3fb105ef030b9b754"
+    },
+    {
+      "path": "docs/acceptance/STUDIO_V3_CA05_SLICE2.json",
+      "sha256": "14c5f08816d498af9e2d48829841fbf153dbbab6f3800c5fa02093147d76bee5"
+    },
+    {
+      "path": "docs/acceptance/STUDIO_V3_CA05_SLICE2.md",
+      "sha256": "841b41328201d800912b68da8a31fe33cb89ec12b6384581b4eb2229620fda8a"
+    },
+    {
+      "path": "docs/acceptance/STUDIO_V3_CA05_SLICE2_REVIEW.md",
+      "sha256": "27d9c0c581cfa896e7844a586f731760a6553a901694b1c7a17bf3db7a0aaa0c"
+    }
+  ],
+  "regression": {
+    "files": 201,
+    "tests": 1714
+  },
+  "environment": {
+    "os": "darwin",
+    "osRelease": "27.0.0",
+    "arch": "arm64",
+    "node": "v23.10.0",
+    "providerRoute": "Recording stub through actual Pi and Demo Responses transport",
+    "modelVersion": null,
+    "realModelCost": null,
+    "codingRunner": null
+  },
+  "acceptance": {
+    "OBS_02": "Partial: receipt custody only; page/crop retrieval open",
+    "otherOBS": "No new closure credit",
+    "G4": "Open"
+  },
+  "preservation": {
+    "capturedExistingFiles": 59,
+    "beforeFile": ".printform-studio/ca05-slice1-recheck/before.json",
+    "beforeSha256": "3989e6a8b015f7cc4e84b3f03b9c5076f9af4f63626e3ae9a8391d8b0c144521",
+    "runtimeChangedThisPass": false,
+    "temporaryMutationCopyRemoved": true,
+    "unchangedExistingFiles": 56,
+    "documentationUpdates": [
+      "TASK.md",
+      "docs/STUDIO_V3_AGENT_REGISTRY.md",
+      "docs/STUDIO_V3_FEATURE_LEDGER.md"
+    ]
+  },
+  "reportFormat": {
+    "requested": ".agent/rules/03-verification.md",
+    "available": false,
+    "fallback": "/Users/yapweijun/.codex/instruction-modules/verification.md"
+  },
+  "reportingUpdates": {
+    "files": [
+      "TASK.md",
+      "docs/STUDIO_V3_FEATURE_LEDGER.md",
+      "docs/STUDIO_V3_AGENT_REGISTRY.md",
+      "docs/acceptance/STUDIO_V3_CA05_SLICE1_RECHECK.md",
+      "docs/acceptance/STUDIO_V3_CA05_SLICE1_RECHECK.json"
+    ],
+    "reportSha256": "6a0fba8be550c7abd89f9b594c5eeab5b97c06ffea59c057d1b0c0cab993f7cb",
+    "runtimeIdentityUnchanged": true,
+    "localLinks": "Pass",
+    "lineLimit": "Pass",
+    "whitespace": "Pass (git diff --check)",
+    "buildPrecedesDocumentationCheckpoint": true
+  }
+}

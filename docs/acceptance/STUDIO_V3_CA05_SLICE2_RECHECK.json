@@ -1,0 +1,230 @@
+{
+  "version": 1,
+  "recordedAt": "2026-10-12T05:43:10.430Z",
+  "status": "Approved text prerequisite and bounded OBS-01 verified; CA-05/G4 Partial/open",
+  "sourceCommit": "774db9283b444d5e75aa13e529856dfe8347e402",
+  "branch": "codex/studio-v3-ca05-observation",
+  "authorization": {
+    "authority": "Direct human reply approving minimal host text slice then OBS-01",
+    "text": "Default-off; document/revision/content/selection/policy/run-bound; one use",
+    "values": "Only existing explicit matching Synthetic host policy; Imported/Real/Unknown denied",
+    "pixels": false,
+    "persistence": "No new permission"
+  },
+  "identity": {
+    "release": "local",
+    "contractHash": "befd783aa9ff1c9501a6b7bac582ff9d8b68388c9f9220a07703144267032379",
+    "knowledgeHash": "fb163609231a86dadca6da60885c1a48ad73a7c67bfcbf9d468c36cdc9abbf51",
+    "packageHash": "b50addc9b6ca13700842020c4d3efdd4b8570eea94c08e9f3cbc9c0d3386aa4a"
+  },
+  "appHash": "9620bb4601c88cc87285cb7b99cc636457b762df25bef8fd41ee6d54908ae740",
+  "manifestHash": "425ffb8d3423f9433845422cc4e0c32cefeb67000a8d321165ded88f9795d12d",
+  "dependencyFiles": 93,
+  "resources": 4,
+  "browser": [
+    {
+      "kind": "numeric",
+      "browser": "chromium",
+      "requests": 11,
+      "receipts": 4,
+      "wireFile": ".printform-studio/ca05-slice2-recheck/browser/studio-v3-observation-rece-dd5f2-evived-evidence-and-recover-chromium/observation-provider-wire.json",
+      "sha256": "6667d6c32ba6fc39ff2a049db9b1ee8b5538d1c6e9262ae18400f4c42492cfe1"
+    },
+    {
+      "kind": "numeric",
+      "browser": "firefox",
+      "requests": 11,
+      "receipts": 4,
+      "wireFile": ".printform-studio/ca05-slice2-recheck/browser/studio-v3-observation-rece-dd5f2-evived-evidence-and-recover-firefox/observation-provider-wire.json",
+      "sha256": "daf0a13558427245779dd440dd02c0063c2b1b255fa8c87cc125c46923a9bb2b"
+    },
+    {
+      "kind": "numeric",
+      "browser": "webkit",
+      "requests": 11,
+      "receipts": 4,
+      "wireFile": ".printform-studio/ca05-slice2-recheck/browser/studio-v3-observation-rece-dd5f2-evived-evidence-and-recover-webkit/observation-provider-wire.json",
+      "sha256": "9e0f06a38ee6b14ae2937f584cdf0774185a0d06a6b809afc7e809670ae43c5d"
+    },
+    {
+      "kind": "semantic",
+      "browser": "chromium",
+      "version": "151.0.7922.34",
+      "requests": 10,
+      "receipts": 2,
+      "wireFile": ".printform-studio/ca05-slice2-recheck/browser/studio-v3-semantic-observa-dc107-t-authorization-and-recover-chromium/semantic-provider-wire.json",
+      "sha256": "c7f855cd9e3e95becc03097cbc288289121515f54909c8b4325509146e852d32"
+    },
+    {
+      "kind": "semantic",
+      "browser": "firefox",
+      "version": "153.0",
+      "requests": 10,
+      "receipts": 2,
+      "wireFile": ".printform-studio/ca05-slice2-recheck/browser/studio-v3-semantic-observa-dc107-t-authorization-and-recover-firefox/semantic-provider-wire.json",
+      "sha256": "77463fe901eec6d7d2a45455ec93c74fef6f41cc843b5b6f6749acbb74ec75bb"
+    },
+    {
+      "kind": "semantic",
+      "browser": "webkit",
+      "version": "26.5",
+      "requests": 10,
+      "receipts": 2,
+      "wireFile": ".printform-studio/ca05-slice2-recheck/browser/studio-v3-semantic-observa-dc107-t-authorization-and-recover-webkit/semantic-provider-wire.json",
+      "sha256": "caae8806e67f18ebd7bc0be19b93fc628075986ab54243bbbbeb5d1c4ef4dc40"
+    }
+  ],
+  "checks": [
+    {
+      "id": "semantic-units",
+      "execution": "fresh",
+      "path": ".printform-studio/ca05-slice2-recheck/focused-unit.log",
+      "sha256": "4f63b1ff15d4648e4583f8ff0fe424ef761c3404f339845ec06fc87c8e0cdc11"
+    },
+    {
+      "id": "semantic-receipt-browser",
+      "execution": "fresh",
+      "path": ".printform-studio/ca05-slice2-recheck/browser.log",
+      "sha256": "42dd28a8e6aaa93df5e35f3df4a5d143cf69579bd75bc8ddbb24c0469f9c51f8"
+    },
+    {
+      "id": "mutation-positive",
+      "execution": "fresh",
+      "path": ".printform-studio/ca05-slice2-recheck/wire-mutation-positive.log",
+      "sha256": "4f9aecba4c47ee5bcb5d841250792467e9671f22ea09c267b73ce5889a62ebea"
+    },
+    {
+      "id": "mutation-rejection",
+      "execution": "fresh; expected failure",
+      "path": ".printform-studio/ca05-slice2-recheck/wire-mutation-rejected.log",
+      "sha256": "3b833d59cd21a4e9e5fd5876dce4b500a6656521b0534d97b059159e1f08d8bc"
+    },
+    {
+      "id": "mutation-recovery",
+      "execution": "fresh",
+      "path": ".printform-studio/ca05-slice2-recheck/wire-mutation-recovery.log",
+      "sha256": "f46531daa08fb58d2f76eeb9d98a46a26523410fd7feb9f4d835a1770014ef4a"
+    },
+    {
+      "id": "full-vitest",
+      "execution": "reused; same runtime",
+      "path": ".printform-studio/ca04-element-style/full-vitest.log",
+      "sha256": "7efa353643b3cc1bde2dc4f4eef66135e892f28a15ff8ac737f52d74f32bc580"
+    },
+    {
+      "id": "site-build",
+      "execution": "reused; same runtime",
+      "path": ".printform-studio/ca05-slice1-recheck/build-site.log",
+      "sha256": "4879ecde57aa65dfd016397da8da2238c051f1ef57d9fac0353d1103727b2fa8"
+    },
+    {
+      "id": "agent-review",
+      "execution": "reused; same runtime",
+      "path": ".printform-studio/ca05-slice1-recheck/agent-final.log",
+      "sha256": "65b545927153d868b9737c3519475ecad504c44547fdcceac69010aa34125727"
+    },
+    {
+      "id": "agent-review-final",
+      "execution": "fresh; Pass",
+      "path": ".printform-studio/ca05-slice2-recheck/agent-final.log",
+      "sha256": "e58196d4cdbf25dda221120bd90788b5f91c15efe346a9bf2f963fc6922ad083"
+    }
+  ],
+  "mutation": {
+    "mutation": "Omit semantic content only from observe_context output using a private Node module-loader hook; actual outgoing-body canary must fail.",
+    "script": ".printform-studio/ca05-evidence/semantic-wire-mutation.mjs",
+    "scriptHash": "c62bc7c21eedb6dfe0b9705848ad3f81d07294bce6666964f2547cdaa91dd678",
+    "source": "studio-v3/agent-handlers.js",
+    "before": "0b2b15404b06c129d939246bf5d6c43985ffdba9411c609218952f8adac8cf27",
+    "after": "0b2b15404b06c129d939246bf5d6c43985ffdba9411c609218952f8adac8cf27",
+    "runs": [
+      {
+        "name": "positive",
+        "mode": "positive",
+        "exit": 0,
+        "expectedCanaryAssertion": true
+      },
+      {
+        "name": "rejected",
+        "mode": "mutant",
+        "exit": 1,
+        "expectedCanaryAssertion": true
+      },
+      {
+        "name": "recovery",
+        "mode": "positive",
+        "exit": 0,
+        "expectedCanaryAssertion": true
+      }
+    ],
+    "sourceModified": false
+  },
+  "unchangedIndependentlyReviewedRuntime": [
+    {"path":"studio-v3/observation-records.js","sha256":"08967c16f462a3287d49029d5bb47564a903268df8acd5e5f9ccc07d91e5d1b3"},
+    {"path":"studio-v3/observation-policy.js","sha256":"ada02e7dbffe4b727a9a53ebd381cbe125a65730c10f8fb599ca81d9f040e601"},
+    {"path":"studio-v3/observation-context.js","sha256":"84d7d9c38d0b130b9f65287dbaf75ae4cef3859658b02415d10885ab6ea210c4"},
+    {"path":"studio-v3/ai-observation-authorization.js","sha256":"2d5c76f2778172c4e59c84c98a123175a00d5aeb8b05cf679b4fd093ee247845"},
+    {"path":"studio-v3/ai-panel.js","sha256":"443df34c8224d5488bdc2c4942eadbe226bceec270af4d17bb9f966538c1356d"},
+    {"path":"studio-v3/ai-conversation.js","sha256":"a9927d5780cf94f9800282a5018eefb8b894ecba5c584de33167e1d49281675d"},
+    {"path":"studio-v3/agent-provider.js","sha256":"05525886dd1a8497157e948e116a7d3d2afb4096fd39a47d0c15a9f410601227"},
+    {"path":"studio-v3/ai-demo-transport.js","sha256":"5ca6d0a51a2f24529cca02d4154b7693d205494ee484772e16f27d8a3f7081a4"},
+    {"path":"studio-v3/agent-handlers.js","sha256":"0b2b15404b06c129d939246bf5d6c43985ffdba9411c609218952f8adac8cf27"}
+  ],
+  "historicalReportsPreserved": [
+    {"path":"docs/acceptance/STUDIO_V3_CA04_ROW_FILL.json","sha256":"e32124fc09d092377dd4d64c9570a5468d3f49108a4ee2d16a3694b0f6e27118"},
+    {"path":"docs/acceptance/STUDIO_V3_CA04_ROW_FILL.md","sha256":"f48d232e23f871758c150d591df5eac99fcdd38d7b05f69d98f56db89715f88b"},
+    {"path":"docs/acceptance/STUDIO_V3_CA05_SLICE1.json","sha256":"e6215b5c6ae85bb8c633b3fdc934e23db6102a63bb54f92ccf3cfedd1e3ace81"},
+    {"path":"docs/acceptance/STUDIO_V3_CA05_SLICE1.md","sha256":"3fd63996451631da501bf67e272a675b98d5b8b0f95ae2d3fb105ef030b9b754"},
+    {"path":"docs/acceptance/STUDIO_V3_CA05_SLICE1_RECHECK.json","sha256":"cf06088be78f782d69b692b2a927ca473eb431a22d64348b145295e2f8357ce1"},
+    {"path":"docs/acceptance/STUDIO_V3_CA05_SLICE1_RECHECK.md","sha256":"6a0fba8be550c7abd89f9b594c5eeab5b97c06ffea59c057d1b0c0cab993f7cb"},
+    {"path":"docs/acceptance/STUDIO_V3_CA05_SLICE2.json","sha256":"14c5f08816d498af9e2d48829841fbf153dbbab6f3800c5fa02093147d76bee5"},
+    {"path":"docs/acceptance/STUDIO_V3_CA05_SLICE2.md","sha256":"841b41328201d800912b68da8a31fe33cb89ec12b6384581b4eb2229620fda8a"},
+    {"path":"docs/acceptance/STUDIO_V3_CA05_SLICE2_REVIEW.md","sha256":"27d9c0c581cfa896e7844a586f731760a6553a901694b1c7a17bf3db7a0aaa0c"}
+  ],
+  "regression": {
+    "files": 201,
+    "tests": 1714,
+    "execution": "Reused identical runtime from preceding receipt recheck; not rerun here"
+  },
+  "unitCases": 31,
+  "browserCases": 6,
+  "environment": {
+    "os": "darwin",
+    "osRelease": "27.0.0",
+    "arch": "arm64",
+    "node": "v23.10.0",
+    "providerRoute": "Actual Pi/Demo transport to recording stub",
+    "realModelVersion": null,
+    "realModelCost": null
+  },
+  "preservation": {
+    "beforeFile": ".printform-studio/ca05-slice2-recheck/before.json",
+    "beforeSha256": "f005a5d4c0b53609c115c753816fc8b522687ec9d193222e821a0c8156ec29e4",
+    "capturedExistingFiles": 61,
+    "runtimeChanged": false,
+    "evaluationChanged": false,
+    "CA04ImplementedThisPass": false,
+    "unchangedExistingFiles": 58,
+    "documentationUpdates": [
+      "TASK.md",
+      "docs/STUDIO_V3_AGENT_REGISTRY.md",
+      "docs/STUDIO_V3_FEATURE_LEDGER.md"
+    ]
+  },
+  "acceptance": {
+    "OBS01": "Authorized semantic portion verified; full visual/disclosure G4 remains open",
+    "G4": "Open; no pixel authority added"
+  },
+  "reportFormat": {
+    "requested": ".agent/rules/03-verification.md",
+    "available": false,
+    "fallback": "/Users/yapweijun/.codex/instruction-modules/verification.md"
+  },
+  "reportingUpdates": {
+    "report": "docs/acceptance/STUDIO_V3_CA05_SLICE2_RECHECK.md",
+    "reportSha256": "be9177704780909b8bcaf00f7c4f751ac9f2d8f73042754c3a72f0112188db40",
+    "lineLimit": "Pass",
+    "localLinks": "Pass",
+    "whitespace": "Pass"
+  }
+}

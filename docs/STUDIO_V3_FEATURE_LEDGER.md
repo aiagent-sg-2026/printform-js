@@ -1,8 +1,8 @@
 # Studio v3 Feature Ledger (CA-01)
 
-Status: reconciled draft, 2026-10-09. The authoritative data is [STUDIO_V3_FEATURE_LEDGER.csv](STUDIO_V3_FEATURE_LEDGER.csv); this page is the readable view and rationale. Every row is `review=proposed`: dispositions are evidence-based proposals for owner confirmation. Product and runtime code is unchanged.
+Status: reconciled draft, 2026-10-09. The authoritative data is [STUDIO_V3_FEATURE_LEDGER.csv](STUDIO_V3_FEATURE_LEDGER.csv); this page is the readable view and rationale. Every row is `review=proposed`: dispositions are evidence-based proposals for owner confirmation. These original dispositions remain proposed; later bounded implementation evidence is recorded below.
 
-Method: enumerate real UI entry points (`studio-v3/index.html`, `app.js` `action()`, `database-controller.js`), compare with the 66-row [historical inventory](STUDIO_V3_AGENT_COVERAGE_INVENTORY.csv) (a pre-registry baseline kept unchanged) and the current [registry](../studio-v3/agent-registry.js) (nine tools, thirteen operations). Counts workflows, not private helpers. All evidence paths of the 66 historical rows were checked to exist.
+Method: enumerate real UI entry points (`studio-v3/index.html`, `app.js` `action()`, `database-controller.js`), compare with the 66-row [historical inventory](STUDIO_V3_AGENT_COVERAGE_INVENTORY.csv) (a pre-registry baseline kept unchanged) and the [registry](../studio-v3/agent-registry.js) (now thirteen tools, thirteen operations). Counts workflows, not private helpers. All evidence paths of the 66 historical rows were checked to exist.
 
 Dispositions: `agent-callable` (eligible; may still lack a service/adapter), `human-mediated` (agent prepares or explains; the human completes), `intentionally-unavailable` (host mechanism or view preference; reason recorded).
 
@@ -14,7 +14,7 @@ Dispositions: `agent-callable` (eligible; may still lack a service/adapter), `hu
 | agent-callable | 48 |
 | human-mediated | 22 |
 | intentionally-unavailable | 9 |
-| Eligible gaps (agent-callable, not yet reachable) | 26 |
+| Eligible gaps (missing or limited agent paths) | 26 |
 
 Origins: 66 rows from the historical inventory, 13 added by this reconciliation. `baseline_access` keeps the historical Tool/Limited/Unexposed/Host label; `eligible_gap=yes` marks agent-callable rows whose baseline was Unexposed or Limited.
 
@@ -61,6 +61,20 @@ The ten G8 families and their rules are owned by the [task register](STUDIO_V3_T
 
 ## Open items
 
+CA-05 slice 1 (2026-10-12): `printform.preview.inspect` now returns numeric diagnostics with a run-owned observation receipt and invalidates evidence after candidate edits or undo. Its updated service/guide/evaluation owners are in the CSV. [Slice evidence](acceptance/STUDIO_V3_CA05_SLICE1.md) records 22 new unit cases, an expected wire-mutation failure, full 196-file/1618-test regression, agent/site checks and 3/3 browser paths. Counts and exposure dispositions are unchanged. The later semantic slice is recorded separately; page/crop retrieval, pixels and full G4 acceptance remain open. CA-04 retains its 18 parallel workflows.
+
+CA-05 slice 2 (2026-10-12): `printform.context.structure` and `printform.context.selection` use `observe_context` for receipt-bound labels/static text, assigned bindings/collections, selected targets and measured layout. A default-off, single-run AI-panel text grant is bound to document/revision/content/run/policy; host policy independently denies Real/Unknown values and all pixels. Protected answers stay local through history recovery; independent review verified end/cancellation revocation after correcting one P2. [Semantic evidence](acceptance/STUDIO_V3_CA05_SLICE2.md): 31 new unit cases, real outgoing-body canaries, mutation rejection, full 199 files / 1649 tests, agent gate/site build and three-engine browser rejection/recovery. Rows stay Limited with eligible gaps; no G4 case or CA-04 parity gap is closed.
+
 - Owner confirmation of every `proposed` row (the model is not the sole judge of its own ledger).
 - Replace `planned:*` owners as CA-02/04/09 deliver.
 - Local companion versus hosted runner and cost profiles gate CA-07/CA-10, not CA-01.
+
+CA-05 slice-1-only recheck (2026-10-12): [current evidence](acceptance/STUDIO_V3_CA05_SLICE1_RECHECK.md) verifies the existing numeric receipt path on the recorded combined-tree artifact: 22 receipt units, expected actual-wire mutation failure and recovery, full 201 files / 1714 tests, agent/site gates and 3/3 browser receipt paths. Runtime, CSV ownership/exposure dispositions and all earlier acceptance reports are preserved. This checkpoint adds no semantic/pixel authority, CA-04 parity implementation or G4 closure credit; OBS-02 page/crop retrieval remains open. Work stops for review.
+
+CA-05 approved host text / OBS-01 recheck (2026-10-12): [current evidence](acceptance/STUDIO_V3_CA05_SLICE2_RECHECK.md) confirms the existing default-off, one-run text grant and receipt-bound semantic path following direct human approval. Fresh 31-unit and 6-browser checks plus actual-wire mutation rejection/recovery pass; independent audit covers 63 requests / 18 receipts on the unchanged artifact. Imported/Real/Unknown values and pixels stay blocked; Synthetic values require explicit matching host policy independently from text. Existing CSV owners, exposure/gap dispositions and historical evidence remain unchanged. Full G4 and CA-04 parity remain open.
+
+CA-05 approved fictional page/crop slice (2026-10-12): `printform.preview.inspect` retains numeric inspection and adds `retrieve_page` under separate one-run fictional pixel consent plus existing text/value restrictions. [Evidence](acceptance/STUDIO_V3_CA05_SLICE3.md) covers 38 new units; actual tool-paired PNG inputs through compaction; byte/PNG integrity and modality rejection/recovery; full 204 files / 1752 tests; agent/site gates and 9/9 three-engine paths. Independent audit checks 114 requests / 42 receipts / 9 evidence IDs and 15 image-bearing requests. Real data and sensitive assets remain blocked; DOM raster capture does not qualify native-print fidelity or final visual comparison. Dispositions stay proposed; CA-04 and full G4 remain open.
+
+CA-05 OBS-05 technical checkpoint (2026-10-12): `printform.agent.question-route` names the existing completion handler/evaluation owner. `finish_answer` v1.1.0 host-authors and retains the latest receipt; wrong/stale evidence and oversize delivered answers reject explicitly. [Current technical evidence](acceptance/STUDIO_V3_CA05_OBS05.md) and [machine report](acceptance/STUDIO_V3_CA05_OBS05.json) resolve both P2 delivery findings and save 33 exact delivered texts bound to current source/app/manifest identity. Fresh 206 files / 1773 full tests, agent/site gates, 12/12 three-engine browser specs and wire/citation mutation rejection/recovery pass. The 33-fixture independent native text/geometry matrix detects all five defects and passes every repair. Evidence-only delivery preserves CSV owners/counts, Limited/proposed exposure, disclosure authority, CA-04 parity and historical reports; full G4 blinded human qualification stays open.
+
+CA-05 local merge checkpoint (2026-10-13): [isolated verification](acceptance/STUDIO_V3_CA05_LOCAL_MERGE.md) binds the CA-05-only implementation, 33 fresh exact delivered texts and latest receipts to the rebuilt artifact. Existing proposed/Limited exposure and CA-04 parity dispositions are preserved. Full G4 human qualification remains open; only local commit/merge is authorized.

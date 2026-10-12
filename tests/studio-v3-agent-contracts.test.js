@@ -18,7 +18,7 @@ describe('Studio v3 agent executable contracts (COV-04)', () => {
       examples:[...AGENT_TOOL_DEFINITIONS,...OPERATION_CAPABILITIES].reduce((n,entry) => n + entry.examples.length + entry.invalid.length,0)});
     expect(AGENT_TOOL_DEFINITIONS.map(tool => tool.name)).toContain('finish_answer');
     for (const entry of validateRegistry()) {
-      expect(entry.contractVersion,entry.id).toBe(entry.name === 'get_capabilities' ? '1.2.0' : '1.0.0');
+      expect(entry.contractVersion,entry.id).toBe(({get_capabilities:'1.2.0',inspect_draft:'1.2.0',observe_context:'1.1.0',finish_answer:'1.1.0'})[entry.name] || '1.0.0');
       expect(entry.examples.length && entry.invalid.length,entry.id).toBeTruthy();
     }
   });
@@ -69,7 +69,7 @@ describe('Studio v3 agent executable contracts (COV-04)', () => {
     // Host-only codes belong to Apply/history, not to agent tools or runs.
     const HOST_ONLY = new Set(['STALE_PROPOSAL']);
     const files = ['agent-tools.js','agent-handlers.js','agent-loop.js','agent-draft.js','agent-knowledge.js','agent-release.js','agent-binding-invariants.js','ai-edits.js',
-      'ai-authoring.js','ai-authoring-contract.js','ai-chat-protocol.js','ai-agent-run.js','agent-usage.js'].map(name => fs.readFileSync(`studio-v3/${name}`,'utf8')).join('\n');
+      'ai-authoring.js','ai-authoring-contract.js','ai-chat-protocol.js','ai-agent-run.js','agent-usage.js','observation-records.js','observation-policy.js','observation-context.js','ai-observation-authorization.js'].map(name => fs.readFileSync(`studio-v3/${name}`,'utf8')).join('\n');
     const raised = new Set([...files.matchAll(/(?:fail|contractError|codes\.add)\('([A-Z][A-Z_]+)'\)|code:'([A-Z][A-Z_]+)'|new Error\('([A-Z][A-Z_]{5,})'\)/g)].map(m => m[1] || m[2] || m[3]));
     expect([...raised].filter(code => !ERROR_CONTRACTS[code] && !HOST_ONLY.has(code)).sort()).toEqual([]);
   });

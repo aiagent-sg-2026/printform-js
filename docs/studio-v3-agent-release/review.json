@@ -7,84 +7,65 @@
  "dispositions": [
   {
    "entries": {
-    "printform.agent.validate_scenarios": "9fe3a5fb2ad24d66a7c50af1d587c6386333768e6997eb23d62325f00a8ed050"
+    "printform.agent.get_capabilities": "e694ca7f110960b80b17cb7a4abd142999a9c63b5ee11f1b22d8235c47808483",
+    "printform.agent.read_skill": "623faee9b798939c8d0828d3e5c3d505b6187a3fcaf74edaaae9dde6cb6b8ae7",
+    "printform.agent.get_context": "a6d72419b1b10a31f9bd3497ec8608d86d243981f56c4308516722b36cfb80c5",
+    "printform.agent.apply_operations": "f34c08e2f6bf0ac0be8e64532224e89eb3cc3c86d64e27e9e46956c21cb46454",
+    "printform.agent.inspect_draft": "096c131ac422de47ec2ac0f3cc61068b1899b3b9749988eaa00c46fd4bfb9bbe",
+    "printform.agent.observe_context": "dc0e6135e79333bd804f75d4ca3c186c702868e7bf51395c1400b2c5f81d5de9",
+    "printform.agent.retrieve_page": "6134e74dedbd3296afdc13fb3202643d38a616a0a68929c749bfb7c8e9adf383",
+    "printform.agent.validate_scenarios": "dbd42e2552aec1c0424ae5629b269f4b6e9ee9cc6c9ab35d7a9d9bcd7e7ccc68",
+    "printform.agent.undo_step": "5c147ec474d868bc89794a035b0eebc1b76502042800743d0c298d9f490bfc96",
+    "printform.agent.take_notes": "a72ba6be5ef8398f7da6fed5c49b5057809906a5e2b2a63fc14b61c20ff30745",
+    "printform.agent.finish": "3d31d819ee945399a886abecae392ee553e9f37c126786b3f88c7ec93dd8420b",
+    "printform.agent.finish_answer": "32843d98ba5c66668b38aabb3d070f9fc424027d21ac53a0bc8c046a47dbd723",
+    "printform.agent.report_blocked": "c1ad510a654eecae0d7bfda81917ed278e8b88bfb597bcac28ebfe35a8c5dc54"
    },
    "disposition": "updated",
-   "justification": "New read tool backed by the shared scenario-matrix service that the Validate panel now also uses. It has a full contract: an output schema, accepted and rejected examples run through the real handler, a read effect that works under the read-only grant, and no effect on run.inspected.",
+   "justification": "CA-05 binds observations to the current run, release, revision and candidate. Approved default-off single-run text and fictional pixel consent remain independently constrained by host value/pixel policies. Receipt-bound PNG custody, paired outgoing image inputs and compaction/freshness checks use existing effects. Completion cites and retains the latest receipt; stale IDs and oversized delivered answers reject. Shared scenario validation already on main is preserved; no CA-04 authoring service or parity change is included. Full G4 human qualification remains open.",
    "evidence": [
-    "studio-v3/scenario-matrix.js",
-    "tests/studio-v3-scenario-matrix.test.js"
+    "studio-v3/agent-tools.js",
+    "studio-v3/agent-contracts.js",
+    "tests/studio-v3-agent-contracts.test.js",
+    "tests/studio-v3-pixel-wire.test.js",
+    "tests/studio-v3-observation-completion.test.js"
    ]
   },
   {
    "entries": {
-    "printform.agent.get_capabilities": "e40b775556fc6620a5310611a65c1a11a73ffe4df6e905058253c21a92eb10de"
-   },
-   "disposition": "updated",
-   "justification": "The capability catalog now lists the validate_scenarios tool and its parameter enum, derived from the registry.",
-   "evidence": [
-    "studio-v3/agent-registry.js"
-   ]
-  },
-  {
-   "entries": {
-    "printform.agent.read_skill": "ab99fa87fa80afdf561d4efcbe96adde96ffb4b96a640bf52e3a64b88d7297f0",
-    "printform.agent.get_context": "941962370b4701f87fea204b952e0676f202118fe844c889839cb7b71535ce55",
-    "printform.agent.apply_operations": "9d1370d68c68d158223f4691c8172f84c0d2cf74a4c6e88fa444f2f27dd94b8d",
-    "printform.agent.inspect_draft": "11c45cde1cdb953fbe80c72fbe785fef3070122cf7138004658a2aeebe35eb7b",
-    "printform.agent.undo_step": "642beb10c4bb85abbde06059dd8620df66fec8e48de56f7b97991693e39bc3c6",
-    "printform.agent.take_notes": "eaf83ef58c347d28b4062a6b7bc3af55420925fd766d8c2c658bfe35ace554e9",
-    "printform.agent.finish": "4320ccbca4892686df5fea2e549cca76d00aeccacb663f979eb54172d8b86d3a",
-    "printform.agent.finish_answer": "be7bd7dae44e8fc533beae40c63f84da7e11b84212703406ab8d29d7244fdd3c",
-    "printform.agent.report_blocked": "115cf9fa0463014149dbe36a664a23628ece92aa18c122148263c86d1a3200d3"
+    "printform.authoring.set_element_style": "4d1cc199dd6b4ae9bf4104ebf4a036ecd71881e9e6c569fd1906c244001b9433",
+    "printform.authoring.set_style": "7d3711a2035e52311acaa08e1b7f0f95bc0d45a4a022942f5b37895af460e7bc",
+    "printform.authoring.set_table_style": "5d292227fae843144e8b97e70bd9b76ed4df34db2b026d98e8e2522d148892d7",
+    "printform.authoring.set_field": "a859c913d5a9c6e16cb0a98957023e8885d30b0e07c4a0f07440c6e29f1fdc36",
+    "printform.authoring.add_field": "77c75cae5420cc33950d92748a892f551f4c19dec834461a4ed371dc87580258",
+    "printform.authoring.remove_field": "4185902121b15f36a16ca7d17a7d866340fe23a78b964dea97cea20f60a86517",
+    "printform.authoring.reorder_fields": "67824a7ec4d3f30f60b4c4836fc3ee1c08162ccbd86227aedc9874206b23e190",
+    "printform.authoring.set_section": "f3805ec08ac9670f81308579ae5d9dcf7d9cea84b0f08a60b2c53dd9ce5e8c89",
+    "printform.authoring.reorder_sections": "d05aeefd913a3a6f631646cd1472fdcf639125a49a1c1eecd4308dc7fba80b1f",
+    "printform.authoring.set_page": "7edcac70feffd16d556707ee62b1a39dde7fa01564f43e98f401bc0acad3f23f",
+    "printform.authoring.set_logo": "416d3a93eaf5dd2324494c34db9ea22f8274ce75b6b7dd55c01aed4e6a831fd3",
+    "printform.authoring.set_collection": "a4d7322ab367de3e9afb76a5cbdff3fc185e9b42454924c93a8d8c257992e940",
+    "printform.authoring.set_heading": "cbbe087f00f40e55affa735e1b52906930eb5871fb7edf1a1ae8419abe9411dc"
    },
    "disposition": "no-impact",
-   "justification": "Their digests moved only because shared modules (handlers, registry, contracts, knowledge) gained the new validate_scenarios tool. Their own handlers, schemas, error lists and examples are unchanged, and the conformance run still applies each of their examples through the real handlers.",
+   "justification": "CA-05 changes the shared contract module import closure and regression hashes. All thirteen authoring operation schemas, examples, implementations and effect grants retain their main behavior. CA-04 row-fill and typography extractions and their examples/evaluations are deliberately excluded. Registered-handler conformance and the existing authoring/binding tests verify the preserved behavior.",
    "evidence": [
-    "tests/studio-v3-agent-contracts.test.js"
+    "tests/studio-v3-agent-contracts.test.js",
+    "tests/studio-v3-ai-authoring.test.js"
    ]
   },
   {
    "entries": {
-    "printform.authoring.set_element_style": "ef4bb5fb406ee0989a17cd15a23a8d97c70a86a95f29e9dea5f20d2b9ee78ee6",
-    "printform.authoring.set_style": "aa65a1552abf4990b4ede99bcce59bc57aabb1e07a1b64ca2f2bebd94f4a6bcb",
-    "printform.authoring.set_table_style": "8562d86ea3a5f101409bc8140f2b6e94ee7ff802c917dd47b5c7ccf180181fb5",
-    "printform.authoring.set_field": "a99d6f30c22961d60f91e7fe4723d515d50443380543f62e2cb661747aa52168",
-    "printform.authoring.add_field": "8fa3cbcc9b24b0e698b170a0461a7e32247e5308daec8b3e68aa36520a711ae3",
-    "printform.authoring.remove_field": "a28a32958b351c1153ec94d66ff892e83f84ac77c3c8baf2ec6c3a90761ba4eb",
-    "printform.authoring.reorder_fields": "d1d2b3cadfaa7d073fe0faa8451232605b2162e295f4d4b6c4dc5d8af5e95ae6",
-    "printform.authoring.set_section": "0c23e276a41487764a104b63966b93702a67c87685a1cb10f3c3b0c389c63319",
-    "printform.authoring.reorder_sections": "2070ab279c62514c7713e7866cd314480de042c5acbd184d96153a471624a4d7",
-    "printform.authoring.set_page": "5a3b8b0d50c43b58870c15205d34d5029a42a447cacf00bca93596018eb2e7ef",
-    "printform.authoring.set_logo": "089fa0f8de34edb4c1fb2f677626b473905d9ab77cead3ca23d53f1dca3b5952",
-    "printform.authoring.set_collection": "d91c5b530ac0c7b4e2eda0acaa9a9025e480a8a5942dcff5307ae453b2f3e8df",
-    "printform.authoring.set_heading": "a97d9adc34f2a3e55b0b936da61a29277551dbbc585d2940a261b47c5cdc969d"
-   },
-   "disposition": "no-impact",
-   "justification": "The shared contracts module gained the validate_scenarios contract; no operation schema, error list or example changed, and the conformance run still applies every accepted and rejected operation example through the real handler.",
-   "evidence": [
-    "tests/studio-v3-agent-contracts.test.js"
-   ]
-  },
-  {
-   "entries": {
-    "printform.knowledge.form-authoring": "052e7c770221c467a5f1b41133f8101677cc0c6781a348802ca94ec6e89543ec"
+    "printform.knowledge.form-authoring": "59a7393e1e28064973824ffdf769fd91424e7f5a94dee2f6447e576ad968cc30",
+    "printform.knowledge.product-workflows": "034c15aa3acc2413dec17d1d9887d5ed4224d0f2e6da3df17ab3c60cf135753f"
    },
    "disposition": "updated",
-   "justification": "The guide now explains validate_scenarios: the scenario ids, that scenarios use built-in synthetic data so a pass says nothing about the person's own data, and that it is evidence for an answer but not an inspection of the exact draft.",
+   "justification": "The bundled guide and ledger document fresh numeric/semantic/pixel receipts, approved one-run fictional disclosure, denied values/assets, actual tool-paired provider images and authoritative latest completion citations. Existing scenario workflow knowledge is preserved. The independent fictional defect oracle remains a bounded evaluation; full G4 blinded human review is pending. CA-04 service sharing is not claimed.",
    "evidence": [
-    "studio-v3/agent-knowledge.js"
-   ]
-  },
-  {
-   "entries": {
-    "printform.knowledge.product-workflows": "2a892e63c293a237c4e154eb99eeb3a60775c0482055d62ea51ba4a506c14819"
-   },
-   "disposition": "updated",
-   "justification": "The validation-matrix ledger row is now reachable, so the generated list of workflows the agent cannot perform no longer includes it; the guide text changed accordingly.",
-   "evidence": [
+    "studio-v3/agent-knowledge.js",
     "docs/STUDIO_V3_FEATURE_LEDGER.csv",
-    "studio-v3/agent-workflows.js"
+    "tests/studio-v3-agent-discovery.test.js",
+    "tests/studio-v3-feature-ledger.test.js"
    ]
   }
  ]

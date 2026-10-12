@@ -67,12 +67,12 @@ export function createDemoTransport({fetchImpl = (...args) => fetch(...args),now
     },
     // One turn of a tool-using run: the whole conversation goes out, the model's output items come back. The gateway
     // allows a limited number of requests per session, so a long run moves to a fresh session before that limit.
-    async agentTurn(alias, context, signal, {onProgress,memory} = {}) {
+    async agentTurn(alias, context, signal, {onProgress,memory,assertCurrent} = {}) {
       if (!isDemoAlias(alias)) throw fail('DEMO_MODEL_UNAVAILABLE');
       if (sessionTurns >= DEMO_CONFIG.agent.sessionRequests) { session.clear(); sessionTurns = 0; }
       sessionTurns += 1;
       let guard;
-      const images = usesImages(context);
+      const visualId = memory?.latestVisual?.()?.observation.id, images = usesImages(context,DEMO_CONFIG.agent,memory);
       if (images) {
         if (!imageModels.has(alias)) throw fail('DEMO_IMAGE_CAPABILITY_UNVERIFIED');
         const generation = discoveryGeneration;
@@ -80,7 +80,7 @@ export function createDemoTransport({fetchImpl = (...args) => fetch(...args),now
       }
       const body = agentBody({alias,context,memory,stream:images ? DEMO_CONFIG.stream.images : DEMO_CONFIG.stream.text}), progress = createProgress(onProgress);
       try {
-        const payload = await json('responses',{method:'POST',signal,headers:{'content-type':'application/json'},body,[assertDispatch]:guard},DEMO_CONFIG.modelTimeoutMs,progress);
+        const payload = await json('responses',{method:'POST',signal,headers:{'content-type':'application/json'},body,[assertDispatch]:()=> { assertCurrent?.(); guard?.(); if (memory?.latestVisual?.()?.observation.id!==visualId) throw fail('EVIDENCE_STALE'); }},DEMO_CONFIG.modelTimeoutMs,progress);
         return {output:agentOutput(payload),usage:responsesUsage(payload)};
       } finally { progress.stop(); }
     },

@@ -4,7 +4,7 @@ beforeEach(()=> {document.documentElement.innerHTML=html.replace(/<!doctype html
 
 // One line under the message box is always on screen: who receives the request, or why Send is off.
 const line=panel=>panel.node('[data-ai-send-reason]');
-const NOTICE='Sent to the Demo gateway · use fictional data only';
+const NOTICE='Sent to the Demo gateway · use fictional data only. Form text and assigned binding paths are not authorized. Bound values blocked. Page and embedded asset pixels blocked.';
 describe('the line under the message box',()=> {
   it('tells who receives the request while Send works',()=> {
     const {panel}=setup();panel.update();

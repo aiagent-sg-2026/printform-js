@@ -1,6 +1,8 @@
 import { DEMO_CONFIG } from './ai-gateway-config.js';
 import { fail } from './ai-edits.js';
 import { createAgentMemory } from './agent-memory.js';
+import { assertImageParts } from './ai-responses-wire.js';
+import { canonicalObservation } from './observation-policy.js';
 
 // Pi messages <-> Responses items for a tool-using run. The gateway is stateless (no stored responses), so every
 // turn resends the conversation; encrypted reasoning travels inside Pi's thinking block and comes back from there.
@@ -32,8 +34,8 @@ function userParts(content,visible) {
   return parts;
 }
 // Whether the next request would carry images, so the caller can require confirmed image support first.
-export function usesImages({messages},limits = DEMO_CONFIG.agent) {
-  return showImages(messages,limits) && messages.some(message=>message.role === 'user' && Array.isArray(message.content) && message.content.some(block=>block.type === 'image'));
+export function usesImages({messages},limits = DEMO_CONFIG.agent,memory) {
+  return Boolean(memory?.latestVisual?.()) || showImages(messages,limits) && messages.some(message=>message.role === 'user' && Array.isArray(message.content) && message.content.some(block=>block.type === 'image'));
 }
 
 // Messages grouped as: the request, then turns of one assistant message and the tool results that answer it.
@@ -47,9 +49,9 @@ function turnsOf(messages) {
 const sizeOf = messages => JSON.stringify(messages).length;
 // Past its budget, the request keeps the original ask and the newest turns, and says in one message what was dropped.
 // Whole turns go, so a function call is never left without its result.
-function compact(messages,memory,limits) {
+function compact(messages,memory,limits,visual) {
   if (sizeOf(messages) <= limits.maxContextChars) return messages;
-  const turns = turnsOf(messages), kept = turns.slice(-limits.keepTurns);
+  const turns = turnsOf(messages), kept = turns.filter((turn,index)=>index>=turns.length-limits.keepTurns || turn.some(message=>message.role==='toolResult' && message.toolCallId===visual?.toolCallId));
   if (kept.length === turns.length) return messages;
   const earlier = {role:'user',content:`Earlier work (older steps were dropped to keep the request small):\n${memory.describe() || 'Nothing was noted.'}`,timestamp:0};
   return [messages[0],earlier,...kept.flat()];
@@ -57,7 +59,14 @@ function compact(messages,memory,limits) {
 
 // Older tool results are folded (the call stays, so the pairing is intact); only the newest few are sent in full.
 export function inputItems({systemPrompt,messages:all},memory = createAgentMemory(),limits = DEMO_CONFIG.agent) {
-  const compacted = compact(all,memory,limits), summarised = compacted !== all;
+  const visual = memory.latestVisual?.();
+  if (visual) {
+    const call = all.flatMap(message=>message.role === 'assistant' ? message.content || [] : []).find(block=>block.type==='toolCall' && block.id===visual.toolCallId);
+    const result = all.find(message=>message.role==='toolResult' && message.toolCallId===visual.toolCallId);
+    if (call?.name!=='retrieve_page' || canonicalObservation(call.arguments)!==canonicalObservation(visual.args) || result?.isError || joined(result?.content)!==visual.output) throw fail('OBSERVATION_PIXELS_PAIR_REQUIRED');
+  }
+  if (all.some(message=>message.role==='toolResult' && message.content?.some(part=>part.type==='image'))) throw fail('OBSERVATION_PIXELS_PAIR_REQUIRED');
+  const compacted = compact(all,memory,limits,visual), summarised = compacted !== all;
   // The notes are shown every turn; a summary already carries them.
   const messages = !summarised && memory.notes ? [compacted[0],{role:'user',content:memory.describe(),timestamp:0},...compacted.slice(1)] : compacted;
   const visible = showImages(all,limits), total = messages.filter(message=>message.role === 'toolResult').length, fullFrom = total - limits.keepToolResults;
@@ -65,7 +74,7 @@ export function inputItems({systemPrompt,messages:all},memory = createAgentMemor
   let seen = 0;
   for (const message of messages) {
     if (message.role === 'user') items.push({role:'user',content:userParts(message.content,visible)});
-    else if (message.role === 'toolResult') items.push({type:'function_call_output',call_id:message.toolCallId,output:seen++ < fullFrom ? FOLDED : joined(message.content)});
+    else if (message.role === 'toolResult') { const folded = seen++ < fullFrom && message.toolCallId!==visual?.toolCallId; items.push({type:'function_call_output',call_id:message.toolCallId,output:folded ? FOLDED : joined(message.content)}); }
     else if (message.role === 'assistant') {
       for (const block of message.content) {
         if (block.type === 'thinking' && block.thinkingSignature) items.push(replayReasoning(block.thinkingSignature));
@@ -74,12 +83,18 @@ export function inputItems({systemPrompt,messages:all},memory = createAgentMemor
       }
     }
   }
+  if (visual) {
+    const image = {type:'input_image',image_url:`data:image/png;base64,${visual.data}`}; assertImageParts([image]);
+    items.push({role:'user',content:[{type:'input_text',text:JSON.stringify({hostObservation:{toolCallId:visual.toolCallId,observationId:visual.observation.id,evidenceId:visual.evidence.id,contentDigest:visual.evidence.contentDigest,candidateDigest:visual.observation.candidateDigest}})},image]});
+  }
   return items;
 }
 
 // A closed body: function tools and encrypted reasoning, and none of the fields the Demo gateway refuses.
 export function agentBody({alias,context,memory,stream}) {
-  const body = JSON.stringify({model:alias,stream,input:inputItems(context,memory),tools:toolSpecs(context.tools || []),tool_choice:'auto',include:['reasoning.encrypted_content']});
+  const requestInput = inputItems(context,memory);
+  assertImageParts(requestInput.flatMap(item=>item.content?.filter(part=>part.type==='input_image') || []));
+  const body = JSON.stringify({model:alias,stream,input:requestInput,tools:toolSpecs(context.tools || []),tool_choice:'auto',include:['reasoning.encrypted_content']});
   if (new TextEncoder().encode(body).length > DEMO_CONFIG.maxBodyBytes) throw fail('AGENT_CONTEXT_LIMIT');
   return body;
 }
