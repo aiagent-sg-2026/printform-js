@@ -1,30 +1,9 @@
 import { resolvePointer } from "./json.js";
 import { SAFE_URL_PROTOCOLS } from "./constants.js";
 import { translateFragment } from "./i18n.js";
-import { tableRepeatDescriptor } from "./row-limits.js";
+import { tableRepeatDescriptor, measureBoundRows, resolveRowLimits, rowLimitErrors } from "./row-limits.js";
+import { formatBindingValue, formatIssue } from "./binding-format.js";
 
-function formatValue(value, format, manifest, options = {}) {
-  if (value === undefined || value === null) return "";
-  const locale = options.locale || manifest.locale || "en-MY";
-  if (format === "currency") {
-    return new Intl.NumberFormat(locale, { style: "currency", currency: options.currency || manifest.currency || "MYR", ...options }).format(value);
-  }
-  if (format === "number") return new Intl.NumberFormat(locale, options).format(value);
-  if (format === "percent") return new Intl.NumberFormat(locale, { style: "percent", ...options }).format(value);
-  if (format === "date" || format === "datetime") {
-    const date = new Date(value);
-    if (Number.isNaN(date.getTime())) return "";
-    const base = { timeZone: options.timeZone || manifest.timeZone || "Asia/Kuala_Lumpur", ...options };
-    return format === "date" ? new Intl.DateTimeFormat(locale, base).format(date) : new Intl.DateTimeFormat(locale, { dateStyle: "medium", timeStyle: "short", ...base }).format(date);
-  }
-  return String(value);
-}
-
-function parseOptions(element) {
-  const raw = element.getAttribute("data-pf-format-options");
-  if (!raw) return {};
-  try { return JSON.parse(raw); } catch { return {}; }
-}
 
 export function safeUrl(value, baseUrl = "https://printform.invalid/") {
   if (typeof value !== "string" || !value.trim()) return null;
@@ -36,7 +15,7 @@ export function safeUrl(value, baseUrl = "https://printform.invalid/") {
   }
 }
 
-function bindElement(element, rootData, scope, manifest, report) {
+function bindElement(element, rootData, scope, manifest, report, scopeChain) {
   if (element.hasAttribute("data-pf-if")) {
     const value = resolvePointer(rootData, element.getAttribute("data-pf-if"), scope);
     if (!value) { element.remove(); return; }
@@ -44,7 +23,8 @@ function bindElement(element, rootData, scope, manifest, report) {
   if (element.hasAttribute("data-pf-text")) {
     const pointer = element.getAttribute("data-pf-text");
     const value = resolvePointer(rootData, pointer, scope);
-    element.textContent = formatValue(value, element.getAttribute("data-pf-format"), manifest, parseOptions(element));
+    try { element.textContent = formatBindingValue(element, value, manifest); }
+    catch (error) { report.errors.push(formatIssue(element, error)); }
     report.bindings += 1;
     if (value === undefined) report.errors.push({ code: "MISSING_BINDING", path: pointer, message: `No value found for ${pointer}` });
   }
@@ -58,10 +38,10 @@ function bindElement(element, rootData, scope, manifest, report) {
       report.errors.push({ code: "UNSAFE_URL", path: pointer, message: `Unsafe or invalid URL at ${pointer}` });
     }
   }
-  bindChildren(element, rootData, scope, manifest, report);
+  bindChildren(element, rootData, scope, manifest, report, scopeChain);
 }
 
-function expandRepeat(element, rootData, scope, manifest, report) {
+function expandRepeat(element, rootData, scope, manifest, report, scopeChain) {
   const pointer = element.getAttribute("data-pf-each");
   const tableRepeat = tableRepeatDescriptor(element);
   const items = resolvePointer(rootData, pointer, scope);
@@ -71,16 +51,15 @@ function expandRepeat(element, rootData, scope, manifest, report) {
     element.replaceWith(fragment);
     return;
   }
+  const repeatId = element.getAttribute("data-pf-repeat-id");
+  const rowGroup = JSON.stringify([tableRepeat?.tableId || "", repeatId, scopeChain]);
+  if (tableRepeat) report.expectedRowsByRepeat[rowGroup] = items.length;
   items.forEach((item, index) => {
     const clone = element.cloneNode(true);
     clone.removeAttribute("data-pf-each");
-    // Stable per-row identity, independent of anything the pagination engine
-    // does afterward (clone/measure/place across pages) — inspectRenderedDocument
-    // uses this to verify the rendered row SEQUENCE matches the source array
-    // (not just the count), catching drops/duplicates/reordering precisely
-    // instead of only "N rows total, something's off".
     clone.setAttribute("data-pf-row-index", String(index));
-    bindElement(clone, rootData, item, manifest, report);
+    clone.setAttribute("data-pf-row-repeat", rowGroup);
+    bindElement(clone, rootData, item, manifest, report, [...scopeChain, [repeatId, index]]);
     fragment.appendChild(clone);
   });
   report.rows += items.length;
@@ -91,10 +70,10 @@ function expandRepeat(element, rootData, scope, manifest, report) {
   element.replaceWith(fragment);
 }
 
-function bindChildren(parent, rootData, scope, manifest, report) {
+function bindChildren(parent, rootData, scope, manifest, report, scopeChain) {
   Array.from(parent.children).forEach((child) => {
-    if (child.hasAttribute("data-pf-each")) expandRepeat(child, rootData, scope, manifest, report);
-    else bindElement(child, rootData, scope, manifest, report);
+    if (child.hasAttribute("data-pf-each")) expandRepeat(child, rootData, scope, manifest, report, scopeChain);
+    else bindElement(child, rootData, scope, manifest, report, scopeChain);
   });
 }
 
@@ -103,7 +82,10 @@ export function bindTemplate(template, data, manifest = {}, options = {}) {
   const locale = options.locale || manifest.locale || "en-MY";
   const effectiveManifest = { ...manifest, locale };
   const translation = translateFragment(fragment, options.i18n || {}, locale, manifest.i18n?.fallbackLocale || "en-MY");
-  const report = { bindings: 0, rows: 0, tableRows: 0, tableRowsByTable: {}, errors: [...translation.errors], warnings: [], translations: translation.translated, locale };
-  bindChildren(fragment, data, data, effectiveManifest, report);
+  const report = { bindings: 0, rows: 0, tableRows: 0, tableRowsByTable: Object.create(null), expectedRowsByRepeat: {}, errors: [...translation.errors], warnings: [], translations: translation.translated, locale };
+  report.errors.push(...rowLimitErrors(measureBoundRows(data, fragment), resolveRowLimits(manifest)));
+  if (report.errors.length) return { fragment: template.ownerDocument.createDocumentFragment(), report };
+  fragment.querySelectorAll("[data-pf-each]").forEach((node, index) => node.setAttribute("data-pf-repeat-id", String(index)));
+  bindChildren(fragment, data, data, effectiveManifest, report, []);
   return { fragment, report };
 }

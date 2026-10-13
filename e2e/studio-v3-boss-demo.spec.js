@@ -32,7 +32,7 @@ test('catalogue, exact dataset kind, USD switch and editable save preserve v3 la
 });
 test('all business templates render and long scenario paginates without missing bindings',async({page,context,browserName},info)=>{
  test.setTimeout(180000);
- for(const kind of ['SalesOrder','SalesOrderConfirmation','DeliveryOrder','DeliveryOrderConfirmation','SalesInvoice','PurchaseOrder','PurchaseInvoice','BankReceipt','BankPayment','EnterpriseProject','ProgressClaim','CertifiedClaim','AccountsReceivableClaim','AccountsPayableClaim']) {
+ for(const kind of ['SalesOrder','SalesOrderConfirmation','DeliveryOrder','DeliveryOrderConfirmation','SalesInvoice','PurchaseOrder','PurchaseInvoice','BankReceipt','BankPayment','EnterpriseProject','ProgressClaim','CertifiedClaim','PCAR','CCAR','AccountsReceivableClaim','AccountsPayableClaim']) {
   await page.locator('[data-action=new]').click();const details=page.locator('#new-dialog details');if((await details.getAttribute('open'))===null)await details.locator('summary').click();await page.locator(`[data-demo-template=${kind}]`).click();await ready(page);
   await expect(page.locator('#status')).toContainText('current layout passed');
  }
@@ -82,7 +82,7 @@ test('catalogue seed migration adds missing fixtures without overwriting a retai
   await new Promise((resolve,reject)=>{
    const tx=db.transaction(['datasets','preferences'],'readwrite'),store=tx.objectStore('datasets');
    const all=store.getAll();all.onsuccess=()=>{for(const record of all.result){if(record.id.startsWith('demo:'))store.delete(record.id);if(record.id==='starter:invoice'){record.data.customer.name='Retained fictional owner edit';record.revision=10;store.put(record);}}};
-   tx.objectStore('preferences').delete('seed:business-demo-v1');tx.objectStore('preferences').put({key:'seed:v1',value:true});
+   tx.objectStore('preferences').delete('seed:business-demo-v2');tx.objectStore('preferences').put({key:'seed:business-demo-v1',value:true});
    tx.oncomplete=resolve;tx.onerror=()=>reject(tx.error);
   });db.close();
  });

@@ -1,6 +1,7 @@
 import { demoMaster } from './demo-master-data.js';
 import { DEMO_SCENARIOS, makeDemoRecord, recordId } from './demo-records.js';
 import { addDays, amount, demoLine, reference, relatedLines, roundRatio } from './demo-fixture-math.js';
+import { buildReceivableClaim } from './demo-receivable-claims.js';
 
 const findRecord = (records,kind,scenario) => records.find(record=>record.id === recordId(kind,scenario));
 export function buildProjectRecords(commercial) {
@@ -62,13 +63,15 @@ export function buildClaimRecords(commercial,projects) {
         reason:'A measured portion remains pending site acceptance. Certification is intentionally distinct from the application.',status:'Partial certification',date:addDays(date,5)}}});
     const receivable = makeDemoRecord('AccountsReceivableClaim',scenario,relatedLines(certified,recordId('AccountsReceivableClaim',scenario)),{date:addDays(date,6),parents:[reference(certified,'requests-certified-payment')],status:'Open',
       summary:{claimedAmount:certified.data.summary.total,claimedAmountMinor:certified.data.summary.totalMinor,outstandingAmount:certified.data.summary.total,outstandingMinor:certified.data.summary.totalMinor},
-      extra:{project:structuredClone(project.data.project),claim:{direction:'receivable',definition:'Generic demo receivable request for this certificate. Not an asserted meaning of PCA, CCAR, PCAP or CCAP.',sourceDocumentId:certified.id}}});
+      extra:{project:structuredClone(project.data.project),claim:{direction:'receivable',definition:'Generic demo receivable request for this certificate; distinct from PCAR and CCAR.',sourceDocumentId:certified.id}}});
     const supplierScenario = DEMO_SCENARIOS[index],purchaseInvoice = findRecord(commercial,'PurchaseInvoice',supplierScenario);
     const payableId = recordId('AccountsPayableClaim',supplierScenario);
     const payable = makeDemoRecord('AccountsPayableClaim',supplierScenario,relatedLines(purchaseInvoice,payableId),{date:addDays(purchaseInvoice.data.document.date,2),parents:[reference(purchaseInvoice,'requests-supplier-payment')],status:'Approved',
       summary:{claimedAmount:purchaseInvoice.data.summary.total,claimedAmountMinor:purchaseInvoice.data.summary.totalMinor},
-      extra:{claim:{direction:'payable',definition:'Generic demo payable request for a supplier invoice. Not an asserted meaning of PCA, CCAR, PCAP or CCAP.',sourceDocumentId:purchaseInvoice.id}}});
-    records.push(progress,certified,receivable,payable);
+      extra:{claim:{direction:'payable',definition:'Generic demo payable request for a supplier invoice; PCA, PCAP and CCAP remain undefined.',sourceDocumentId:purchaseInvoice.id}}});
+    const pcar = buildReceivableClaim('PCAR',scenario,progress,progress,previousCertified);
+    const ccar = buildReceivableClaim('CCAR',scenario,certified,pcar,previousCertified);
+    records.push(progress,certified,pcar,ccar,receivable,payable);
     previousProgress = progress; previousCertified = certified;
   });
   return records;

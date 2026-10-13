@@ -1,4 +1,5 @@
 import http from "node:http";
+import { isIP } from "node:net";
 import { URL } from "node:url";
 import { JSDOM } from "jsdom";
 import { CommandBus } from "../core/command-bus.js";
@@ -16,6 +17,14 @@ const SERVER_COMMANDS = new Set([
   "renew_lease", "release_lease", "takeover_transaction", "recover_transaction",
   "resolve_conflict", "compare_revision", "request_export",
 ]);
+
+function isLoopbackHost(host) {
+  if (/^localhost\.?$/i.test(host)) return true;
+  if (isIP(host) === 4) return host.startsWith("127.");
+  if (isIP(host) !== 6) return false;
+  const canonical = new URL(`http://[${host}]`).hostname;
+  return canonical === "[::1]" || /^\[::ffff:7f[0-9a-f]{2}:[0-9a-f]{1,4}\]$/.test(canonical);
+}
 
 async function readJson(request, limit = 8 * 1024 * 1024) {
   const chunks = [];
@@ -45,6 +54,10 @@ export class TransactionHttpServer {
     dataPolicy = null,
   } = {}) {
     if (!dbPath || !formId || !initialProject) throw new TypeError("TransactionHttpServer requires dbPath, formId and initialProject");
+    if (typeof host === "string" && host.startsWith("[") && host.endsWith("]")) host = host.slice(1, -1);
+    if (!isLoopbackHost(host) && (typeof serverToken !== "string" || !serverToken.trim())) {
+      throw Object.assign(new Error("Non-loopback transaction server requires a non-empty serverToken"), { code: "SERVER_AUTH_REQUIRED" });
+    }
     this.dbPath = dbPath;
     this.formId = formId;
     this.initialProject = structuredClone(initialProject);
@@ -54,7 +67,7 @@ export class TransactionHttpServer {
     this.serverToken = serverToken;
     this.allowedOrigins = new Set(allowedOrigins);
     this.onCrash = onCrash;
-    this.testMode = testMode;
+    this.testMode = testMode === true;
     this.dataPolicy = dataPolicy || classifyImportedDocument(formId);
     this.persistenceAllowed = this.dataPolicy.allowDurable === true;
     this.backend = this.persistenceAllowed ? new SqliteDurableBackend({ filename: dbPath }) : null;
@@ -77,7 +90,7 @@ export class TransactionHttpServer {
       const onListening = () => {
         this.httpServer.off("error", onError);
         const address = this.httpServer.address();
-        resolve({ host: this.host, port: address.port, url: `http://${this.host}:${address.port}` });
+        resolve({ host: this.host, port: address.port, url: `http://${isIP(this.host) === 6 ? `[${this.host}]` : this.host}:${address.port}` });
       };
       this.httpServer.once("error", onError);
       this.httpServer.once("listening", onListening);
@@ -178,7 +191,7 @@ export class TransactionHttpServer {
       return;
     }
     this.#authorize(request);
-    const url = new URL(request.url, `http://${this.host}`);
+    const url = new URL(request.url, `http://${isIP(this.host) === 6 ? `[${this.host}]` : this.host}`);
     if (this.testMode && url.pathname === "/__test__/shutdown" && request.method === "POST") {
       jsonResponse(response, 200, { ok: true }, origin);
       setTimeout(() => this.close().then(() => process.exit(0)), 0);
@@ -193,7 +206,7 @@ export class TransactionHttpServer {
       throw Object.assign(new Error("Route not found"), { code: "NOT_FOUND", status: 404 });
     }
     this.#assertServerPersistenceAllowed();
-    if (request.headers["x-printform-drop-before"] === "true") { request.socket.destroy(); return; }
+    if (this.testMode && request.headers["x-printform-drop-before"] === "true") { request.socket.destroy(); return; }
     const body = ["POST"].includes(request.method) ? await readJson(request) : {};
     if (parts[3] === "command" && request.method === "POST") {
       await this.#command(request, response, body, origin);
@@ -228,14 +241,14 @@ export class TransactionHttpServer {
     const transaction = name === "apply_changes" && input.transactionId ? store.getTransaction(input.transactionId) : null;
     if (name === "apply_changes" && transaction?.status === "committed") {
       if (input.expectedCandidateHash && transaction.preview_hash !== input.expectedCandidateHash) throw Object.assign(new Error("Idempotency key was reused for a different candidate"), { code: "IDEMPOTENCY_KEY_REUSE" });
-      respondAfterNetworkPolicy(request, response, { ok: true, result: { already_committed: true, committed_revision: transaction.working_revision, transaction } }, origin);
+      respondAfterNetworkPolicy(request, response, { ok: true, result: { already_committed: true, committed_revision: transaction.working_revision, transaction } }, origin, this.testMode);
       return;
     }
     if (name === "apply_changes" && ["committing", "recovery_required"].includes(transaction?.status)) {
       throw Object.assign(new Error("Commit is in progress or requires recovery"), { code: "COMMIT_IN_PROGRESS", transactionId: transaction.transaction_id, status: transaction.status });
     }
-    const failurePhase = request.headers["x-printform-failure-phase"] || request.headers["x-printform-crash-at"] || null;
-    const crashPhase = request.headers["x-printform-crash-at"] || null;
+    const failurePhase = this.testMode ? request.headers["x-printform-failure-phase"] || request.headers["x-printform-crash-at"] || null : null;
+    const crashPhase = this.testMode ? request.headers["x-printform-crash-at"] || null : null;
     const bus = this.#bus(request, failurePhase);
     const result = await bus.execute(name, input);
     if (!result.ok && crashPhase && crashPhase === result.error?.phase) {
@@ -244,12 +257,12 @@ export class TransactionHttpServer {
     }
     if (result.ok && name === "apply_changes") {
       result.result = { ...result.result, already_committed: false, committed_revision: result.result.revision };
-      if (request.headers["x-printform-crash-after-commit"] === "true") {
+      if (this.testMode && request.headers["x-printform-crash-after-commit"] === "true") {
         crashHttpRequest(request, response, "after_commit_before_response", this.onCrash);
         return;
       }
     }
-    respondAfterNetworkPolicy(request, response, result, origin);
+    respondAfterNetworkPolicy(request, response, result, origin, this.testMode);
   }
 
   async #evidence(request, response, pack, origin) {
@@ -257,20 +270,20 @@ export class TransactionHttpServer {
     const existing = Number.isInteger(pack.revision) ? store.getEvidenceAnchor(pack.revision) : null;
     if (existing) {
       if (existing.evidence_pack_hash !== pack.hash) throw Object.assign(new Error("A different Evidence Pack is already anchored"), { code: "EVIDENCE_ANCHOR_CONFLICT" });
-      respondAfterNetworkPolicy(request, response, { ok: true, result: { already_anchored: true, anchor: existing, evidencePack: store.getEvidencePack(pack.revision) } }, origin);
+      respondAfterNetworkPolicy(request, response, { ok: true, result: { already_anchored: true, anchor: existing, evidencePack: store.getEvidencePack(pack.revision) } }, origin, this.testMode);
       return;
     }
-    const failurePhase = request.headers["x-printform-failure-phase"] || request.headers["x-printform-crash-at"] || null;
+    const failurePhase = this.testMode ? request.headers["x-printform-failure-phase"] || request.headers["x-printform-crash-at"] || null : null;
     const bus = this.#bus(request, failurePhase);
     try {
       const evidencePack = bus.recordEvidencePack(pack);
-      if (request.headers["x-printform-crash-at"] === "during_evidence_write") {
+      if (this.testMode && request.headers["x-printform-crash-at"] === "during_evidence_write") {
         crashHttpRequest(request, response, "during_evidence_write", this.onCrash);
         return;
       }
-      respondAfterNetworkPolicy(request, response, { ok: true, result: { already_anchored: false, evidencePack, anchor: store.getEvidenceAnchor(pack.revision) } }, origin);
+      respondAfterNetworkPolicy(request, response, { ok: true, result: { already_anchored: false, evidencePack, anchor: store.getEvidenceAnchor(pack.revision) } }, origin, this.testMode);
     } catch (error) {
-      if (request.headers["x-printform-crash-at"] && request.headers["x-printform-crash-at"] === error.phase) crashHttpRequest(request, response, error.phase, this.onCrash);
+      if (this.testMode && request.headers["x-printform-crash-at"] && request.headers["x-printform-crash-at"] === error.phase) crashHttpRequest(request, response, error.phase, this.onCrash);
       else throw error;
     }
   }

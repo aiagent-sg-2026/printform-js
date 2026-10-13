@@ -1,6 +1,6 @@
 /* eslint-disable no-console */
 
-import { PTAC_MAX_WORDS_PER_SEGMENT, splitParagraphIntoHtmlChunks } from "../text.js";
+import { PTAC_MAX_WORDS_PER_SEGMENT, collectHtmlSegments } from "../text.js";
 
 export function attachPtacSegmentMethods(FormatterClass) {
   FormatterClass.prototype.expandPtacSegments = function expandPtacSegments() {
@@ -25,7 +25,7 @@ export function attachPtacSegmentMethods(FormatterClass) {
         return;
       }
 
-      const allChildren = Array.from(contentWrapper.children);
+      const allChildren = Array.from(contentWrapper.childNodes);
 
       if (allChildren.length === 0) {
         ptacRoot.classList.add("ptac-rowitem", "ptac_segment");
@@ -33,19 +33,7 @@ export function attachPtacSegmentMethods(FormatterClass) {
         return;
       }
 
-      const segments = [];
-
-      // Iterate through all children
-      allChildren.forEach(child => {
-        if (child.tagName.toLowerCase() === 'p') {
-          // It's a paragraph, check if it needs splitting
-          const chunks = splitParagraphIntoHtmlChunks(child, PTAC_MAX_WORDS_PER_SEGMENT);
-          chunks.forEach(chunk => segments.push(chunk));
-        } else {
-          // It's not a paragraph (e.g., h2, h3, div, etc.), keep it as is
-          segments.push(child.outerHTML);
-        }
-      });
+      const segments = collectHtmlSegments(contentWrapper, PTAC_MAX_WORDS_PER_SEGMENT);
 
       if (segments.length === 0) {
         ptacRoot.classList.add("ptac-rowitem", "ptac_segment");

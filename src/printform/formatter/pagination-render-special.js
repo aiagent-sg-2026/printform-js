@@ -3,7 +3,7 @@ import { DomHelpers } from "../dom.js";
 export function renderSpecialRow(formatter, context) {
   const {
     outputContainer, sections, heights, footerState, footerSpacerTemplate, logFn,
-    pageContext, row, nextRow, index, rowHeight, footerHeight, comboHeight,
+    pageContext, row, nextRow, index,
     currentHeight: startingHeight, hasFooterCombo, isPtacRow, isPaddtRow, baseClass, footerBaseClass
   } = context;
   const footerRow = hasFooterCombo ? nextRow : null;
@@ -42,6 +42,7 @@ export function renderSpecialRow(formatter, context) {
     ? DomHelpers.appendRowItem(container, footerRow, null, index + 1, footerBaseClass)
     : null;
   const testHeight = formatter.measureContentHeight(container, pageContext.repeatingHeight);
+  let reservedHeight = Math.max(0, testHeight - currentHeight);
   if (testFooterClone && testFooterClone.parentNode === container) container.removeChild(testFooterClone);
   if (testClone && testClone.parentNode === container) container.removeChild(testClone);
 
@@ -62,12 +63,18 @@ export function renderSpecialRow(formatter, context) {
       sections, heights, pageContext.skipRowHeader, pageContext.tableId
     );
     currentHeight = formatter.measureContentHeight(nextContainer, pageContext.repeatingHeight);
+    const probe = DomHelpers.appendRowItem(nextContainer, row, null, index, baseClass);
+    const footerProbe = footerRow
+      ? DomHelpers.appendRowItem(nextContainer, footerRow, null, index + 1, footerBaseClass) : null;
+    reservedHeight = Math.max(0, formatter.measureContentHeight(nextContainer, pageContext.repeatingHeight) - currentHeight);
+    if (footerProbe) footerProbe.remove();
+    if (probe) probe.remove();
   }
 
+  const beforeDummy = new Set(formatter.getCurrentPageContainer(outputContainer).children);
   const skipDummyRowItems = formatter.shouldSkipDummyRowItemsForContext(pageContext);
   if (!skipDummyRowItems) {
     const currentContainer = formatter.getCurrentPageContainer(outputContainer);
-    const reservedHeight = footerRow ? comboHeight : rowHeight;
     currentHeight = formatter.insertFooterDummyRows(
       currentContainer, pageContext, currentHeight, reservedHeight, footerLabel
     );
@@ -78,6 +85,15 @@ export function renderSpecialRow(formatter, context) {
   if (footerRow) DomHelpers.appendRowItem(finalContainer, footerRow, null, index + 1, footerBaseClass);
   if (logFn) logFn(`append ${footerLabel} ${index}`);
   currentHeight = formatter.measureContentHeight(finalContainer, pageContext.repeatingHeight);
+  // Context-sensitive CSS may change heights after a special row is appended.
+  // Roll back only filler, never business rows, until the actual row fits.
+  const fillers = Array.from(finalContainer.children).filter(
+    (node) => !beforeDummy.has(node) && node.classList.contains("prowitem_dummy")
+  );
+  while (currentHeight > pageContext.limit && fillers.length) {
+    fillers.pop().remove();
+    currentHeight = formatter.measureContentHeight(finalContainer, pageContext.repeatingHeight);
+  }
   if (formatter.debug) {
     console.log(`[printform]   ${footerLabel} row[${index}] added, currentHeight=${currentHeight}px`);
   }

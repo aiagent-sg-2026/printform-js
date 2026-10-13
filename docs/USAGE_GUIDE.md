@@ -80,9 +80,9 @@ PrintForm.format(formEl);
 ```
 
 Notes:
-- `formatAll` is async and will not run again unless `force: true`.
-- The formatter removes the original `.printform` node and inserts a
-  `.printform_formatter_processed` output container in its place.
+- `formatAll` processes current source forms, including later additions, and concurrent callers await the same Promise.
+- It returns `{formattedCount, failedCount: 0}`; any failure rejects with `AggregateError.errors` and `error.report` counts.
+- Successful formatting replaces the source with `.printform_formatter_processed`; a failed form is preserved. See the [ERP contract and limits](ERP_PRINT_SUPPORT.zh-CN.md).
 - The public API also exposes `PrintForm.DEFAULT_CONFIG` and
   `PrintForm.DEFAULT_PADDT_CONFIG` for inspection.
 

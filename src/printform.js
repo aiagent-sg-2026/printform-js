@@ -40,54 +40,58 @@ function pauseInMilliseconds(time) {
   });
 }
 
-async function formatAllPrintForms(overrides = {}) {
+let pendingFormat = null;
+
+function formatAllPrintForms(overrides = {}) {
+  if (pendingFormat) return pendingFormat;
   const globalScope = typeof window !== "undefined" ? window : globalThis;
-  if (globalScope.__printFormProcessing) {
-    return;
-  }
-  if (!overrides.force && globalScope.__printFormProcessed) {
-    return;
-  }
   globalScope.__printFormProcessing = true;
+  pendingFormat = formatBatch(globalScope, overrides).finally(() => {
+    pendingFormat = null;
+    globalScope.__printFormProcessing = false;
+  });
+  return pendingFormat;
+}
 
-  try {
-    const doc = globalScope.document;
-    if (!doc) return;
-
-    const forms = Array.from(doc.querySelectorAll(".printform"));
-    for (let index = 0; index < forms.length; index += 1) {
-      const formEl = forms[index];
-      const perFormOverrides = { ...overrides };
-      if (perFormOverrides.divPageBreakBeforeClassAppend === undefined && formEl && formEl.dataset) {
-        const datasetValue = formEl.dataset.divPageBreakBeforeClassAppend;
-        if (typeof datasetValue === "string" && datasetValue.trim()) {
-          perFormOverrides.divPageBreakBeforeClassAppend = datasetValue.trim();
-        }
-      }
-      const dividerClassAppend = perFormOverrides.divPageBreakBeforeClassAppend;
-      const config = getPrintformConfig(formEl, perFormOverrides);
-      try {
-        await pauseInMilliseconds(getDeviceDelay());
-      } catch (error) {
-        console.error("pauseInMilliseconds error", error);
-      }
-      try {
-        const formatted = withDividerClassAppend(globalScope, dividerClassAppend, () => {
-          const formatter = new PrintFormFormatter(formEl, config);
-          return formatter.format();
-        });
-        if (index > 0 && formatted && formatted.parentNode) {
-          formatted.parentNode.insertBefore(DomHelpers.createPageBreakDivider(dividerClassAppend), formatted);
-        }
-      } catch (error) {
-        console.error("printform format error", error);
+async function formatBatch(globalScope, overrides) {
+  const doc = globalScope.document;
+  const forms = doc ? Array.from(doc.querySelectorAll(".printform")) : [];
+  const errors = [];
+  const report = { formattedCount: 0, failedCount: 0 };
+  globalScope.__printFormProcessed = false;
+  for (let index = 0; index < forms.length; index += 1) {
+    const formEl = forms[index];
+    const perFormOverrides = { ...overrides };
+    if (perFormOverrides.divPageBreakBeforeClassAppend === undefined && formEl.dataset) {
+      const value = formEl.dataset.divPageBreakBeforeClassAppend;
+      if (typeof value === "string" && value.trim()) {
+        perFormOverrides.divPageBreakBeforeClassAppend = value.trim();
       }
     }
-
-    globalScope.__printFormProcessed = true;
-  } finally {
-    globalScope.__printFormProcessing = false;
+    const dividerClassAppend = perFormOverrides.divPageBreakBeforeClassAppend;
+    try {
+      await pauseInMilliseconds(getDeviceDelay());
+      const config = getPrintformConfig(formEl, perFormOverrides);
+      const formatted = withDividerClassAppend(globalScope, dividerClassAppend, () => {
+        const formatter = new PrintFormFormatter(formEl, config, perFormOverrides);
+        return formatter.format();
+      });
+      if (report.formattedCount > 0 && formatted?.parentNode) {
+        formatted.parentNode.insertBefore(DomHelpers.createPageBreakDivider(dividerClassAppend), formatted);
+      }
+      report.formattedCount += 1;
+    } catch (error) {
+      errors.push(error);
+      report.failedCount += 1;
+    }
   }
+  globalScope.__printFormProcessed = errors.length === 0;
+  if (errors.length) {
+    const error = new AggregateError(errors, `${errors.length} print form(s) failed to paginate`);
+    error.report = report;
+    throw error;
+  }
+  return report;
 }
 
 function formatSinglePrintForm(formEl, overrides = {}) {
@@ -102,7 +106,7 @@ function formatSinglePrintForm(formEl, overrides = {}) {
   const dividerClassAppend = perFormOverrides.divPageBreakBeforeClassAppend;
   const config = getPrintformConfig(formEl, perFormOverrides);
   return withDividerClassAppend(globalScope, dividerClassAppend, () => {
-    const formatter = new PrintFormFormatter(formEl, config);
+    const formatter = new PrintFormFormatter(formEl, config, perFormOverrides);
     return formatter.format();
   });
 }
@@ -133,13 +137,13 @@ if (globalScope) {
         if (doc.readyState === 'complete') {
           // 文档已完全加载,添加延迟确保样式已应用
           setTimeout(() => {
-            formatAllPrintForms();
+            formatAllPrintForms().catch(error => console.error("printform format error", error));
           }, delay);
         } else {
           // 使用 load 事件而不是 DOMContentLoaded,确保 CSS 已加载
           globalScope.addEventListener('load', () => {
             setTimeout(() => {
-              formatAllPrintForms();
+              formatAllPrintForms().catch(error => console.error("printform format error", error));
             }, delay);
           });
         }

@@ -13,10 +13,12 @@ export const DEMO_DOCUMENT_KINDS = [
   ['EnterpriseProject','Enterprise project','invoice','Project scope, customer, contract value and commercial references.'],
   ['ProgressClaim','Progress claim','invoice','Measured cumulative work, previous claims, retention and current application.'],
   ['CertifiedClaim','Certified claim','invoice','Independently certified cumulative value with an explicit variance from the application.'],
+  ['PCAR','Progress Claim Account Receivable','invoice','Receivable at the progress-application stage, with period valuation, retention and outstanding amount.'],
+  ['CCAR','Certified Claim Account Receivable','invoice','Receivable at the certified stage, linked to the certificate and its application adjustment.'],
   ['AccountsReceivableClaim','AR claim (generic demo)','invoice','Generic receivable request against a certified amount; no ERP-specific acronym meaning is assumed.'],
   ['AccountsPayableClaim','AP claim (generic demo)','purchase','Generic supplier payable request against a purchase invoice; no ERP-specific acronym meaning is assumed.']
 ].map(([documentKind,label,baseType,description]) => ({documentKind,kind:documentKind,label,baseType,description,status:'ready'}));
-export const PENDING_DEMO_KINDS = ['PCA','CCAR','PCAP','CCAP'].map(kind => ({
+export const PENDING_DEMO_KINDS = ['PCA','PCAP','CCAP'].map(kind => ({
   documentKind:kind,kind,label:`${kind} · definition pending`,status:'pending-definition',scenarioCount:0,
   description:'Reserved spoken abbreviation. Confirm the exact ERP document meaning and required fields before adding a template or sample.'
 }));

@@ -39,3 +39,28 @@ describe("PrintForm v2 declarative binding", () => {
     expect(bindTemplate(template, {}, {}).report.errors[0].code).toBe("MISSING_BINDING");
   });
 });
+
+it.each(['not json','null','[]','{\"minimumFractionDigits\":5,\"maximumFractionDigits\":2}'])('returns a located formatting error for invalid options %s',raw=>{
+  const template=document.createElement('template');
+  template.innerHTML='<span data-pf-component-id="total" data-pf-text="/amount" data-pf-format="number">Original content</span>';
+  template.content.firstChild.setAttribute('data-pf-format-options',raw);
+  const bound=bindTemplate(template,{amount:12});
+  expect(bound.report.errors).toContainEqual(expect.objectContaining({code:'FORMAT_CONFIG',path:'/amount',component:'total'}));
+  expect(bound.fragment.firstChild.textContent).toBe('Original content');
+});
+
+it('counts reserved-key table identities without prototype inheritance in the exported row report', () => {
+  const template = document.createElement('template');
+  template.innerHTML = ['constructor', '__proto__'].map(id =>
+    `<div class="prowitem" data-pf-table-id="${id}" data-pf-each="/items"><span data-pf-text="./name"></span></div>`
+  ).join('');
+  const { report, fragment } = bindTemplate(template, { items: [{ name: 'A' }, { name: 'B' }] },
+    { acceptance: { maxRowsPerTable: 2, maxRows: 4 } });
+  expect(report.errors).toEqual([]);
+  const exported = JSON.parse(JSON.stringify(report.tableRowsByTable));
+  expect(Object.hasOwn(exported, '__proto__')).toBe(true);
+  expect(exported.constructor).toBe(2);
+  expect(exported.__proto__).toBe(2);
+  expect(report.tableRows).toBe(4);
+  expect([...fragment.querySelectorAll('span')].map(node => node.textContent)).toEqual(['A', 'B', 'A', 'B']);
+});

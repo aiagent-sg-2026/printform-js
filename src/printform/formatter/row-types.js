@@ -55,9 +55,6 @@ export function attachRowTypeMethods(FormatterClass) {
     if (!row) {
       return false;
     }
-    if (!this.config.repeatRowheader) {
-      return false;
-    }
 
     // prowitem: allow per-page opt-out via row class (override PTAC/PADDT defaults).
     if (row.classList.contains("without_prowheader") || row.classList.contains("tb_without_rowheader")) {

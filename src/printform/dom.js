@@ -1,6 +1,7 @@
 /* eslint-disable no-console */
 
 import { normalizeHeight } from "./helpers.js";
+import { appendMeasuredDummyRows } from "./dummy.js";
 
   function applyTableSizingReset(table) {
     if (!table) return;
@@ -23,32 +24,6 @@ import { normalizeHeight } from "./helpers.js";
     return table;
   }
 
-  function createDummyRowItemTable(config) {
-    const table = document.createElement("table");
-    table.className = "dummy_row_item";
-    table.setAttribute("width", `${config.papersizeWidth}px`);
-    table.setAttribute("cellspacing", "0");
-    table.setAttribute("cellpadding", "0");
-    applyTableSizingReset(table);
-    // Default dummy row item table to separate borders (override reset).
-    table.style.borderCollapse = "separate";
-    if (config.customDummyRowItemContent) {
-      table.innerHTML = config.customDummyRowItemContent;
-    } else {
-      table.innerHTML = `<tr style="height:${normalizeHeight(config.heightOfDummyRowItem)}px;"><td style="border:0px solid black;padding:0;margin:0;line-height:0;font-size:0;"></td></tr>`;
-    }
-    return table;
-  }
-
-function appendDummyRowItems(config, target, diffHeight) {
-  const itemHeight = normalizeHeight(config.heightOfDummyRowItem);
-  const remaining = normalizeHeight(diffHeight);
-  if (itemHeight <= 0 || remaining <= 0) return;
-  const count = Math.floor(remaining / itemHeight);
-  for (let index = 0; index < count; index += 1) {
-    target.appendChild(createDummyRowItemTable(config));
-  }
-}
 
 function appendDummyRow(config, target, diffHeight) {
   const remaining = normalizeHeight(diffHeight);
@@ -70,18 +45,8 @@ function applyDummyRowItemsStep(config, container, heightPerPage, currentHeight,
     console.log(`[printform]   remaining: ${remaining}px, itemHeight: ${config.heightOfDummyRowItem}px`);
   }
   if (remaining > 0) {
-    appendDummyRowItems(config, container, remaining);
-    const itemHeight = normalizeHeight(config.heightOfDummyRowItem);
-    if (itemHeight > 0) {
-      const count = Math.floor(remaining / itemHeight);
-      const remainder = normalizeHeight(remaining % itemHeight);
-      const newHeight = normalizeHeight(heightPerPage - remainder);
-      if (debug) {
-        console.log(`[printform]   inserted ${count} dummy_row_items (${count} x ${itemHeight}px = ${count * itemHeight}px)`);
-        console.log(`[printform]   remainder: ${remainder}px, newHeight: ${newHeight}px`);
-      }
-      return newHeight;
-    }
+    const addedHeight = appendMeasuredDummyRows(config, container, remaining, measureHeightRaw);
+    return normalizeHeight(currentHeight + addedHeight);
   }
   return normalizeHeight(currentHeight);
 }
@@ -110,7 +75,7 @@ function applyDummyRowStep(config, container, heightPerPage, currentHeight, debu
 }
 
 function applyFooterSpacerWithDummyStep(config, container, heightPerPage, currentHeight, skipDummyRowItems, debug) {
-  if (!config.insertFooterSpacerWithDummyRowItemWhileFormatTable || skipDummyRowItems) {
+  if (!config.insertDummyRowItemWhileFormatTable || !config.insertFooterSpacerWithDummyRowItemWhileFormatTable || skipDummyRowItems) {
     if (debug) {
       console.log(`[printform] applyFooterSpacerWithDummyStep: SKIPPED (flag=${config.insertFooterSpacerWithDummyRowItemWhileFormatTable}, skipDummy=${skipDummyRowItems})`);
     }
@@ -127,16 +92,7 @@ function applyFooterSpacerWithDummyStep(config, container, heightPerPage, curren
     console.log(`[printform]   remaining: ${remaining}px`);
   }
   if (remaining > 0) {
-    appendDummyRowItems(config, container, remaining);
-    const itemHeight = normalizeHeight(config.heightOfDummyRowItem);
-    if (itemHeight > 0) {
-      const count = Math.floor(remaining / itemHeight);
-      const remainder = normalizeHeight(remaining % itemHeight);
-      workingHeight = normalizeHeight(heightPerPage - remainder);
-      if (debug) {
-        console.log(`[printform]   inserted ${count} spacer dummy_row_items, remainder: ${remainder}px`);
-      }
-    }
+    workingHeight += appendMeasuredDummyRows(config, container, remaining, measureHeightRaw);
   }
   return {
     currentHeight: workingHeight,

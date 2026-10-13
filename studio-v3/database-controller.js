@@ -130,7 +130,8 @@ export class DemoDatabase {
   async restore() {
     if (!confirm('Restore the three built-in invoice, purchase order and delivery note datasets? This replaces only starter records. Saved copies, the current form draft and all other browser storage are retained.')) return;
     await this.refresh();
-    await this.store.write(starterRecords().map(record=>({id:record.id,record,expectedRevision:this.records.find(r=>r.id === record.id)?.revision ?? null})));
+    const restored = starterRecords().filter(record => ['starter:invoice','starter:purchase','starter:delivery'].includes(record.id));
+    await this.store.write(restored.map(record=>({id:record.id,record,expectedRevision:this.records.find(r=>r.id === record.id)?.revision ?? null})));
     await this.refresh(); this.channel?.postMessage({changed:true});
     this.message = 'Starter records restored. Current form data is unchanged; load a saved dataset when ready.';
   }

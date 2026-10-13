@@ -16,6 +16,8 @@
 - 架构、规格与任务状态: [DESIGN.md](DESIGN.md) · [SPEC.md](SPEC.md) · [EPIC.md](EPIC.md) · [ROADMAP.md](ROADMAP.md) · [TASK.md](TASK.md)
 - 变更记录: [CHANGELOG.md](CHANGELOG.md)（英文）
 - 版本与兼容矩阵: [docs/COMPATIBILITY_MATRIX.zh-CN.md](docs/COMPATIBILITY_MATRIX.zh-CN.md)
+- ERP 单据与格式支持契约: [支持范围](docs/ERP_PRINT_SUPPORT.zh-CN.md) · [PCAR/CCAR 业务与导入契约](docs/ERP_CLAIM_BUSINESS_CONTRACT.zh-CN.md)
+- 缺陷、改进与验证证据: [docs/ERP_PRINT_AUDIT.zh-CN.md](docs/ERP_PRINT_AUDIT.zh-CN.md)
 - 许可协议: [LICENSE](LICENSE)（MIT）
 
 ### 🎨 PrintForm Studio —— 可视化调试工具
@@ -238,8 +240,9 @@ PrintForm.format(myForm);
 ```
 
 注意：
-- `formatAll` 默认只执行一次，重复执行请传 `force: true`。
-- 格式化会移除原始 `.printform`，插入处理后的容器。
+- `formatAll()` 扫描当前源单据，后来追加的 `.printform` 无需 `force`；并发调用等待同一批 Promise。
+- 成功返回 `{formattedCount, failedCount: 0}`；任一失败抛 `AggregateError`，`errors` 为单据错误、`report` 为本批成功/失败数。
+- 成功移除原始 `.printform` 并插入输出；失败保留源单据，不能把整批当成已成功。
 
 ### 4. 构建生产版本
 如果你修改了源码 (`src/` 目录)，需要重新打包：

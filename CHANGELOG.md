@@ -15,11 +15,30 @@ who don't need the diary.
 
 ## [Unreleased]
 
-Current working-tree versions: runtime `1.0.0`, Studio `0.11.0`, Protocol `2.0.0`, Agent Contract `3.0.0`.
+Current working-tree versions: runtime `1.0.0`, Studio `0.11.0`, Protocol `2.0.0`, Agent Contract `4.0.0`.
 E13-SERVER provides a bounded single-writer SQLite backend; the browser UI still uses localStorage.
 E14 UI includes four layers, context badges, structured change cards, apply-mode controls,
 batch history controls, session/settings/trace surfaces and a resizable rail.
 
+
+### Globe3 claim business contracts — 2026-10-14
+
+- Added a fail-closed raw CCAR financial-tab normalizer and portable print-project creator using `financialRows`, with explicit numeric profiles, supplied currency precision and optional ERP balances; no invented commodity rows or accounting recognition.
+- Added canonical PCAR project creation requiring `entp_pbill`, an explicit prior-certified or stored-last-claim basis and supplied valuation amounts; no full raw PCAR database adapter is claimed.
+- Corrected fictional PCAR movements to use prior cumulative certification, including retention/on-hold movements without a second deduction; separately identified seed migration preserves user records and selection checks basis and collection.
+- Documented [business contracts and import APIs](docs/ERP_CLAIM_BUSINESS_CONTRACT.zh-CN.md), immutable financial-print snapshot refresh, six Studio currencies, precision 0..6, and the legacy `items` workbench boundary. No live ERP, booked-AR, Production Ready or new verification-count claim is added; the following execution counts remain historical.
+
+
+### ERP print correctness and coverage — 2026-10-13
+
+- Added independently identified PCAR (Progress Claim Account Receivable) and CCAR (Certified Claim Account Receivable) templates, source-linked three-period fictional datasets, receivable/certification bindings and non-destructive catalogue seed migration.
+- Kept supplied ERP amounts unchanged; application and certification stages are not additional sales or automatic accounting postings.
+- Fixed mixed-node PTAC/PADDT content loss, integer segmentation, presentation context, skip/nonrepeating table headers, actual-height dummy filling, configuration overrides, page markers and reserved-key table identities.
+- Batch formatting now includes later source forms, shares concurrent completion and rejects partial failure with `AggregateError` plus per-batch counts. Failed formatting rolls back its own output and preserves source nodes/listeners; unsplittable overflow fails explicitly.
+- Fixed schema-profile bypasses, keyword shapes, JSON equality, Unicode/date validation, scoped repeat identity and nested row preflight, RFC6901 contract editing, Intl diagnostics, standalone business-rule parity and stale-render generation guards.
+- Restricted HTTP fault injection to explicit test mode; non-loopback listeners require a token. Shared-token identity remains a deployment limitation, not a new user-authentication system.
+- Added the [complete findings register](docs/ERP_PRINT_AUDIT.zh-CN.md) and [ERP transaction/format contract](docs/ERP_PRINT_SUPPORT.zh-CN.md), updated API/integration documentation and synchronized project knowledge through KB-MCP.
+- Local integrated build: 211 test files / 1,899 tests passed; final reserved-key binding-report correction passed another 5 files / 36 focused tests and rebuilt the site. Three-engine browser checks: 67 passed / 2 intentional skips, plus 6 catalogue/seed passes. Remaining boundaries are recorded in the audit; no Production Ready, tax, real-ERP or native-printer certification is granted.
 ### Documentation — 2026-09-07
 
 - Reconciled architecture, current behavior, epic/task status, roadmap, product strategy,

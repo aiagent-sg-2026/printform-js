@@ -1,4 +1,5 @@
 import { starterRecords } from './database-model.js';
+import { seedCertifiedClaimBasis } from './claim-basis-seed.js';
 
 export const DATABASE_NAME = 'printform-studio-v3-demo-db';
 const clone = value => structuredClone(value);
@@ -104,12 +105,13 @@ export async function createDatabase() {
   try { store = await openDatabase(); } catch (error) { store = new MemoryDatabase(storageMessage(error)); }
   try {
     for (let attempt = 0; attempt < 2; attempt++) {
-      if (await store.preference('seed:business-demo-v1')) break;
+      if (await store.preference('seed:business-demo-v2')) break;
       const records = await store.list();
       const missing = starterRecords().filter(r => !records.some(old => old.id === r.id));
-      try { await store.write(missing.map(record => ({id:record.id,record,expectedRevision:null})),{key:'seed:business-demo-v1',value:true}); break; }
+      try { await store.write(missing.map(record => ({id:record.id,record,expectedRevision:null})),{key:'seed:business-demo-v2',value:true}); break; }
       catch (error) { if (error.code !== 'DATASET_CONFLICT' || attempt) throw error; }
     }
+    await seedCertifiedClaimBasis(store);
   } catch (error) {
     store.close(); store = new MemoryDatabase(storageMessage(error));
     await store.write(starterRecords().map(record => ({id:record.id,record,expectedRevision:null})));

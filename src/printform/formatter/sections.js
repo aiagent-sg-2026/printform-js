@@ -36,7 +36,7 @@ export function attachSectionMethods(FormatterClass) {
     const paddtRows = allRows.filter((row) => this.isPaddtRow(row));
     const mainRows = allRows.filter((row) => !this.isPaddtRow(row));
     const rowHeaders = Array.from(this.formEl.querySelectorAll(".prowheader"));
-    const rowHeadersById = {};
+    const rowHeadersById = Object.create(null);
     rowHeaders.forEach((header) => {
       const tableId = this.getRowTableId(header);
       if (!rowHeadersById[tableId]) rowHeadersById[tableId] = header;
@@ -61,7 +61,9 @@ export function attachSectionMethods(FormatterClass) {
       header: DomHelpers.measureHeight(sections.header),
       docInfos: {},
       rowHeader: DomHelpers.measureHeight(sections.rowHeader),
-      rowHeaders: Object.fromEntries((sections.rowHeaders || []).map((header) => [this.getRowTableId(header), DomHelpers.measureHeight(header)])),
+      rowHeaders: Object.assign(Object.create(null), Object.fromEntries(
+        Object.entries(sections.rowHeadersById).map(([tableId, header]) => [tableId, DomHelpers.measureHeight(header)])
+      )),
       footerVariants: {},
       footerLogo: DomHelpers.measureHeight(sections.footerLogo),
       footerPagenum: DomHelpers.measureHeight(sections.footerPagenum)

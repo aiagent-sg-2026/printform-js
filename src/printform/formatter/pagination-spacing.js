@@ -18,6 +18,18 @@ export function attachPaginationSpacingMethods(FormatterClass) {
     tableId = "default"
   ) {
     const container = this.getCurrentPageContainer(outputContainer);
+    // Keep a nonrepeating table's first header with its first business row,
+    // including explicit page breaks and rows that overflow after header insert.
+    if (!this.isRowHeaderRepeated(sections, tableId)) {
+      const hasTableRows = Array.from(container.querySelectorAll(".prowitem_processed, .ptac-rowitem_processed, .paddt-rowitem_processed"))
+        .some((row) => this.getRowTableId(row) === tableId);
+      if (!hasTableRows) {
+        Array.from(container.querySelectorAll(".prowheader_processed"))
+          .filter((header) => this.getRowTableId(header) === tableId)
+          .forEach((header) => header.remove());
+        this.seenTableHeaders?.delete(tableId);
+      }
+    }
     const filledHeight = this.applyRemainderSpacing(
       container,
       pageLimit,
@@ -35,6 +47,7 @@ export function attachPaginationSpacingMethods(FormatterClass) {
     this.createNewLogicalPage(outputContainer);
     const nextContainer = this.getCurrentPageContainer(outputContainer);
     this.appendRepeatingSections(nextContainer, sections, logFn, skipRowHeader, tableId);
+    this.ensureActiveTableHeader(nextContainer, sections, logFn, tableId, skipRowHeader);
     return filledHeight;
   };
 

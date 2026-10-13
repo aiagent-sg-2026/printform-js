@@ -24,6 +24,13 @@ describe("AI Designer contract and safety boundary", () => {
     expect(TOOL_CONTRACTS.find((tool) => tool.name === "apply_changes").inputSchema.properties.operations).toBeUndefined();
   });
 
+  it("accepts optional binding patches and still rejects unknown component binding properties", () => {
+    const {inputSchema}=getOperationCatalog().find(entry=>entry.type==="update_component");
+    const operation={type:"update_component",componentId:"document-header",patch:{binding:{text:"/title"}}};
+    expect(validateData(inputSchema,operation).valid).toBe(true);
+    expect(validateData(inputSchema,{...operation,patch:{binding:{unexpected:"/title"}}}).errors).toContainEqual(expect.objectContaining({code:"ADDITIONAL_PROPERTY",path:"/patch/binding/unexpected"}));
+  });
+
   it("returns safe design state without sample values or asset sources", () => {
     const project = createSalesInvoiceProject();
     const state = inspectDesignState({ ...project, revision: 4 });

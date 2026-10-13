@@ -24,20 +24,48 @@ export function tableRepeatDescriptor(source) {
 
 export function listBoundTableRepeats(template) {
   const nodes = template?.content?.querySelectorAll?.("[data-pf-each]") || template?.querySelectorAll?.("[data-pf-each]");
-  if (nodes) return Array.from(nodes).map(tableRepeatDescriptor).filter(Boolean);
+  if (nodes) return Array.from(nodes).flatMap(node => {
+    const descriptor = tableRepeatDescriptor(node);
+    if (!descriptor) return [];
+    const ancestors = [];
+    for (let parent = node.parentElement; parent; parent = parent.parentElement) {
+      if (parent.hasAttribute("data-pf-each")) ancestors.unshift(parent.getAttribute("data-pf-each"));
+    }
+    return [{...descriptor, ancestors}];
+  });
   const source = typeof template === "string" ? template : template?.innerHTML || "";
-  const tags = /<[A-Za-z][^>]*\bdata-pf-each\s*=\s*(['"])(.*?)\1[^>]*>/gi;
-  return Array.from(source.matchAll(tags), (match) => tableRepeatDescriptor(match[0])).filter(Boolean);
+  const stack = [], repeats = [];
+  // Preserve repeat ancestry even in the Node CLI, where DOMParser is unavailable.
+  const tags = /<!--[\s\S]*?-->|<\/?([A-Za-z][\w:-]*)(?:[^"'<>]|"[^"]*"|'[^']*')*>/g;
+  const voidTags = new Set(["area","base","br","col","embed","hr","img","input","link","meta","param","source","track","wbr"]);
+  for (const match of source.matchAll(tags)) {
+    if (!match[1]) continue;
+    const tag = match[1].toLowerCase();
+    if (match[0].startsWith("</")) {
+      const index = stack.findLastIndex(node => node.tag === tag);
+      if (index >= 0) stack.length = index;
+      continue;
+    }
+    const pointer = attribute(match[0], "data-pf-each");
+    const descriptor = tableRepeatDescriptor(match[0]);
+    if (descriptor) repeats.push({...descriptor, ancestors:stack.filter(node => node.pointer).map(node => node.pointer)});
+    if (!voidTags.has(tag) && !match[0].endsWith("/>")) stack.push({tag, pointer});
+  }
+  return repeats;
 }
 
 export function measureBoundRows(data, template, descriptors = listBoundTableRepeats(template)) {
-  const byTable = new Map();
-  const paths = new Map();
+  const byTable = new Map(), paths = new Map();
   for (const descriptor of descriptors) {
-    if (!String(descriptor.pointer).startsWith("/")) continue;
-    const value = resolvePointer(data, descriptor.pointer, data);
-    if (!Array.isArray(value)) continue;
-    const count = value.length;
+    const pointers = [...(descriptor.ancestors || []), descriptor.pointer];
+    let count = 0;
+    const visit = (scope, depth) => {
+      const values = resolvePointer(data, pointers[depth], scope);
+      if (!Array.isArray(values)) return;
+      if (depth === pointers.length - 1) count += values.length;
+      else for (const value of values) visit(value, depth + 1);
+    };
+    visit(data, 0);
     byTable.set(descriptor.tableId, (byTable.get(descriptor.tableId) || 0) + count);
     if (!paths.has(descriptor.tableId)) paths.set(descriptor.tableId, descriptor.pointer);
   }

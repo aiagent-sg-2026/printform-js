@@ -4,7 +4,7 @@
 // that the command bus rejects.
 import { FONT_BASE_MAX_PT, FONT_BASE_MIN_PT } from "./typography.js";
 
-const objectSchema = (properties, required) => ({ type: "object", properties, required, additionalProperties: false });
+const objectSchema = (properties, required = []) => ({ type: "object", properties, required, additionalProperties: false });
 const anyValue = {};
 const nonEmptyString = { type: "string", minLength: 1 };
 const slotName = { type: "string", pattern: "^[a-z][a-z0-9-]*$" };

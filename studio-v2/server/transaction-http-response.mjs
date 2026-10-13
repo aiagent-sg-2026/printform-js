@@ -55,13 +55,13 @@ export function statusForError(error) {
   return 400;
 }
 
-export function respondAfterNetworkPolicy(request, response, body, origin) {
+export function respondAfterNetworkPolicy(request, response, body, origin, testMode = false) {
   const send = () => {
-    if (request.headers["x-printform-drop-after-commit"] === "true") { request.socket.destroy(); return; }
+    if (testMode === true && request.headers["x-printform-drop-after-commit"] === "true") { request.socket.destroy(); return; }
     const safeBody = safeResponseBody(body);
     jsonResponse(response, safeBody.ok ? 200 : statusForError(safeBody.error || {}), safeBody, origin);
   };
-  const delay = Math.max(0, Number(request.headers["x-printform-delay-ms"]) || 0);
+  const delay = testMode === true ? Math.max(0, Number(request.headers["x-printform-delay-ms"]) || 0) : 0;
   if (delay) setTimeout(send, delay); else send();
 }
 

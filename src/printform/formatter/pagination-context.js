@@ -23,7 +23,8 @@ export function attachPaginationContextMethods(FormatterClass) {
     }
     const skipRowHeader = this.shouldSkipRowHeaderForRow(row);
     const tableId = this.getRowTableId(row);
-    const rowHeaderHeight = heights.rowHeaders?.[tableId] ?? heights.rowHeader ?? 0;
+    const rowHeaderHeight = this.getSectionRowHeader(sections, tableId)
+      ? (heights.rowHeaders?.[tableId] ?? heights.rowHeader ?? 0) : 0;
     pageContext.skipRowHeader = skipRowHeader;
     pageContext.tableId = tableId;
     pageContext.rowHeaderHeight = rowHeaderHeight;
@@ -43,7 +44,7 @@ export function attachPaginationContextMethods(FormatterClass) {
         total += heights.docInfos[docInfo.key] || 0;
       }
     });
-    const rowHeader = sections.rowHeadersById?.[tableId] || sections.rowHeader;
+    const rowHeader = this.getSectionRowHeader(sections, tableId);
     if (this.isRowHeaderRepeated(sections, tableId) && rowHeader && !skipRowHeader) {
       total += heights.rowHeaders?.[tableId] ?? heights.rowHeader ?? 0;
     }

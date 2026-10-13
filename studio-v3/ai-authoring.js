@@ -4,7 +4,8 @@ import { BLOCKS, selectionField, defaultDesign } from './model.js';
 import { validateDesign } from './file-io.js';
 import { resolvePointer } from '../studio-v2/core/json.js';
 import { validPointer } from './design-authoring.js';
-import { TABLE_STYLE_KEYS, isHexColor } from './table-style.js';
+import { tableStyleChange } from './table-style.js';
+import { elementStyleChange } from './element-style.js';
 
 const unsafe = () => { throw Object.assign(new Error('UNSAFE_PROPOSAL'),{code:'UNSAFE_PROPOSAL'}); };
 const fieldKeys = ['label','pointer','format','kind','text','showLabel','labelStyle','valueStyle','width','assetId','height','fit'];
@@ -36,23 +37,21 @@ export function applyAuthoring(design,operations,project,explicitPointers=[]) {
     object(op,['type','target','patch','section','field','order','value']);
     if (!AUTHORING_TYPES.includes(op.type)) unsafe();
     if (op.type === 'set_element_style') {
-      object(op,['type','target','patch']); object(op.patch,['fontSize','bold','color','align']);
-      const key = {'header-title':'titleStyle','page-number':'pageNumberStyle'}[op.target]; if (!key) unsafe();
-      record(op.target,'typography',design[key],op.patch); design[key] = structuredClone(op.patch);
+      object(op,['type','target','patch']);
+      const change = elementStyleChange(design,op.target,op.patch);
+      for (const {target,property,before,after} of change.changes) record(target,property,before,after);
+      if (change.design[change.key] === undefined) delete design[change.key];
+      else design[change.key] = change.design[change.key];
     } else if (op.type === 'set_style') {
       object(op,['type','patch']);
       object(op.patch,GLOBAL_STYLE_KEYS);
       for (const [key,value] of Object.entries(op.patch)) { record('style',key,design[key],value); design[key] = structuredClone(value); }
     } else if (op.type === 'set_table_style') {
-      object(op,['type','target','patch']); object(op.patch,TABLE_STYLE_KEYS);
-      if (op.target !== 'items') unsafe();
-      for (const [key,value] of Object.entries(op.patch)) {
-        if (value !== null && !isHexColor(value)) unsafe();
-        record('items',`tableStyle.${key}`,design.tableStyle?.[key],value === null ? undefined : value);
-        if (value === null) { if (design.tableStyle) delete design.tableStyle[key]; }
-        else design.tableStyle = {...design.tableStyle,[key]:value};
-      }
-      if (design.tableStyle && !Object.keys(design.tableStyle).length) delete design.tableStyle;
+      object(op,['type','target','patch']);
+      const change = tableStyleChange(design,op.target,op.patch);
+      for (const {target,property,before,after} of change.changes) record(target,property,before,after);
+      if (change.design.tableStyle === undefined) delete design.tableStyle;
+      else design.tableStyle = change.design.tableStyle;
     } else if (op.type === 'set_field') {
       object(op,['type','target','patch']); object(op.patch,fieldKeys);
       const selected = selectionField(design,op.target); if (!selected) unsafe();

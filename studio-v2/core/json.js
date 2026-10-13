@@ -21,6 +21,31 @@ export function parseJson(text, sectionName) {
   }
 }
 
+export function encodePointerToken(token) {
+  return String(token).replace(/~/g, "~0").replace(/\//g, "~1");
+}
+
+export function pointerTokens(pointer) {
+  if (typeof pointer !== "string" || !pointer.startsWith("/") || /~(?![01])/u.test(pointer)) throw new Error("Expected an RFC6901 JSON Pointer");
+  return pointer.slice(1).split("/").map(decodePointerToken);
+}
+
+export function jsonEqual(left, right) {
+  if (left === right) return true;
+  if (!left || !right || typeof left !== "object" || typeof right !== "object") return false;
+  if (Array.isArray(left) !== Array.isArray(right)) return false;
+  if (Array.isArray(left)) return left.length === right.length && left.every((value, index) => jsonEqual(value, right[index]));
+  const keys = Object.keys(left);
+  return keys.length === Object.keys(right).length && keys.every(key => Object.prototype.hasOwnProperty.call(right, key) && jsonEqual(left[key], right[key]));
+}
+
+export function jsonUnique(values) {
+  for (let index = 0; index < values.length; index++) {
+    for (let previous = 0; previous < index; previous++) if (jsonEqual(values[index], values[previous])) return false;
+  }
+  return true;
+}
+
 export function decodePointerToken(token) {
   return token.replace(/~1/g, "/").replace(/~0/g, "~");
 }

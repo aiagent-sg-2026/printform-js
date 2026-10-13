@@ -80,9 +80,9 @@ PrintForm.format(formEl);
 ```
 
 注意：
-- `formatAll` 默认只执行一次，如需重跑必须传 `force: true`。
-- 格式化后原始 `.printform` 会被移除并替换为
-  `.printform_formatter_processed` 输出容器。
+- `formatAll` 处理当前源单据（含后来追加），并发调用等待同一批 Promise，无需靠 `force` 解除全局标记。
+- 成功返回 `{formattedCount,failedCount:0}`；任一失败抛 `AggregateError.errors` 与 `error.report` 成功/失败数。
+- 成功将源节点替换为 `.printform_formatter_processed`；失败保留源单据。参见 [ERP 支持契约与限制](ERP_PRINT_SUPPORT.zh-CN.md)。
 - 公共 API 也提供 `PrintForm.DEFAULT_CONFIG` 与
   `PrintForm.DEFAULT_PADDT_CONFIG` 便于查看默认值。
 

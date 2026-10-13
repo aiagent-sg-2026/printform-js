@@ -4,6 +4,8 @@ import { validateDesign } from './file-io.js';
 import { datasetName, datasetTitleFor } from './database-model.js';
 import { dataSource } from './data-provenance.js';
 import { sectionOrder } from './design-authoring.js';
+import { tableStyleChange } from './table-style.js';
+import { elementStyleChange } from './element-style.js';
 
 export function createBus(project, database = null, source = 'builtin-demo') {
   const initial = structuredClone(project);
@@ -42,15 +44,14 @@ export function designOperations(project, design) {
   return [{type:'replace_manifest',value:next.manifest},{type:'replace_template',value:next.templateHtml},{type:'replace_theme',value:next.themeCss}];
 }
 export function formDesign(project, selected, form, kind) {
-  const d = designOf(project);
+  let d = designOf(project);
   const values = new FormData(form);
   const text = name => String(values.get(name) || '');
   const checked = name => values.has(name);
   const tableStyle = () => {
     if (!values.has('rowBackground')) return;
     const color = text('rowBackground').trim();
-    if (color) d.tableStyle = {...d.tableStyle,rowBackground:color};
-    else { if (d.tableStyle) delete d.tableStyle.rowBackground; if (d.tableStyle && !Object.keys(d.tableStyle).length) delete d.tableStyle; }
+    d = tableStyleChange(d,'items',{rowBackground:color || null}).design;
   };
   const selection = selectionField(d,selected);
   const fieldStyle = prefix => {
@@ -66,7 +67,7 @@ export function formDesign(project, selected, form, kind) {
     for (const key of ['color']) d[key] = text(key);
     for (const key of ['font','padding']) d[key] = Number(values.get(key));
     for (const key of ['striped','borders','pageNumbers']) d[key] = checked(key);
-    if (values.has('pageNumberStyle.fontSize')) { const style = fieldStyle('pageNumberStyle'); if (Object.keys(style).length) d.pageNumberStyle = style; else delete d.pageNumberStyle; }
+    if (values.has('pageNumberStyle.fontSize')) d = elementStyleChange(d,'page-number',fieldStyle('pageNumberStyle')).design;
     if (values.has('paper')) d.page = {paper:text('paper'),orientation:text('orientation'),margins:Object.fromEntries(['top','right','bottom','left'].map(side=>[side,Number(values.get(`margin-${side}`))]))};
   } else if (kind === 'field' && selection) {
     for (const key of ['label','format']) if (values.has(key)) selection.field[key] = text(key);
@@ -87,7 +88,7 @@ export function formDesign(project, selected, form, kind) {
     if (!d.blocks[id]) throw new Error('Select an existing section before Apply.');
     d.blocks[id].label = text('label'); d.blocks[id].enabled = checked('enabled');
     if (id === 'header') { d.title = text('title'); d.repeatHeader = checked('repeatHeader'); }
-    if (id === 'header' && values.has('titleStyle.fontSize')) { const style = fieldStyle('titleStyle'); if (Object.keys(style).length) d.titleStyle = style; else delete d.titleStyle; }
+    if (id === 'header' && values.has('titleStyle.fontSize')) d = elementStyleChange(d,'header-title',fieldStyle('titleStyle')).design;
     if (id === 'items') { d.repeatTable = checked('repeatTable'); d.breakBefore = checked('breakBefore'); tableStyle(); }
     else if (values.has('layoutColumns')) {
       if (text('layoutColumns') || text('layoutGap')) d.blocks[id].layout = {columns:Number(values.get('layoutColumns') || 1),gap:Number(values.get('layoutGap') || 0)}; else delete d.blocks[id].layout;

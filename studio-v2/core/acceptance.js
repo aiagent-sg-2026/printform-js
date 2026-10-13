@@ -10,6 +10,8 @@ import { collectPaginationDiagnostics } from "./render-diagnostics.js";
 import { validateTrustedContent } from "./content-security.js";
 import { contrastFailures } from "./contrast.js";
 import { countBoundRows, measureBoundRows, resolveRowLimits, rowLimitErrors } from "./row-limits.js";
+import { inspectRowIntegrity } from "./row-integrity.js";
+import { inspectTemplateFormats } from "./binding-format.js";
 
 function error(code, message, path = "/") {
   return { code, message, path, severity: "error" };
@@ -39,7 +41,7 @@ export function validateProject(project, options = {}) {
   if (profile.valid) {
     const dataReport = validateData(project.schema, project.sampleData);
     errors.push(...dataReport.errors.map(prefixPath("/sampleData")));
-    if (dataReport.valid) errors.push(...validateBusinessRules(project.sampleData).errors);
+    if (dataReport.valid) errors.push(...validateBusinessRules(project.sampleData, manifest).errors);
   }
   errors.push(...validateI18n(project).errors);
   errors.push(...validateAssetSlots(project).errors);
@@ -57,6 +59,7 @@ export function validateProject(project, options = {}) {
     ...(manifest.acceptance || {})
   };
   const rowReport = measureBoundRows(project.sampleData, project.templateHtml);
+  errors.push(...inspectTemplateFormats(project.templateHtml, manifest));
   const rows = rowReport.total;
   errors.push(...rowLimitErrors(rowReport, resolveRowLimits(limits), "/sampleData"));
   if (!project.templateHtml || !project.templateHtml.includes("printform")) errors.push(error("PRINTFORM_ROOT_MISSING", "Template must contain a .printform root", "/template"));
@@ -129,44 +132,10 @@ export function inspectRenderedDocument(doc, manifest, options = {}) {
   const limit = manifest.acceptance?.maxLogicalPages || LIMITS.logicalPages;
   if (!pages.length) errors.push(error("PAGINATION_FAILED", "PrintForm did not produce logical pages"));
   if (pages.length > limit) errors.push(error("PAGE_LIMIT", `${pages.length} pages exceed the ${limit} page limit`));
-  // P0-B content-integrity check (docs/STUDIO_V2_ENGINEERING_ROADMAP.zh-CN.md
-  // "验证数量、顺序、重复与遗漏"): .prowitem rows are cloned-then-placed by
-  // the pagination engine, never split (unlike .ptac/.paddt long-text
-  // segments) — so the count of .prowitem_processed elements in the final
-  // output must exactly equal how many table rows data-pf-each bound. A mismatch
-  // means the pagination engine silently dropped or duplicated a data row,
-  // which no other check here would otherwise catch.
   const expectedRowCount = options.expectedRowCount;
   const rowNodes = Array.from(doc.querySelectorAll(".prowitem_processed"));
   const actualRowCount = rowNodes.length;
-  if (Number.isFinite(expectedRowCount) && actualRowCount !== expectedRowCount) {
-    errors.push(error("ROW_COUNT_MISMATCH", `Rendered ${actualRowCount} item row(s) but data binding produced ${expectedRowCount}; pagination may have dropped or duplicated a row`));
-  }
-  // Order/identity check: binding.js tags each row with its source-array
-  // position (data-pf-row-index) before pagination ever touches it. Older
-  // exported documents predating that attribute have none of these tags —
-  // skip gracefully rather than false-positive on every legacy export; the
-  // count check above still applies to them.
-  const taggedRows = rowNodes.filter((node) => node.hasAttribute("data-pf-row-index"));
-  if (taggedRows.length) {
-    const summarize = (values) => values.slice(0, 20).join(", ") + (values.length > 20 ? ` (+${values.length - 20} more)` : "");
-    const occurrences = new Map();
-    const sequence = taggedRows.map((node) => {
-      const index = Number(node.getAttribute("data-pf-row-index"));
-      occurrences.set(index, (occurrences.get(index) || 0) + 1);
-      return index;
-    });
-    const duplicates = Array.from(occurrences.entries()).filter(([, count]) => count > 1).map(([index]) => index).sort((a, b) => a - b);
-    if (duplicates.length) errors.push(error("ROW_DUPLICATE_INDEX", `Row index ${summarize(duplicates)} rendered more than once`));
-    if (Number.isFinite(expectedRowCount)) {
-      const missing = [];
-      for (let i = 0; i < expectedRowCount; i += 1) if (!occurrences.has(i)) missing.push(i);
-      if (missing.length) errors.push(error("ROW_MISSING_INDEX", `Row index ${summarize(missing)} never rendered`));
-    }
-    if (!sequence.every((value, i) => i === 0 || value > sequence[i - 1])) {
-      errors.push(error("ROW_ORDER_MISMATCH", "Rendered rows are not in the same order as the source data"));
-    }
-  }
+  errors.push(...inspectRowIntegrity(rowNodes, options));
   const overflow = pageList.flatMap((page, pageIndex) => {
     const pageRect = page.getBoundingClientRect();
     return Array.from(page.querySelectorAll("table,td,th,img,[data-pf-text],[data-pf-href]")).filter((node) => {

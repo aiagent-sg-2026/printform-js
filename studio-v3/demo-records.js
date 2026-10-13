@@ -8,7 +8,7 @@ export const DEMO_SCENARIOS = [
   {id:'campus',name:'Campus multi-building rollout',customerId:'customer:fern',supplierId:'supplier:juniper',personId:'person:hana',count:64,start:'2026-08-01'}
 ];
 export const recordId = (kind,scenario) => `demo:${kind}:${scenario.id}`;
-const prefixes = {SalesQuotation:'SQ',SalesOrder:'SO',SalesOrderConfirmation:'SOC',DeliveryOrder:'DO',DeliveryOrderConfirmation:'DOC',SalesInvoice:'SI',PurchaseOrder:'PO',PurchaseInvoice:'PI',BankReceipt:'BR',BankPayment:'BP',EnterpriseProject:'PRJ',ProgressClaim:'PCL',CertifiedClaim:'CERT',AccountsReceivableClaim:'AR',AccountsPayableClaim:'AP'};
+const prefixes = {SalesQuotation:'SQ',SalesOrder:'SO',SalesOrderConfirmation:'SOC',DeliveryOrder:'DO',DeliveryOrderConfirmation:'DOC',SalesInvoice:'SI',PurchaseOrder:'PO',PurchaseInvoice:'PI',BankReceipt:'BR',BankPayment:'BP',EnterpriseProject:'PRJ',ProgressClaim:'PCL',CertifiedClaim:'CERT',PCAR:'PCAR',CCAR:'CCAR',AccountsReceivableClaim:'AR',AccountsPayableClaim:'AP'};
 export function makeDemoRecord(kind,scenario,items,options = {}) {
   const definition = demoKind(kind), id = options.id || recordId(kind,scenario);
   const person = demoMaster('salespeople',scenario.personId);
