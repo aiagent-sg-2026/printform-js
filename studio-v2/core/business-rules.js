@@ -14,8 +14,9 @@ export function calculateFinancialTotals(data) {
   return { subtotal, grandTotal: money(subtotal + tax + shipping - discount) };
 }
 
-export function validateBusinessRules(data) {
+export function validateBusinessRules(data, manifest = {}) {
   const errors = [];
+  if (manifest.businessRules === false || manifest.studioV3) return {valid:true, errors};
   const items = Array.isArray(data?.items) ? data.items : [];
   items.forEach((item, index) => {
     if ([item?.quantity, item?.unitPrice, item?.lineTotal].every((value) => typeof value === "number")) {

@@ -192,6 +192,9 @@ import { parseBooleanFlag, parseNumber, parseString, resolvePaperDimensions } fr
       ...datasetConfig,
       ...overrides
     };
+    CONFIG_DESCRIPTORS.forEach(({ key, parser, defaultValue }) => {
+      merged[key] = parser(merged[key], defaultValue);
+    });
     merged.customDummyRowItemContent = resolveTemplateOverride(
       formEl,
       "custom-dummy-row-item-content",
@@ -230,6 +233,9 @@ import { parseBooleanFlag, parseNumber, parseString, resolvePaperDimensions } fr
         merged.papersizeHeight = resolved.height;
       }
     }
+    ["papersizeWidth", "papersizeHeight", "heightOfDummyRowItem"].forEach((key) => {
+      if (merged[key] <= 0) merged[key] = DEFAULT_CONFIG[key];
+    });
     return merged;
   }
 
@@ -274,8 +280,10 @@ import { parseBooleanFlag, parseNumber, parseString, resolvePaperDimensions } fr
     for (var k1 in legacy) { if (Object.prototype.hasOwnProperty.call(legacy, k1)) merged[k1] = legacy[k1]; }
     for (var k2 in datasetConfig) { if (Object.prototype.hasOwnProperty.call(datasetConfig, k2)) merged[k2] = datasetConfig[k2]; }
     for (var k3 in overrides) { if (Object.prototype.hasOwnProperty.call(overrides, k3)) merged[k3] = overrides[k3]; }
-    merged.paddtDebug = parseBooleanFlag(merged.paddtDebug, DEFAULT_PADDT_CONFIG.paddtDebug);
-    merged.paddtMaxWordsPerSegment = parseNumber(merged.paddtMaxWordsPerSegment, DEFAULT_PADDT_CONFIG.paddtMaxWordsPerSegment);
+    PADDT_CONFIG_DESCRIPTORS.forEach(({ key, parser, defaultValue }) => {
+      merged[key] = parser(merged[key], defaultValue);
+    });
+    merged.paddtMaxWordsPerSegment = Math.floor(merged.paddtMaxWordsPerSegment);
     if (!Number.isFinite(merged.paddtMaxWordsPerSegment) || merged.paddtMaxWordsPerSegment <= 0) {
       merged.paddtMaxWordsPerSegment = DEFAULT_PADDT_CONFIG.paddtMaxWordsPerSegment;
     }

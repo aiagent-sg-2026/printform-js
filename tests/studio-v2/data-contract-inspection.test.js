@@ -81,3 +81,15 @@ describe("applyDataContractEdits", () => {
     expect("maxLength" in schema.properties.invoiceNumber).toBe(false);
   });
 });
+
+it("round-trips RFC6901 slash, tilde and empty property tokens through inspection and editing", () => {
+  const schema = {type:"object",properties:{"a/b":{type:"object",properties:{"a~b":{type:"object",properties:{"":{type:"string"}}}}}}};
+  const data = {"a/b":{"a~b":{"":"before"}}};
+  const leaf = inspectDataContract(schema,data)[0].fields[0].fields[0];
+  expect(leaf.path).toBe("/a~1b/a~0b/");
+  const next = applyDataContractEdits(schema,data,{[leaf.path]:{sampleValue:"after",maxLength:10,required:true}});
+  expect(next.sampleData["a/b"]["a~b"][""]).toBe("after");
+  expect(next.schema.properties["a/b"].properties["a~b"].properties[""].maxLength).toBe(10);
+  expect(next.schema.properties["a/b"].properties["a~b"].required).toEqual([""]);
+  expect(data["a/b"]["a~b"][""]).toBe("before");
+});

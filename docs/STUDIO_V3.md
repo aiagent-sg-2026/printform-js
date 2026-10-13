@@ -147,6 +147,24 @@ and item `rate`/`amount` bindings intentionally avoid the v2 sample-specific
 financial rules. Studio validates presence/types and formats values; it does
 not derive financial values. Synthetic sample fixtures are demonstration data.
 
+ERP business kinds, PCAR/CCAR stage semantics, print formats and acceptance limits
+are defined in the [ERP support contract](ERP_PRINT_SUPPORT.zh-CN.md).
+The [ERP audit](ERP_PRINT_AUDIT.zh-CN.md) separates repaired defects from remaining
+gaps; generic family scenarios are not per-business-kind acceptance evidence.
+
+The [Globe3 claim business/import contract](ERP_CLAIM_BUSINESS_CONTRACT.zh-CN.md)
+distinguishes raw CCAR financial-tab coverage (`/financialRows`) from canonical
+PCAR (`entp_pbill`, explicit prior-certified or stored-last-claim basis); no full
+raw PCAR database adapter is claimed. The project creators emit financial print
+string snapshots, not a monetary engine: refresh ERP inputs and rerun the creator
+when amounts or precision change; editing raw JSON alone does not regenerate
+formatted projections. Portable project Open/save/export is separate from the
+legacy dataset workbench, which still requires `items` and is not certified for
+raw ledgers. Studio creators support MYR/USD/SGD/EUR/CNY/JPY and precision 0..6.
+Corrected-basis fictional seeds have separate identities, preserve user records,
+and dataset selection checks basis and collection. Production Pilot remains.
+
+
 ## File and data boundaries
 
 Saved sample datasets use IndexedDB `printform-studio-v3-demo-db` version 1,

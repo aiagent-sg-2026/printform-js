@@ -94,9 +94,9 @@ E13-SERVER 接受测试位于 `tests/studio-v2/server-transaction.test.js`，覆
 | 规则 | 说明 |
 |---|---|
 | 自动执行 | 脚本加载时若文档已就绪立即排版，否则等 `load` + 延迟（移动端 150ms / 桌面 50ms） |
-| 防重入 | 二次调用 `formatAll()` 无操作，除非 `{ force: true }` |
+| 批次完成与防重入 | `formatAll()` 处理当前源单据（含后来追加）；并发共享 Promise。成功返回 `{formattedCount,failedCount:0}`；失败抛 `AggregateError` 与 `error.report`，失败源单据保留 |
 | 行级换页 | `tb_page_break_before` 强制该行前换页；PTAC/PADDT 长文切分出的克隆段**不继承**该 class |
-| 小计+页脚组合 | `prowitem_subtotal` 后紧跟 `prowitem_footer` 时按组合高度整体测试，放不下整组下移 |
+| 小计+页脚组合 | 同一 table ID 的 `prowitem_subtotal` 后紧跟 `prowitem_footer` 时按组合高度整体测试，放不下整组下移；不同 table 不合并 |
 | 行头跳过 | `without_prowheader`/`tb_without_rowheader` 行级豁免；PTAC/PADDT 有独立 `repeat_*_rowheader` 开关 |
 | PADDT 后置 | PADDT 行在全部常规页脚之后另起物理页渲染，仅带 logo 与页码页脚，docinfo 按 `repeat_paddt_docinfo*` 过滤 |
 | 纸张预设 | `data-paper-size`（A4/A5/LETTER/LEGAL）+ `data-orientation` + `data-dpi` 可代替手工宽高；手工值优先 |

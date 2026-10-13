@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { installPrintFormDocument } from "../../studio-v2/core/runtime.js";
 import { createSalesInvoiceProject } from "../../studio-v2/samples/sales-invoice.js";
+import { calculateFinancialTotals } from "../../studio-v2/core/business-rules.js";
 
 function installSections(project) {
   document.documentElement.lang = "en-MY";
@@ -53,6 +54,7 @@ describe("PrintFormDocument runtime", () => {
   it("binds valid rows and returns a layout report", async () => {
     const project = createSalesInvoiceProject();
     project.sampleData.items = project.sampleData.items.slice(0, 1);
+    Object.assign(project.sampleData.totals, calculateFinancialTotals(project.sampleData));
     project.templateHtml = project.templateHtml.replace(/<img\b[^>]*>/gi, "");
     installSections(project);
     window.PrintForm = { formatAll: async () => {
@@ -72,6 +74,7 @@ describe("PrintFormDocument runtime", () => {
   it("blocks with ROW_COUNT_MISMATCH when pagination renders a different row count than the binder produced", async () => {
     const project = createSalesInvoiceProject();
     project.sampleData.items = project.sampleData.items.slice(0, 2);
+    Object.assign(project.sampleData.totals, calculateFinancialTotals(project.sampleData));
     project.templateHtml = project.templateHtml.replace(/<img\b[^>]*>/gi, "");
     installSections(project);
     window.PrintForm = { formatAll: async () => {

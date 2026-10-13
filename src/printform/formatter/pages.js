@@ -41,7 +41,8 @@ function buildDummySpacer(config, remaining, debug) {
 
 export function attachPageMethods(FormatterClass) {
   FormatterClass.prototype.initializeOutputContainer = function initializeOutputContainer() {
-    const container = document.createElement("div");
+    const container = this.formEl.cloneNode(false);
+    container.classList.remove("printform");
     container.classList.add("printform_formatter");
     // iOS/Android (WebKit) may auto-adjust text sizes, which breaks fixed-height pagination.
     // Keep it scoped to the formatter output to avoid unexpected global side effects.
@@ -136,6 +137,10 @@ export function attachPageMethods(FormatterClass) {
         }
         appendedSpacerHeight = remaining;
       }
+    }
+    const actualHeight = DomHelpers.measureHeightRaw(pageContainer);
+    if (actualHeight > configuredHeight + 0.01) {
+      throw new RangeError(`Printform logical page exceeds configured height (${actualHeight}px > ${configuredHeight}px); unsplittable content or chrome does not fit`);
     }
 
     if (this.debug) {

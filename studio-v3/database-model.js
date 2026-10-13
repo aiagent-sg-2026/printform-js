@@ -133,6 +133,9 @@ export const sameData = (a,b) => JSON.stringify(a) === JSON.stringify(b);
 export function datasetMatchesProject(record,project) {
   const type=project.manifest.studioV3.type,kind=project.sampleData.document?.kind,recordKind=record.data.document?.kind;
   if(record.type!==type)return false;
+  const profile=project.sampleData.claim?.basisProfile;
+  if(profile && record.data.claim?.basisProfile!==profile)return false;
+  if(!Array.isArray(dataValue(record.data,project.manifest.studioV3.collection)))return false;
   if(kind)return recordKind===kind;
   return !recordKind || recordKind==={invoice:'SalesInvoice',purchase:'PurchaseOrder',delivery:'DeliveryOrder'}[type];
 }

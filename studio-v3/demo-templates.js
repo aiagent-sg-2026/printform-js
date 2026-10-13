@@ -30,13 +30,41 @@ export function newDemoProject(kind) {
     design.columns=[column('no','#','./no',7),column('description','Allocation / reference','./description',68),column('amount','Amount','./amount',25,'currency')];
     design.totals=[field('allocated','Allocated','/summary/allocatedAmount','currency'),field('unapplied','Unapplied','/summary/unappliedAmount','currency'),field('total',kind==='BankReceipt'?'Receipt total':'Payment total','/summary/total','currency')];
   }
-  if(kind==='EnterpriseProject' || ['ProgressClaim','CertifiedClaim','AccountsReceivableClaim'].includes(kind)) {
+  if(kind==='EnterpriseProject' || ['ProgressClaim','CertifiedClaim','PCAR','CCAR','AccountsReceivableClaim'].includes(kind)) {
     design.customer.push(field('project-name','Project','/project/name'),field('contract-reference','Contract','/project/contractReference'));
     design.header.push(field('contract-value','Contract value','/project/contractValue','currency'));
   }
-  if(['ProgressClaim','CertifiedClaim'].includes(kind)) {
-    design.columns=[column('no','#','./no',5),column('description','Work description','./description',35),column('previous','Previous','./previousWork',15,'currency'),column('current','Current','./currentWork',15,'currency'),column('cumulative','Cumulative','./cumulativeWork',15,'currency'),column('amount','Net amount','./amount',15,'currency')];
-    design.totals=[field('previous','Previous claim (excl. tax)','/summary/previousClaim','currency'),field('current','Current claim (excl. tax)','/summary/currentClaim','currency'),field('cumulative','Cumulative claim (excl. tax)','/summary/cumulativeClaim','currency'),field('retention','Current retention','/summary/retention','currency'),...(kind==='CertifiedClaim'?[field('certified','Certified (excl. tax)','/summary/certifiedAmount','currency')]:[]),field('tax','Tax','/summary/tax','currency'),field('total','Current total (incl. tax)','/summary/total','currency')];
+  if(['ProgressClaim','CertifiedClaim','PCAR','CCAR'].includes(kind)) {
+    design.columns=[column('no','#','./no',5),column('description','Work description','./description',35),column('previous','Previous','./previousWork',15,'currency'),column('current','Current','./currentWork',15,'currency'),column('cumulative','Cumulative','./cumulativeWork',15,'currency'),column('amount','After retention','./amount',15,'currency')];
+    design.totals=[field('previous','Previous claim (excl. tax)','/summary/previousClaim','currency'),field('current','Current claim (excl. tax)','/summary/currentClaim','currency'),field('cumulative','Cumulative claim (excl. tax)','/summary/cumulativeClaim','currency'),field('retention','Current retention','/summary/retention','currency'),...(['CertifiedClaim','CCAR'].includes(kind)?[field('certified','Certified (excl. tax)','/summary/certifiedAmount','currency')]:[]),field('tax','Tax','/summary/tax','currency'),field('total','Current total (incl. tax)','/summary/total','currency')];
+  }
+  if(['PCAR','CCAR'].includes(kind)) {
+    // Receivable summaries must be independently pageable, not one oversized legacy footer.
+    design.page={paper:'A4',orientation:'portrait',margins:{top:22,right:22,bottom:22,left:22}};
+    design.layoutPreset='progress-certificate';
+    design.repeatHeader=false;
+    design.titleStyle={fontSize:16,bold:true};
+    design.blocks.header.layout={columns:2,gap:8};
+    design.blocks.totals.layout={columns:2,gap:12};
+    design.blocks.footer.layout={columns:2,gap:12};
+    design.blocks.customer.keepTogether=true;
+    design.blocks.totals.keepTogether=true;
+    design.customer=design.customer.filter(f=>!f.id.startsWith('ship'));
+    design.columns.find(c=>c.id==='previous').label='Previous certified cumulative';
+    design.columns.find(c=>c.id==='current').label='Current movement';
+    design.columns.find(c=>c.id==='amount').label='Current net';
+    design.totals.find(f=>f.id==='previous').label='Previous certified net (excl. tax)';
+    design.totals.find(f=>f.id==='current').label='Current net (excl. tax)';
+    design.totals.push(field('on-hold','Current on-hold movement','/summary/onHold','currency'));
+    design.header.push(field('previous-certificate','Previous certificate','/claim/previousCertificateNumber'));
+    design.footer.push(field('claim-basis','Current calculation basis','/claim/basis'),field('balance-basis','Balance meaning','/claim/balanceBasis'));
+    design.header.push(field('claim-period','Claim period','/claim/period'),field('claim-from','Period from','/claim/periodStart'),field('claim-to','Period to','/claim/periodEnd'),field('claim-source','Source document','/claim/sourceDocumentNumber'),field('claim-status','Receivable status','/document/status'));
+    if(kind==='CCAR') {
+      design.header.push(field('certified-by','Certified by','/certification/certifiedBy'),field('certified-date','Certified on','/certification/date'));
+      design.header.push(field('pcar-application','PCAR application','/claim/applicationDocumentNumber'));
+      design.totals.push(field('application','Application total (incl. tax)','/summary/applicationAmount','currency'),field('certification-adjustment','Application less certified (incl. tax)','/summary/certificationAdjustmentAmount','currency'));
+    }
+    design.totals.push(field('paid','Recorded paid amount (demo)','/summary/paidAmount','currency'),field('outstanding',kind==='PCAR'?'Provisional application balance':'Certified request balance (not ledger AR)','/summary/outstandingAmount','currency'));
   }
   return compileProject(project,applyA4DemoDesign(design,kind));
 }

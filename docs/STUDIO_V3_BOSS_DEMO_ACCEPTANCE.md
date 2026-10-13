@@ -43,7 +43,19 @@ All rows begin **not yet verified for this change**. A mocked provider test is n
 
 Use conspicuously fictional companies, `.example` contact addresses, fixed reproducible dates and explicit synthetic identifiers. Include Sales Quotation, Sales Order, Sales Order Confirmation, Delivery Order, Delivery Order Confirmation, Sales Invoice, Purchase Order, Purchase Invoice, Bank Receipt, Bank Payment, Enterprise Project, Progress Claim, Certified Claim, and neutral Accounts Receivable/Payable Claim examples.
 
-Keep spoken `PCA`, `CCAR`, `PCAP`, `CCAP` as pending definitions. Do not assign business semantics until confirmed. Fixture calculations are generation-time test data; the form renderer continues to consume supplied amounts without silently recomputing business transactions.
+`PCAR` means Progress Claim Account Receivable and `CCAR` means Certified Claim Account Receivable, confirmed by the user on 2026-10-13. They now have distinct source-linked receivable-stage templates and three-period fictional datasets. `PCA`, `PCAP`, `CCAP` remain pending. See the [ERP support contract](ERP_PRINT_SUPPORT.zh-CN.md); fixture arithmetic never recomputes live ERP values.
+
+Globe3 follow-up (2026-10-14): corrected fictional PCAR uses prior cumulative
+CCAR certification, not the previous application, for its movement basis.
+Stored Last Claim is a separate explicitly selected profile. The
+[claim business/import contract](ERP_CLAIM_BUSINESS_CONTRACT.zh-CN.md) records raw
+CCAR financial-tab coverage versus canonical-only PCAR coverage, snapshot
+refresh requirements, six-currency/precision limits and the legacy `items`
+workbench boundary. New corrected-basis records preserve retained user data;
+dataset compatibility checks basis and collection. Provisional balances are not
+automatically booked AR. This amendment gives no new test/browser pass credit
+and does not replace the historical checkpoints below or upgrade Production Pilot.
+
 
 ## Approvals and external prerequisites
 
@@ -52,6 +64,7 @@ Existing GPTDemo/Pi endpoint reuse is authorized. New credentials, model grants,
 ## Implemented local preparation (2026-10-02)
 
 - 15 defined business kinds and 48 fictional records, plus the three retained legacy starters and a separate compact A5 preset record. Shared masters include addresses, parties, salespeople, departments, business units, terms, products, currencies and an explicitly fictional clearing ledger.
+- Current extension (2026-10-13): PCAR and CCAR add six source-linked fictional receivable records. The earlier 15-kind/48-record checkpoint is historical; current ERP audit evidence is tracked separately, not retroactively credited to the boss-demo gate.
 - Deterministic integer-minor-unit calculations and tests reconcile tax, discounts, partial deliveries, invoice allocations and three cumulative claim/certificate periods. The independent USD quotation is authored in USD, not a simulated FX conversion.
 - Template headings/fields are business-specific. Discount amounts, quotation validity, dispatch/receipt dates and claim tax basis are explicit. Source selection is filtered to the template's business kind; currency changes atomically with its data and participates in Undo.
 - The read-only dataset adapter exposes bounded identity listing, revision-aware record reading and value-free schema inspection. A future production adapter needs authenticated server-side authorization and its own deployment acceptance; it must not accept SQL or browser-held database credentials.

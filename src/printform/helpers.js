@@ -84,6 +84,12 @@ export function normalizeHeight(value) {
   return Math.max(0, Math.ceil(num - epsilon));
 }
 
+export function selectIncludingRoot(element, selector) {
+  const targets = Array.from(element.querySelectorAll(selector));
+  if (element.matches?.(selector)) targets.unshift(element);
+  return targets;
+}
+
 function ensurePageNumberPlaceholder(element) {
   if (!element) return null;
   if (element.__pageNumberPlaceholder) {
@@ -91,7 +97,8 @@ function ensurePageNumberPlaceholder(element) {
   }
   const doc = element.ownerDocument || (typeof document !== "undefined" ? document : null);
   if (!doc) return null;
-  let container = element.querySelector("[data-page-number-container]");
+  let container = element.matches?.("[data-page-number-container]")
+    ? element : element.querySelector("[data-page-number-container]");
   if (!container) {
     container = element.querySelector("td:last-child") || element.querySelector("td") || element;
   }
@@ -109,7 +116,8 @@ function ensurePhysicalPageNumberPlaceholder(element) {
   }
   const doc = element.ownerDocument || (typeof document !== "undefined" ? document : null);
   if (!doc) return null;
-  let container = element.querySelector("[data-physical-page-number-container]");
+  let container = element.matches?.("[data-physical-page-number-container]")
+    ? element : element.querySelector("[data-physical-page-number-container]");
   if (!container) {
     container = element.querySelector("td:last-child") || element.querySelector("td") || element;
   }
@@ -122,13 +130,13 @@ function ensurePhysicalPageNumberPlaceholder(element) {
 
 export function updatePageNumberContent(element, pageNumber, totalPages) {
   if (!element) return;
-  const numberTargets = element.querySelectorAll("[data-page-number]");
+  const numberTargets = selectIncludingRoot(element, "[data-page-number]");
   if (numberTargets.length > 0) {
     numberTargets.forEach(function(target) {
       target.textContent = pageNumber;
     });
   }
-  const totalTargets = element.querySelectorAll("[data-page-total]");
+  const totalTargets = selectIncludingRoot(element, "[data-page-total]");
   const totalValue = totalPages !== undefined && totalPages !== null ? totalPages : "";
   if (totalTargets.length > 0) {
     totalTargets.forEach(function(target) {
@@ -147,13 +155,13 @@ export function updatePageNumberContent(element, pageNumber, totalPages) {
 
 export function updatePhysicalPageNumberContent(element, pageNumber, totalPages) {
   if (!element) return;
-  const numberTargets = element.querySelectorAll("[data-physical-page-number]");
+  const numberTargets = selectIncludingRoot(element, "[data-physical-page-number]");
   if (numberTargets.length > 0) {
     numberTargets.forEach(function(target) {
       target.textContent = pageNumber;
     });
   }
-  const totalTargets = element.querySelectorAll("[data-physical-page-total]");
+  const totalTargets = selectIncludingRoot(element, "[data-physical-page-total]");
   const totalValue = totalPages !== undefined && totalPages !== null ? totalPages : "";
   if (totalTargets.length > 0) {
     totalTargets.forEach(function(target) {

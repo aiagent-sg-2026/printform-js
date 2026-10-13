@@ -16,7 +16,7 @@ import { attachPaginationFinalizeMethods } from "./pagination-finalize.js";
 import { createPrintformDebugSession } from "../debug.js";
 
 export class PrintFormFormatter {
-  constructor(formEl, config) {
+  constructor(formEl, config, overrides = {}) {
     this.formEl = formEl;
     this.config = config;
     this.debug = Boolean(config.debug);
@@ -24,7 +24,7 @@ export class PrintFormFormatter {
     this.showLogicalPageNumber = config.showLogicalPageNumber !== false;
     this.showPhysicalPageNumber = Boolean(config.showPhysicalPageNumber);
     // paddt 独立配置 (中文解释: paddt 专用配置)
-    this.paddtConfig = getPaddtConfig(formEl, {});
+    this.paddtConfig = getPaddtConfig(formEl, overrides);
     this.paddtDebug = Boolean(this.paddtConfig.paddtDebug);
     this.currentPage = 1;
     this.currentPhysicalPage = 0;
@@ -34,6 +34,7 @@ export class PrintFormFormatter {
     this.logicalPageNumberClones = [];
     this.physicalPageNumberClones = [];
     this.logicalPageToPhysicalPage = [];
+    this.seenTableHeaders = new Set();
     // 初始化时输出 debug 状态
     if (this.debug) {
       console.log(`[printform] ===== PrintFormFormatter initialized =====`);
@@ -57,8 +58,14 @@ export class PrintFormFormatter {
     debugSession.install();
 
     const logFn = this.debug ? this.log.bind(this) : null;
+    const source = this.formEl;
+    const workingForm = source.cloneNode(true);
+    let container;
     try {
-      const container = this.initializeOutputContainer();
+      source.parentNode.insertBefore(workingForm, source);
+      workingForm.style.width = `${this.config.papersizeWidth}px`;
+      this.formEl = workingForm;
+      container = this.initializeOutputContainer();
       this.ensureCurrentPageContainer(container);
       const sections = this.collectSections();
       const heights = this.measureSections(sections);
@@ -175,9 +182,14 @@ export class PrintFormFormatter {
 
       container.classList.remove("printform_formatter");
       container.classList.add("printform_formatter_processed");
-      this.formEl.remove();
+      source.remove();
       return container;
+    } catch (error) {
+      if (container) container.remove();
+      throw error;
     } finally {
+      workingForm.remove();
+      this.formEl = source;
       debugSession.uninstall();
     }
   }

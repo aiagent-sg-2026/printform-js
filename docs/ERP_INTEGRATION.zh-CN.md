@@ -1,7 +1,8 @@
-# ERP 集成指南:数据绑定导出包
+# ERP 集成指南：legacy v1 数据绑定导出包
 
-> 面向:需要把 PrintForm.js 模板接入 ERP/后端系统(ColdFusion、Node、PHP、任何能输出 JSON 的技术栈)的开发者。
-> 前置阅读:[STUDIO_DESIGN.zh-CN.md](STUDIO_DESIGN.zh-CN.md) Phase 3 一节。
+> 本文只描述冻结的 Studio v1 Mustache 导出包，不是当前 v2/v3 的 JSON Pointer 协议。
+> 新集成先读 [ERP 单据/格式支持契约](ERP_PRINT_SUPPORT.zh-CN.md)、[审计与改进清单](ERP_PRINT_AUDIT.zh-CN.md) 及 [v2 协议](PRINTFORM_V2_PROTOCOL.zh-CN.md)。
+> 面向任何能输出 JSON 的 ERP/后端；v1 背景见 [STUDIO_DESIGN.zh-CN.md](STUDIO_DESIGN.zh-CN.md) Phase 3。
 
 ---
 
@@ -56,6 +57,7 @@ PrintFormTemplate.render(realData);
   </div>
 </template>
 <script>/* mustache-lite.js 全文内联 */</script>
+<script src="./dist/printform.js"></script>
 <script>
   window.PrintFormTemplate = {
     render: function (data) {
@@ -67,7 +69,6 @@ PrintFormTemplate.render(realData);
   };
   window.PrintFormTemplate.render(/* Studio 里最后编辑的示例数据,直接打开文件也能看到内容 */);
 </script>
-<script src="./dist/printform.js"></script>
 ```
 
 `render(data)` 可以反复调用——每次都会用新数据重新生成 `.printform` 容器并强制重新分页,不受 PrintForm.js "分页只跑一次"的保护逻辑影响。

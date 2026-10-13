@@ -13,6 +13,7 @@ export function attachRenderingMethods(FormatterClass) {
     let consumedHeight = 0;
     if (sections.header) {
       const clone = appendPageChromeOnce(container, sections.header, logFn, "pheader");
+      this.registerPageNumberClone(clone);
       if (clone && !this.config.repeatHeader) {
         consumedHeight += heights.header;
       }
@@ -27,6 +28,8 @@ export function attachRenderingMethods(FormatterClass) {
     const rowHeader = this.getSectionRowHeader(sections, tableId);
     if (rowHeader && !skipRowHeader) {
       const clone = appendPageChromeOnce(container, rowHeader, logFn, "prowheader");
+      (this.seenTableHeaders ||= new Set()).add(tableId);
+      this.registerPageNumberClone(clone);
       if (clone && !this.isRowHeaderRepeated(sections, tableId)) {
         consumedHeight += heights.rowHeaders?.[tableId] ?? heights.rowHeader ?? 0;
       }
@@ -36,7 +39,7 @@ export function attachRenderingMethods(FormatterClass) {
 
   FormatterClass.prototype.appendRepeatingSections = function appendRepeatingSections(container, sections, logFn, skipRowHeader, tableId = "default") {
     if (this.config.repeatHeader) {
-      appendPageChromeOnce(container, sections.header, logFn, "pheader");
+      this.registerPageNumberClone(appendPageChromeOnce(container, sections.header, logFn, "pheader"));
     }
     sections.docInfos.forEach((docInfo) => {
       if (this.config[docInfo.repeatFlag]) {
@@ -46,19 +49,25 @@ export function attachRenderingMethods(FormatterClass) {
     });
     const rowHeader = this.getSectionRowHeader(sections, tableId);
     if (this.isRowHeaderRepeated(sections, tableId) && rowHeader && !skipRowHeader) {
-      appendPageChromeOnce(container, rowHeader, logFn, "prowheader");
+      this.registerPageNumberClone(appendPageChromeOnce(container, rowHeader, logFn, "prowheader"));
+      (this.seenTableHeaders ||= new Set()).add(tableId);
     }
   };
 
-  FormatterClass.prototype.ensureActiveTableHeader = function ensureActiveTableHeader(container, sections, logFn, tableId) {
-    if (!this.isRowHeaderRepeated(sections, tableId)) return null;
+  FormatterClass.prototype.ensureActiveTableHeader = function ensureActiveTableHeader(container, sections, logFn, tableId, skipRowHeader = false) {
+    if (skipRowHeader) return null;
+    const seen = (this.seenTableHeaders ||= new Set());
+    if (seen.has(tableId) && !this.isRowHeaderRepeated(sections, tableId)) return null;
     const rowHeader = this.getSectionRowHeader(sections, tableId);
     if (!rowHeader) return null;
     const hasHeader = Array.from(container.querySelectorAll(".prowheader_processed")).some(
       (node) => this.getRowTableId(node) === tableId,
     );
     if (hasHeader) return null;
-    return appendPageChromeOnce(container, rowHeader, logFn, "prowheader");
+    const clone = appendPageChromeOnce(container, rowHeader, logFn, "prowheader");
+    if (clone) seen.add(tableId);
+    this.registerPageNumberClone(clone);
+    return clone;
   };
 
   FormatterClass.prototype.registerPageNumberClone = function registerPageNumberClone(node) {
@@ -68,7 +77,9 @@ export function attachRenderingMethods(FormatterClass) {
     let registered = false;
 
     if (this.showLogicalPageNumber) {
-      if (node.querySelector("[data-page-number], [data-page-total], [data-page-number-container]")) {
+      if (node.matches?.("[data-page-number], [data-page-total], [data-page-number-container]") ||
+          node.querySelector("[data-page-number], [data-page-total], [data-page-number-container]") ||
+          node.classList.contains("pfooter_pagenum_processed")) {
         updatePageNumberContent(node, this.currentPage, null);
         this.logicalPageNumberClones.push({ node, pageNumber: this.currentPage });
         registered = true;
@@ -76,7 +87,8 @@ export function attachRenderingMethods(FormatterClass) {
     }
 
     if (this.showPhysicalPageNumber) {
-      if (node.querySelector("[data-physical-page-number], [data-physical-page-total], [data-physical-page-number-container]")) {
+      if (node.matches?.("[data-physical-page-number], [data-physical-page-total], [data-physical-page-number-container]") ||
+          node.querySelector("[data-physical-page-number], [data-physical-page-total], [data-physical-page-number-container]")) {
         const physicalPage = this.logicalPageToPhysicalPage[this.currentPage] || this.currentPhysicalPage || 1;
         updatePhysicalPageNumberContent(node, physicalPage, null);
         this.physicalPageNumberClones.push({ node, pageNumber: physicalPage });
@@ -90,11 +102,11 @@ export function attachRenderingMethods(FormatterClass) {
   FormatterClass.prototype.appendRepeatingFooters = function appendRepeatingFooters(container, sections, logFn) {
     sections.footerVariants.forEach((footer) => {
       if (this.config[footer.repeatFlag]) {
-        DomHelpers.appendClone(container, footer.element, logFn, footer.className);
+        this.registerPageNumberClone(DomHelpers.appendClone(container, footer.element, logFn, footer.className));
       }
     });
     if (this.config.repeatFooterLogo) {
-      DomHelpers.appendClone(container, sections.footerLogo, logFn, FOOTER_LOGO_VARIANT.className);
+      this.registerPageNumberClone(DomHelpers.appendClone(container, sections.footerLogo, logFn, FOOTER_LOGO_VARIANT.className));
     }
     if (this.config.repeatFooterPagenum) {
       this.appendFooterPageNumber(container, sections, logFn);
@@ -103,9 +115,9 @@ export function attachRenderingMethods(FormatterClass) {
 
   FormatterClass.prototype.appendFinalFooters = function appendFinalFooters(container, sections, logFn) {
     sections.footerVariants.forEach((footer) => {
-      DomHelpers.appendClone(container, footer.element, logFn, footer.className);
+      this.registerPageNumberClone(DomHelpers.appendClone(container, footer.element, logFn, footer.className));
     });
-    DomHelpers.appendClone(container, sections.footerLogo, logFn, FOOTER_LOGO_VARIANT.className);
+    this.registerPageNumberClone(DomHelpers.appendClone(container, sections.footerLogo, logFn, FOOTER_LOGO_VARIANT.className));
     this.appendFooterPageNumber(container, sections, logFn);
   };
 

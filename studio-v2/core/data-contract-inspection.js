@@ -1,4 +1,4 @@
-import { cloneJson } from "./json.js";
+import { cloneJson, encodePointerToken, pointerTokens } from "./json.js";
 
 // Read-only walker over a project's JSON Schema + sample data, for the P1
 // Data contract panel. Deliberately scoped to "view structure, edit existing
@@ -25,7 +25,7 @@ function walkObjectSchema(schema, sampleValue, pathPrefix) {
   const properties = schema.properties || {};
   return Object.keys(properties).map((key) => {
     const propSchema = properties[key];
-    const path = `${pathPrefix}/${key}`;
+    const path = `${pathPrefix}/${encodePointerToken(key)}`;
     const isRequired = required.has(key);
     const value = sampleValue && typeof sampleValue === "object" ? sampleValue[key] : undefined;
     if (propSchema.type === "object") {
@@ -44,7 +44,7 @@ export function inspectDataContract(schema, sampleData) {
 }
 
 function splitPath(path) {
-  return String(path || "").split("/").filter(Boolean);
+  return pointerTokens(path);
 }
 
 function schemaParentAndKey(schema, path) {

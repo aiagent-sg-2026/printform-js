@@ -1,6 +1,6 @@
 /* eslint-disable no-console */
 
-import { PADDT_MAX_WORDS_PER_SEGMENT, splitPaddtParagraphIntoHtmlChunks } from "../text.js";
+import { PADDT_MAX_WORDS_PER_SEGMENT, collectHtmlSegments } from "../text.js";
 
 export function attachPaddtSegmentMethods(FormatterClass) {
   FormatterClass.prototype.expandPaddtSegments = function expandPaddtSegments() {
@@ -27,7 +27,7 @@ export function attachPaddtSegmentMethods(FormatterClass) {
         return;
       }
 
-      const allChildren = Array.from(contentWrapper.children);
+      const allChildren = Array.from(contentWrapper.childNodes);
 
       if (allChildren.length === 0) {
         paddtRoot.classList.add("paddt-rowitem", "paddt_segment");
@@ -35,16 +35,7 @@ export function attachPaddtSegmentMethods(FormatterClass) {
         return;
       }
 
-      const segments = [];
-
-      allChildren.forEach(child => {
-        if (child.tagName.toLowerCase() === "p") {
-          const chunks = splitPaddtParagraphIntoHtmlChunks(child, maxWords);
-          chunks.forEach(chunk => segments.push(chunk));
-        } else {
-          segments.push(child.outerHTML);
-        }
-      });
+      const segments = collectHtmlSegments(contentWrapper, maxWords);
 
       if (segments.length === 0) {
         paddtRoot.classList.add("paddt-rowitem", "paddt_segment");

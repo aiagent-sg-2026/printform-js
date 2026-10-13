@@ -27,11 +27,11 @@ export function renderRows(outputContainer, sections, heights, footerState, heig
     const isPaddtRow = this.isPaddtRow(row);
     const isSubtotal = this.isSubtotalRow(row);
     const isFooter = this.isFooterRow(row);
-    const hasFooterCombo = isSubtotal && nextRow && this.isFooterRow(nextRow);
+    const hasFooterCombo = isSubtotal && nextRow && this.isFooterRow(nextRow) &&
+      this.getRowTableId(row) === this.getRowTableId(nextRow);
     const footerRow = hasFooterCombo ? nextRow : null;
     const footerBaseClass = footerRow ? this.getRowBaseClass(footerRow) : null;
     const footerHeight = footerRow ? rowHeightCache[index + 1] : 0;
-    const comboHeight = rowHeight + footerHeight;
 
     if (!rowHeight && (!hasFooterCombo || !footerHeight)) {
       DomHelpers.markAsProcessed(row, baseClass);
@@ -60,7 +60,8 @@ export function renderRows(outputContainer, sections, heights, footerState, heig
 
     const activeTableId = this.getRowTableId(row);
     const activeHeader = this.ensureActiveTableHeader(
-      this.getCurrentPageContainer(outputContainer), sections, logFn, activeTableId
+      this.getCurrentPageContainer(outputContainer), sections, logFn, activeTableId,
+      this.shouldSkipRowHeaderForRow(row)
     );
     if (activeHeader) {
       const activeContainer = this.getCurrentPageContainer(outputContainer);
@@ -68,6 +69,7 @@ export function renderRows(outputContainer, sections, heights, footerState, heig
       const hasPriorRows = activeContainer.querySelector(".prowitem_processed, .ptac-rowitem_processed, .paddt-rowitem_processed");
       if (currentHeight > pageContext.limit && hasPriorRows) {
         activeContainer.removeChild(activeHeader);
+        this.seenTableHeaders.delete(activeTableId);
         currentHeight = this.prepareNextPage(
           outputContainer, sections, logFn, pageContext.limit, currentHeight, footerState,
           footerSpacerTemplate, this.shouldSkipRowHeaderForRow(row),
@@ -75,6 +77,7 @@ export function renderRows(outputContainer, sections, heights, footerState, heig
         );
         this.refreshPageContextForRow(pageContext, row, heights, sections);
         const nextContainer = this.getCurrentPageContainer(outputContainer);
+        this.ensureActiveTableHeader(nextContainer, sections, logFn, activeTableId, pageContext.skipRowHeader);
         pageContext.repeatingHeight = this.computeRepeatingHeightForPage(
           sections, heights, pageContext.skipRowHeader, pageContext.tableId
         );
@@ -88,7 +91,7 @@ export function renderRows(outputContainer, sections, heights, footerState, heig
     if (hasFooterCombo || isSubtotal || isFooter) {
       const result = renderSpecialRow(this, {
         outputContainer, sections, heights, footerState, footerSpacerTemplate, logFn,
-        pageContext, row, nextRow, index, rowHeight, footerHeight, comboHeight,
+        pageContext, row, nextRow, index,
         currentHeight, hasFooterCombo, isPtacRow, isPaddtRow, baseClass, footerBaseClass
       });
       currentHeight = result.currentHeight;
@@ -165,6 +168,9 @@ export function renderRows(outputContainer, sections, heights, footerState, heig
     if (!isPaddtRow) pageContext.isPaddtPage = false;
   }
 
+  if (!firstPageInitialized) {
+    return this.renderEmptyDocument(outputContainer, sections, heights, heightPerPage, logFn);
+  }
   if (this.debug) console.log(`[printform] ===== renderRows END (page ${this.currentPage}, finalHeight=${currentHeight}px) =====`);
   return {
     currentHeight,

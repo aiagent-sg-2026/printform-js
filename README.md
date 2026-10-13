@@ -30,7 +30,7 @@ Studio v2 is a Production Pilot for ERP engineers. It builds inspectable, self-c
 | **Understand the v2 single-HTML contract** | [Studio v2 Protocol](docs/PRINTFORM_V2_PROTOCOL.zh-CN.md) (Chinese) |
 | **Connect Codex or Claude Code** | [Agent setup](studio-v2/AGENT_SETUP.md) |
 | **Maintain the legacy v1 Studio** | [Studio v1 Design Doc](docs/STUDIO_DESIGN.zh-CN.md) (Chinese) |
-| **Bind a template to real data / connect an ERP backend** | [ERP Integration Guide](docs/ERP_INTEGRATION.zh-CN.md) - `{{ }}` placeholders, `PrintFormTemplate.render(data)`, ColdFusion example (Chinese) |
+| **Connect an ERP / check transaction and format coverage** | [ERP support contract](docs/ERP_PRINT_SUPPORT.zh-CN.md) · [PCAR/CCAR business and import contract](docs/ERP_CLAIM_BUSINESS_CONTRACT.zh-CN.md) · [bug and improvement audit](docs/ERP_PRINT_AUDIT.zh-CN.md) · [legacy v1 integration](docs/ERP_INTEGRATION.zh-CN.md) (Chinese) |
 
 Studio v2 is the intended production path and remains **Production Pilot**. It exports a self-contained HTML with declarative bindings, embedded runtimes and validation records. Versions: runtime 1.0.0 / Studio 0.11.0 / Protocol 2.0.0 / Agent Contract 4.0.0. E14's four-layer panel, change cards, mode controls, history and resizable rail exist; the current worktree includes shared scope/apply/data-policy enforcement and closed Agent projections, while composed release acceptance remains incomplete. See the [production plan](docs/STUDIO_V2_PRODUCTION_PLAN.md) for current evidence, pending requirements and proposed layout. Production Ready has not been declared. Studio v1 remains frozen and independent.
 
@@ -270,9 +270,8 @@ const myForm = document.querySelector('#invoice-1');
 PrintForm.format(myForm);
 ```
 
-Notes:
-- `formatAll` is async and only runs once unless `force: true` is supplied.
-- The formatter removes the original `.printform` node and inserts a processed container in its place.
+`formatAll()` processes current source forms, including later additions; concurrent calls share completion. It returns `{formattedCount, failedCount}` and rejects with `AggregateError` plus `error.report` if any form fails.
+Successful formatting removes the source `.printform`; failed formatting preserves it. See the [ERP support contract](docs/ERP_PRINT_SUPPORT.zh-CN.md) for layout, business-data and actual-print limits.
 
 ### 5. Build for Production
 If you modify the source (`src/` directory), rebuild:
