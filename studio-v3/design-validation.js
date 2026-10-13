@@ -1,5 +1,8 @@
-import { BLOCKS, FIELD_STYLE_KEYS, FIELD_KINDS, PAPERS, ORIENTATIONS, ALIGNMENTS, FORMATS, validPointer, fieldKind, sectionOrder } from './design-authoring.js';
+import { BLOCKS, FIELD_KINDS, PAPERS, ORIENTATIONS, FORMATS, validPointer, fieldKind, sectionOrder } from './design-authoring.js';
 import { A4_PRESET_IDS } from './a4-presets.js';
+import { validateTableStyle } from './table-style.js';
+import { validateFieldStyle } from './element-style.js';
+export { validateFieldStyle } from './element-style.js';
 const color = value => typeof value === 'string' && /^#[0-9a-f]{6}$/i.test(value);
 const number = (value,min,max) => typeof value === 'number' && Number.isFinite(value) && value >= min && value <= max;
 const identifier = value => typeof value === 'string' && /^[a-z0-9-]{1,60}$/.test(value);
@@ -7,14 +10,6 @@ const text = (value,max) => typeof value === 'string' && value.length <= max;
 const fail = message => { throw new Error(message); };
 export function exactDesignKeys(value, keys, label) {
   if (!value || typeof value !== 'object' || Array.isArray(value) || Object.keys(value).some(key => !keys.includes(key))) fail(`Unsupported ${label} property.`);
-}
-export function validateFieldStyle(style) {
-  exactDesignKeys(style,FIELD_STYLE_KEYS,'field style');
-  if (style.fontSize !== undefined && !number(style.fontSize,6,72)) fail('Field font size must be between 6 and 72pt.');
-  if (style.bold !== undefined && typeof style.bold !== 'boolean') fail('Field bold must be a boolean.');
-  if (style.color !== undefined && !color(style.color)) fail('Field color must be a six-digit hex color.');
-  if (style.align !== undefined && !ALIGNMENTS.includes(style.align)) fail('Unsupported field alignment.');
-  return style;
 }
 function image(value,assets,label) {
   if (!identifier(value.assetId) || !assets.has(value.assetId)) fail(`${label} must reference an existing embedded raster asset.`);
@@ -92,10 +87,7 @@ export function validateDesign(d) {
   if (d.version !== 1 || !['invoice','purchase','delivery'].includes(d.type)) fail('Unsupported v3 template version or document type.');
   if (!text(d.title,100)) fail('Document heading must contain at most 100 characters.');
   if (!color(d.color) || !number(d.font,6,14) || !number(d.padding,2,16)) fail('Invalid print style settings.');
-  if (d.tableStyle !== undefined) {
-    exactDesignKeys(d.tableStyle,['rowBackground'],'table style');
-    if (d.tableStyle.rowBackground !== undefined && !color(d.tableStyle.rowBackground)) fail('Table row background must be a six-digit hex color.');
-  }
+  if (d.tableStyle !== undefined) validateTableStyle(d.tableStyle);
   exactDesignKeys(d.blocks,BLOCKS,'blocks');
   const assets = validateAssets(d), ids = new Set();
   BLOCKS.forEach(id => {

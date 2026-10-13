@@ -7,65 +7,185 @@
  "dispositions": [
   {
    "entries": {
-    "printform.agent.get_capabilities": "e694ca7f110960b80b17cb7a4abd142999a9c63b5ee11f1b22d8235c47808483",
-    "printform.agent.read_skill": "623faee9b798939c8d0828d3e5c3d505b6187a3fcaf74edaaae9dde6cb6b8ae7",
-    "printform.agent.get_context": "a6d72419b1b10a31f9bd3497ec8608d86d243981f56c4308516722b36cfb80c5",
-    "printform.agent.apply_operations": "f34c08e2f6bf0ac0be8e64532224e89eb3cc3c86d64e27e9e46956c21cb46454",
-    "printform.agent.inspect_draft": "096c131ac422de47ec2ac0f3cc61068b1899b3b9749988eaa00c46fd4bfb9bbe",
-    "printform.agent.observe_context": "dc0e6135e79333bd804f75d4ca3c186c702868e7bf51395c1400b2c5f81d5de9",
-    "printform.agent.retrieve_page": "6134e74dedbd3296afdc13fb3202643d38a616a0a68929c749bfb7c8e9adf383",
-    "printform.agent.validate_scenarios": "dbd42e2552aec1c0424ae5629b269f4b6e9ee9cc6c9ab35d7a9d9bcd7e7ccc68",
-    "printform.agent.undo_step": "5c147ec474d868bc89794a035b0eebc1b76502042800743d0c298d9f490bfc96",
-    "printform.agent.take_notes": "a72ba6be5ef8398f7da6fed5c49b5057809906a5e2b2a63fc14b61c20ff30745",
-    "printform.agent.finish": "3d31d819ee945399a886abecae392ee553e9f37c126786b3f88c7ec93dd8420b",
-    "printform.agent.finish_answer": "32843d98ba5c66668b38aabb3d070f9fc424027d21ac53a0bc8c046a47dbd723",
-    "printform.agent.report_blocked": "c1ad510a654eecae0d7bfda81917ed278e8b88bfb597bcac28ebfe35a8c5dc54"
+    "printform.agent.validate_scenarios": "0d5a17a2e6f5cb4e68fd2703110567cbed58bc22f9f07a383654ab7f4db544bd"
    },
    "disposition": "updated",
-   "justification": "CA-05 binds observations to the current run, release, revision and candidate. Approved default-off single-run text and fictional pixel consent remain independently constrained by host value/pixel policies. Receipt-bound PNG custody, paired outgoing image inputs and compaction/freshness checks use existing effects. Completion cites and retains the latest receipt; stale IDs and oversized delivered answers reject. Shared scenario validation already on main is preserved; no CA-04 authoring service or parity change is included. Full G4 human qualification remains open.",
+   "justification": "Retains the shared scenario-matrix and receipt slice. Agent tools now check current host state before effects; provider dispatch and completion recheck run-bound semantic authorization. Existing draft, numeric inspection, scenario and answer effects stay registered under their original grants; observe_context alone admits authorized semantic content. CA-05 slice 3 adds fictional receipt-bound page/crop capture with separate host pixel consent, denied-value/asset guards, paired host follow-up image input and compaction/dispatch freshness checks; existing effect grants and CA-04 services are retained.",
    "evidence": [
+    "studio-v3/scenario-matrix.js",
+    "tests/studio-v3-scenario-matrix.test.js",
     "studio-v3/agent-tools.js",
-    "studio-v3/agent-contracts.js",
     "tests/studio-v3-agent-contracts.test.js",
-    "tests/studio-v3-pixel-wire.test.js",
-    "tests/studio-v3-observation-completion.test.js"
+    "tests/studio-v3-pixel-observation.test.js",
+    "tests/studio-v3-pixel-wire.test.js"
    ]
   },
   {
    "entries": {
-    "printform.authoring.set_element_style": "4d1cc199dd6b4ae9bf4104ebf4a036ecd71881e9e6c569fd1906c244001b9433",
-    "printform.authoring.set_style": "7d3711a2035e52311acaa08e1b7f0f95bc0d45a4a022942f5b37895af460e7bc",
-    "printform.authoring.set_table_style": "5d292227fae843144e8b97e70bd9b76ed4df34db2b026d98e8e2522d148892d7",
-    "printform.authoring.set_field": "a859c913d5a9c6e16cb0a98957023e8885d30b0e07c4a0f07440c6e29f1fdc36",
-    "printform.authoring.add_field": "77c75cae5420cc33950d92748a892f551f4c19dec834461a4ed371dc87580258",
-    "printform.authoring.remove_field": "4185902121b15f36a16ca7d17a7d866340fe23a78b964dea97cea20f60a86517",
-    "printform.authoring.reorder_fields": "67824a7ec4d3f30f60b4c4836fc3ee1c08162ccbd86227aedc9874206b23e190",
-    "printform.authoring.set_section": "f3805ec08ac9670f81308579ae5d9dcf7d9cea84b0f08a60b2c53dd9ce5e8c89",
-    "printform.authoring.reorder_sections": "d05aeefd913a3a6f631646cd1472fdcf639125a49a1c1eecd4308dc7fba80b1f",
-    "printform.authoring.set_page": "7edcac70feffd16d556707ee62b1a39dde7fa01564f43e98f401bc0acad3f23f",
-    "printform.authoring.set_logo": "416d3a93eaf5dd2324494c34db9ea22f8274ce75b6b7dd55c01aed4e6a831fd3",
-    "printform.authoring.set_collection": "a4d7322ab367de3e9afb76a5cbdff3fc185e9b42454924c93a8d8c257992e940",
-    "printform.authoring.set_heading": "cbbe087f00f40e55affa735e1b52906930eb5871fb7edf1a1ae8419abe9411dc"
+    "printform.agent.get_capabilities": "28a3ce824204855b312ce9f09318550799285727fe8f5fcc5a14a93b008b1a14"
+   },
+   "disposition": "updated",
+   "justification": "Retains the shared scenario-matrix and receipt slice. Agent tools now check current host state before effects; provider dispatch and completion recheck run-bound semantic authorization. Existing draft, numeric inspection, scenario and answer effects stay registered under their original grants; observe_context alone admits authorized semantic content. CA-05 slice 3 adds fictional receipt-bound page/crop capture with separate host pixel consent, denied-value/asset guards, paired host follow-up image input and compaction/dispatch freshness checks; existing effect grants and CA-04 services are retained.",
+   "evidence": [
+    "studio-v3/agent-registry.js",
+    "studio-v3/agent-tools.js",
+    "tests/studio-v3-agent-contracts.test.js",
+    "tests/studio-v3-pixel-observation.test.js",
+    "tests/studio-v3-pixel-wire.test.js"
+   ]
+  },
+  {
+   "entries": {
+    "printform.agent.read_skill": "07f910a8d074761ad22a23508a76571ecd0f6576b0f32cd7465a061e0168da87",
+    "printform.agent.get_context": "b8b3fd2862a04aeb26ecc077ae45ee4d8b57b283f16b16c91ea9c4a013828664",
+    "printform.agent.take_notes": "816e39b69e2380ecee4611aaf94039296aa9b28236448a7ab3f7e4ce9e193f2e",
+    "printform.agent.finish_answer": "be5849acbcafa71b8baccff026519d2823910e3ba73d58ba0a5ec305fdf0a86c",
+    "printform.agent.report_blocked": "9951c0c1086417c07419623c04f458a22ecf96ce5d255aa31bea57b94f3879ac"
+   },
+   "disposition": "updated",
+   "justification": "Retains the shared scenario-matrix and receipt slice. Agent tools now check current host state before effects; provider dispatch and completion recheck run-bound semantic authorization. Existing draft, numeric inspection, scenario and answer effects stay registered under their original grants; observe_context alone admits authorized semantic content. CA-05 slice 3 adds fictional receipt-bound page/crop capture with separate host pixel consent, denied-value/asset guards, paired host follow-up image input and compaction/dispatch freshness checks; existing effect grants and CA-04 services are retained. OBS-05 completion now host-authors and retains the latest receipt, rejects old/foreign/invalidated evidence, and enforces the UI/history answer budget without truncating citations. Independent fictional text/geometry qualification and recovery use native preview measurements; full G4 blinded review stays open.",
+   "evidence": [
+    "tests/studio-v3-agent-contracts.test.js",
+    "studio-v3/agent-tools.js",
+    "tests/studio-v3-pixel-observation.test.js",
+    "tests/studio-v3-pixel-wire.test.js",
+    "tests/studio-v3-observation-completion.test.js",
+    "tests/studio-v3-observation-comparison.test.js",
+    "e2e/studio-v3-observation-comparison.spec.js"
+   ]
+  },
+  {
+   "entries": {
+    "printform.authoring.set_style": "10e1047b232f99dcc6c0723a0ea48834b67bc20881a9699b6c282ef294666988",
+    "printform.authoring.set_field": "de887bd12b17454cbc08ca433798a463d8d60daf69f30d7767436c4d5c56e1d1",
+    "printform.authoring.add_field": "9c3bacc34cf4fca73c767eff7176fd58103f9462ff593bf8cf6a4cdaa9563cb2",
+    "printform.authoring.remove_field": "b36e636772e86f8d436c7e5549e8d9bc7469fb251652f6ca18146321935a9de0",
+    "printform.authoring.reorder_fields": "16464a831426cab0730f635307cc5d2a520f9eab3183c64875a7b7388f971b1c",
+    "printform.authoring.set_section": "ded2300beb73aa24ca34ce0841777882d6181ef15e2a59912e2b352341ae4eac",
+    "printform.authoring.reorder_sections": "85dac51b4c4485ed3f424509b0d949b2cf53508dac338e54bead6145a3511676",
+    "printform.authoring.set_page": "d91f8c1b15a9fa5f18b40fdff81b28ad1aaeb3799309da157aeebb06685c1297",
+    "printform.authoring.set_logo": "3022ceda4fab0f223d374b9392d0d1db43a0b2af83498650810911dd672d80bf",
+    "printform.authoring.set_collection": "b8141ce1c80838e9509e5443c8bf24e459a1504bc6a8cd760a0b57c4e72803ef",
+    "printform.authoring.set_heading": "59fdfee0f1595f76353a508c4cf8a95d4f1014be73218cafe80f3179f6d3bb46"
    },
    "disposition": "no-impact",
-   "justification": "CA-05 changes the shared contract module import closure and regression hashes. All thirteen authoring operation schemas, examples, implementations and effect grants retain their main behavior. CA-04 row-fill and typography extractions and their examples/evaluations are deliberately excluded. Registered-handler conformance and the existing authoring/binding tests verify the preserved behavior.",
+   "justification": "Retains the prior CA-05 and row-fill work. Extracting typography validation changes transitive hashes; unrelated operation schemas, effects and examples stay unchanged. Stored field typography delegates to the same keys/bounds/messages. Existing authoring/binding regression and registered-handler conformance verify the unaffected operation behavior.",
    "evidence": [
-    "tests/studio-v3-agent-contracts.test.js",
-    "tests/studio-v3-ai-authoring.test.js"
+    "tests/studio-v3-agent-contracts.test.js"
    ]
   },
   {
    "entries": {
-    "printform.knowledge.form-authoring": "59a7393e1e28064973824ffdf769fd91424e7f5a94dee2f6447e576ad968cc30",
-    "printform.knowledge.product-workflows": "034c15aa3acc2413dec17d1d9887d5ed4224d0f2e6da3df17ab3c60cf135753f"
+    "printform.knowledge.form-authoring": "3e0b63c62a3ff4d87f484cce6d6ca078cd40a16f227168a7727c9bed23cc341d"
    },
    "disposition": "updated",
-   "justification": "The bundled guide and ledger document fresh numeric/semantic/pixel receipts, approved one-run fictional disclosure, denied values/assets, actual tool-paired provider images and authoritative latest completion citations. Existing scenario workflow knowledge is preserved. The independent fictional defect oracle remains a bounded evaluation; full G4 blinded human review is pending. CA-04 service sharing is not claimed.",
+   "justification": "The form-authoring guide documents numeric and semantic receipt custody, default-off single-run fictional text/pixel consent, independent host value/pixel-denial policies, asset/signature rejection, expiry and candidate/undo invalidation. It describes qualified DOM raster page/crop retrieval, paired host image inputs that survive compaction and guarded dispatch, while final visual comparison, real-data transmission and sensitive-asset qualification remain open. Protected answers retain local-only history handling. Existing shared row-fill/element typography semantics and separate UI commit/Pi draft authority are retained. The guide now documents current completion citations, optional exact receipt IDs and length rejection; receipt identity is explicitly not a visual-similarity approval.",
    "evidence": [
     "studio-v3/agent-knowledge.js",
+    "tests/studio-v3-semantic-observation.test.js",
+    "tests/studio-v3-semantic-wire.test.js",
+    "studio-v3/ai-conversation.js",
+    "tests/studio-v3-observation-authorization-ui.test.js",
+    "tests/studio-v3-pixel-observation.test.js",
+    "tests/studio-v3-pixel-wire.test.js"
+   ]
+  },
+  {
+   "entries": {
+    "printform.knowledge.product-workflows": "66f76d1bb4d77128b205a008cbc69d048cb1346418d77094e379ff07f1693dfc"
+   },
+   "disposition": "updated",
+   "justification": "Retains the shared validation-matrix ledger change and records bounded semantic structure/selection owners. The generated unavailable-workflow guide still leaves semantic rows Limited/eligible-gap; no G4 or CA-04 closure is asserted. CA-05 slice 3 adds fictional receipt-bound page/crop capture with separate host pixel consent, denied-value/asset guards, paired host follow-up image input and compaction/dispatch freshness checks; existing effect grants and CA-04 services are retained.",
+   "evidence": [
     "docs/STUDIO_V3_FEATURE_LEDGER.csv",
-    "tests/studio-v3-agent-discovery.test.js",
-    "tests/studio-v3-feature-ledger.test.js"
+    "studio-v3/agent-workflows.js",
+    "tests/studio-v3-pixel-observation.test.js",
+    "tests/studio-v3-pixel-wire.test.js"
+   ]
+  },
+  {
+   "entries": {
+    "printform.agent.inspect_draft": "ab61ed3188872d9a251e77f4f024e9fbfe86ded9e2092d9474354414eb344757",
+    "printform.agent.apply_operations": "10384f52935b12967a51707cc067e9bf7d3489f007668373f5954a69701d10eb",
+    "printform.agent.undo_step": "27c239bb33335dfb67b688296d4009c9bfdf72135bb1ac040c5e1f19f4c4a4bf",
+    "printform.agent.finish": "bbf7449d8ff06d67acffd72535c7147717a48a8f6ffc9fa75325edea17d1848f"
+   },
+   "disposition": "updated",
+   "justification": "Retains the shared scenario-matrix and receipt slice. Agent tools now check current host state before effects; provider dispatch and completion recheck run-bound semantic authorization. Existing draft, numeric inspection, scenario and answer effects stay registered under their original grants; observe_context alone admits authorized semantic content. CA-04 row fill now reuses the inspector transformation without merging effect authority; the real registered schema/grant/scope and candidate parity fixtures pass. Element typography now shares inspector validation/transformation while retaining draft/grant/scope authority; new direct parity and recovery evaluations are registered. CA-05 slice 3 adds fictional receipt-bound page/crop capture with separate host pixel consent, denied-value/asset guards, paired host follow-up image input and compaction/dispatch freshness checks; existing effect grants and CA-04 services are retained.",
+   "evidence": [
+    "studio-v3/observation-records.js",
+    "studio-v3/agent-knowledge.js",
+    "tests/studio-v3-observation-tools.test.js",
+    "tests/studio-v3-observation-wire.test.js",
+    "studio-v3/agent-tools.js",
+    "tests/studio-v3-agent-contracts.test.js",
+    "studio-v3/table-style.js",
+    "tests/studio-v3-row-fill-parity.test.js",
+    "studio-v3/element-style.js",
+    "tests/studio-v3-element-style-parity.test.js",
+    "tests/studio-v3-pixel-observation.test.js",
+    "tests/studio-v3-pixel-wire.test.js"
+   ]
+  },
+  {
+   "entries": {
+    "printform.agent.observe_context": "b66f50772005f839206db07465bb1de8ab57b15de5853591a199438682546641"
+   },
+   "disposition": "updated",
+   "justification": "New read-only semantic observation service with host-minted, document/revision/content/run/policy-bound authorization. Projects only authorized text/assigned bindings and host-permitted synthetic values, selected targets and real numeric print evidence. Pixels remain blocked. Positive and rejection/recovery fixtures inspect actual outgoing provider bodies and refresh-time guards. CA-05 slice 3 adds fictional receipt-bound page/crop capture with separate host pixel consent, denied-value/asset guards, paired host follow-up image input and compaction/dispatch freshness checks; existing effect grants and CA-04 services are retained.",
+   "evidence": [
+    "studio-v3/observation-context.js",
+    "studio-v3/observation-policy.js",
+    "tests/studio-v3-semantic-observation.test.js",
+    "tests/studio-v3-semantic-wire.test.js",
+    "e2e/studio-v3-semantic-observation.spec.js",
+    "tests/studio-v3-pixel-observation.test.js",
+    "tests/studio-v3-pixel-wire.test.js"
+   ]
+  },
+  {
+   "entries": {
+    "printform.authoring.set_table_style": "7bf4ce63208fcaca817755787811677b1779bdc4a9a02de837511711bcb1a1d1"
+   },
+   "disposition": "updated",
+   "justification": "The existing items row-fill operation now calls the same pure tableStyleChange service as the real inspector. Its six-digit hex/null schema and effect contract stay at 1.0.0; canonical service errors and normalized candidate/binding diagnostics agree. Pi schema, read-only grants, selected scopes and private proposal approval remain independently enforced. Differential fixtures cover fill/reset, invalid inputs, atomic candidate rejection and recovery; recorded browser requests verify the actual transport path.",
+   "evidence": [
+    "studio-v3/table-style.js",
+    "studio-v3/ai-authoring.js",
+    "tests/studio-v3-row-fill-parity.test.js",
+    "e2e/studio-v3-row-fill-parity.spec.js"
+   ]
+  },
+  {
+   "entries": {
+    "printform.authoring.set_element_style": "0cc41a664d0dd53748666d94a1c5d1c4e7054171de0d172b84789c774b796896"
+   },
+   "disposition": "updated",
+   "justification": "The heading/page-number operation and real inspector now reuse elementStyleChange. Typography bounds, closed keys, value spelling and replacement semantics stay typed under 1.0.0. Empty overrides normalize to removal/inheritance in both paths, avoiding a spurious empty-object proposal. Identical defined key/value overrides retain their existing representation, so JSON key order alone reports NO_CHANGES. Added versioned examples cover page-number typography and inherited NO_CHANGES. Direct differential fixtures cover normalized candidates, existing validation, identical service errors, selected/read-only denial, private-batch recovery and separate human approval; browser fixtures record the real provider transport.",
+   "evidence": [
+    "studio-v3/element-style.js",
+    "studio-v3/ai-authoring.js",
+    "studio-v3/agent-contracts.js",
+    "tests/studio-v3-element-style-parity.test.js",
+    "e2e/studio-v3-element-style-parity.spec.js"
+   ]
+  },
+  {
+   "entries": {
+    "printform.agent.retrieve_page": "2cdd28170f16c2a97220ebd60c23372f2fa5c4eac3d3451704e585eb7391785e"
+   },
+   "disposition": "updated",
+   "justification": "CA-05 slice 3 introduces versioned receipt-bound retrieval under explicit single-run fictional pixel and existing text/value authority. The qualified sandbox DOM raster bridge preserves project isolation. Run-owned PNG bytes are validated, hashed and paired with the actual tool call/result on the outgoing wire, including after compaction. Negative/recovery fixtures cover stale/revoked grants, denied values/assets, bounds, byte limits and unsupported modalities. This does not qualify final visual comparison, real-data publication or sensitive assets. The existing default-off permission labels now share a bounded scroll area so they cannot collapse selected element references in the fixed composer. Checkbox IDs, exact labels, defaults and grant policy remain unchanged. The native fixture measures desktop/mobile references, permission scrolling, comment/input controls and close/reopen without provider inference; CSS and the fixture now participate in release identity.",
+   "evidence": [
+    "studio-v3/observation-pixels.js",
+    "studio-v3/preview-pixels.js",
+    "studio-v3/agent-wire.js",
+    "tests/studio-v3-pixel-observation.test.js",
+    "tests/studio-v3-pixel-wire.test.js",
+    "e2e/studio-v3-pixel-observation.spec.js",
+    "studio-v3/index.html",
+    "studio-v3/ai-panel.css",
+    "e2e/studio-v3-observation-composer.spec.js"
    ]
   }
  ]

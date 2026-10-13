@@ -32,7 +32,7 @@ describe('Studio v3 UI and Pi service parity register (COV-03)', () => {
   });
   it('states the open parity debt so it cannot be mistaken for coverage', () => {
     const count = status => REGISTER.entries.filter(entry => entry.status === status).length;
-    expect({shared:count('shared'),parallel:count('parallel'),agentOnly:count('agent-only')}).toEqual({shared:2,parallel:18,agentOnly:12});
+    expect({shared:count('shared'),parallel:count('parallel'),agentOnly:count('agent-only')}).toEqual({shared:4,parallel:16,agentOnly:12});
     const doc = fs.readFileSync('docs/STUDIO_V3_AGENT_REGISTRY.md','utf8');
     expect(doc).toContain(`${count('shared')} shared, ${count('parallel')} parallel, ${count('agent-only')} agent-only`);
   });

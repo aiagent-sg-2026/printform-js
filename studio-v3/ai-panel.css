@@ -126,6 +126,8 @@ body.ai-open.preview-only .studio-grid { grid-template-columns:0 minmax(0,1fr) v
 .ai-composer { display:flex; flex-direction:column; overflow:hidden; }
 .ai-composer > * { flex:none; }
 .ai-composer > .ai-reference-files, .ai-composer > [data-ai-element-tags] { flex:0 1 auto; min-height:0; overflow:auto; }
+/* Permission copy can scroll without collapsing selected references or the message controls. */
+.ai-composer > .ai-observation-disclosure { display:grid; gap:6px; flex:0 1 auto; min-height:48px; max-height:24dvh; overflow:auto; }
 /* Kept last: these hide parts of the panel on short screens and must win over the rules above. */
 /* Short screens keep the one-line scope and drop its explanation, so the conversation and composer stay usable. */
 /* On the wide layout the panel sits under the header, so the illustration is the first thing to give way. */

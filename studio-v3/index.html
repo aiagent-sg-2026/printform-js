@@ -56,8 +56,10 @@
       <div class="ai-scope-hint" data-ai-scope><span class="ai-scope-icon" data-icon="form"></span><div><label for="ai-scope">Scope:</label> <select id="ai-scope"><option value="whole">Whole form</option><option value="selected" disabled>Selected elements</option></select><p class="ai-scope-help"></p></div></div>
       <div data-ai-log role="log" aria-label="AI conversation" aria-live="polite"></div>
       <form class="ai-composer">
+        <div class="ai-observation-disclosure" role="group" aria-label="Observation sharing permissions">
         <label class="hint"><input type="checkbox" id="ai-observation-text" data-ai="observation-text"> Share current labels, static text and assigned binding paths for one run (fictional text only)</label>
         <label class="hint"><input type="checkbox" id="ai-observation-pixels"> I confirm this form is fictional and authorize page/crop pixels for this run via Demo Gateway and the selected model. Text authorization is also required; denied values and embedded images stay blocked. Real forms require separate approval.</label>
+        </div>
         <div data-ai-element-tags aria-label="Referenced elements" hidden></div>
         <div class="ai-input"><button type="button" class="ai-plus" data-ai="attach" data-icon="plus" aria-label="Attach reference" title="Attach reference (PDF, PNG or JPG)"></button><label class="sr-only" for="ai-prompt">Message AI assistant</label><textarea id="ai-prompt" maxlength="4000" rows="1" placeholder="Describe what you want to change…"></textarea><button class="primary ai-send" data-ai-send aria-describedby="ai-send-reason" data-icon="send" aria-label="Send message" title="Send (Enter)"></button><button type="button" class="ai-send" data-ai="cancel" data-icon="stop" aria-label="Stop request" title="Stop request" hidden></button></div>
         <p class="ai-send-reason" id="ai-send-reason" data-ai-send-reason></p>
