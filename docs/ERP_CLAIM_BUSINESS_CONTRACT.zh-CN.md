@@ -7,7 +7,7 @@
 - PCAR＝Progress Claim Account Receivable；Globe3 存储类型为 `entp_pbill`。
 - CCAR＝Certified Claim Account Receivable；Globe3 存储类型为 `entp_pcar`，不是按字面将 PCAR 映射到同名表。
 - 已实现 raw CCAR 的限定 financial-tab 适配与打印项目生成。
-- 已实现 **canonical PCAR** 打印项目生成；上游必须完成来源解析、估值和基准选择。**没有完整 raw PCAR 数据库适配器**。
+- 已实现 **canonical PCAR** 净额打印项目，以及 [raw PCAR / SO work-done](ERP_RAW_PCAR_WORK_DONE.zh-CN.md) 精确 join、限定基准 gross movement 与 `/valuations` 项目。上游仍负责授权、完整 prior snapshot 与净额规则；不声称完整 raw PCAR main financial 或所有客户版本适配。
 - 虚构 catalogue 的 `newDemoProject('PCAR'/'CCAR')` 与真实输入 API 是不同入口，不能用示例通过证明真实 ERP 已验收。
 
 ## 2. 业务基准与链路
@@ -134,4 +134,4 @@ Studio creator 当前仅可 round-trip `MYR / USD / SGD / EUR / CNY / JPY` 六�
 - [AIA G702 官方产品说明](https://designshop.aia.org/products/g702-1992-application-and-certificate-for-payment)：申请和 architect certification 可有差异；“previous payments”措辞不能替所有地区/合同规定 previous-certified 基准。
 - [IASB 2015 staff paper 引述 IFRS 15 §108](https://www.ifrs.org/content/dam/ifrs/meetings/2015/december/iasb/clarifications-to-ifrs-15/ap07h-revenue-from-contracts-with-customers.pdf)：无条件权利仅余时间流逝的原则。staff paper 不是完整准则或个案法律意见，不能把 PCAR/CCAR provisional balance 自动称为 booked AR 或已确认收入。
 
-代码事实来源：上述 adapter/project 文件、`studio-v3/globe3-claim-money.js`、`studio-v3/claim-basis-seed.js` 和 `studio-v3/database-model.js`。当前完整构建 **215 files / 2,022 tests passed**，PCAR/CCAR 三浏览器 Open/save/reopen/独立 HTML 打印 **12/12 passed**；实际 smoke 与认证边界见 [审计 §7](ERP_PRINT_AUDIT.zh-CN.md#7-globe3-claim-契约后续修正2026-10-14)。这些检查使用自行编造输入，不宣称已连接或验收真实客户 ERP。
+代码事实来源：上述 adapter/project 文件、`studio-v3/globe3-claim-money.js`、`studio-v3/claim-basis-seed.js` 和 `studio-v3/database-model.js`。基线完整构建 **215 files / 2,022 tests passed**、PCAR/CCAR 三浏览器打印 **12/12 passed** 见 [审计 §7](ERP_PRINT_AUDIT.zh-CN.md#7-globe3-claim-契约后续修正2026-10-14)；新增 raw PCAR 独立构建 **217 files / 2,072 tests** 与 **6/6** 浏览器旅程见 [raw 契约 §8](ERP_RAW_PCAR_WORK_DONE.zh-CN.md#8-选项-1-独立验收)。检查使用自行编造输入，不宣称已连接或验收真实客户 ERP。
