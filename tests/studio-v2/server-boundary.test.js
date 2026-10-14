@@ -1,3 +1,4 @@
+// @vitest-environment node
 import { afterEach, describe, expect, it } from "vitest";
 import { classifySyntheticDocument } from "../../studio-v2/core/data-policy.js";
 import { createEvidencePack } from "../../studio-v2/core/evidence-pack.js";
