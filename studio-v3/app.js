@@ -26,9 +26,9 @@ let bus, displayed, zoom = 1, pageIndex = 0, editQueue = Promise.resolve();
 const database = new DemoDatabase({
   project:() => bus?.project, state:() => state, context:() => bus,
   render:renderPanels, busy:syncControls, download,
-  apply:async (data,reference,context,source = null,title = undefined) => {
+  apply:async (data,reference,context,source = null,title = undefined,sourceSchema = undefined) => {
     if (context !== bus) throw new Error('Dataset was saved, but the document changed. Load it into the intended form again.');
-    state.dataDraft = null; await replaceData(bus,data,'erp',reference,source,title); await changed();
+    await replaceData(bus,data,'erp',reference,source,title,sourceSchema); state.dataDraft = null; await changed();
   }
 });
 const drafts = new FormDrafts({
@@ -227,8 +227,8 @@ async function applyForm({kind,context,selected,form,key,values}) {
       try { data = parseSampleJSON(source); state.jsonError = ''; } catch (error) { state.jsonError = error.message; throw error; }
       if (!data || typeof data !== 'object' || Array.isArray(data)) { state.jsonError = 'Sample data must be a JSON object.'; throw new Error(state.jsonError); }
       if (database.draft && !confirm('Replace unapplied table edits with this JSON? Saved database records will not change.')) return;
-      database.resetDraft(); state.dataDraft = null;
       await replaceData(bus,data,'erp',null);
+      database.resetDraft(); state.dataDraft = null;
     } else if (kind === 'locale') {
       const values = new FormData(form);
       await editProject(bus,[{type:'set_manifest_value',path:'/locale',value:values.get('locale')},{type:'set_manifest_value',path:'/currency',value:values.get('currency')}],'locale & currency');

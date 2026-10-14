@@ -85,7 +85,7 @@
 | E02 | `scenario-matrix.js:20-23` 用 generic family 数据替换 exact kind | 已修：已声明kind用公开独立fixture，Payment/Receipt/PCAR/CCAR来源字段与合成seed保留；未知kind／custom缺字段仍明确拒绝，不复制私有ERP来伪造通过 |
 | E03 | v2 `sample-scenarios.js:20-32` 假定首数组、numeric no；ProgressClaim no 是 string | 已修：声明或唯一table collection，typed no及其他集合保留，不重算钱；真实45个TYPE_MISMATCH消失，empty仍遵守minItems |
 | E04 | v2 ProgressClaim 金额是 string，无 currency marker | 已修：非格式化semantic marker纳入真实金额geometry检查；源码字符串保留，22pt标题补足真实行框；长文本真实失败继续blocked |
-| E05 | `data-source-adapter.js:27-36` 只描述 /items，scalarFields 跳过数组 | 开放：allocations/parentDocuments/nested collections schema 不完整；空数组需要权威 schema |
+| E05 | `data-source-adapter.js:27-36` 只描述 /items，scalarFields 跳过数组 | 已修：显式复用JSON Schema profile，区分observed/authoritative；空数组字段只取声明契约，nested/allocations按具体父scope实际绑定、保存与表格编辑，未知安全字段保留 |
 | E06 | v3 BankPayment/BankReceipt 仅虚构本地 fixtures，用户编辑无真实清算校验 | 开放：真实 ERP 授权、多发票/币种/扣款/银行 settlement 未认证；不应自动修改金额来通过 |
 | E07 | HTTP 可非 loopback+empty token，owner/agentId 由 caller header 声明 | 部分已修：非 loopback 无有效 token 拒绝启动；shared-token 内 caller identity 仍不是 authenticated principal |
 | E08 | HTTP fault/delay/drop/crash headers 不受 testMode 保护 | 已修：仅显式 testMode:true 生效；普通服务忽略注入 |
@@ -251,5 +251,15 @@ Playwright 截图、HTML 与 Chromium PDF 写入各 case 的 `test-results/`；�
 - 新 A5 横向、50×30mm 标签、210×280mm 有限连续页覆盖 one/multi-row、CJK/RTL、direct/offline，目标边距有 W3C/Epson/Zebra 一手依据；仍不声称任意尺寸、endless spool、驱动/实体介质、扫码或原生指令认证。
 - 专项真实 normalizer/project/binder/save/read 与拒绝边界 **157/157 passed**；Node24 完整 `build:site` **226 files / 2,351 tests passed**，runtime/site/agent gate 完成。三浏览器/PDF 实际记录见 [原始退货](ERPNEXT_RETURN_ADAPTER.zh-CN.md) 与 [扩展纸型](ERP_ADDITIONAL_PAPER_ACCEPTANCE.zh-CN.md)。
 - 三引擎原始退货15、新纸型36、旧纸型24、transaction27、settlement12统一串行 **114/114 passed**，无 retry/flaky/skip；新17份实际Chromium PDF。原生不带测试init script的UI3页ready且截图已查看；额外managed工具出现PREVIEW_NOT_STARTED/截图20s timeout，根因未确认，未扩大预算或把工具失败标成成功。
+
+## 17. 嵌套集合与权威 schema（后续选项 1）
+
+- 基线实际 source.schema 只返回/items，遗漏allocations、parentDocuments、具体父allocations与转义键集合；现扫描全部行并区分mixed/optional，不把观察结果当成权威schema。
+- 唯一项目schema保留在project.schema；manifest只存来源/本地dataset/version身份。显式声明仍不是生产ERP授权；空父数组不捏造第0行，不flatten、跨父join或重算金额。
+- 重开空集合后，后续schema-less输入仍遵守原契约；错误后续行/类型/身份/预算在提交前拒绝。导入总是新本地UUID，只重绑声明的本地身份，不按文件id覆盖原记录；已有revision/CAS保护保留。
+- 集成实际发现nullable数组被误列为标量、合法null被当作missing；修正为既有profile语义，实际数组仍是集合、null标量为空白，缺失undefined仍拒绝。
+- 首次完整构建21项New-dataset消费者失败，根因是纯databaseView新增隐式controller.project依赖；改用已有显式project参数传schema，未修改原消费者测试或添加假fallback。最终Node24完整227文件/2365项通过，runtime/site/publication gate完成；新增14项业务边界。
+- 三引擎完整UI生命周期3/3通过，实际managed离线ready/1页与原样身份/金额截图已查看；先前Node-DOMParser宿主错误与Firefox布局warning如实记录。warning仍打印并附JSON，不放宽deadline/业务断言；完整历史见[嵌套数据契约](ERP_NESTED_DATASET_SCHEMA.zh-CN.md)。不新增AI原值/const/enum曝光或改变grant，发布baseline不前移。
+
 
 

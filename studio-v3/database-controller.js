@@ -3,8 +3,13 @@ import { createDatabase, storageMessage, DATABASE_NAME } from './database-store.
 import { datasetRecord, datasetMatchesProject, datasetName, datasetTitleFor, dataValue, exportDataset, importDataset, itemColumns, newItem, numericPaths, removeRowPaths, setDataValue, starterRecords, validateDataset } from './database-model.js';
 import { designOf } from './model.js';
 import { databaseView } from './database-view.js';
+import { assertCollectionBinding, assertProjectSchema, projectSourceSchema, validateSourceSchema } from './dataset-schema.js';
 
 const referenceFor = record => ({id:record.id,title:record.title,type:record.type,revision:record.revision,origin:record.origin || 'local-demo'});
+function withRecordContract(project,record) {
+  const contract = validateSourceSchema(record.sourceSchema,record.data,record.id) || projectSourceSchema({...project,sampleData:record.data});
+  return contract ? {...record,sourceSchema:{...contract,datasetId:record.id}} : record;
+}
 export class DemoDatabase {
   constructor(callbacks) {
     this.callbacks = callbacks; this.records = []; this.selected = {}; this.store = null;
@@ -27,8 +32,12 @@ export class DemoDatabase {
   starting(project) {
     const type = designOf(project).type, kind = project.sampleData.document?.kind;
     const compatible=this.records.filter(record=>datasetMatchesProject(record,project));
-    const record=compatible.find(record=>record.id===this.selected[type]) || (kind ? compatible[0] : compatible.find(record=>record.id===`starter:${type}`));
-    return record ? {project:{...project,manifest:{...project.manifest,...(record.data.document?.currency ? {currency:record.data.document.currency} : {})},sampleData:structuredClone(record.data)},reference:referenceFor(record)} : {project,reference:null};
+    const selected=compatible.find(record=>record.id===this.selected[type]) || (kind ? compatible[0] : compatible.find(record=>record.id===`starter:${type}`));
+    if (!selected) return {project,reference:null};
+    const record = withRecordContract(project,selected), sourceSchema = record.sourceSchema;
+    const next = {...project,manifest:{...project.manifest,datasetSchema:sourceSchema ? {sourceId:sourceSchema.sourceId,datasetId:sourceSchema.datasetId,version:sourceSchema.version} : null,...(record.data.document?.currency ? {currency:record.data.document.currency} : {})},schema:sourceSchema?.schema || project.schema,sampleData:structuredClone(record.data)};
+    assertProjectSchema(next);
+    return {project:next,reference:referenceFor(record)};
   }
   resetDraft() { this.draft = null; this.errors.clear(); this.rowPage = 0; this.error = ''; }
   guardDraft() {
@@ -39,7 +48,7 @@ export class DemoDatabase {
     if (!this.draft) {
       const reference = this.state.sample === 'erp' ? this.project.studioV3Session.database : null;
       const data = structuredClone(this.project.sampleData);
-      this.draft = {data,title:datasetTitleFor(this.project),reference:structuredClone(reference || null),numberPaths:numericPaths(data),columnTypes:new Map(itemColumns(data,designOf(this.project)).map(c=>[c.pointer,c.type]))};
+      this.draft = {data,title:datasetTitleFor(this.project),reference:structuredClone(reference || null),numberPaths:numericPaths(data),columnTypes:new Map(itemColumns(data,designOf(this.project),this.project.schema).map(c=>[c.pointer,c.type]))};
     }
     return this.draft;
   }
@@ -65,7 +74,11 @@ export class DemoDatabase {
   validateDraft() {
     const draft = this.ensureDraft(); this.draftErrors();
     if (this.errors.size) throw new Error(`Enter a finite number for ${[...this.errors][0]}.`);
-    draft.title = datasetName(draft.title); validateDataset(draft.data); return draft;
+    const title = datasetName(draft.title);
+    validateDataset(draft.data);
+    const candidate = {...this.project,sampleData:draft.data};
+    assertProjectSchema(candidate); assertCollectionBinding(candidate,designOf(candidate).collection,undefined,false);
+    draft.title = title; return draft;
   }
   render() {
     const target = document.querySelector('#database-workbench'); if (!target || !this.project) return;
@@ -82,15 +95,18 @@ export class DemoDatabase {
   }
   async refresh() { this.records = (await this.store.list()).sort((a,b)=>a.title.localeCompare(b.title)); }
   async apply(record, data = record.data) {
-    await this.callbacks.apply(data,record ? referenceFor(record) : null,this.context);
+    await this.callbacks.apply(data,record ? referenceFor(record) : null,this.context,null,undefined,record?.sourceSchema);
     this.resetDraft(); this.message = this.store.persistent ? 'Dataset saved locally and applied to the print form.' : 'Applied in this tab only. Export before leaving; storage is unavailable.';
   }
   async choose(id) {
-    if (!id || !this.guardDraft()) return;
-    await this.refresh(); const record = this.records.find(r=>r.id === id);
-    if (!record || !datasetMatchesProject(record,this.project)) throw new Error('Choose a dataset for the current document type.');
+    if (!id) return;
+    const record = withRecordContract(this.project,await this.source.read(id));
+    if (!datasetMatchesProject(record,this.project)) throw new Error('Choose a dataset for the current document type.');
+    const candidate = {...this.project,sampleData:record.data,schema:record.sourceSchema?.schema || this.project.schema,manifest:{...this.project.manifest,datasetSchema:record.sourceSchema ? {sourceId:record.sourceSchema.sourceId,datasetId:record.sourceSchema.datasetId,version:record.sourceSchema.version} : null}};
+    assertProjectSchema(candidate); assertCollectionBinding(candidate,designOf(candidate).collection,undefined,false);
+    if (!this.guardDraft()) return;
     await this.store.select(record.type,record.id); this.selected[record.type] = record.id;
-    await this.apply(await this.source.read(record.id,{revision:record.revision})); this.message = 'Loaded saved dataset into the form. Your template layout is retained.';
+    await this.apply(record); this.message = 'Loaded saved dataset into the form. Your template layout is retained.';
   }
   async save(copy) {
     if (this.state.dataDraft !== null) throw new Error('Apply your advanced JSON edits before saving the dataset.');
@@ -104,6 +120,8 @@ export class DemoDatabase {
       title = `${base} · copy ${index}`;
     }
     const record = datasetRecord(designOf(this.project).type,draft.data,title,reference?.id);
+    const sourceSchema = projectSourceSchema({...this.project,sampleData:draft.data});
+    if (sourceSchema) record.sourceSchema = {...sourceSchema,datasetId:record.id};
     if (this.project.studioV3Session.source?.kind === 'imported-data') record.origin = 'imported-data';
     const [saved] = await this.store.write([{id:record.id,record,expectedRevision:reference?.revision ?? null}],{key:`active:${record.type}`,value:record.id});
     await this.refresh(); this.selected[record.type] = record.id;
@@ -111,8 +129,10 @@ export class DemoDatabase {
     await this.apply(saved);
   }
   async import(source) {
-    const record = importDataset(source,designOf(this.project).type);
+    const record = withRecordContract(this.project,importDataset(source,designOf(this.project).type));
     if (!datasetMatchesProject(record,this.project)) throw new Error('Imported dataset must match the selected business document kind.');
+    const candidate = {...this.project,sampleData:record.data,schema:record.sourceSchema?.schema || this.project.schema,manifest:{...this.project.manifest,datasetSchema:record.sourceSchema ? {sourceId:record.sourceSchema.sourceId,datasetId:record.sourceSchema.datasetId,version:record.sourceSchema.version} : null}};
+    assertProjectSchema(candidate); assertCollectionBinding(candidate,designOf(candidate).collection,undefined,false);
     if (!this.guardDraft()) return;
     const [saved] = await this.store.write([{id:record.id,record,expectedRevision:null}],{key:`active:${record.type}`,value:record.id});
     await this.refresh(); this.selected[record.type] = record.id; this.channel?.postMessage({changed:true});
@@ -140,15 +160,16 @@ export class DemoDatabase {
     if (name === 'import') { document.querySelector('#dataset-file').click(); return; }
     if (name === 'previous-rows' || name === 'next-rows') { this.rowPage += name === 'previous-rows' ? -1 : 1; this.render(); return; }
     if (name === 'add-row' || name === 'delete-row') {
-      const draft = this.ensureDraft();
+      const draft = this.ensureDraft(), collection = designOf(this.project).collection, rows = dataValue(draft.data,collection);
+      if (!Array.isArray(rows)) throw new Error('Selected collection must be an array.');
       if (name === 'add-row') {
-        if (draft.data.items.length >= 500) throw new Error('At most 500 item records are supported.');
-        draft.data.items.push(newItem(draft.data,designOf(this.project),draft.columnTypes));
-        for (const pointer of numericPaths(draft.data)) draft.numberPaths.add(pointer); this.rowPage = Math.floor((draft.data.items.length-1)/25);
+        if (rows.length >= 500) throw new Error('At most 500 item records are supported.');
+        rows.push(newItem(draft.data,designOf(this.project),draft.columnTypes));
+        for (const pointer of numericPaths(draft.data)) draft.numberPaths.add(pointer); this.rowPage = Math.floor((rows.length-1)/25);
       } else {
-        const index = Number(target.dataset.row); draft.data.items.splice(index,1);
-        draft.numberPaths = removeRowPaths(draft.numberPaths,index);
-        this.rowPage = Math.min(this.rowPage,Math.max(0,Math.ceil(draft.data.items.length/25)-1)); this.draftErrors();
+        const index = Number(target.dataset.row); rows.splice(index,1);
+        draft.numberPaths = removeRowPaths(draft.numberPaths,index,collection);
+        this.rowPage = Math.min(this.rowPage,Math.max(0,Math.ceil(rows.length/25)-1)); this.draftErrors();
       }
       this.error = this.errors.size ? `Enter a finite number for ${[...this.errors][0]}.` : ''; this.render(); return;
     }
@@ -170,6 +191,8 @@ export class DemoDatabase {
       else if (name === 'export') {
         const draft = this.draft;
         const record = datasetRecord(designOf(this.project).type,draft?.data || this.project.sampleData,draft?.title || datasetTitleFor(this.project));
+        const sourceSchema = projectSourceSchema({...this.project,sampleData:record.data});
+        if (sourceSchema) record.sourceSchema = {...sourceSchema,datasetId:record.id};
         this.callbacks.download(exportDataset(record),'studio-v3-dataset.json','application/json');
       }
     } catch (error) { this.error = error.code === 'DATASET_CONFLICT' || error instanceof DOMException ? storageMessage(error) : error.message; throw error; }

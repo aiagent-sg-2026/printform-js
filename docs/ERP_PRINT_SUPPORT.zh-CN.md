@@ -161,4 +161,12 @@ try {
 - 发布只补足实际 raw SDK 浏览器依赖 `src/printform/helpers.js`，不公开整个 src、配置或本地文件树；消费者在已构建站点动态导入并创建真实项目，不用 API mock 掩盖部署缺口。
 - 本轮 C 实际Node24完整226文件/2351项、专项157项；三引擎原始退货15、新纸型36、旧纸型24、transaction27、settlement12合计114/114通过，含新17份真实Chromium PDF。不带测试init script的实际UI另证3页ready；额外managed工具的启动/截图失败单独保留，未冒充其通过。
 
+## 11. 明确嵌套集合与空数组来源契约
+
+- [嵌套数据契约](ERP_NESTED_DATASET_SCHEMA.zh-CN.md)复用现有JSON Schema profile，项目schema只存一份；来源/版本声明不是生产授权认证，observed描述符不能自证字段类型。
+- 空allocations的字段来自显式schema；后续非空输入继续受同一契约约束。具体父JSON Pointer可在选择器、字段树、表格编辑、binder和离线输出中实际消费，不flatten或混父记录。
+- 原样字符串身份/金额、转义键、正常未知字段保留；null与missing区分，不生成假行或零金额。错误类型/父scope/身份/预算保留原项目与草稿，文件导入不覆盖原本地记录。
+- 本轮Node24完整227文件/2365项、最终专项36项及runtime/site/agent gate通过；三引擎完整UI重开/离线生命周期3/3通过，实际离线1页ready截图已查看，浏览器warning保留。数据库/items约束与项目自定义集合边界仍各自保持。
+
+
 

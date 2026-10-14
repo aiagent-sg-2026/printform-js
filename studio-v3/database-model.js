@@ -2,6 +2,7 @@ import { compactA5Record } from './compact-a5-demo.js';
 import { demoStarterRecords } from './demo-catalog.js';
 import { sampleData } from './model.js';
 import { assertBoundedJson, parseBoundedJson, unsafeJsonKey } from './json-safety.js';
+import { declaredCollectionFields, validateSourceSchema } from './dataset-schema.js';
 
 export const DATASET_FORMAT = 'printform-studio-v3-dataset';
 export const DATA_TYPES = ['invoice', 'purchase', 'delivery'];
@@ -39,18 +40,23 @@ export function groupFields(data, group) {
   if (group !== 'other') return scalarFields(data[group],`/${group}`);
   return Object.entries(data).filter(([key]) => !DATA_GROUPS.some(([id]) => id === key)).flatMap(([key,value]) => scalarFields(value,`/${encodeKey(key)}`));
 }
-export function itemColumns(data, design) {
-  const result = new Map(), rows = Array.isArray(data.items) ? data.items : [];
+export function itemColumns(data, design, schema=null) {
+  const result = new Map(), value = dataValue(data,design.collection || '/items'), rows = Array.isArray(value) ? value : [];
+  const declared = schema ? declaredCollectionFields(schema,design.collection || '/items') : [];
   for (const field of design.columns) {
     const pointer = field.pointer?.startsWith('./') ? field.pointer.slice(1) : null;
     if (pointer) {
-      const record = rows.find(row=>dataValue(row,pointer) !== undefined), value = record && dataValue(record,pointer);
-      const type = typeof value === 'number' ? 'number' : typeof value === 'boolean' ? 'boolean' : value === undefined && ['number','currency','percent'].includes(field.format) ? 'number' : 'text';
+      const types = new Set(rows.map(row=>dataValue(row,pointer)).filter(value=>value !== undefined).map(value=>typeof value));
+      const declaredType = declared.find(entry=>entry.pointer === `.${pointer}`)?.type, sourceType = declaredType === 'integer' ? 'number' : declaredType;
+      const type = sourceType || (types.size > 1 ? 'mixed' : [...types][0]) || (['number','currency','percent'].includes(field.format) ? 'number' : 'text');
       result.set(pointer,{pointer,label:field.label,type});
     }
   }
+  const templatePointers = new Set(result.keys());
   for (const row of rows) for (const field of scalarFields(row)) {
-    if (!result.has(field.pointer) && result.size < 30) result.set(field.pointer,{...field,label:field.pointer.slice(1)});
+    const previous = result.get(field.pointer);
+    if (previous && !templatePointers.has(field.pointer) && previous.type !== field.type) previous.type = 'mixed';
+    if (!previous && result.size < 30) result.set(field.pointer,{...field,label:field.pointer.slice(1)});
   }
   return [...result.values()];
 }
@@ -60,7 +66,7 @@ export function newItem(data, design, types = new Map()) {
     column.type = types.get(column.pointer) || column.type;
     const parts = pathParts(column.pointer), key = parts.pop(); let parent = row;
     for (const part of parts) parent = parent[part] ||= {};
-    parent[key] = column.pointer === '/no' ? (data.items?.length || 0)+1 : column.type === 'number' ? 0 : column.type === 'boolean' ? false : '';
+    parent[key] = column.pointer === '/no' ? (dataValue(data,design.collection || '/items')?.length || 0)+1 : column.type === 'number' ? 0 : column.type === 'boolean' ? false : '';
   }
   return row;
 }
@@ -85,16 +91,20 @@ export function datasetName(value) {
 }
 export const datasetTitleFor = project => datasetName(project.manifest.sampleDataTitle ?? `${project.manifest.title || 'Print form'} · dataset`.slice(0,100));
 export function numericPaths(data) {
-  const paths = scalarFields(data).filter(f=>typeof f.value === 'number').map(f=>f.pointer);
-  for (const [index,row] of (Array.isArray(data.items) ? data.items : []).entries()) {
-    paths.push(...scalarFields(row,`/items/${index}`).filter(f=>typeof f.value === 'number').map(f=>f.pointer));
-  }
+  const paths = [];
+  const walk = (value,path='') => {
+    if (value && typeof value === 'object') for (const [key,child] of Object.entries(value)) walk(child,`${path}/${encodeKey(key)}`);
+    else if (typeof value === 'number') paths.push(path);
+  };
+  walk(data);
   return new Set(paths);
 }
-export function removeRowPaths(paths,index) {
+export function removeRowPaths(paths,index,collection='/items') {
   return new Set([...paths].flatMap(pointer=> {
-    const match = /^\/items\/(\d+)(\/.*)$/.exec(pointer); if (!match) return [pointer];
-    const row = Number(match[1]); return row === index ? [] : [row > index ? `/items/${row-1}${match[2]}` : pointer];
+    if (!pointer.startsWith(`${collection}/`)) return [pointer];
+    const [token,...rest] = pointer.slice(collection.length+1).split('/');
+    if (!/^\d+$/.test(token)) return [pointer];
+    const row = Number(token); return row === index ? [] : [row > index ? `${collection}/${row-1}/${rest.join('/')}` : pointer];
   }));
 }
 export function datasetRecord(type, data, title, id = crypto.randomUUID()) {
@@ -106,14 +116,18 @@ export function starterRecords() {
   return [...DATA_TYPES.map(type => ({...datasetRecord(type,sampleData(type),`${{invoice:'Invoice',purchase:'Purchase order',delivery:'Delivery note'}[type]} · starter`, `starter:${type}`),origin:'builtin-demo'})),...demoStarterRecords(),compactA5Record()];
 }
 export function exportDataset(record) {
-  return JSON.stringify({format:DATASET_FORMAT,version:1,dataset:{type:record.type,title:record.title,data:record.data}},null,2);
+  const sourceSchema = validateSourceSchema(record.sourceSchema,record.data,record.id);
+  return JSON.stringify({format:DATASET_FORMAT,version:1,dataset:{type:record.type,title:record.title,data:record.data,...(sourceSchema ? {id:record.id,sourceSchema} : {})}},null,2);
 }
 export function importDataset(source, type) {
   const parsed = parseBoundedJson(source,{maxDepth:18});
   if (parsed && typeof parsed === 'object' && parsed.format === DATASET_FORMAT) {
     if (parsed.version !== 1 || !parsed.dataset) throw new Error('Unsupported dataset file version.');
     if (parsed.dataset.type !== type) throw new Error('Start a matching document template before importing this dataset.');
-    return {...datasetRecord(type,parsed.dataset.data,parsed.dataset.title),origin:'imported-data'};
+    if (parsed.dataset.sourceSchema && (typeof parsed.dataset.id !== 'string' || !parsed.dataset.id)) throw new Error('Source schema requires the exported dataset identity.');
+    const sourceSchema = validateSourceSchema(parsed.dataset.sourceSchema,parsed.dataset.data,parsed.dataset.id);
+    const record = datasetRecord(type,parsed.dataset.data,parsed.dataset.title);
+    return {...record,origin:'imported-data',...(sourceSchema ? {sourceSchema:{...sourceSchema,datasetId:record.id}} : {})};
   }
   return {...datasetRecord(type,parsed,'Imported sample'),origin:'imported-data'};
 }

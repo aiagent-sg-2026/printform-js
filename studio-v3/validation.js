@@ -5,6 +5,7 @@ import { BLOCKS, designOf } from './model.js';
 export { validPointer } from './design-authoring.js';
 import { validPointer, fieldKind, pageDimensions, pageSettings } from './design-authoring.js';
 import { validateDesign } from './design-validation.js';
+import { assertProjectSchema, assertCollectionBinding } from './dataset-schema.js';
 
 export function bindingValidation(project) {
   const d = designOf(project);
@@ -14,6 +15,7 @@ export function bindingValidation(project) {
     issue('INVALID_DESIGN','/manifest/studioV3',error.message,'document');
     return {valid:false,errors,errorCount:errors.length};
   }
+  try { assertProjectSchema(project); } catch (error) { issue('SOURCE_SCHEMA_INVALID','/schema',error.message,'document'); }
   BLOCKS.filter(id => d.blocks[id].enabled).forEach(id => {
     if (id === 'items') return;
     d[id].forEach(f => {
@@ -26,6 +28,7 @@ export function bindingValidation(project) {
   if (d.blocks.items.enabled) {
     const items = validPointer(d.collection) ? resolvePointer(project.sampleData, d.collection) : undefined;
     if (!Array.isArray(items)) issue('COLLECTION_NOT_ARRAY', d.collection, 'Collection must be an array. Use /items, without a wildcard.', 'items');
+    else if (items.some(row=>!row || typeof row !== 'object' || Array.isArray(row))) issue('ROW_NOT_OBJECT',d.collection,'Every collection row must be an object.','items');
     else d.columns.forEach(f => {
       if (fieldKind(f) !== 'bound') return;
       if (!validPointer(f.pointer, true)) return issue('INVALID_POINTER', f.pointer, 'Use a row-relative pointer such as ./description.', `items-${f.id}`);
@@ -34,6 +37,9 @@ export function bindingValidation(project) {
     if (!d.columns.length) issue('COLUMNS_EMPTY', '/columns', 'Add at least one item column.', 'items');
     const width = d.columns.reduce((sum, c) => sum + Number(c.width), 0);
     if (width > 100.1 || width <= 0) issue('COLUMN_WIDTHS', '/columns', 'Column widths must total 100% or less.', 'items');
+  }
+  if (d.blocks.items.enabled) {
+    try { assertCollectionBinding(project,d.collection,d.columns,false); } catch (error) { issue('COLLECTION_SCHEMA_INVALID',d.collection,error.message,'items'); }
   }
   return { valid: !errors.length, errors: errors.slice(0, 30), errorCount: errors.length };
 }
