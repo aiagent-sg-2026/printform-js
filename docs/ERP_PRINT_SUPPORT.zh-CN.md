@@ -1,6 +1,6 @@
 # ERP 打印支持契约
 
-审查日期：2026-10-13。状态：**Production Pilot，不是全部 ERP 格式、法定发票或打印机认证**。
+审查日期：2026-10-15。状态：**Production Pilot，不是全部 ERP 格式、法定发票或打印机认证**。
 
 问题与改进清单、实际验证结果见 [ERP 打印审计](ERP_PRINT_AUDIT.zh-CN.md)。本文件区分“可绑定和分页”“现成业务示例”“真实业务验收”，不得混为一个 supported 标志。
 
@@ -15,7 +15,7 @@
 
 ## 2. 明确的业务类型
 
-以下目录及明确 canonical 契约提供模板和虚构数据；可供开发/打印验证，不证明真实 ERP 会计正确性。新增六种收货/退货/调整/现金退款通过专用 creator 导入，未冒充 catalogue 内置模板或 raw 数据库适配。
+以下目录及明确 canonical 契约提供模板和虚构数据；可供开发/打印验证，不证明真实 ERP 会计正确性。六种收货/退货/调整/现金退款通过专用 creator 导入；另有严格锁定 ERPNext v15.0.0 的原始退货 profile，未冒充所有版本或 catalogue 内置模板。
 
 | 类型 | exact `document.kind` | 打印语义与约束 |
 | --- | --- | --- |
@@ -38,7 +38,7 @@
 | 通用应付申请 | `AccountsPayableClaim` | 来源采购发票的通用示例，不替未定义缩写赋予业务含义 |
 | 采购收货 | `PurchaseReceipt` | accepted/received/rejected、UOM、库存 inflow；不是供应商发票 |
 | 采购退货 | `PurchaseReturn` | 原收货单/原行、returned、库存 outflow；应付调整另用 DebitNote |
-| 销售退货 | `SalesReturn` | 原发货单/原行、returned、库存 inflow；应收调整另用 CreditNote |
+| 销售退货 | `SalesReturn` | 明确库存 none/inflow 与应收 none/decrease；原发货-only 与 Sales Invoice return 区分，不重复入库或猜测应收冲减 |
 | 贷项 | `CreditNote` | 明确 receivable/payable decrease；库存退回须另外显式声明 |
 | 借项 | `DebitNote` | 明确账款方向；supplier 的 ERPNext decrease/Odoo increase 不按标题推定 |
 | 现金退款 | `Refund` | 明确 customer outflow/supplier inflow 与退款依据分配；不是 vendor credit-note 名称别名 |
@@ -151,5 +151,14 @@ try {
 - [安全导入](ERP_PROJECT_IMPORT_SAFETY.zh-CN.md)：JSON/HTML重开与数据导入/编辑共享bounded JSON；工程自定义集合保留，dataset仍按其既有/items业务profile校验。未知正常字段不被删除，危险或超预算输入不被清洗成“有效”。
 - [业务场景](ERP_BUSINESS_SCENARIO_CONTRACT.zh-CN.md)：已声明kind使用公开exact-kind fixture，而非generic family或私有ERP复制；合成行只作排版，不重算税额/总计/余额。v2明确repeat collection，claim字符串行号和其他数组不变。
 - 原样货币字符串声明`data-pf-monetary="currency"`，不经Intl再格式化；真实Range/clip检查发现问题仍阻断。实际普通v2claim22pt行框已补足，未减字号/增纸/放宽容差；长文本legacy输入仍有真实blocked边界。
-- 本轮Node24完整224文件/2279项与三引擎24项consumer通过；这不认证任意custom kind、实际ERP、银行或所有claim长文本。
+- 本轮 B 的Node24完整224文件/2279项与三引擎24项consumer通过；这不认证任意custom kind、实际ERP、银行或所有claim长文本。
+
+## 10. 固定版本原始退货与扩展纸型
+
+- [ERPNext 原始退货](ERPNEXT_RETURN_ADAPTER.zh-CN.md)：只读 Purchase Receipt / Sales Invoice / Purchase Invoice return，后两种分别明确 stock 0/1；已提交状态、真实原单/原子行身份、授权精确十进制覆盖必需。本币与单据币独立，不重算 FX、税、退款或账款。
+- Canonical SalesReturn 现在允许明确 receivable decrease 和 none/inflow 库存，仍拒绝两个效果均 none。不是把 Delivery Note 自动升级成 Credit Note。
+- [扩展纸型](ERP_ADDITIONAL_PAPER_ACCEPTANCE.zh-CN.md)：A5 横向、50×30mm 小标签、210×280mm 有限连续页；目标设备边距来自官方手册，但浏览器/PDF 证据不替代进纸、切刀、穿孔、扫码或原生 ZPL/ESC-POS 认证。
+- 发布只补足实际 raw SDK 浏览器依赖 `src/printform/helpers.js`，不公开整个 src、配置或本地文件树；消费者在已构建站点动态导入并创建真实项目，不用 API mock 掩盖部署缺口。
+- 本轮 C 实际Node24完整226文件/2351项、专项157项；三引擎原始退货15、新纸型36、旧纸型24、transaction27、settlement12合计114/114通过，含新17份真实Chromium PDF。不带测试init script的实际UI另证3页ready；额外managed工具的启动/截图失败单独保留，未冒充其通过。
+
 

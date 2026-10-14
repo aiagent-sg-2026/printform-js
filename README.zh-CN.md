@@ -16,7 +16,7 @@
 - 架构、规格与任务状态: [DESIGN.md](DESIGN.md) · [SPEC.md](SPEC.md) · [EPIC.md](EPIC.md) · [ROADMAP.md](ROADMAP.md) · [TASK.md](TASK.md)
 - 变更记录: [CHANGELOG.md](CHANGELOG.md)（英文）
 - 版本与兼容矩阵: [docs/COMPATIBILITY_MATRIX.zh-CN.md](docs/COMPATIBILITY_MATRIX.zh-CN.md) · [Node24 / 固定 runner CI 契约](docs/CI_RUNTIME_COMPATIBILITY.zh-CN.md) · [依赖安全修复](docs/DEPENDENCY_SECURITY_REMEDIATION.zh-CN.md)
-- ERP 单据与格式支持契约: [支持范围](docs/ERP_PRINT_SUPPORT.zh-CN.md) · [PCAR/CCAR](docs/ERP_CLAIM_BUSINESS_CONTRACT.zh-CN.md) · [收货／退货／贷借项／现金退款](docs/ERP_TRANSACTION_BUSINESS_CONTRACT.zh-CN.md) · [安全导入](docs/ERP_PROJECT_IMPORT_SAFETY.zh-CN.md) · [业务场景／金额检查](docs/ERP_BUSINESS_SCENARIO_CONTRACT.zh-CN.md) · [特殊纸型验收](docs/ERP_SPECIAL_PAPER_ACCEPTANCE.zh-CN.md)
+- ERP 单据与格式支持契约: [支持范围](docs/ERP_PRINT_SUPPORT.zh-CN.md) · [PCAR/CCAR](docs/ERP_CLAIM_BUSINESS_CONTRACT.zh-CN.md) · [收货／退货／贷借项／现金退款](docs/ERP_TRANSACTION_BUSINESS_CONTRACT.zh-CN.md) · [ERPNext 原始退货](docs/ERPNEXT_RETURN_ADAPTER.zh-CN.md) · [安全导入](docs/ERP_PROJECT_IMPORT_SAFETY.zh-CN.md) · [业务场景／金额检查](docs/ERP_BUSINESS_SCENARIO_CONTRACT.zh-CN.md) · [特殊纸型](docs/ERP_SPECIAL_PAPER_ACCEPTANCE.zh-CN.md) · [A5／小标签／有限连续纸](docs/ERP_ADDITIONAL_PAPER_ACCEPTANCE.zh-CN.md)
 - 缺陷、改进与验证证据: [docs/ERP_PRINT_AUDIT.zh-CN.md](docs/ERP_PRINT_AUDIT.zh-CN.md)
 - 许可协议: [LICENSE](LICENSE)（MIT）
 
