@@ -15,6 +15,13 @@ who don't need the diary.
 
 ## [Unreleased]
 
+### Fixed ERPNext Payment Entry and physical-paper boundaries
+
+- Add a read-only ERPNext15.0.0 Receive/Customer and Pay/Supplier snapshot adapter with exact authorized money/precision, native account/reference identity and portable Studio projects.
+- Keep party-account allocation/unapplied facts separate from cash and invoice currencies; require independently supplied invoice-currency money rather than infer FX or clearing.
+- Add Letter/Legal portrait/landscape direct/offline/PDF conservation profiles and an official-source browser/OS/driver/media matrix; no physical printer queue or device certification is claimed.
+- Correct legacy750×1050 logical-pixel examples that incorrectly called themselves physical A4; explicit widths are not preset/device printable-area evidence.
+
 ### ERP long-claim and multirow continuation
 
 - Preserve the original four valuation totals in the final claim footer instead of silently dropping an unregistered table.

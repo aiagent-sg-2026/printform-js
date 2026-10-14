@@ -1,13 +1,16 @@
 import { fail, has, object, text, choice, date, currency, jsonSafe, money, reference, metadata } from './erp-settlement-validation.js';
 
 export const ERP_SETTLEMENT_PROFILE = 'erp-supplied-settlement-v1';
-const allocationMoney = ['invoiceAppliedAmount', 'invoiceClearedAmount', 'invoiceBalanceBefore', 'invoiceRemainingBalance', 'cashAppliedAmount'];
-const summaryMoney = ['cashAppliedAmount', 'invoiceClearedAmount', 'unappliedAmount', 'remainingBalance', 'fxDifference'];
+const allocationMoney = ['invoiceAppliedAmount', 'partyAppliedAmount', 'invoiceClearedAmount', 'invoiceBalanceBefore', 'invoiceRemainingBalance', 'cashAppliedAmount'];
+const summaryMoney = ['cashAppliedAmount', 'invoiceClearedAmount', 'unappliedAmount', 'partyUnappliedAmount', 'partyAllocatedAmount', 'remainingBalance', 'fxDifference'];
 const adjustmentKinds = ['bankFee', 'withholding', 'discount', 'fxGain', 'fxLoss', 'writeOff', 'other'];
 const labels = {
   invoiceAppliedAmount: 'Invoice-currency applied', invoiceClearedAmount: 'Invoice cleared (ERP supplied)',
+  partyAppliedAmount: 'Applied amount (party-account currency)',
   invoiceBalanceBefore: 'Invoice balance before', invoiceRemainingBalance: 'Invoice remaining balance',
   cashAppliedAmount: 'Cash-currency applied', unappliedAmount: 'Unapplied advance / prepayment',
+  partyUnappliedAmount: 'Unapplied advance / prepayment (party-account currency)',
+  partyAllocatedAmount: 'ERP allocated total (party-account currency)',
   remainingBalance: 'ERP remaining balance', fxDifference: 'ERP FX difference',
   bankFee: 'Bank fee', withholding: 'Withholding', discount: 'Settlement discount',
   fxGain: 'FX gain', fxLoss: 'FX loss', writeOff: 'Write-off', other: 'Other adjustment'
@@ -16,7 +19,7 @@ const labels = {
 // Canonical facts only: no ERP connection, posting, allocation, tax or FX calculation.
 export function normalizeErpSettlement(input) {
   jsonSafe(input);
-  object(input, 'input', ['profile', 'source', 'document', 'company', 'party', 'cashMovement', 'allocations', 'adjustments', 'summary', 'bank', 'approval', 'notes']);
+  object(input, 'input', ['profile', 'source', 'document', 'company', 'party', 'partyAccount', 'cashMovement', 'allocations', 'adjustments', 'summary', 'bank', 'approval', 'notes']);
   if (input.profile !== ERP_SETTLEMENT_PROFILE) fail('PROFILE', 'profile', `Choose explicit ${ERP_SETTLEMENT_PROFILE}; ambiguous raw ERP amounts are not inferred.`);
   const source = metadata(input.source, 'source', ['system', 'documentType', 'id'], ['system', 'documentType', 'id']);
   object(input.document, 'document', ['kind', 'number', 'date', 'currency', 'reference', 'status']);
@@ -66,7 +69,8 @@ export function normalizeErpSettlement(input) {
     if (!has(supplied, 'invoiceAppliedAmount')) fail('AMOUNT', `${path}.invoiceAppliedAmount`, 'Supply the explicit invoice-currency applied amount.');
     for (const key of allocationMoney) if (has(supplied, key)) {
       const value = money(supplied[key], `${path}.${key}`);
-      const expected = key === 'cashAppliedAmount' ? cashMovement.amount.currency : ref.currency;
+      const expected = key === 'cashAppliedAmount' ? cashMovement.amount.currency : key === 'partyAppliedAmount' ? input.partyAccount?.currency : ref.currency;
+      if (!expected) fail('CURRENCY', `${path}.${key}`, 'Party applied amount requires the supplied party account identity, currency and provenance.');
       if (value.currency !== expected) fail('CURRENCY', `${path}.${key}.currency`, `Expected ${expected}; do not conflate invoice and cash currency amounts.`);
       result[key] = value;
       append('Invoice allocation', supplied.id, labels[key], value, `${path}.${key}`, ref, { metric: key, ...(result.state ? { state: result.state } : {}) });
@@ -79,6 +83,11 @@ export function normalizeErpSettlement(input) {
   });
   const allocationById = new Map(allocations.map(entry => [entry.id, entry]));
   const result = { profile: input.profile, source, document, company, party, cashMovement, allocations };
+  if (has(input, 'partyAccount')) {
+    object(input.partyAccount, 'partyAccount', ['id', 'currency', 'provenance']);
+    result.partyAccount = { id: text(input.partyAccount.id, 'partyAccount.id'), currency: currency(input.partyAccount.currency, 'partyAccount.currency'),
+      provenance: metadata(input.partyAccount.provenance, 'partyAccount.provenance', ['sourcePath', 'meaning'], ['sourcePath', 'meaning']) };
+  }
   if (has(input, 'adjustments')) {
     if (!Array.isArray(input.adjustments)) fail('ROWS', 'adjustments', 'Expected an array of supplied adjustments.');
     result.adjustments = input.adjustments.map((supplied, index) => {
@@ -114,8 +123,12 @@ export function normalizeErpSettlement(input) {
     if (has(input.summary, 'remainingBalance')) result.summary.balanceBasis = text(input.summary.balanceBasis, 'summary.balanceBasis');
     else if (has(input.summary, 'balanceBasis')) fail('BALANCE', 'summary.balanceBasis', 'Balance basis requires its supplied remainingBalance.');
     for (const key of ['cashAppliedAmount', 'unappliedAmount']) if (result.summary[key] && result.summary[key].currency !== cashMovement.amount.currency) fail('CURRENCY', `summary.${key}.currency`, 'Expected the cash movement currency.');
+    for (const key of ['partyUnappliedAmount', 'partyAllocatedAmount']) if (result.summary[key]) {
+      if (!result.partyAccount) fail('CURRENCY', `summary.${key}`, 'A party-currency fact requires the supplied party account identity, currency and provenance.');
+      if (result.summary[key].currency !== result.partyAccount.currency) fail('CURRENCY', `summary.${key}.currency`, 'Expected the supplied party-account currency, not the cash currency.');
+    }
   }
-  if (!allocations.length && !result.summary?.unappliedAmount) fail('ADVANCE', 'summary.unappliedAmount', 'A pure advance/prepayment requires its ERP-supplied unapplied amount; it is not derived from cash.');
+  if (!allocations.length && !result.summary?.unappliedAmount && !result.summary?.partyUnappliedAmount) fail('ADVANCE', 'summary', 'A pure advance/prepayment requires an ERP-supplied cash- or party-account-currency unapplied amount; it is never derived from cash.');
   if (has(input, 'bank')) result.bank = metadata(input.bank, 'bank', ['name', 'account', 'transactionReference', 'date', 'status', 'paymentMethod']);
   if (has(input, 'approval')) result.approval = metadata(input.approval, 'approval', ['status', 'approvedBy', 'date', 'reference']);
   if (has(input, 'notes')) result.notes = text(input.notes, 'notes');
