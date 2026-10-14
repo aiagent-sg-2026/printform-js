@@ -208,3 +208,12 @@ Playwright 截图、HTML 与 Chromium PDF 写入各 case 的 `test-results/`；�
 - 真实 Chrome 另开 Refund 离线产物，2 页 ready；现金 MYR130.000、source USD30.000、basis USD25.000、cash applied MYR111.000、remaining USD5.000 各有独立含义；已查看两页。来源银行状态仍为 Not bank-reconciled。
 - 并行单测/browser 时的 4 项旧 typography parity 超时改为串行隔离验证后消失；未扩大 timeout、改断言或将运行竞争伪报业务 bug。复制/转发式 unit round trips 已删除，真实项目生命周期仍完整保留。
 
+## 12. 特殊纸型与精确 mm 边界（本轮选项 2）
+
+- 新增 58×120mm、80×160mm、100×70mm 标签、210×140mm 有限连续介质矩阵：direct / offline standalone × Chromium/Firefox/WebKit **24/24 passed**；Chromium 八种实际 PDF 检查页树、尺寸、逐页 ID/日期/金额、CJK/Arabic 与标签资产。
+- 真实产品 bug：234.33070866px 标签预算中的 234.328125px 正文被 ceil 为235px，三张标签输出五页、首尾空白。保留实测正文小数与一个 CSS layout unit 容差后，同一输入准确三页；没有删掉空白 DOM 掩盖错误。
+- 初次 headerless standalone blocked 为未关闭默认重复表头；按既有配置修正，错误语义未变。ArialMT PDF map 将 Arabic Yeh 变成不同字符，采用原版 OFL Amiri 与足够行高修复字体环境，不合并 Unicode 字符或缩小文字。direct font-ready 先触发布局，避免 WebKit 旧 ready Promise。
+- 完整 `npm run build:site` **222 files / 2,259 tests passed**。相关 141 项 browser 回归实际为138 passed、1 WebKit CCAR flaky（自动重试通过）、2 有意非 Chromium PDF-only skip；首次失败在 file navigation 的 load event。改成 DOM parsed + 实际 runtime ready 门禁后，PCAR/CCAR 六项三引擎专项 **6/6 passed**，保留原金额、行数和越界断言。
+- 真实 Chrome 另开离线标签：ready、3 页/3 行，每张约377.945×264.563px；三个金额原文、CJK/Arabic 与 Code39 reference asset 显示正确。只证明资产保留，不证明扫码或硬件。
+- [特殊纸型契约](ERP_SPECIAL_PAPER_ACCEPTANCE.zh-CN.md) 区分有限 CSS/PDF 页、设备不可打印区、切刀/传感器/驱动/连续介质；不认证无限 spool、ESC/POS、ZPL、真实切纸或全部字体。已有业务/会计安全边界不变。
+

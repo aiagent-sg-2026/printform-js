@@ -116,3 +116,8 @@ CSS Paged Media 明确区分 page box、page sheet 与设备可打印区域；�
 6. W3C CSS Values and Units Level 3：[absolute lengths](https://drafts.csswg.org/css-values-3/#absolute-lengths)。
 
 [7] [CSS Viewport Module Level 1 §4 / §4.1（编辑草案）](https://drafts.csswg.org/css-viewport/#zoom-property)：zoom 影响布局，DOM client rects 返回缩放后的长度；[MDN zoom](https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/zoom) 对比 transform 的非布局缩放。草案仍是 work in progress，浏览器支持必须通过实际 journey 验证。
+
+## 2026-10-14 精确 mm 纸型补充
+
+正文 fit 保留实测小数，不把234.328125px 行 ceil成235px后与234.33070866px纸高比较；行及最后页的 fit 共用一个 CSS layout unit 容差，现有物理几何验收不放宽。同一三标签输入的前后空白页已修复；[特殊纸型矩阵](ERP_SPECIAL_PAPER_ACCEPTANCE.zh-CN.md) 24/24、完整 build222 files/2259 tests 已实际通过。字体本身的 PDF 字符地图与行框仍需独立验证；见新契约的 Amiri/OFL 与设备边界，不能推导全部字体或硬件通过。
+

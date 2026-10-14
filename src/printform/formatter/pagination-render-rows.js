@@ -2,6 +2,7 @@
 
 import { DomHelpers } from "../dom.js";
 import { renderSpecialRow } from "./pagination-render-special.js";
+import { fitsWithinHeight } from "./pagination-fit.js";
 
 const ROW_HEIGHT_PREDICTION_SAFETY_MARGIN_PX = 50;
 
@@ -74,7 +75,7 @@ export function renderRows(outputContainer, sections, heights, footerState, heig
       const activeContainer = this.getCurrentPageContainer(outputContainer);
       currentHeight = this.measureContentHeight(activeContainer, pageContext.repeatingHeight);
       const hasPriorRows = activeContainer.querySelector(".prowitem_processed, .ptac-rowitem_processed, .paddt-rowitem_processed");
-      if (currentHeight > pageContext.limit && hasPriorRows) {
+      if (!fitsWithinHeight(currentHeight, pageContext.limit) && hasPriorRows) {
         activeContainer.removeChild(activeHeader);
         this.seenTableHeaders.delete(activeTableId);
         currentHeight = this.prepareNextPage(
@@ -145,7 +146,7 @@ export function renderRows(outputContainer, sections, heights, footerState, heig
     const clone = DomHelpers.appendRowItem(container, row, null, index, baseClass);
     const measuredHeight = this.measureContentHeight(container, pageContext.repeatingHeight);
     if (this.debug) console.log(`[printform]   row[${index}] height=${rowHeight}px, currentHeight=${measuredHeight}px, limit=${pageContext.limit}px`);
-    if (measuredHeight <= pageContext.limit) {
+    if (fitsWithinHeight(measuredHeight, pageContext.limit)) {
       if (logFn) logFn(`append ${baseClass || "prowitem"} ${index}`);
       currentHeight = measuredHeight;
       if (!isPtacRow) pageContext.isPtacPage = false;
