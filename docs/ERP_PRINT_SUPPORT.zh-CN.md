@@ -100,7 +100,7 @@ HTML 可表示这些内容不等于本仓库已有业务 schema、完整样张�
 | 横向/自定义尺寸 | 配置层可表示 | 长表头、页脚、窄宽度重排的真实几何 |
 | 连续页/多表 | 重复区、表 ID、行身份、逻辑页码 | 不同表头高度、嵌套重复、合计/签字区边界 |
 | 热敏票据/标签/连续介质 | [特殊纸型矩阵](ERP_SPECIAL_PAPER_ACCEPTANCE.zh-CN.md)：58/80mm、100×70mm 标签、210×140mm 有限连续页，三引擎 direct/offline 24/24；8 份真实 PDF | 不可打印区、驱动/DPI、原生 endless spool、切刀、穿孔/传感器、扫码；无 ESC/POS/ZPL |
-| PTAC/PADDT/普通超高行 | DOM Range 实测并行单元格；保留 inline、grapheme、身份；可配置 split/first/last/repeat | 任意富文本、多 row/rowspan 拆分、超大原子资产及全部字体；见[复杂分页契约](ERP_COMPLEX_PAGINATION.zh-CN.md) |
+| PTAC/PADDT/普通超高行 | DOM Range实测多格、多tr/rowspan/colspan窗口；保留inline、grapheme、身份及split/first/last/repeat；见[多行续片](ERP_MULTIROW_CONTINUATION.zh-CN.md) | 任意富文本CSS、嵌套table、超大原子资产及全部字体；原子失败仍阻断，不重复金额 |
 | n-up | 校验未缩放逻辑页后，真实 sheet grid、统一比例、输出专属纸型规则与部分末页 | 浏览器 PDF 与目标打印机分别验收；设备不可打印边界/驱动不由 wrapper 数量认证 |
 | 离线 HTML | runtime/数据/资源内联；可独立打开 | 首次离线导出与缓存完整性另测；允许外部资源的 opt-in 不能宣称完全断网 |
 | PDF | 浏览器打印产物，可检查文本与页面 | 浏览器 PDF 不是 PDF/A、电子签章、法定票据或物理打印机认证 |
@@ -150,7 +150,7 @@ try {
 
 - [安全导入](ERP_PROJECT_IMPORT_SAFETY.zh-CN.md)：JSON/HTML重开与数据导入/编辑共享bounded JSON；工程自定义集合保留，dataset仍按其既有/items业务profile校验。未知正常字段不被删除，危险或超预算输入不被清洗成“有效”。
 - [业务场景](ERP_BUSINESS_SCENARIO_CONTRACT.zh-CN.md)：已声明kind使用公开exact-kind fixture，而非generic family或私有ERP复制；合成行只作排版，不重算税额/总计/余额。v2明确repeat collection，claim字符串行号和其他数组不变。
-- 原样货币字符串声明`data-pf-monetary="currency"`，不经Intl再格式化；真实Range/clip检查发现问题仍阻断。实际普通v2claim22pt行框已补足，未减字号/增纸/放宽容差；长文本legacy输入仍有真实blocked边界。
+- 原样货币字符串声明`data-pf-monetary="currency"`，不经Intl再格式化；真实Range/clip问题仍阻断。22pt行框保留；历史B的long-claim blocked现由[续片修复](ERP_MULTIROW_CONTINUATION.zh-CN.md)接续，现行回归要求完整ready、全部金额与业务行守恒，不增纸或放宽容差。
 - 本轮 B 的Node24完整224文件/2279项与三引擎24项consumer通过；这不认证任意custom kind、实际ERP、银行或所有claim长文本。
 
 ## 10. 固定版本原始退货与扩展纸型
@@ -167,6 +167,11 @@ try {
 - 空allocations的字段来自显式schema；后续非空输入继续受同一契约约束。具体父JSON Pointer可在选择器、字段树、表格编辑、binder和离线输出中实际消费，不flatten或混父记录。
 - 原样字符串身份/金额、转义键、正常未知字段保留；null与missing区分，不生成假行或零金额。错误类型/父scope/身份/预算保留原项目与草稿，文件导入不覆盖原本地记录。
 - 本轮Node24完整227文件/2365项、最终专项36项及runtime/site/agent gate通过；三引擎完整UI重开/离线生命周期3/3通过，实际离线1页ready截图已查看，浏览器warning保留。数据库/items约束与项目自定义集合边界仍各自保持。
+
+## 12. 长 claim 与多tr/rowspan续片
+
+- [续片契约](ERP_MULTIROW_CONTINUATION.zh-CN.md)：保留原估价总计表并进入既有最终footer；dummy/spacer延后到footer和页码完成后的真实剩余预算。默认与long均检查所有源金额序列，而非仅ready状态。
+- 多tr/rowspan=0/正跨度/colspan使用同一实测Range引擎；first/last/repeat按cell参与窗口定义。内部tr不增加业务行；不可适配的原子内容仍失败并完整回滚，不承诺任意CSS/字体或嵌套table的自动拆分。
 
 
 

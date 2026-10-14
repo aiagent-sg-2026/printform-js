@@ -1,5 +1,6 @@
 import { expect, test } from "@playwright/test";
-import { autoLayoutPaginationFixture, CELL_POLICY_FIXTURE, complexPaginationFixture } from "../tests/fixtures/complex-pagination.js";
+import { getDocument } from "pdfjs-dist/legacy/build/pdf.mjs";
+import { autoLayoutPaginationFixture, CELL_POLICY_FIXTURE, complexPaginationFixture, multirowPaginationFixture } from "../tests/fixtures/complex-pagination.js";
 
 async function renderFixture(page, fixture, overrides = {}) {
   await page.goto("/index001.html");
@@ -26,7 +27,10 @@ async function renderFixture(page, fixture, overrides = {}) {
     });
     const rows = Array.from(output.querySelectorAll(".prowitem_processed,.ptac-rowitem_processed,.paddt-rowitem_processed"));
     const { analyzeRowIntegrity } = await import("/studio-v2/core/row-integrity.js");
-    const identity = analyzeRowIntegrity(rows, { expectedRowCount: 1, expectedRowsByRepeat: { maintenance: 1 } });
+    const expectedRows = fixture.expectedRows || 1;
+    const identity = analyzeRowIntegrity(rows, { expectedRowCount: expectedRows, expectedRowsByRepeat: { maintenance: expectedRows } });
+    const { inspectRenderedDocument } = await import("/studio-v2/core/acceptance.js");
+    const acceptance = inspectRenderedDocument(document, {}, { expectedRowCount: expectedRows, expectedRowsByRepeat: { maintenance: expectedRows } });
     const cells = Object.fromEntries(Object.keys(original).map(key => [key, rows.map(row => row.querySelector(`[data-fixture-cell="${key}"]`)?.textContent || "").join("")]));
     const rowRects = rows.map(row => {
       const rect = row.getBoundingClientRect();
@@ -47,7 +51,8 @@ async function renderFixture(page, fixture, overrides = {}) {
     });
     return {
       original, cells, pages, rowRects, identity: { errors: identity.errors, rows: identity.renderedRows, fragments: identity.renderedRowFragments },
-      currency: Array.from(output.querySelectorAll('[data-pf-format="currency"]'), node => node.textContent).filter(Boolean),
+      acceptance: { codes: acceptance.errors.map(error => error.code), metrics: acceptance.metrics },
+      currency: Array.from(output.querySelectorAll('[data-pf-format="currency"],[data-pf-monetary="currency"]'), node => node.textContent).filter(Boolean),
       fragments: rows.map(row => ({ source: row.dataset.pfSourceRow, index: row.dataset.pfFragmentIndex, count: row.dataset.pfFragmentCount })),
       markup: { strongText: Array.from(output.querySelectorAll("strong"), node => node.textContent).join(""), emphasis: output.querySelector("em")?.textContent, comment: output.innerHTML.includes("<!--authored-marker-->") },
       presentation: { dir: output.dir, lang: output.lang, font: output.style.fontSize, accent: output.style.getPropertyValue("--fixture-accent") }
@@ -160,10 +165,99 @@ test("genuinely atomic image/chrome failure rolls back original DOM and listener
     sourceRow.addEventListener("click", () => { clicks += 1; });
     let error = "";
     try { window.PrintForm.format(form, { papersizeHeight: 100, papersizeWidth: 260, insertDummyRowItemWhileFormatTable: false }); }
-    catch (caught) { error = caught.message; }
+    catch (caught) { error = caught.name; }
     sourceRow.click();
     return { error, intact: form.outerHTML === before, sameRow: sourceRow === form.lastElementChild, clicks, output: document.querySelectorAll(".printform_formatter,.printform_formatter_processed").length };
   });
-  expect(result.error).toContain("unsplittable content or chrome");
+  expect(result.error).toBe("RangeError");
   expect(result).toMatchObject({ intact: true, sameRow: true, clicks: 1, output: 0 });
+});
+
+for (const options of [{ rowspan: false }, { rowspan: true }, { rowspan: true, zeroSpan: true }, { rowspan: true, spanningText: true }, { rowspan: true, packedRows: true }]) {
+  test(`multirow claim ${JSON.stringify(options)} conserves every source cell across semantic table windows`, async ({ page, browserName }, info) => {
+    const fixture = multirowPaginationFixture(options);
+    const result = await renderFixture(page, fixture);
+    for (const [key, text] of Object.entries(result.original)) {
+      if (key !== "reference") expect(result.cells[key], key).toBe(text);
+    }
+    expect(result.cells.reference).toMatch(/^(REF-C)+$/);
+    expect(result.currency).toEqual(["MYR 123.45", "MYR 67.89", "MYR 10.00"]);
+    expect(result.identity.errors).toEqual([]);
+    expect(result.identity.rows).toBe(2);
+    expect(result.identity.fragments).toBeGreaterThan(2);
+    expect(result.acceptance.codes.filter(code => code.startsWith("ROW_"))).toEqual([]);
+    expect(result.acceptance.metrics.renderedRows).toBe(2);
+    expect(result.acceptance.metrics.renderedRowFragments).toBe(result.identity.fragments);
+    expect(result.rowRects.every(rect => rect.inside)).toBe(true);
+    expect(result.pages.length).toBeGreaterThan(1);
+    expect(result.pages.every(page => !page.horizontalOverflow && Math.max(page.height, page.scrollHeight) <= fixture.height + 1)).toBe(true);
+    const semantics = await page.locator(".prowitem_processed").evaluateAll(tables => ({
+      rows: tables.flatMap(table => Array.from(table.rows, row => row.cells.length)),
+      spans: tables.flatMap(table => Array.from(table.querySelectorAll('[data-fixture-cell="identity"]'), cell => ({ span: cell.rowSpan, rows: table.rows.length, tag: cell.tagName, scope: cell.getAttribute("scope") }))),
+      links: tables.flatMap(table => Array.from(table.querySelectorAll("a"), link => link.getAttribute("href"))),
+      dangling: tables.some(table => Array.from(table.querySelectorAll("th,td")).some(cell => cell.rowSpan > table.rows.length))
+    }));
+    expect(semantics.dangling).toBe(false);
+    expect(semantics.rows.every(count => count > 0)).toBe(true);
+    expect(semantics.links.every(href => href === "https://example.invalid/claim")).toBe(true);
+    if (options.rowspan) expect(semantics.spans.every(cell => cell.tag === "TH" && cell.scope === "rowgroup")).toBe(true);
+    if (options.packedRows) {
+      expect(semantics.spans.some(cell => cell.span > 1)).toBe(true);
+      expect(semantics.spans.length).toBeGreaterThan(1);
+    }
+    expect(result.markup.comment).toBe(true);
+    await page.emulateMedia({ media: "print" });
+    const printBounds = await page.locator(".prowitem_processed").evaluateAll(rows => rows.every(row => {
+      const bounds = row.getBoundingClientRect(), page = row.closest(".printform_page").getBoundingClientRect();
+      return bounds.left >= page.left - 1 && bounds.right <= page.right + 1 && bounds.bottom <= page.bottom + 1;
+    }));
+    expect(printBounds).toBe(true);
+    if (browserName === "chromium" && options.packedRows) {
+      await page.addStyleTag({ content: `@page { size:${fixture.width}px ${fixture.height}px; margin:0 } @media print { .physical_page_wrapper { break-inside:avoid; margin:0!important } }` });
+      const bytes = await page.pdf({ preferCSSPageSize: true, printBackground: true, scale: 1, displayHeaderFooter: false });
+      await info.attach("multirow-claim.pdf", { body: bytes, contentType: "application/pdf" });
+      const loading = getDocument({ data: new Uint8Array(bytes), isEvalSupported: false });
+      try {
+        const pdf = await loading.promise, text = [];
+        expect(pdf.numPages).toBe(result.pages.length);
+        for (let number = 1; number <= pdf.numPages; number += 1) {
+          const physical = await pdf.getPage(number), viewport = physical.getViewport({ scale: 1 });
+          expect(Math.abs(viewport.width - fixture.width * 72 / 96)).toBeLessThan(1);
+          expect(Math.abs(viewport.height - fixture.height * 72 / 96)).toBeLessThan(1);
+          const content = await physical.getTextContent();
+          for (const item of content.items.filter(item => item.str?.trim())) {
+            expect(item.transform[4]).toBeGreaterThanOrEqual(-1);
+            expect(item.transform[4] + item.width).toBeLessThanOrEqual(viewport.width + 1);
+            expect(item.transform[5]).toBeGreaterThanOrEqual(-1);
+            expect(item.transform[5]).toBeLessThanOrEqual(viewport.height + 1);
+          }
+          text.push(content.items.map(item => item.str || "").join(""));
+        }
+        const allText = text.join("");
+        for (const token of ["123.45", "67.89", "10.00", "CLAIM-A"]) expect(allText.split(token)).toHaveLength(2);
+      } finally { await loading.destroy(); }
+    }
+  });
+}
+
+test("nested table and multirow atomic content fail without leaving partial continuation output", async ({ page }) => {
+  await page.goto("/index001.html");
+  await page.waitForFunction(() => window.__printFormProcessed === true);
+  const result = await page.evaluate(() => {
+    document.body.replaceChildren();
+    const form = document.createElement("section");
+    form.className = "printform";
+    form.innerHTML = '<table class="prowitem"><tbody><tr><td rowspan="2">Authored scope</td><td>Initial row</td></tr><tr><td><table style="height:300px"><tr><td>Indivisible nested table</td></tr></table></td></tr></tbody></table>';
+    document.body.append(form);
+    const source = form.firstElementChild, before = form.outerHTML;
+    let clicks = 0;
+    source.addEventListener("click", () => { clicks += 1; });
+    let error = "";
+    try { window.PrintForm.format(form, { papersizeHeight: 100, papersizeWidth: 260, insertDummyRowItemWhileFormatTable: false }); }
+    catch (caught) { error = caught.name; }
+    source.click();
+    return { error, same: source === form.firstElementChild, intact: before === form.outerHTML, clicks, output: document.querySelectorAll(".printform_formatter,.printform_formatter_processed").length };
+  });
+  expect(result.error).toBe("RangeError");
+  expect(result).toMatchObject({ same: true, intact: true, clicks: 1, output: 0 });
 });

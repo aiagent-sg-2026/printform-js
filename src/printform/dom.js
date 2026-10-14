@@ -20,79 +20,79 @@ import { appendMeasuredDummyRows } from "./dummy.js";
     table.setAttribute("cellspacing", "0");
     table.setAttribute("cellpadding", "0");
     applyTableSizingReset(table);
-    table.innerHTML = `<tr style="height:${normalizeHeight(height)}px;"><td style="border:0px solid black;padding:0;margin:0;line-height:0;font-size:0;"></td></tr>`;
+    table.innerHTML = `<tr style="height:${height}px;"><td style="border:0px solid black;padding:0;margin:0;line-height:0;font-size:0;"></td></tr>`;
     return table;
   }
 
 
-function appendDummyRow(config, target, diffHeight) {
-  const remaining = normalizeHeight(diffHeight);
+function appendDummyRow(config, target, diffHeight, before = null) {
+  const remaining = Math.max(0, diffHeight);
   if (remaining <= 0) return;
-  target.appendChild(createDummyRowTable(config, remaining));
+  target.insertBefore(createDummyRowTable(config, remaining), before);
 }
 
-function applyDummyRowItemsStep(config, container, heightPerPage, currentHeight, debug) {
+function applyDummyRowItemsStep(config, container, heightPerPage, currentHeight, debug, before = null) {
   if (!config.insertDummyRowItemWhileFormatTable) {
     if (debug) {
       console.log(`[printform] applyDummyRowItemsStep: SKIPPED (insertDummyRowItemWhileFormatTable=false)`);
     }
-    return normalizeHeight(currentHeight);
+    return currentHeight;
   }
-  const remaining = normalizeHeight(heightPerPage - currentHeight);
+  const remaining = Math.max(0, heightPerPage - currentHeight);
   if (debug) {
     console.log(`[printform] applyDummyRowItemsStep:`);
     console.log(`[printform]   heightPerPage: ${heightPerPage}px, currentHeight: ${currentHeight}px`);
     console.log(`[printform]   remaining: ${remaining}px, itemHeight: ${config.heightOfDummyRowItem}px`);
   }
   if (remaining > 0) {
-    const addedHeight = appendMeasuredDummyRows(config, container, remaining, measureHeightRaw);
-    return normalizeHeight(currentHeight + addedHeight);
+    const addedHeight = appendMeasuredDummyRows(config, container, remaining, measureHeightRaw, before);
+    return currentHeight + addedHeight;
   }
-  return normalizeHeight(currentHeight);
+  return currentHeight;
 }
 
-function applyDummyRowStep(config, container, heightPerPage, currentHeight, debug) {
+function applyDummyRowStep(config, container, heightPerPage, currentHeight, debug, before = null) {
   if (!config.insertDummyRowWhileFormatTable) {
     if (debug) {
       console.log(`[printform] applyDummyRowStep: SKIPPED (insertDummyRowWhileFormatTable=false)`);
     }
-    return normalizeHeight(currentHeight);
+    return currentHeight;
   }
-  const remaining = normalizeHeight(heightPerPage - currentHeight);
+  const remaining = Math.max(0, heightPerPage - currentHeight);
   if (debug) {
     console.log(`[printform] applyDummyRowStep:`);
     console.log(`[printform]   heightPerPage: ${heightPerPage}px, currentHeight: ${currentHeight}px`);
     console.log(`[printform]   remaining: ${remaining}px`);
   }
   if (remaining > 0) {
-    appendDummyRow(config, container, remaining);
+    appendDummyRow(config, container, remaining, before);
     if (debug) {
       console.log(`[printform]   inserted 1 dummy_row with height: ${remaining}px`);
     }
-    return normalizeHeight(currentHeight + remaining);
+    return currentHeight + remaining;
   }
-  return normalizeHeight(currentHeight);
+  return currentHeight;
 }
 
-function applyFooterSpacerWithDummyStep(config, container, heightPerPage, currentHeight, skipDummyRowItems, debug) {
+function applyFooterSpacerWithDummyStep(config, container, heightPerPage, currentHeight, skipDummyRowItems, debug, before = null) {
   if (!config.insertDummyRowItemWhileFormatTable || !config.insertFooterSpacerWithDummyRowItemWhileFormatTable || skipDummyRowItems) {
     if (debug) {
       console.log(`[printform] applyFooterSpacerWithDummyStep: SKIPPED (flag=${config.insertFooterSpacerWithDummyRowItemWhileFormatTable}, skipDummy=${skipDummyRowItems})`);
     }
     return {
-      currentHeight: normalizeHeight(currentHeight),
+      currentHeight,
       skipFooterSpacer: false
     };
   }
-  const remaining = normalizeHeight(heightPerPage - currentHeight);
-  let workingHeight = normalizeHeight(currentHeight);
+  const remaining = Math.max(0, heightPerPage - currentHeight);
+  let workingHeight = currentHeight;
   if (debug) {
     console.log(`[printform] applyFooterSpacerWithDummyStep:`);
     console.log(`[printform]   heightPerPage: ${heightPerPage}px, currentHeight: ${currentHeight}px`);
     console.log(`[printform]   remaining: ${remaining}px`);
   }
   if (remaining > 0) {
-    workingHeight += appendMeasuredDummyRows(config, container, remaining, measureHeightRaw);
+    workingHeight += appendMeasuredDummyRows(config, container, remaining, measureHeightRaw, before);
   }
   return {
     currentHeight: workingHeight,
@@ -100,7 +100,7 @@ function applyFooterSpacerWithDummyStep(config, container, heightPerPage, curren
   };
 }
 
-function applyFooterSpacerStep(config, container, heightPerPage, currentHeight, footerState, spacerTemplate, debug) {
+function applyFooterSpacerStep(config, container, heightPerPage, currentHeight, footerState, spacerTemplate, debug, before = null) {
   if (!config.insertFooterSpacerWhileFormatTable) {
     if (debug) {
       console.log(`[printform] applyFooterSpacerStep: SKIPPED (insertFooterSpacerWhileFormatTable=false)`);
@@ -108,14 +108,14 @@ function applyFooterSpacerStep(config, container, heightPerPage, currentHeight, 
     return;
   }
   const clone = spacerTemplate.cloneNode(true);
-  let remaining = normalizeHeight(heightPerPage - currentHeight);
-  const nonRepeating = footerState && footerState.nonRepeating ? normalizeHeight(footerState.nonRepeating) : 0;
+  let remaining = Math.max(0, heightPerPage - currentHeight);
+  const nonRepeating = footerState && footerState.nonRepeating ? footerState.nonRepeating : 0;
   if (nonRepeating > 0) {
     remaining -= nonRepeating;
   }
   const spacerHeight = Math.max(0, remaining);
   clone.style.height = `${spacerHeight}px`;
-  container.appendChild(clone);
+  container.insertBefore(clone, before);
   if (debug) {
     console.log(`[printform] applyFooterSpacerStep:`);
     console.log(`[printform]   heightPerPage: ${heightPerPage}px, currentHeight: ${currentHeight}px`);

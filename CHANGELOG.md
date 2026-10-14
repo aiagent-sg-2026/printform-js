@@ -15,6 +15,13 @@ who don't need the diary.
 
 ## [Unreleased]
 
+### ERP long-claim and multirow continuation
+
+- Preserve the original four valuation totals in the final claim footer instead of silently dropping an unregistered table.
+- Fill remainder spacing only after final footers/page totals; retain strict page geometry without rounding up the available budget.
+- Continue multirow tables and rowspan/colspan cells using measured table windows and independent DOM Range cursors; retain money, rich text, semantic identity and atomic rollback.
+- Correct exhausted finite-word endpoints and last-policy cells ending before a partially consumed spanning cell; browser conservation cases remain strict.
+
 Current working-tree versions: runtime `1.0.0`, Studio `0.11.0`, Protocol `2.0.0`, Agent Contract `4.0.0`.
 E13-SERVER provides a bounded single-writer SQLite backend; the browser UI still uses localStorage.
 E14 UI includes four layers, context badges, structured change cards, apply-mode controls,

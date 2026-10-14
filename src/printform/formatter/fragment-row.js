@@ -1,6 +1,7 @@
 import { DomHelpers } from "../dom.js";
 import { cloneContentRange, contentBoundaries, hasGeneratedContent } from "../text-ranges.js";
 import { wordCeilingEnd } from "../text.js";
+import { measuredCellLayout } from "./fragment-table.js";
 
 const POLICIES = new Set(["split", "first", "last", "repeat"]);
 
@@ -8,44 +9,6 @@ function fail(row, reason) {
   throw new RangeError(`Printform row exceeds configured height; unsplittable content or chrome does not fit (${row.dataset.pfSourceRow || row.id || "row"}: ${reason})`);
 }
 
-function rowCells(row) {
-  if (row.tagName !== "TABLE") return [row];
-  if (row.rows.length !== 1 || Array.from(row.rows[0].cells).some((cell) => cell.rowSpan !== 1)) {
-    fail(row, "measured continuations require a single table row without rowspan");
-  }
-  return Array.from(row.rows[0].cells);
-}
-
-function pinColumns(source, clone, paperWidth) {
-  if (source.tagName !== "TABLE") return;
-  const view = source.ownerDocument.defaultView;
-  const tableStyle = view.getComputedStyle(source);
-  const px = (style, name) => Number.parseFloat(style[name]) || 0;
-  const measuredWidth = source.getBoundingClientRect().width;
-  const targetWidth = Math.min(measuredWidth || paperWidth, paperWidth);
-  const sources = rowCells(source);
-  const styles = sources.map((cell) => view.getComputedStyle(cell));
-  const gap = tableStyle.borderCollapse === "collapse" ? 0
-    : px(tableStyle, "borderSpacing") * (sources.length + 1);
-  const chrome = ["paddingLeft", "paddingRight", "borderLeftWidth", "borderRightWidth"]
-    .reduce((sum, name) => sum + px(tableStyle, name), 0);
-  const available = targetWidth - gap - chrome;
-  if (!(available > 0)) fail(source, "table border/padding/spacing consumes the target paper width");
-  // Used CSS widths and border-box widths are not interchangeable for td.
-  // Normalize measured outer cell proportions into the target table's actual
-  // content budget, rather than preserving an intrinsically oversized table.
-  const widths = sources.map((cell) => cell.getBoundingClientRect().width);
-  const total = widths.reduce((sum, value) => sum + value, 0);
-  clone.style.width = `${targetWidth}px`;
-  clone.style.boxSizing = "border-box";
-  clone.style.tableLayout = "fixed";
-  rowCells(clone).forEach((cell, index) => {
-    const outer = available * (total ? widths[index] / total : 1 / sources.length);
-    const cellChrome = ["paddingLeft", "paddingRight", "borderLeftWidth", "borderRightWidth"]
-      .reduce((sum, name) => sum + px(styles[index], name), 0);
-    cell.style.width = `${Math.max(0, outer - (styles[index].boxSizing === "border-box" ? 0 : cellChrome))}px`;
-  });
-}
 
 function fits(row, height, width) {
   if (DomHelpers.measureHeightRaw(row) > height + 0.01) return false;
@@ -70,81 +33,100 @@ function fits(row, height, width) {
   return true;
 }
 
-// Each cell is a parallel flow. Short cells finish once; amounts are never copied
-// merely because an independent description needs another physical continuation.
+// Cells advance through the same DOM Range flow, including cells whose table
+// grid rectangle intersects several logical rows or physical continuations.
 export function fragmentMeasuredRow(row, { height, width, sourceId, maxWords = Infinity }) {
   const readabilitySplit = Number.isFinite(maxWords) && (row.textContent.match(/\S+/g) || []).length > maxWords;
   if (DomHelpers.measureHeightRaw(row) <= height + 0.01 && !readabilitySplit) return [row];
   if (!(height > 0) || row.dataset.pfKeepTogether === "true") fail(row, "atomic row or no body budget");
-  const sources = rowCells(row);
-  if ([row, ...sources].some(hasGeneratedContent)) fail(row, "generated row/cell chrome cannot be duplicated across continuations");
-  const template = row.cloneNode(true);
-  pinColumns(row, template, width);
-  const probe = template.cloneNode(true);
-  probe.style.visibility = "hidden";
-  row.parentNode.insertBefore(probe, row);
-  const probeCells = rowCells(probe);
-  const chunks = [];
-  const policies = [];
-  try {
-    sources.forEach((source, cellIndex) => {
-      let policy = source.dataset.pfCellPolicy || "split";
-      if (!POLICIES.has(policy)) fail(row, `unknown cell policy ${policy}`);
-      if (policy === "split" && (source.dataset.pfKeepTogether === "true" || source.dataset.pfFormat === "currency")) policy = "first";
-      policies.push(policy);
-      probeCells.forEach((cell) => cell.replaceChildren());
-      const target = probeCells[cellIndex];
-      if (policy !== "split") {
-        target.replaceChildren(...Array.from(source.childNodes, (node) => node.cloneNode(true)));
-        if (!fits(probe, height, width)) fail(row, `${policy} cell ${cellIndex} cannot fit intact`);
-        chunks.push([Array.from(source.childNodes, (node) => node.cloneNode(true))]);
-        return;
-      }
-      const points = contentBoundaries(source);
-      const cellChunks = [];
-      let start = 0;
-      while (start < points.length - 1) {
-        let low = start + 1;
-        let high = wordCeilingEnd(points, start, maxWords);
-        let end = start;
-        while (low <= high) {
-          const middle = Math.floor((low + high) / 2);
-          target.replaceChildren(cloneContentRange(source, points, start, middle));
-          if (fits(probe, height, width)) { end = middle; low = middle + 1; }
-          else high = middle - 1;
+  const layout = measuredCellLayout(row, width, fail);
+  if ([row, ...layout.rows, ...layout.cells.map(cell => cell.source)].some(hasGeneratedContent)) {
+    fail(row, "generated row/cell chrome cannot be duplicated across continuations");
+  }
+  const flows = new Map(layout.cells.map((cell) => {
+    const source = cell.source;
+    let policy = source.dataset.pfCellPolicy || "split";
+    if (!POLICIES.has(policy)) fail(row, `unknown cell policy ${policy}`);
+    if (policy === "split" && (source.dataset.pfKeepTogether === "true" ||
+      source.dataset.pfFormat === "currency" || source.dataset.pfMonetary === "currency")) policy = "first";
+    return [cell, { policy, points: policy === "split" ? contentBoundaries(source) : null, cursor: 0, emitted: false }];
+  }));
+  const fragments = [];
+  let startRow = 0;
+  while (startRow < layout.rows.length) {
+    let best = null;
+    for (let endRow = startRow + 1; endRow <= layout.rows.length; endRow += 1) {
+      const candidate = layout.slice(startRow, endRow, fragments.length === 0);
+      const { fragment, targets } = candidate;
+      if (row.tagName !== "TABLE") targets.set(layout.cells[0], fragment);
+      const visibility = fragment.style.visibility;
+      fragment.style.visibility = "hidden";
+      row.parentNode.insertBefore(fragment, row);
+      let viable = false;
+      try {
+        // Reserve indivisible content before measuring any text. In particular,
+        // a last-policy amount cannot be displaced by a greedy description.
+        targets.forEach((target, cell) => {
+          const flow = flows.get(cell);
+          if (flow.policy === "split") {
+            const selected = best?.ends.get(cell) ?? flow.cursor;
+            target.append(cloneContentRange(cell.source, flow.points, flow.cursor, selected));
+          } else if (flow.policy === "repeat" || (flow.policy === "first" && !flow.emitted) ||
+            (flow.policy === "last" && cell.end <= endRow)) {
+            target.append(...Array.from(cell.source.childNodes, node => node.cloneNode(true)));
+          }
+        });
+        if (!fits(fragment, height, width)) {
+          if (!best) fail(row, "atomic cell, row or table chrome cannot fit intact");
+          break;
         }
-        if (end === start) fail(row, `cell ${cellIndex} has an atomic element, grapheme or fixed chrome larger than its budget`);
-        cellChunks.push(cloneContentRange(source, points, start, end));
-        start = end;
+        const ends = new Map();
+        targets.forEach((target, cell) => {
+          const flow = flows.get(cell);
+          if (flow.policy !== "split") return;
+          let end = best?.ends.get(cell) ?? flow.cursor;
+          let low = end + 1;
+          let high = wordCeilingEnd(flow.points, flow.cursor, maxWords);
+          while (low <= high) {
+            const middle = Math.floor((low + high) / 2);
+            target.replaceChildren(cloneContentRange(cell.source, flow.points, flow.cursor, middle));
+            if (fits(fragment, height, width)) { end = middle; low = middle + 1; }
+            else high = middle - 1;
+          }
+          target.replaceChildren(cloneContentRange(cell.source, flow.points, flow.cursor, end));
+          ends.set(cell, end);
+        });
+        const complete = Array.from(targets.keys()).every((cell) => {
+          const flow = flows.get(cell);
+          return cell.end > endRow || flow.policy !== "split" || ends.get(cell) === flow.points.length - 1;
+        });
+        targets.forEach((target, cell) => {
+          if (flows.get(cell).policy === "last" && (cell.end > endRow || (!complete && cell.end === endRow))) target.replaceChildren();
+        });
+        const progress = complete || Array.from(ends).some(([cell, end]) => end > flows.get(cell).cursor);
+        if (!progress) fail(row, "cell has an atomic element, grapheme or fixed chrome larger than its budget");
+        fragment.style.visibility = visibility;
+        best = { fragment, ends, targets, endRow, complete };
+        viable = true;
+        if (!complete) break;
+      } finally {
+        fragment.remove();
+        if (!viable) fragment.style.visibility = visibility;
       }
-      chunks.push(cellChunks);
+    }
+    if (!best) fail(row, "table continuation made no progress");
+    best.ends.forEach((end, cell) => { flows.get(cell).cursor = end; });
+    best.targets.forEach((_target, cell) => {
+      if (flows.get(cell).policy === "first") flows.get(cell).emitted = true;
     });
-    const count = Math.max(...chunks.map((cell) => cell.length));
-    const fragments = Array.from({ length: count }, (_, index) => {
-      const fragment = template.cloneNode(true);
-      rowCells(fragment).forEach((cell, cellIndex) => {
-        const policy = policies[cellIndex];
-        const selected = policy === "repeat" ? 0 : policy === "last" ? (index === count - 1 ? 0 : -1) : index;
-        const chunk = chunks[cellIndex][selected];
-        cell.replaceChildren();
-        if (chunk) {
-          if (Array.isArray(chunk)) cell.append(...chunk.map((node) => node.cloneNode(true)));
-          else cell.append(chunk.cloneNode(true));
-        }
-      });
-      fragment.dataset.pfSourceRow = sourceId;
-      fragment.dataset.pfFragmentIndex = String(index);
-      fragment.dataset.pfFragmentCount = String(count);
-      if (index > 0) {
-        fragment.classList.remove("tb_page_break_before");
-      }
-      return fragment;
-    });
-    fragments.forEach((fragment) => {
-      probe.replaceWith(fragment);
-      if (!fits(fragment, height, width)) { fragment.remove(); fail(row, "combined cell continuations exceed the measured budget"); }
-      fragment.replaceWith(probe);
-    });
-    return fragments;
-  } finally { probe.remove(); }
+    fragments.push(best.fragment);
+    startRow = best.complete ? best.endRow : best.endRow - 1;
+  }
+  fragments.forEach((fragment, index) => {
+    fragment.dataset.pfSourceRow = sourceId;
+    fragment.dataset.pfFragmentIndex = String(index);
+    fragment.dataset.pfFragmentCount = String(fragments.length);
+    if (index > 0) fragment.classList.remove("tb_page_break_before");
+  });
+  return fragments;
 }
