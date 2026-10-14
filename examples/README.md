@@ -30,7 +30,7 @@
 
 | 文件 | 测什么 |
 |---|---|
-| [index013.html](../index013.html) | 仅 PTAC（条款段落，按词数自动切分为多段） |
+| [index013.html](../index013.html) | 仅 PTAC（按真实纸面预算拆分条款；词数仅为额外可读性上限，见[复杂分页契约](../docs/ERP_COMPLEX_PAGINATION.zh-CN.md)） |
 | [index014.html](../index014.html) | PTAC + PADDT 组合：PADDT 段落在所有常规页脚之后另起物理页 |
 | [index017.html](../index017.html) | 同 014，开启 `data-debug="y"`（控制台日志 + 页内调试面板）便于观察分页决策 |
 | [index019.html](../index019.html) | 仅 PADDT（审计/长文声明段落） |

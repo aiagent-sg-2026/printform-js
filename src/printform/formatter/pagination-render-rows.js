@@ -59,6 +59,13 @@ export function renderRows(outputContainer, sections, heights, footerState, heig
     }
 
     const activeTableId = this.getRowTableId(row);
+    if (activeTableId !== pageContext.tableId || this.shouldSkipRowHeaderForRow(row) !== pageContext.skipRowHeader) {
+      this.refreshPageContextForRow(pageContext, row, heights, sections);
+      pageContext.repeatingHeight = this.computeRepeatingHeightForPage(
+        sections, heights, pageContext.skipRowHeader, pageContext.tableId
+      );
+      currentHeight = this.measureContentHeight(this.getCurrentPageContainer(outputContainer), pageContext.repeatingHeight);
+    }
     const activeHeader = this.ensureActiveTableHeader(
       this.getCurrentPageContainer(outputContainer), sections, logFn, activeTableId,
       this.shouldSkipRowHeaderForRow(row)

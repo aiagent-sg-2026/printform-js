@@ -99,8 +99,9 @@ PrintForm.format(formEl);
 - `data-show-physical-page-number` 控制显示。
 
 N-up：
-- `data-n-up="2"` 会把 2 个逻辑页放进一个物理页容器
-  （`.physical_page_wrapper`）。
+- `data-n-up="2"` 在未缩放逻辑内容通过几何检查后，以统一比例拼入真实物理 sheet grid。
+- `nUp > 1` 使用输出专属命名 `@page` 规则；宿主 padding/border 从可用纸面扣除。`nUp=1` 保留宿主的纸张样式。
+- 参见[测量分页、单元格策略与明确限制](ERP_COMPLEX_PAGINATION.zh-CN.md)；浏览器 PDF 验证不等于打印机认证。
 
 ---
 
@@ -108,7 +109,8 @@ N-up：
 
 PTAC（`.ptac`）：
 - 适合条款/长文本。
-- 每个段落会拆分成约 200 词的块，转为 `.ptac-rowitem`。
+- 按真实纸面预算测量 DOM Range，独立拆分并行单元格，保留 inline 标记与 Unicode grapheme。
+- PTAC 的 200 词上限只能缩短续片，不能放宽宽高检查；不可拆内容明确失败，不裁切。
 - `data-repeat-ptac-rowheader="n"` 可关闭 PTAC 页的 `.prowheader`。
 - `data-insert-ptac-dummy-row-items="n"` 可关闭 PTAC 页的空白行。
 
@@ -117,6 +119,7 @@ PADDT（`.paddt`）：
 - PADDT 页面只保留 `.pfooter_logo` 与 `.pfooter_pagenum`。
 - 主要控制项：`data-repeat-paddt-rowheader`、`data-insert-paddt-dummy-row-items`
   以及 PADDT 独立的 docinfo 开关（`data-repeat-paddt-docinfo*`）。
+- `paddtMaxWordsPerSegment` 保留为额外可读性上限；物理适配仍以实测几何为准。
 - `data-repeat-paddt` 当前为保留项。
 
 ---

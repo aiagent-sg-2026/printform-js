@@ -90,6 +90,8 @@ export function attachPageMethods(FormatterClass) {
     const page = document.createElement("div");
     page.classList.add("printform_page");
     page.style.width = `${this.config.papersizeWidth}px`;
+    // Preview gaps are not logical content; leave nUp=1 host geometry untouched.
+    if (this.nUp > 1) page.style.setProperty("margin", "0", "important");
     // Note: min-height removed - height will be calculated precisely by JavaScript
     this.currentPhysicalWrapper.appendChild(page);
     this.currentPageContainer = page;

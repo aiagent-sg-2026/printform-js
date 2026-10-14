@@ -145,7 +145,7 @@ npm run dev
 | `data-repeat-footer` | `y` / `n` | 是否每页重复页脚 (默认 `n`)。 |
 | `data-show-logical-page-number`| `y` / `n` | 是否显示页码 (如 "Page 1 of 3")。 |
 | `data-show-physical-page-number`| `y` / `n` | 是否显示物理页码 (N-up 时)。 |
-| `data-n-up` | `1` / `2` | **N-Up 打印**：一张纸打印几页逻辑页 (例如设为 2 可实现双联单)。 |
+| `data-n-up` | 正整数 | **N-Up 打印**：实测逻辑页以统一比例拼入物理 sheet cell；参见[几何与限制](docs/ERP_COMPLEX_PAGINATION.zh-CN.md)。 |
 
 ### 行与页脚控制
 

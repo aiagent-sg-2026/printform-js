@@ -30,7 +30,9 @@ export function attachPaginationContextMethods(FormatterClass) {
     pageContext.rowHeaderHeight = rowHeaderHeight;
     pageContext.isPtacPage = this.isPtacRow(row);
     pageContext.isPaddtPage = this.isPaddtRow(row);
-    pageContext.limit = pageContext.baseLimit + (skipRowHeader ? rowHeaderHeight : 0);
+    const reservedHeader = this.maxRepeatingRowHeaderHeight(sections, heights);
+    const activeRepeatedHeader = !skipRowHeader && this.isRowHeaderRepeated(sections, tableId) ? rowHeaderHeight : 0;
+    pageContext.limit = pageContext.baseLimit + reservedHeader - activeRepeatedHeader;
     return pageContext;
   };
 

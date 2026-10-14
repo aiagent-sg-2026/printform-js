@@ -22,7 +22,7 @@ describe('page chrome lifecycle', () => {
     const f = new Formatter(), sections = fixture(), output = document.createElement('div');
     output.innerHTML = '<section></section>';
     Object.assign(f, {
-      initializePageContext:()=>({limit:100,repeatingHeight:0}), refreshPageContextForRow:()=>{},
+      initializePageContext:()=>({limit:100,repeatingHeight:0,tableId:'default',skipRowHeader:false}), refreshPageContextForRow:()=>{},
       getCurrentPageContainer:()=>output.lastElementChild,
       computeRepeatingHeightForPage:()=>200,
       // First row overflows; continuation body measurement legitimately clamps

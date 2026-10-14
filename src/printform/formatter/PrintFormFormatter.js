@@ -14,6 +14,8 @@ import { attachPaginationRenderMethods } from "./pagination-render.js";
 import { attachPaginationSpacingMethods } from "./pagination-spacing.js";
 import { attachPaginationFinalizeMethods } from "./pagination-finalize.js";
 import { createPrintformDebugSession } from "../debug.js";
+import { expandMeasuredRows, resetFragmentMetadata } from "./measured-rows.js";
+import { applyNUpGeometry } from "./n-up-geometry.js";
 
 export class PrintFormFormatter {
   constructor(formEl, config, overrides = {}) {
@@ -62,6 +64,7 @@ export class PrintFormFormatter {
     const workingForm = source.cloneNode(true);
     let container;
     try {
+      resetFragmentMetadata(workingForm);
       source.parentNode.insertBefore(workingForm, source);
       workingForm.style.width = `${this.config.papersizeWidth}px`;
       this.formEl = workingForm;
@@ -73,6 +76,7 @@ export class PrintFormFormatter {
       this.markSectionsProcessed(sections);
       const footerState = this.computeFooterState(sections, heights);
       const heightPerPage = this.computeHeightPerPage(sections, heights);
+      sections.rows = expandMeasuredRows(this, sections, heights, footerState);
       const renderState = sections.rows.length
         ? this.renderRows(
           container,
@@ -139,6 +143,7 @@ export class PrintFormFormatter {
         // 计算 paddt 页脚状态与可用高度（考虑 repeatFooterLogo/repeatFooterPagenum）
         const paddtFooterState = this.computeFooterState(paddtSections, heights);
         const paddtHeightPerPage = this.computeHeightPerPage(paddtSections, heights);
+        paddtSections.rows = expandMeasuredRows(this, paddtSections, heights, paddtFooterState);
 
         const paddtRenderState = this.renderRows(
           container,
@@ -176,6 +181,7 @@ export class PrintFormFormatter {
           console.log(`[printform]   Page ${index + 1}: height style = ${heightStyle}`);
         }
       });
+      applyNUpGeometry(container, this.config);
 
       debugSession.markEnd({ pageCount: allPages.length });
       debugSession.appendPanel(container, { pageCount: allPages.length });

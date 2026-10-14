@@ -1,61 +1,60 @@
-import { describe, it, expect } from 'vitest';
-import { splitParagraphIntoHtmlChunks } from '../src/printform/text.js';
+import { describe, expect, it } from "vitest";
+import { cloneContentRange, contentBoundaries } from "../src/printform/text-ranges.js";
+import { wordCeilingEnd } from "../src/printform/text.js";
 
-describe('Text Segmentation Logic', () => {
-  it('should split long text into chunks based on word count', () => {
-    const p = document.createElement('p');
-    // create "word1 word2 ... word20"
-    const text = Array.from({ length: 20 }, (_, i) => `word${i + 1}`).join(' ');
-    p.textContent = text;
-    
-    // limit 10 words per chunk
-    const chunks = splitParagraphIntoHtmlChunks(p, 10);
-    
-    expect(chunks.length).toBe(2);
-    // check content of first chunk
-    expect(chunks[0]).toContain('word1');
-    expect(chunks[0]).toContain('word10');
-    expect(chunks[0]).not.toContain('word11');
-    
-    // check content of second chunk
-    expect(chunks[1]).toContain('word11');
-    expect(chunks[1]).toContain('word20');
+function chunks(root, words) {
+  const points = contentBoundaries(root);
+  const output = [];
+  for (let start = 0; start < points.length - 1;) {
+    const end = wordCeilingEnd(points, start, words);
+    const node = root.cloneNode(false);
+    node.append(cloneContentRange(root, points, start, end));
+    output.push(node);
+    start = end;
+  }
+  return output;
+}
+
+describe("measured-pagination text ranges", () => {
+  it("conserves all text, inline markup and comments under the additional readability ceiling", () => {
+    const paragraph = document.createElement("p");
+    paragraph.className = "fictional-description";
+    paragraph.dataset.note = "authored";
+    paragraph.innerHTML = "Alpha <strong>Bravo Charlie</strong> <span>Delta</span><!--note--><a href=\"#\"> Echo Foxtrot</a> Golf ";
+    const pieces = chunks(paragraph, 2);
+    expect(pieces.map(node => node.textContent).join("")).toBe(paragraph.textContent);
+    expect(pieces.every(node => (node.textContent.match(/\S+/g) || []).length <= 2)).toBe(true);
+    expect(pieces.every(node => node.className === paragraph.className && node.dataset.note === "authored")).toBe(true);
+    expect(pieces.map(node => node.innerHTML).join("")).toContain("<!--note-->");
+    expect(pieces.flatMap(node => Array.from(node.querySelectorAll("strong"), strong => strong.textContent)).join("")).toBe("Bravo Charlie");
+    expect(pieces.flatMap(node => Array.from(node.querySelectorAll("a"), link => link.textContent)).join("")).toBe(" Echo Foxtrot");
   });
 
-  it('should handle text shorter than limit', () => {
-    const p = document.createElement('p');
-    p.textContent = "short text";
-    const chunks = splitParagraphIntoHtmlChunks(p, 100);
-    expect(chunks.length).toBe(1);
-    expect(chunks[0]).toContain("short text");
+  it("never separates a combining cluster across inline nodes, surrogate pair or emoji ZWJ sequence", () => {
+    const root = document.createElement("div");
+    root.innerHTML = "甲e<em>\u0301</em>👨‍👩‍👧‍👦乙";
+    const points = contentBoundaries(root);
+    const fragments = points.slice(1).map((_point, index) => cloneContentRange(root, points, index, index + 1));
+    expect(fragments.map(node => node.textContent)).toEqual(["甲", "e\u0301", "👨‍👩‍👧‍👦", "乙"]);
+    expect(fragments[1].querySelector("em").textContent).toBe("\u0301");
   });
 
-  it('should preserve tag attributes', () => {
-    const p = document.createElement('p');
-    p.className = "my-class";
-    p.setAttribute("data-test", "true");
-    p.textContent = "some text";
-    
-    const chunks = splitParagraphIntoHtmlChunks(p, 10);
-    
-    expect(chunks[0]).toContain('class="my-class"');
-    expect(chunks[0]).toContain('data-test="true"');
+  it("retains RTL logical character order, isolation markup and combining vowel marks", () => {
+    const root = document.createElement("div");
+    root.dir = "rtl";
+    root.lang = "ar";
+    root.innerHTML = "<bdi>مُراجعة</bdi> الحديقة";
+    const points = contentBoundaries(root);
+    const pieces = points.slice(1).map((_point, index) => cloneContentRange(root, points, index, index + 1));
+    expect(pieces.map(node => node.textContent).join("")).toBe(root.textContent);
+    expect(pieces[0].textContent).toBe("مُ");
+    expect(pieces[0].querySelector("bdi")).not.toBeNull();
+    expect(root.dir).toBe("rtl");
   });
 
-  // This test detects the "Inline Markup Fidelity" issue
-  it('should preserve inline HTML tags when splitting', () => {
-    const p = document.createElement('p');
-    // 3 words total
-    p.innerHTML = 'Word1 <b>Word2</b> Word3';
-    
-    // Split with limit 2 to force segmentation
-    // This will trigger the logic that uses textContent and strips tags
-    const chunks = splitParagraphIntoHtmlChunks(p, 2);
-    
-    expect(chunks.length).toBe(2);
-    // The first chunk should contain Word1 and Word2.
-    // Ideally, it should preserve the <b> tag around Word2.
-    // If the bug exists, it will be "Word1 Word2" (no tags).
-    expect(chunks[0]).toContain('<b>Word2</b>'); 
+  it.each([Infinity, NaN, 0, -2])("keeps non-ceilings harmless: %s", limit => {
+    const root = document.createElement("p");
+    root.textContent = "one two three";
+    expect(chunks(root, limit).map(node => node.textContent).join("")).toBe(root.textContent);
   });
 });

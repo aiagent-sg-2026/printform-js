@@ -108,45 +108,15 @@ describe('Segmentation Logic', () => {
       expect(table.classList.contains('paddt_segment')).toBe(true);
     });
 
-    it('should respect custom word limit from config', () => {
-       // This test indirectly verifies config usage by setting up a very small limit
-       // that would force a split if logic works, or just verify it runs without error.
-       // Truly verifying the split logic requires testing the interaction with 'splitPaddtParagraphIntoHtmlChunks'
-       // which is tested in text.test.js. Here we just ensure the config path doesn't crash.
-       
-       formatter = new MockFormatter(formEl, { paddtMaxWordsPerSegment: 5 });
-       formEl.innerHTML = `
-        <table class="paddt">
-          <tr><td><p>One two three four five six</p></td></tr>
-        </table>
-      `;
-      
+    it("registers independent cells without speculative word-count cloning", () => {
+      formatter = new MockFormatter(formEl, { paddtMaxWordsPerSegment: 1 });
+      formEl.innerHTML = '<table class="paddt tb_page_break_before"><tr><td>one two three</td><td>MYR 123.45</td></tr></table>';
+      const before = formEl.textContent;
       formatter.expandPaddtSegments();
-      // If it ran successfully, we expect it to be expanded
-      expect(formEl.dataset.paddtExpanded).toBe("true");
-      
-      // We can check if it actually split (6 words > 5 limit)
-      // The logic creates clones for overflow.
-      const tables = formEl.querySelectorAll('.paddt');
-      expect(tables.length).toBeGreaterThan(1);
-    });
-
-    it('should strip tb_page_break_before from cloned segments (only first segment keeps it)', () => {
-      formatter = new MockFormatter(formEl, { paddtMaxWordsPerSegment: 5 });
-      formEl.innerHTML = `
-        <table class="paddt tb_page_break_before">
-          <tr><td><p>One two three four five six seven eight nine ten eleven twelve</p></td></tr>
-        </table>
-      `;
-
-      formatter.expandPaddtSegments();
-
-      const tables = Array.from(formEl.querySelectorAll('.paddt'));
-      expect(tables.length).toBeGreaterThan(1);
-      expect(tables[0].classList.contains('tb_page_break_before')).toBe(true);
-      tables.slice(1).forEach((clone) => {
-        expect(clone.classList.contains('tb_page_break_before')).toBe(false);
-      });
+      expect(formEl.querySelectorAll(".paddt")).toHaveLength(1);
+      expect(formEl.textContent).toBe(before);
+      expect(formEl.querySelector(".paddt").classList.contains("tb_page_break_before")).toBe(true);
+      // Only actual measured rendering decides continuation boundaries.
     });
   });
 });
