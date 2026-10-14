@@ -199,3 +199,12 @@ Playwright 截图、HTML 与 Chromium PDF 写入各 case 的 `test-results/`；�
 - 配置素材的重复页码缺失与字形高于固定 chrome 另行纠正，未把它们伪报产品缺陷或改变 nonrepeat 默认；所有金额/几何/页数断言保留。源码与详细事实见[复杂分页契约](ERP_COMPLEX_PAGINATION.zh-CN.md)。
 - §2/§3 的历史审计状态与计数保留为当时快照；本节关闭实测适配/多格续片/物理 n-up 的限定缺口，仍不授予任意 DOM、多 row/rowspan、全部语言字体或打印硬件认证。
 
+## 11. 六种收货、退货、贷借项与现金退款（本轮选项 1）
+
+- 实现 [canonical transaction 契约](ERP_TRANSACTION_BUSINESS_CONTRACT.zh-CN.md) 与实际 portable creator，覆盖 PurchaseReceipt、PurchaseReturn、SalesReturn、CreditNote、DebitNote、Refund；不是只更换发票标题。
+- 库存-only 退回、receivable/payable 调整和实际现金退款分开；原单/原行、quantity/UOM、signed decimals、currency/precision、每个 provenance 及可选库存/审批事实保留。ERPNext/Odoo supplier debit 方向明确供应，不从标题猜测。
+- 不提供原单最大可退数量/自动合计核对、原始 ERP 字段地图或库存/账务/银行执行。缺少金额/税/汇总不补零；采购收货用真正 accepted quantity，现金退款不伪造 invoice item。
+- runtime/site/agent release 构建成功；最终串行完整单测 **222 files / 2,259 tests passed**，含 85 项新业务边界回归。三引擎九组新 transaction + 四组 settlement：**39/39 passed**；实际 Chromium PDF 身份、数量、金额、纸型和坐标守恒。
+- 真实 Chrome 另开 Refund 离线产物，2 页 ready；现金 MYR130.000、source USD30.000、basis USD25.000、cash applied MYR111.000、remaining USD5.000 各有独立含义；已查看两页。来源银行状态仍为 Not bank-reconciled。
+- 并行单测/browser 时的 4 项旧 typography parity 超时改为串行隔离验证后消失；未扩大 timeout、改断言或将运行竞争伪报业务 bug。复制/转发式 unit round trips 已删除，真实项目生命周期仍完整保留。
+
