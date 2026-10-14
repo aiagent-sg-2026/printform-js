@@ -9,7 +9,7 @@
 - [ERPNext Payment Entry](https://docs.frappe.io/erpnext/payment-entry)：一个付款单可对应同一客户／供应商的多个发票；支持部分付款、预收／预付及未分配金额；Paid Amount 与 Received Amount 使用各账户币种；费用、代扣和汇兑差额有独立语义；提交 ERP 单据才产生分录。
 - [Odoo 19 Payments](https://www.odoo.com/documentation/19.0/applications/finance/accounting/payments.html)：独立付款可晚于付款时匹配发票；支持部分与合并付款；登记付款、In payment、银行对账及 Paid 不是同一状态；汇兑及现金制税务分录由 ERP 对账流程处理。
 
-这些页面支持业务边界，**不建立 Globe3／其它 ERP 原始数据库字段映射**。本功能不猜测 `paid_amount`、`received_amount`、`allocated_amount` 等原始字段的含义。上游必须根据已确认的字段地图选择、转换事实，并声明下面的命名 profile。未建立实际字段地图，故没有 raw DB adapter 或伪造连接。
+这些页面支持 canonical 业务边界，**不建立 Globe3／其它 ERP 原始数据库字段映射**。canonical API 不猜测 `paid_amount`、`received_amount`、`allocated_amount`。ERPNext **15.0.0** 另有已固定官方 tag 的 [Payment Entry 原始快照适配](ERPNEXT_PAYMENT_ENTRY_ADAPTER.zh-CN.md)；它不是通用 ERP 或 live DB adapter，其它版本仍须明确字段地图。
 
 ## 2. API 与使用入口
 
@@ -48,11 +48,11 @@ const input = {
 
 预付款将 `document.kind` 改为 `BankPayment`，`party.type` 改为 `supplier`，`cashMovement.direction` 改为 `outflow`，并供应对应来源身份及单号。不是把预收单复制成某个假发票。
 
-空 `allocations` 始终保留为空。没有调整时打印表格没有数据行；现金流与 ERP 提供的未分配预收／预付款金额仍显示。预收模式不是“发票全部付清”。空 allocation 要求显式 `summary.unappliedAmount`，不会从现金金额计算该值。
+空 `allocations` 始终保留为空。没有调整时打印表格没有数据行；现金流与 ERP 提供的未分配预收／预付款金额仍显示。预收模式不是“发票全部付清”。空 allocation 要求显式 `summary.unappliedAmount`（现金币种）或 `summary.partyUnappliedAmount`（有明确账户来源的party账户币种），不会从现金金额计算该值。
 
 ## 4. 输入字段（未知字段报错，缺失可选字段不补齐）
 
-顶层仅允许：`profile`、`source`、`document`、`company`、`party`、`cashMovement`、`allocations`、`adjustments`、`summary`、`bank`、`approval`、`notes`。
+顶层仅允许：`profile`、`source`、`document`、`company`、`party`、`partyAccount`、`cashMovement`、`allocations`、`adjustments`、`summary`、`bank`、`approval`、`notes`。
 
 | 字段 | 精确规则 |
 | --- | --- |
@@ -61,10 +61,11 @@ const input = {
 | `document` | 必填 `kind`（BankReceipt／BankPayment）、`number`、`date`、`currency`；可选 `reference`、`status`。日期是有效的 `YYYY-MM-DD`。状态按 ERP 原文保存，不推导银行清算。 |
 | `company` | 必填 `name`；可选 `id`、`address`、`registration`，字符串。 |
 | `party` | 必填 `id`、`type`、`name`；可选 `address`。BankReceipt 只接受 customer，BankPayment 只接受 supplier。多客户批量银行存款、员工报销、内部转账不在此契约。 |
+| `partyAccount` | 可选 `{id,currency,provenance}`；currency为ISO币种，provenance必需 `{sourcePath,meaning}`。供应party币种金额时必须提供此原生账户身份与来源；不等同于cash account。 |
 | `cashMovement` | 必填 `direction`、`amount`；收款 inflow、付款 outflow；可选 `sourceAmount` 保存来源侧账户币种／金额。`amount.currency` 必须等于 `document.currency`。 |
 | `allocations` | 必填数组，可以为空。每行规格见下节。 |
 | `adjustments` | 可选数组；缺失不变成虚构空财务项。每行规格见下节。 |
-| `summary` | 可选独立 ERP 汇总事实；纯预收／预付必须有其中的 unappliedAmount。规格见下节。 |
+| `summary` | 可选独立 ERP 汇总事实；纯预收／预付必须有 unappliedAmount 或 partyUnappliedAmount。规格见下节。 |
 | `bank` | 可选；仅允许 `name`、`account`、`transactionReference`、`date`、`status`、`paymentMethod`。保存并打印供应的银行上下文。 |
 | `approval` | 可选；仅允许 `status`、`approvedBy`、`date`、`reference`。保存并打印供应的审批上下文；不检查授权、不执行审批、不使单据自动 Approved。 |
 | `notes` | 可选非空字符串，按供应内容打印。 |
@@ -82,6 +83,7 @@ const input = {
 - 正负号与零不改成绝对值。显式字符串 `-0.000`、`+0.000` 也保留并打印；数值 `-0` 因 JSON 会失去符号而被拒绝。
 - 数额必须可准确转换为安全整数 minor units。超大数额及无法无损保留的数额报错，不以浮点近似值通过。
 - 规范化 money 为 `{amount, currency, minorUnitDigits, amountMinor, displayAmount}`；`amount` 保存字符串表示，`amountMinor` 只用于无损数额表达／零检查，`displayAmount` 是准确文本，不使用默认两位 currency formatter。
+- money 可选携 `provenance: {sourcePath,meaning}`，两值均为非空来源字符串；规范化、printRows、save/reopen保留。fixed-version raw adapter 的映射金额要求其精确导出provenance，不降低既有金额精度规则。
 
 ### 4.2 Allocation：发票应用、发票清偿与现金应用各自独立
 
@@ -90,6 +92,7 @@ const input = {
 - 必填 `id`：非空来源 allocation 标识，所有 allocation／adjustment ID 不得重复。
 - 必填 `sourceReference`：`{system, documentType, id, number, currency}`；可选 `date`、`partyId`、`companyId`。保存原发票／账单／贷项来源，不根据名称重分类。
 - 必填 `invoiceAppliedAmount`：**发票币种的应用额**。
+- 可选 `partyAppliedAmount`：**partyAccount.currency 的原生账户应用额**，必须提供partyAccount身份、币种与provenance。不得改标为invoice币种，也不能替代仍必需的invoiceAppliedAmount；不同币种的invoice applied须由授权来源独立供应，不本地FX。
 - 可选 `invoiceClearedAmount`：**ERP 提供的实际发票清偿额**，可能包含折让／代扣影响，绝不等同于 cash applied。
 - 可选 `cashAppliedAmount`：**现金币种的应用额**，与 `cashMovement.amount.currency` 相同；不由汇率乘算而来。
 - 可选 `invoiceBalanceBefore`、`invoiceRemainingBalance`：独立 ERP 发票余额，均使用 reference 的发票币种。
@@ -122,6 +125,8 @@ const input = {
 | `cashAppliedAmount` | ERP 现金币种应用额；币种必须等于现金币种。 |
 | `invoiceClearedAmount` | ERP 提供的发票清偿汇总；供应方须自行建立其明确币种的汇总范围。多发票不同币种不自动汇总。 |
 | `unappliedAmount` | ERP 未分配的预收／预付款，使用现金币种。**不是 invoice outstanding。** |
+| `partyUnappliedAmount` | ERP原生party账户币种的未分配预收／预付款；必须与partyAccount.currency匹配；既不是cash unapplied，也不是invoice outstanding。 |
+| `partyAllocatedAmount` | ERP原生party账户币种的已分配汇总；必须与partyAccount.currency匹配；不把多币发票本地求和。 |
 | `remainingBalance` | ERP 独立余额；必须同时供应非空 `balanceBasis` 描述其语义，例如某币种的 party ledger snapshot，而不是假称未分配现金为发票欠款。 |
 | `fxDifference` | ERP 独立汇兑差额，保留供应币种与精度。 |
 
@@ -161,6 +166,8 @@ npx playwright test e2e/studio-v3-erp-settlement.spec.js
 ```
 
 这些代码使用 canonical ERP facts，不授予真实银行／ERP 对账、生产授权、私有 raw DB 字段地图或实际 printer certification；独立执行结果见下节。
+2026-10-15补充：partyAccount／partyAppliedAmount／partyUnappliedAmount／partyAllocatedAmount及可选money provenance，为原生ERPNext三类独立币种保真而显式增加。旧cash unapplied语义不变；当前专项原生Payment/settlement/transaction/return四文件247项通过，agent gate28 reviewed。浏览器/完整构建结果记录于[原生适配专项](ERPNEXT_PAYMENT_ENTRY_ADAPTER.zh-CN.md)，以下历史验收不覆盖或改写。
+
 
 ## 8. 选项 2 独立验收
 

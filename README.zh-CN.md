@@ -16,7 +16,7 @@
 - 架构、规格与任务状态: [DESIGN.md](DESIGN.md) · [SPEC.md](SPEC.md) · [EPIC.md](EPIC.md) · [ROADMAP.md](ROADMAP.md) · [TASK.md](TASK.md)
 - 变更记录: [CHANGELOG.md](CHANGELOG.md)（英文）
 - 版本与兼容矩阵: [docs/COMPATIBILITY_MATRIX.zh-CN.md](docs/COMPATIBILITY_MATRIX.zh-CN.md) · [Node24 / 固定 runner CI 契约](docs/CI_RUNTIME_COMPATIBILITY.zh-CN.md) · [依赖安全修复](docs/DEPENDENCY_SECURITY_REMEDIATION.zh-CN.md)
-- ERP 单据与格式支持契约: [支持范围](docs/ERP_PRINT_SUPPORT.zh-CN.md) · [PCAR/CCAR](docs/ERP_CLAIM_BUSINESS_CONTRACT.zh-CN.md) · [收货／退货／贷借项／现金退款](docs/ERP_TRANSACTION_BUSINESS_CONTRACT.zh-CN.md) · [ERPNext 原始退货](docs/ERPNEXT_RETURN_ADAPTER.zh-CN.md) · [安全导入](docs/ERP_PROJECT_IMPORT_SAFETY.zh-CN.md) · [嵌套集合／空数组schema](docs/ERP_NESTED_DATASET_SCHEMA.zh-CN.md) · [业务场景／金额检查](docs/ERP_BUSINESS_SCENARIO_CONTRACT.zh-CN.md) · [特殊纸型](docs/ERP_SPECIAL_PAPER_ACCEPTANCE.zh-CN.md) · [A5／小标签／有限连续纸](docs/ERP_ADDITIONAL_PAPER_ACCEPTANCE.zh-CN.md)
+- ERP 单据与格式支持契约: [支持范围](docs/ERP_PRINT_SUPPORT.zh-CN.md) · [PCAR/CCAR](docs/ERP_CLAIM_BUSINESS_CONTRACT.zh-CN.md) · [交易类型](docs/ERP_TRANSACTION_BUSINESS_CONTRACT.zh-CN.md) · [ERPNext原始退货](docs/ERPNEXT_RETURN_ADAPTER.zh-CN.md) · [ERPNext Payment Entry](docs/ERPNEXT_PAYMENT_ENTRY_ADAPTER.zh-CN.md) · [安全导入](docs/ERP_PROJECT_IMPORT_SAFETY.zh-CN.md) · [嵌套集合](docs/ERP_NESTED_DATASET_SCHEMA.zh-CN.md) · [业务场景](docs/ERP_BUSINESS_SCENARIO_CONTRACT.zh-CN.md) · [复杂续片](docs/ERP_MULTIROW_CONTINUATION.zh-CN.md) · [特殊纸型](docs/ERP_SPECIAL_PAPER_ACCEPTANCE.zh-CN.md) · [扩展纸型](docs/ERP_ADDITIONAL_PAPER_ACCEPTANCE.zh-CN.md) · [Letter／Legal／驱动边界](docs/ERP_DRIVER_PAPER_MATRIX.zh-CN.md)
 - 缺陷、改进与验证证据: [docs/ERP_PRINT_AUDIT.zh-CN.md](docs/ERP_PRINT_AUDIT.zh-CN.md)
 - 许可协议: [LICENSE](LICENSE)（MIT）
 
@@ -85,7 +85,7 @@ npm run dev
 在页面中创建一个 `class="printform"` 的 `div`，并配置纸张大小。
 
 ```html
-<!-- 容器：定义纸张大小 (例如 A4 宽 750px 高 1050px) -->
+<!-- 显式逻辑CSS像素预算，不是物理A4；需要预设时使用data-paper-size。 -->
 <div class="printform"
      data-papersize-width="750"
      data-papersize-height="1050">

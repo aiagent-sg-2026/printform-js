@@ -38,6 +38,7 @@ export function createErpSettlementProject(input) {
   optional(design.header, normalized.document, '/document', { reference: 'Document reference', status: 'ERP document status' });
   optional(design.header, normalized.bank, '/bank', { name: 'Bank', account: 'Bank account', transactionReference: 'Bank reference', date: 'Bank reference date', status: 'ERP bank status', paymentMethod: 'Payment method' }, 'bank-');
   design.customer = [field('party', receipt ? 'Received from' : 'Paid to', '/party/name'), field('party-id', 'Source party ID', '/party/id')];
+  if (normalized.partyAccount) design.customer.push(field('party-account', 'Party account ID', '/partyAccount/id'), field('party-account-currency', 'Party account currency', '/partyAccount/currency'));
   optional(design.customer, normalized.party, '/party', { address: 'Party address' });
   optional(design.customer, normalized.company, '/company', { id: 'Company ID', address: 'Company address', registration: 'Company registration' }, 'company-');
   design.collection = '/printRows';

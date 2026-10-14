@@ -53,7 +53,7 @@ export function jsonSafe(value, path = 'input', ancestors = new Set()) {
   ancestors.delete(value);
 }
 export function money(value, path) {
-  object(value, path, ['amount', 'currency', 'minorUnitDigits']);
+  object(value, path, ['amount', 'currency', 'minorUnitDigits', 'provenance']);
   const code = currency(value.currency, `${path}.currency`);
   let precision, parsed;
   try {
@@ -66,7 +66,8 @@ export function money(value, path) {
   // Raw signed zero remains visible, although JSON cannot preserve numeric -0.
   if (parsed.amountMinor === 0 && /^-/.test(parsed.amountRaw.trim())) display = display.replace(`${code} `, `${code} -`);
   if (/^\+/.test(parsed.amountRaw.trim())) display = display.replace(`${code} `, `${code} +`);
-  return { amount: parsed.amountRaw, currency: code, minorUnitDigits: precision, amountMinor: parsed.amountMinor, displayAmount: display };
+  return { amount: parsed.amountRaw, currency: code, minorUnitDigits: precision, amountMinor: parsed.amountMinor, displayAmount: display,
+    ...(has(value, 'provenance') ? { provenance: metadata(value.provenance, `${path}.provenance`, ['sourcePath', 'meaning'], ['sourcePath', 'meaning']) } : {}) };
 }
 export function reference(value, path) {
   object(value, path, ['system', 'documentType', 'id', 'number', 'currency', 'date', 'partyId', 'companyId']);

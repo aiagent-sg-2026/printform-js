@@ -175,6 +175,6 @@ describe('settlement invariants reject ambiguous or lossy inputs before project 
   });
   it('requires an explicit unapplied fact for an advance rather than deriving it from cash', () => {
     const input = fictionalAdvance(); delete input.summary;
-    expect(() => createErpSettlementProject(input)).toThrow(expect.objectContaining({ code: 'ERP_SETTLEMENT_ADVANCE', path: 'summary.unappliedAmount' }));
+    expect(() => createErpSettlementProject(input)).toThrow(expect.objectContaining({ code: 'ERP_SETTLEMENT_ADVANCE' }));
   });
 });

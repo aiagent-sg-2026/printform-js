@@ -96,7 +96,7 @@ HTML 可表示这些内容不等于本仓库已有业务 schema、完整样张�
 | 格式 | 当前实现/约定 | 尚需独立证明 |
 | --- | --- | --- |
 | 自定义 HTML/CSS | v1/v2 固定 section/row 协议；v3 受控布局模型 | 任意 DOM 层级、任意 CSS 排版、普通未声明节点不会自动成为可打印 section |
-| A4/A5/Letter/Legal | 已有纸张参数和预设 | 目标浏览器/PDF/驱动的实际物理尺寸、边距和缩放 |
+| A4/A5/Letter/Legal | 已有参数/预设；[Letter/Legal四个有限物理profile与驱动矩阵](ERP_DRIVER_PAPER_MATRIX.zh-CN.md) | 不同浏览器/PDF/系统队列分别验收；750×1050显式CSS像素不是物理A4，预设不证明驱动可打印区 |
 | 横向/自定义尺寸 | 配置层可表示 | 长表头、页脚、窄宽度重排的真实几何 |
 | 连续页/多表 | 重复区、表 ID、行身份、逻辑页码 | 不同表头高度、嵌套重复、合计/签字区边界 |
 | 热敏票据/标签/连续介质 | [特殊纸型矩阵](ERP_SPECIAL_PAPER_ACCEPTANCE.zh-CN.md)：58/80mm、100×70mm 标签、210×140mm 有限连续页，三引擎 direct/offline 24/24；8 份真实 PDF | 不可打印区、驱动/DPI、原生 endless spool、切刀、穿孔/传感器、扫码；无 ESC/POS/ZPL |
@@ -172,6 +172,13 @@ try {
 
 - [续片契约](ERP_MULTIROW_CONTINUATION.zh-CN.md)：保留原估价总计表并进入既有最终footer；dummy/spacer延后到footer和页码完成后的真实剩余预算。默认与long均检查所有源金额序列，而非仅ready状态。
 - 多tr/rowspan=0/正跨度/colspan使用同一实测Range引擎；first/last/repeat按cell参与窗口定义。内部tr不增加业务行；不可适配的原子内容仍失败并完整回滚，不承诺任意CSS/字体或嵌套table的自动拆分。
+
+## 13. 固定 ERPNext Payment Entry 与驱动/介质边界
+
+- [ERPNext15.0.0原始收付款](ERPNEXT_PAYMENT_ENTRY_ADAPTER.zh-CN.md)：Receive/Customer、Pay/Supplier、真实parent/child/account/invoice身份、已提交状态及授权精确金额/独立精度元数据；不连接ERP或执行过账、核销、付款。
+- 原生allocated/unallocated使用party-account currency，不改标为cash或invoice currency；跨发票币种必须另供授权invoiceAppliedAmount。deduction是本位币独立ledger事实，不猜bank fee/税/FX；旧cash unapplied币种规则不变。
+- [纸张/驱动矩阵](ERP_DRIVER_PAPER_MATRIX.zh-CN.md)区分浏览器、真实PDF、OS队列与实物四层，列明Epson TM-T88VII、Zebra ZD421型号/介质/DPI边界。实际lpstat没有destination/default，未发送打印作业；不把headless PDF当成设备认证。
+- Internal Transfer、退款、payment-term schedules、withholding/tax与其它版本不在此raw profile；拒绝不代表ERP本身不支持。生产ERP授权、会计/银行及实际设备仍需独立证据。
 
 
 

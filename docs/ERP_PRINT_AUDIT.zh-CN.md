@@ -86,7 +86,7 @@
 | E03 | v2 `sample-scenarios.js:20-32` 假定首数组、numeric no；ProgressClaim no 是 string | 已修：声明或唯一table collection，typed no及其他集合保留，不重算钱；真实45个TYPE_MISMATCH消失，empty仍遵守minItems |
 | E04 | v2 ProgressClaim 金额是 string，无 currency marker；估价总计未注册协议区 | 已修：字符串原样几何检查；四个原总计移入既有最终footer，不重算金额；长claim改为真实末页预算，详见§18 |
 | E05 | `data-source-adapter.js:27-36` 只描述 /items，scalarFields 跳过数组 | 已修：显式复用JSON Schema profile，区分observed/authoritative；空数组字段只取声明契约，nested/allocations按具体父scope实际绑定、保存与表格编辑，未知安全字段保留 |
-| E06 | v3 BankPayment/BankReceipt 仅虚构本地 fixtures，用户编辑无真实清算校验 | 开放：真实 ERP 授权、多发票/币种/扣款/银行 settlement 未认证；不应自动修改金额来通过 |
+| E06 | v3 BankPayment/BankReceipt 原仅fictional catalogue，无原生Payment Entry映射 | 已补固定ERPNext15.0.0只读授权快照profile与party/cash/invoice币种隔离，详见§19；真实生产ERP、银行清算/会计权威仍开放，不自动改金额通过 |
 | E07 | HTTP 可非 loopback+empty token，owner/agentId 由 caller header 声明 | 部分已修：非 loopback 无有效 token 拒绝启动；shared-token 内 caller identity 仍不是 authenticated principal |
 | E08 | HTTP fault/delay/drop/crash headers 不受 testMode 保护 | 已修：仅显式 testMode:true 生效；普通服务忽略注入 |
 | E09 | runtime asset catch 与 pagination await 后缺 generation guard | 已修：每个 await/catch/finish 检查 generation；过期请求不能清空当前 mount/覆盖报告 |
@@ -268,6 +268,15 @@ Playwright 截图、HTML 与 Chromium PDF 写入各 case 的 `test-results/`；�
 - 多tr/rowspan/colspan共享原DOM Range与二维cell网格，独立游标/窗口交集；内部tr不冒充新增业务行。嵌套table、超大资产与chrome仍原子失败、回滚DOM身份/监听器。
 - 首轮真实浏览器另捕获耗尽cell的有限word预算越界、跨行窗口last-policy金额遗漏；修复端点与cell结束窗口语义，保留逐格/逐金额守恒断言。详细执行证据见[续片契约](ERP_MULTIROW_CONTINUATION.zh-CN.md)。
 - 开放环境风险：综合矩阵WebKit曾在HTTP/file:导航未提交时45s挂起，根因未确认；同一HTML在独立真实进程load/ready/6页。完整文件分进程验收不等于长期WebKit会话、系统打印或硬件认证；原失败trace保留，未提高deadline。
+
+## 19. 固定原生收付款与纸张/驱动矩阵（后续选项 3）
+
+- 实际before：旧canonical接收完整原始Payment Entry报ERP_SETTLEMENT_FIELD/input.context，公开adapter URL为404；现新增直接原生snapshot→canonical→便携Studio项目，不以canonical fixture冒充原始来源。
+- 按官方v15.0.0 controller/DocType/reference/deduction及Accounts Controller核对身份、提交状态、账户与字段币种。原生reference allocated是party-account currency；跨发票币种必须独立授权金额，不用汇率或outstanding推算核销/余额。
+- partyAccount、partyAppliedAmount、partyAllocated/Unapplied为最小增量；旧cash unapplied币种约束保留。六个fictional收付/预收预付/多发票/扣款/跨发票币种供实际消费，不认证生产来源。
+- 新增Letter/Legal纵横向独立纸张/PDF矩阵；官方Epson/Zebra资料区分纸宽/打印宽、DPI、子型号、OS驱动及传感器/切纸。实际CUPS无destination/default，未发作业或伪造实体认证。
+- 已观察专项4文件/247项通过及agent gate28 reviewed。首轮仅既有advance错误path钉死旧单字段分支而失败；删除过期path断言，保留拒绝缺失unapplied事实的ADVANCE业务断言，不改钉新path或放宽币种。
+- 旧README把750×1050 CSS像素称物理A4，现修正文案；显式逻辑预算、CSS/PDF物理纸与打印机可打印区必须分层。完整构建、三引擎/实际PDF与UI证据见[原生适配](ERPNEXT_PAYMENT_ENTRY_ADAPTER.zh-CN.md)和[驱动矩阵](ERP_DRIVER_PAPER_MATRIX.zh-CN.md)。
 
 
 
