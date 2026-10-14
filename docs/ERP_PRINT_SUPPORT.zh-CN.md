@@ -71,7 +71,7 @@ corrected-basis migration 使用独立标识的虚构数据，不覆盖用户记
 - 预收预付允许无发票核销；partial 与 full settlement 必须区分。
 - 一个凭证核销多张发票时，逐项保留来源 ID、币种、核销和余额；明细完整性检查不能只数一个 `/items` 数组。
 - 手续费、扣税、折让、汇差需要独立标签和 ERP 计算结果，不能塞进商品税或默默调整总額。
-- 当前 BankReceipt/BankPayment 示例覆盖全额、部分及未核销预收预付；没有认证真实银行支付、所有多发票/多币种/扣款组合。
+- 已实现 [canonical 收付款契约](ERP_SETTLEMENT_BUSINESS_CONTRACT.zh-CN.md)：多发票、独立 invoice/cash currencies、partial/full、空 allocation 的纯预收预付，以及 ERP supplied fees/withholding/discount/FX；每个金额各有精度和 provenance。旧 catalogue 仍是较小示例，不能认证真实银行支付、全部 ERP raw fields 或所有会计组合。
 - 收款 Receipt 与采购收货 Purchase Receipt 是不同业务；当前 DeliveryOrderConfirmation 不能冒充完整采购收货契约。
 
 ## 4. 其它交易的准入

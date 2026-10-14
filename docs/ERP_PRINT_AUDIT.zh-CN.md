@@ -182,3 +182,10 @@ Playwright 截图、HTML 与 Chromium PDF 写入各 case 的 `test-results/`；�
 - latest eligible supplied prior certificate 与 stored Last Claim 各有明确基准；缺 prior line 拒绝，只有显式新工作声明可归零；gross movement 不伪装净应付或 booked AR。
 - **隔离选项 2/3** 后 `npm run build:site`：217 files / 2,072 tests passed；raw PCAR 三浏览器 Open/save/reopen/offline export：6/6 passed。实际截图与 PDF.js 保真证据见新契约 §8；不是 live ERP 或硬件认证。
 
+
+## 9. Payment / Receipt（选项 2 独立验收）
+
+- 依据 ERPNext/Odoo 官方支付/核销说明实现 [canonical settlement](ERP_SETTLEMENT_BUSINESS_CONTRACT.zh-CN.md)，不是猜测 ERP raw fields。现金流、来源现金、invoice applied/cleared、cash applied、remaining 与 unapplied、费用/扣款/折让/FX 分开标示，金额各自声明币种与精度。
+- 使用 `/printRows` 事实集合；空 allocation 的真正预收预付没有假商品行、发票、已收余额或审批。保留来源单据、状态与 bank snapshot；打印不使付款自动过账、到账或核销。
+- **隔离选项 3** 后完整构建 218 files / 2,132 tests；三浏览器四种业务旅程 12/12 passed。实测截图与四份 Chromium PDF.js 金额/日期保真证据见契约 §8；仍为 Pilot。
+
