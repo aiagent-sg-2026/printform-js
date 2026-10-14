@@ -40,6 +40,11 @@ function copyAllowlist() {
     const source = path.resolve(root, name);
     if (fs.existsSync(source)) copy(source, path.resolve(output, name));
   });
+  // Published ERP project modules import this browser-only paper helper.
+  // Copy the explicit leaf, not the whole source tree or local configuration.
+  const helper = "src/printform/helpers.js";
+  fs.mkdirSync(path.dirname(path.resolve(output, helper)), { recursive: true });
+  copy(path.resolve(root, helper), path.resolve(output, helper));
 }
 
 async function writePilotExports() {

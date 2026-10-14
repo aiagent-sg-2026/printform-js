@@ -4,6 +4,8 @@
 
 本功能提供六种**明确的 canonical 事实输入、校验和真正可携带的 Studio v3 打印项目**，不是 raw ERP 字段猜测器、会计／库存执行器或银行接口。原单、库存退回、账款调整和现金退款始终是不同业务事实；同一来源单据可以显式同时声明库存退回及账款调整，但不会从标题、金额符号或状态推导另一种效果。
 
+固定版本原始输入另见 [ERPNext 退货适配器](ERPNEXT_RETURN_ADAPTER.zh-CN.md)：v15.0.0 的 PR/SI/PI return 投影为本契约，不把原生 JSON 数字伪装成精确金额，也不将其他版本、现金退款或业务过账列为已支持。
+
 实际阅读的官方主来源（2026-10-14）：
 
 - [ERPNext Purchase Receipt](https://docs.frappe.io/erpnext/purchase-receipt)：可直接收货或关联采购订单；received／accepted／rejected 数量、仓库、UOM、币种和估值各有意义；收货不是供应商发票。
@@ -42,14 +44,14 @@ const reopened = readProject(serialized);
 | --- | --- | --- | --- | --- |
 | PurchaseReceipt | supplier | inflow | none／none | 至少一行带 item.id 及 accepted 数量；可选 received／rejected；可直接收货或引用 order。 |
 | PurchaseReturn | supplier | outflow | none／none | original 收货来源、原 line ID、returned 数量；供应商账款调整另用 DebitNote。 |
-| SalesReturn | customer | inflow | none／none | original 发货来源、原 line ID、returned 数量；客户账款调整另用 CreditNote。 |
+| SalesReturn | customer | none 或 inflow | none／none，或 receivable／decrease | 库存-only 发货退回，或原 Sales Invoice 明确供应的应收冲减；有库存时需原 line ID/returned 数量，有账款时每行需 netAmount。两效果不能均为 none。 |
 | CreditNote | customer 或 supplier | none，或 customer inflow／supplier outflow | customer receivable／decrease；supplier payable／decrease | original 原发票／账单，每行明确 netAmount；库存效果非 none 时另需 item、returned 数量及原 line ID。 |
 | DebitNote | customer 或 supplier | none，或 customer inflow／supplier outflow | customer receivable／increase；supplier payable／increase 或 decrease | original 原发票／账单，每行明确 netAmount；supplier decrease 表达 ERPNext 采购退货，increase 表达 Odoo vendor debit；绝不按名字猜测。 |
 | Refund | customer 或 supplier | none | none／none | customer outflow／supplier inflow 的实际 cashMovement；至少一项 refund-basis 来源及关联分配。 |
 
 `effects.accounting` 在此专指 party 的 receivable／payable 调整，不表示全部 General Ledger。库存-only 的 none／none 表示本 profile 不声明客户／供应商账款调整，并不否认 ERPNext perpetual inventory 在实际提交时可能产生估值／库存清算分录。本模块不表示、推导或执行那些科目分录；供应的 valuation／baseAmount 仍保持独立。
 
-PurchaseReturn／SalesReturn 是库存退回 profile；带账款调整的原始 return invoice 应映射到 CreditNote／DebitNote，不能把两种效果装进库存-only kind。Refund 只表示实际供应的现金退款事实；没有 cashMovement 的 Odoo vendor refund 应映射到 CreditNote，而非伪造 cashMovement。未知／未声明语义报错。
+PurchaseReturn 表示库存退回，采购发票应付调整映射到 DebitNote。SalesReturn 可表达明确声明的库存退回、退货销售发票应收减少或两者：发货-only 保持 none／none accounting；invoice return 使用 receivable／decrease，不从金额符号推断。CreditNote 可另表达不退货的价格调整。Refund 只表示实际供应的现金退款事实；没有 cashMovement 的 Odoo vendor refund 应映射到 CreditNote，而非伪造 cashMovement。未知／未声明语义报错。
 
 `scope.extent` 为 full／partial，含 `reason` 与 provenance。它是 ERP 明确提供的本单范围，**不通过数量比率、原单余额或金额总和计算**。原单保持独立，模块没有写回原单状态、退货数量或 outstanding 的能力。
 
@@ -127,7 +129,7 @@ const money = {
 
 money 必填以上五项。金额必须为十进制字符串，精度 0–6；保留 `+`／`-`／签名零与尾随零，不接受指数、不四舍五入。复用现有 exact-decimal parser，超出安全整数 minor units 或不能准确无损表达的值拒绝。规范化增加 `amountMinor`、`displayAmount`；不计算新税／总额／汇率。
 
-`direction` 仅可为 increase／decrease／inflow／outflow／valuation／balance。它表达**该数值自身的供应业务意义**，不通过金额正负号推断。单价和估值使用 valuation；note 的 netAmount 必须与显式 accounting.direction 一致；库存-only netAmount 使用 valuation。税或其他调整可以有独立供应的 increase／decrease，不用简单符号规则覆盖它们。
+`direction` 仅可为 increase／decrease／inflow／outflow／valuation／balance。它表达**该数值自身的供应业务意义**，不通过金额正负号推断。单价和估值使用 valuation；note 或 receivable减少SalesReturn的 netAmount 必须与显式 accounting.direction 一致；库存-only netAmount 使用 valuation。税或其他调整可以有独立供应的 increase／decrease，不用简单符号规则覆盖它们。
 
 monetary fact 必填 `{id, label, role, amount: money}`，可选 `sourceReferenceId`、`basis`；引用若提供必须存在。按位置允许：
 

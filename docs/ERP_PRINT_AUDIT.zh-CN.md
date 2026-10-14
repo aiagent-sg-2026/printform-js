@@ -242,3 +242,14 @@ Playwright 截图、HTML 与 Chromium PDF 写入各 case 的 `test-results/`；�
 - 最终实际Node24 build:site **224 files / 2,279 tests passed**；runtime/site/publication gate完成。三引擎实际consumer **24/24 passed**。首轮8个5s timeout、27-stale-review阻断以及18/6、12/12、21/3浏览器中间结果不冒充通过；没有提高timeout、缩断言或隐藏几何错误。
 - [导入契约](ERP_PROJECT_IMPORT_SAFETY.zh-CN.md)／[业务与金额契约](ERP_BUSINESS_SCENARIO_CONTRACT.zh-CN.md)记录修复、边界与实际证据；publication owner对真实传递依赖重新review，不前移baseline或改变授权。
 
+## 16. 固定 ERPNext 原始退货与扩展纸型（本轮 C）
+
+- 官方 v15.0.0 return 控制器核对真实 parent/child links、同公司/party/汇率、提交状态及 stock 条件；只读 PR/SI/PI return 共五种路径，版本、来源、时间、精确覆盖与币种必须显式提供，未授权或不确定事实仍拒绝。
+- Canonical SalesReturn 原只允许库存退回，不能表示真实 SI return 的 receivable decrease；现允许明确 none/inflow 库存与应收减少，拒绝两个效果均 none、错误 basis/direction、缺失净额及方向混淆。Delivery Note stock-only 不自动变为会计调整。
+- 原 `Number(rawText)` 对合法 `-0,001.250` / `+0,039.299` 覆盖误判；现只用解析后的安全 minor 值与 native number 做一致性比较。源词法原文保留，金融显示仍遵守既有 canonical money 规则；矛盾来源拒绝，不用 Number 恢复精度。
+- 实际公开 v3/model 浏览器 import 曾因未发布 `/src/printform/helpers.js` 失败；站点只增加该必需 leaf，不暴露整个 src/config/local 文件树。新 browser journey 由已构建公开模块实际创建项目，不用 Node-side project 或 mock 跳过依赖闭包。
+- 新 A5 横向、50×30mm 标签、210×280mm 有限连续页覆盖 one/multi-row、CJK/RTL、direct/offline，目标边距有 W3C/Epson/Zebra 一手依据；仍不声称任意尺寸、endless spool、驱动/实体介质、扫码或原生指令认证。
+- 专项真实 normalizer/project/binder/save/read 与拒绝边界 **157/157 passed**；Node24 完整 `build:site` **226 files / 2,351 tests passed**，runtime/site/agent gate 完成。三浏览器/PDF 实际记录见 [原始退货](ERPNEXT_RETURN_ADAPTER.zh-CN.md) 与 [扩展纸型](ERP_ADDITIONAL_PAPER_ACCEPTANCE.zh-CN.md)。
+- 三引擎原始退货15、新纸型36、旧纸型24、transaction27、settlement12统一串行 **114/114 passed**，无 retry/flaky/skip；新17份实际Chromium PDF。原生不带测试init script的UI3页ready且截图已查看；额外managed工具出现PREVIEW_NOT_STARTED/截图20s timeout，根因未确认，未扩大预算或把工具失败标成成功。
+
+

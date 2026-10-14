@@ -51,8 +51,12 @@ export function normalizeErpTransaction(input) {
   const scope = { extent: choice(input.scope.extent, ['full', 'partial'], 'scope.extent'), reason: text(input.scope.reason, 'scope.reason'), provenance: provenance(input.scope.provenance, 'scope.provenance') };
   object(input.effects, 'effects', ['inventory', 'accounting']);
   const expectedStock = kind === 'PurchaseReturn' || (noteKinds.includes(kind) && party.type === 'supplier') ? 'outflow' : 'inflow';
-  const inventory = effect(input.effects.inventory, 'effects.inventory', inventoryKinds.includes(kind) ? [expectedStock] : kind === 'Refund' ? ['none'] : ['none', expectedStock]);
-  const accounting = effect(input.effects.accounting, 'effects.accounting', noteKinds.includes(kind) ? ['increase', 'decrease'] : ['none'], noteKinds.includes(kind) ? [party.type === 'customer' ? 'receivable' : 'payable'] : ['none']);
+  const inventory = effect(input.effects.inventory, 'effects.inventory', kind === 'SalesReturn' ? ['none', 'inflow'] : inventoryKinds.includes(kind) ? [expectedStock] : kind === 'Refund' ? ['none'] : ['none', expectedStock]);
+  const accounting = effect(input.effects.accounting, 'effects.accounting', kind === 'SalesReturn' ? ['none', 'decrease'] : noteKinds.includes(kind) ? ['increase', 'decrease'] : ['none'], kind === 'SalesReturn' ? ['none', 'receivable'] : noteKinds.includes(kind) ? [party.type === 'customer' ? 'receivable' : 'payable'] : ['none']);
+  if (kind === 'SalesReturn') {
+    if (accounting.basis !== (accounting.direction === 'none' ? 'none' : 'receivable')) fail('SEMANTICS', 'effects.accounting.basis', 'Sales returns declare either stock-only none accounting or an explicit receivable decrease.');
+    if (inventory.direction === 'none' && accounting.direction === 'none') fail('SEMANTICS', 'effects', 'A sales return must declare stock returned or receivable reduced; a no-effect document is not a return.');
+  }
   if (kind === 'CreditNote' && accounting.direction !== 'decrease') fail('SEMANTICS', 'effects.accounting.direction', 'A credit note reduces the explicitly identified receivable or payable.');
   if (kind === 'DebitNote' && party.type === 'customer' && accounting.direction !== 'increase') fail('SEMANTICS', 'effects.accounting.direction', 'Customer debit notes increase receivable. Supplier debit direction must be explicitly mapped for ERPNext versus Odoo.');
   const result = { profile: input.profile, source, document, company, party, references, scope, effects: { inventory, accounting } };
@@ -134,11 +138,11 @@ export function normalizeErpTransaction(input) {
       line.amounts = monetaryFacts(entry.amounts, `${path}.amounts`, ['unitRate', 'netAmount', 'valuationAmount', 'baseAmount'], document.currency);
       line.amounts.forEach((fact, i) => {
         const direction = fact.role === 'unitRate' || fact.role === 'valuationAmount' ? 'valuation'
-          : fact.role === 'netAmount' ? (noteKinds.includes(kind) ? accounting.direction : 'valuation') : undefined;
+          : fact.role === 'netAmount' ? (noteKinds.includes(kind) || (kind === 'SalesReturn' && accounting.direction === 'decrease') ? accounting.direction : 'valuation') : undefined;
         if (direction && fact.amount.direction !== direction) fail('SEMANTICS', `${path}.amounts[${i}].amount.direction`, 'Unit rates and valuations are not cash; net amount follows the explicit accounting effect or inventory valuation.');
       });
       if (!line.quantities.length && !line.amounts.length) fail('ROWS', path, 'A line must contain a supplied quantity or monetary fact, not a title-only placeholder.');
-      if (noteKinds.includes(kind) && !line.amounts.some(fact => fact.role === 'netAmount')) fail('AMOUNT', `${path}.amounts`, 'An accounting adjustment line requires an explicit netAmount, not only a unit rate or title.');
+      if ((noteKinds.includes(kind) || (kind === 'SalesReturn' && accounting.direction === 'decrease')) && !line.amounts.some(fact => fact.role === 'netAmount')) fail('AMOUNT', `${path}.amounts`, 'An accounting adjustment line requires an explicit netAmount, not only a unit rate or title.');
       return line;
     });
     if (has(input, 'taxes')) {

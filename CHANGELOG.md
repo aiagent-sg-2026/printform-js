@@ -21,6 +21,13 @@ E14 UI includes four layers, context badges, structured change cards, apply-mode
 batch history controls, session/settings/trace surfaces and a resizable rail.
 
 
+### Fixed-version native ERP returns and additional paper — 2026-10-15
+
+- Added read-only ERPNext15.0.0 Purchase Receipt / Sales Invoice / Purchase Invoice return adapters with original parent/child identity, submitted lifecycle and authorized exact decimal overlays; independent stock/accounting effects and source currencies never become local posting or FX.
+- Extended explicit SalesReturn receivable-decrease semantics while retaining delivery-only stock returns; grouped/leading-zero exact source facts no longer fail native-number consistency checks, and contradictory facts still reject.
+- Published only the missing browser SDK helper leaf; added real native-adapter import/Open/save/reopen/offline/PDF consumers and A5 landscape,50×30mm labels,210×280mm bounded fanfold consumers without physical-device or endless-spool claims.
+- Actual Node24 full226 files/2351 tests,157 targeted business boundaries and three-engine114/114 consumers pass, including17 new actual Chromium PDFs; unmodified native Studio Open is3page ready with inspected visual proof. Extra managed-tool startup/screenshot failures are retained, not reported as success. [Native return contract](docs/ERPNEXT_RETURN_ADAPTER.zh-CN.md) / [additional paper evidence](docs/ERP_ADDITIONAL_PAPER_ACCEPTANCE.zh-CN.md).
+
 ### Bounded ERP imports and exact business stress — 2026-10-15
 
 - Unified project reopen, dataset import and JSON editor safety without imposing the database /items schema on custom projects; unsafe/budget-exceeding input rejects before mutation.
