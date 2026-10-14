@@ -6,6 +6,7 @@ import { resolvePointer } from '../studio-v2/core/json.js';
 import { validPointer } from './design-authoring.js';
 import { tableStyleChange } from './table-style.js';
 import { elementStyleChange } from './element-style.js';
+import { projectDescriptor } from './dataset-schema.js';
 
 const unsafe = () => { throw Object.assign(new Error('UNSAFE_PROPOSAL'),{code:'UNSAFE_PROPOSAL'}); };
 const fieldKeys = ['label','pointer','format','kind','text','showLabel','labelStyle','valueStyle','width','assetId','height','fit'];
@@ -124,12 +125,13 @@ export function explicitBindingPointers(request='',references=[]) {
   return [...new Set([request,...references.map(r=>r.comment || '')].join(' ').match(/(?:\.\/|\/)[a-zA-Z0-9_~/-]{1,238}/g) || [])].slice(0,20);
 }
 export function availableBindings(project,explicitPointers=[],effectiveCollection=project.manifest.studioV3.collection) {
-  const result = [], seen = new Set(), collection = project.manifest.studioV3.collection;
+  const result = [], seen = new Set(), collection = project.manifest.studioV3.collection, descriptor = projectDescriptor(project);
   const collections = [...new Set([collection,effectiveCollection,...explicitPointers.filter(pointer=>pointer.startsWith('/') && Array.isArray(resolvePointer(project.sampleData,pointer)))])];
   const add = (pointer,owner=collection) => {
     const relative = pointer.startsWith('./'), key = relative ? `${owner}:${pointer}` : pointer; if (seen.has(key) || result.length >= 80 || !validPointer(pointer,relative)) return;
-    const value = resolvePointer(project.sampleData,pointer,relative ? resolvePointer(project.sampleData,owner)?.[0] : undefined);
-    const type = Array.isArray(value) ? 'array' : typeof value;
+    const value = resolvePointer(project.sampleData,pointer);
+    const field = relative ? descriptor.collections.find(entry=>entry.pointer === owner)?.fields.find(entry=>entry.pointer === pointer) : descriptor.fields.find(entry=>entry.pointer === pointer);
+    const observedType = relative ? field?.type : Array.isArray(value) ? 'array' : field?.type || typeof value, type = observedType === 'integer' ? 'number' : observedType;
     if (!['array','string','number','boolean'].includes(type)) return;
     seen.add(key); result.push({pointer,type,relative,...(relative ? {collection:owner} : {})});
   };

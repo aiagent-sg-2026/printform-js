@@ -6,6 +6,7 @@ import { dataSource } from './data-provenance.js';
 import { sectionOrder } from './design-authoring.js';
 import { tableStyleChange } from './table-style.js';
 import { elementStyleChange } from './element-style.js';
+import { assertProjectSchema, assertCollectionBinding, validateSourceSchema } from './dataset-schema.js';
 
 export function createBus(project, database = null, source = 'builtin-demo') {
   const initial = structuredClone(project);
@@ -21,18 +22,27 @@ export async function editProject(bus, operations, reason, dataSession = null) {
   const preview = bus.preview(operations, revision);
   const design = designOf(preview.candidate);
   validateDesign(design);
+  assertProjectSchema(preview.candidate);
+  const previous = designOf(bus.project);
+  const bindingChanged = previous.collection !== design.collection || previous.columns.length !== design.columns.length || design.columns.some((field,index)=>field.pointer !== previous.columns[index]?.pointer || field.kind !== previous.columns[index]?.kind);
+  if (bindingChanged || design.blocks.items.enabled && design.collection !== '/items' && operations.some(operation=>operation.type === 'replace_sample_data')) assertCollectionBinding(preview.candidate,design.collection,design.columns,bindingChanged);
   const next = compileProject(preview.candidate, design);
   if (dataSession) next.studioV3Session = structuredClone(dataSession);
   return bus.commit(next, reason, {expectedRevision:revision});
 }
-export async function replaceData(bus, data, sample = 'erp', database = undefined, sourceOverride = null, title = undefined) {
+export async function replaceData(bus, data, sample = 'erp', database = undefined, sourceOverride = null, title = undefined, sourceSchema = undefined) {
   const session = bus.project.studioV3Session;
   const names = {'0':'Empty','1':'Single item','45':'Standard','100':'Multi-page','500':'Stress',long:'Long & bilingual'};
   const source = sourceOverride || (sample !== 'erp' ? dataSource('validation-sample',names[sample] || sample) : database === undefined ? session.erpSource : dataSource(database?.origin || 'imported-data'));
   const name = title !== undefined ? datasetName(title) : database?.title ? datasetName(database.title) : datasetTitleFor(bus.project);
   const currency = data.document?.currency;
   if (currency !== undefined && !['MYR','USD','SGD','EUR','CNY','JPY'].includes(currency)) throw new Error('Dataset currency is unsupported. Choose a supported dataset currency.');
-  return editProject(bus,[{type:'replace_sample_data',value:data},{type:'set_manifest_value',path:'/sampleDataTitle',value:name},...(currency ? [{type:'set_manifest_value',path:'/currency',value:currency}] : [])],`data: ${sample}`,{
+  const contract = sourceSchema === undefined ? null : validateSourceSchema(sourceSchema,data,database?.id);
+  const schemaOperations = sourceSchema === undefined ? [] : [
+    {type:'replace_schema',value:contract?.schema || {type:'object',additionalProperties:true}},
+    {type:'set_manifest_value',path:'/datasetSchema',value:contract ? {sourceId:contract.sourceId,datasetId:contract.datasetId,version:contract.version} : null}
+  ];
+  return editProject(bus,[...schemaOperations,{type:'replace_sample_data',value:data},{type:'set_manifest_value',path:'/sampleDataTitle',value:name},...(currency ? [{type:'set_manifest_value',path:'/currency',value:currency}] : [])],`data: ${sample}`,{
     sample,erpData:sample === 'erp' ? data : session.erpData,
     database:database === undefined ? session.database : database,
     source,erpSource:sample === 'erp' ? source : session.erpSource

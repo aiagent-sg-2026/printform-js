@@ -21,6 +21,13 @@ E14 UI includes four layers, context badges, structured change cards, apply-mode
 batch history controls, session/settings/trace surfaces and a resizable rail.
 
 
+### Explicit nested dataset contracts — 2026-10-15
+
+- Reused the existing JSON Schema profile as the only project contract; explicit source envelopes supply empty-collection fields, while observed descriptors scan all rows without claiming source authority.
+- Connected concrete nested scopes to collection/field pickers, data tree, table editing and real binding; preserved escaped pointers, exact source strings, nullable scalars and unknown safe fields without parent flattening or financial calculations.
+- Persisted schema through project/dataset save and reopen; later schema-less inputs retain the active contract, imports always create fresh local identities, and failed validation preserves records/revision/drafts.
+- Actual Node24 full227 files/2365 tests, publication gate and three-engine3/3 complete UI/offline consumers pass; inspected actual offline ready1page preserves exact identity and amount. Browser warnings remain printed/attached. Fixed the pure-view schema dependency rather than altering existing dataset-selection consumers. [Contract and actual failure history](docs/ERP_NESTED_DATASET_SCHEMA.zh-CN.md).
+
 ### Fixed-version native ERP returns and additional paper — 2026-10-15
 
 - Added read-only ERPNext15.0.0 Purchase Receipt / Sales Invoice / Purchase Invoice return adapters with original parent/child identity, submitted lifecycle and authorized exact decimal overlays; independent stock/accounting effects and source currencies never become local posting or FX.

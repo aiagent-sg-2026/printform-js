@@ -1,4 +1,5 @@
-import { validateDataset, scalarFields } from './database-model.js';
+import { validateDataset } from './database-model.js';
+import { datasetDescriptor, validateSourceSchema } from './dataset-schema.js';
 
 // Bounded, read-only application contract. Production implements this contract
 // on an authenticated server; a browser never receives SQL or DB credentials.
@@ -22,17 +23,14 @@ export function createLocalDatasetSource(store) {
       const record = (await records()).find(r=>r.id === id);
       if (!record) throw new Error('The selected dataset is unavailable.');
       if (revision !== undefined && record.revision !== revision) throw new Error('Dataset changed. Refresh before reading.');
-      return {...record,data:validateDataset(record.data)};
+      const data = validateDataset(record.data);
+      const sourceSchema = validateSourceSchema(record.sourceSchema,data,record.id);
+      return {...record,data,...(sourceSchema ? {sourceSchema} : {})};
     },
     async schema(id) {
       const record = await this.read(id);
-      const root = scalarFields(record.data).map(({pointer,type})=>({pointer,type}));
-      const fields = new Map();
-      for (const row of record.data.items) for (const f of scalarFields(row)) {
-        const pointer = `.${f.pointer}`, previous = fields.get(pointer);
-        fields.set(pointer,{pointer,type:previous && previous.type !== f.type ? 'mixed' : f.type});
-      }
-      return {sourceId:'local-demo',datasetId:id,revision:record.revision,fields:root,collections:[{pointer:'/items',fields:[...fields.values()]}]};
+      const source = record.sourceSchema;
+      return {datasetId:id,revision:record.revision,...datasetDescriptor(record.data,source?.schema,source),sourceId:source?.sourceId || 'local-demo'};
     }
   });
 }

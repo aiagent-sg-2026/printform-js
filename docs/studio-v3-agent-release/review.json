@@ -4,15 +4,16 @@
   "release": "a99c932e45a95d4d5b5c811e7dbc0db3256ddf99",
   "packageHash": "c472d0ca870e77f25b36f756b5171332f377122ac70d42422e152b27cfee03be"
  },
- "reviewNotes": "Preserves prior ERP/measured-pagination and CA-04/CA-05 decisions. This owner reconciliation reviews the actual transitive bounded JSON, exact-kind scenario and non-formatting monetary-inspection changes: project/dataset/editor share safety budgets without imposing /items on custom projects; typed fixture stress preserves source totals and relationships instead of calculating financial truth; source monetary strings now participate in geometry diagnostics. Source changes and consumer boundary proof are documented in docs/ERP_PROJECT_IMPORT_SAFETY.zh-CN.md and docs/ERP_BUSINESS_SCENARIO_CONTRACT.zh-CN.md. Current fingerprints are not a bypass: all existing grants, publication/conformance evaluations, privacy and financial-value authority remain required and unchanged. This does not advance the published baseline or certify all ERP inputs, long-text layouts or hardware.",
+ "reviewNotes": "Preserves prior ERP/measured-pagination and CA-04/CA-05 decisions. This owner reconciliation reviews bounded JSON, exact-kind scenarios and non-formatting monetary inspection, plus explicit nested dataset schema and actual binding/UI consumers. Project schema remains the only structural contract; observed fields are not authoritative, empty collections do not invent fields, nullable values retain the existing blank binding semantics, and parent scopes retain concrete JSON Pointers. Dataset imports always create a fresh local identity, preserve source facts and reject invalid rows before mutations. Manifest stores only source/dataset/version identities; closed AI projections do not publish schema const/enum values. Existing grants, privacy, financial authority and publication/conformance evaluations remain required. The published baseline is unchanged; no universal ERP, long-layout or hardware certification is asserted. Evidence: docs/ERP_NESTED_DATASET_SCHEMA.zh-CN.md and the existing import/business contracts.",
  "dispositions": [
   {
    "entries": {
-    "printform.agent.validate_scenarios": "f47d3a1f53aa9f5493a4f1cfc1ce80ee967b3af30eaf9859e93678728a54c132"
+    "printform.agent.validate_scenarios": "d5177a91b69ca939c8c943a5383cb9de56317c8ae1d6d28fe260e41ffc839dc2"
    },
    "disposition": "updated",
    "justification": "Retains the shared scenario-matrix and receipt slice. Agent tools now check current host state before effects; provider dispatch and completion recheck run-bound semantic authorization. Existing draft, numeric inspection, scenario and answer effects stay registered under their original grants; observe_context alone admits authorized semantic content. CA-05 slice 3 adds fictional receipt-bound page/crop capture with separate host pixel consent, denied-value/asset guards, paired host follow-up image input and compaction/dispatch freshness checks; existing effect grants and CA-04 services are retained.",
    "evidence": [
+    "studio-v3/dataset-schema.js",
     "studio-v3/json-safety.js",
     "studio-v2/core/monetary-inspection.js",
     "studio-v2/core/schema.js",
@@ -26,11 +27,12 @@
   },
   {
    "entries": {
-    "printform.agent.get_capabilities": "72b39550afcf5d7a563a8c0fdd2df599a8d1535035e02adf0bfc4269611b25ec"
+    "printform.agent.get_capabilities": "3af65a947ca9fe493d4e7ed2b6d2f4e8e09ab00e50ec9f5de9ad408d54734806"
    },
    "disposition": "updated",
    "justification": "Retains the shared scenario-matrix and receipt slice. Agent tools now check current host state before effects; provider dispatch and completion recheck run-bound semantic authorization. Existing draft, numeric inspection, scenario and answer effects stay registered under their original grants; observe_context alone admits authorized semantic content. CA-05 slice 3 adds fictional receipt-bound page/crop capture with separate host pixel consent, denied-value/asset guards, paired host follow-up image input and compaction/dispatch freshness checks; existing effect grants and CA-04 services are retained.",
    "evidence": [
+    "studio-v3/dataset-schema.js",
     "studio-v3/json-safety.js",
     "studio-v2/core/monetary-inspection.js",
     "studio-v2/core/schema.js",
@@ -43,15 +45,16 @@
   },
   {
    "entries": {
-    "printform.agent.read_skill": "ab979022526b15b1a0705ba0526a0ba9f01001f0ce50df20d784c89945c14d5c",
-    "printform.agent.get_context": "eda4bb98b58147aa07efe07b590f1c230ba5e4e3ed9223fb077a094e7611452e",
-    "printform.agent.take_notes": "f35adaf928731bd9ea555c4085cbc4a660b5239bde2eb0202234bf604b413eb5",
-    "printform.agent.finish_answer": "e829f0e31a75d732674def005a3ef6fb6875e02628bd270c13fa2f0f6d48d606",
-    "printform.agent.report_blocked": "cd09b9895cf14eaee90a00ecee860a9fdfb28f1d13b8796153d64058e3a1992c"
+    "printform.agent.read_skill": "f5894f3844e60ae9e7ac48f896b15c0f9d9083de87eec43f9c28675f51f5b86c",
+    "printform.agent.get_context": "3b2dee9fb9c6bc89bc493d564f64151928d3c5664f1eadafe5f7ae65efdd80c4",
+    "printform.agent.take_notes": "f76cef1bab4f3b6082a77de27b8919f465e716a87ef4dd72a3f1b6c0f346aa97",
+    "printform.agent.finish_answer": "96e672595e99b5e004066cdaafeda734ec25a52e9603416add288832b4016335",
+    "printform.agent.report_blocked": "7b94655cc139610d21a1608bc5dba12ebdc0be99a9370c3dba6dbccb9a38ffb9"
    },
    "disposition": "updated",
    "justification": "Retains the shared scenario-matrix and receipt slice. Agent tools now check current host state before effects; provider dispatch and completion recheck run-bound semantic authorization. Existing draft, numeric inspection, scenario and answer effects stay registered under their original grants; observe_context alone admits authorized semantic content. CA-05 slice 3 adds fictional receipt-bound page/crop capture with separate host pixel consent, denied-value/asset guards, paired host follow-up image input and compaction/dispatch freshness checks; existing effect grants and CA-04 services are retained. OBS-05 completion now host-authors and retains the latest receipt, rejects old/foreign/invalidated evidence, and enforces the UI/history answer budget without truncating citations. Independent fictional text/geometry qualification and recovery use native preview measurements; full G4 blinded review stays open.",
    "evidence": [
+    "studio-v3/dataset-schema.js",
     "studio-v3/json-safety.js",
     "studio-v2/core/monetary-inspection.js",
     "studio-v2/core/schema.js",
@@ -66,21 +69,22 @@
   },
   {
    "entries": {
-    "printform.authoring.set_style": "c96d262b8bcbbf1a26370729c4c4af3ee200d4aa2babfabb051d591f06b9b4aa",
-    "printform.authoring.set_field": "e31c31968be2c6a9f74d0571da13fa1a9980bfaf212c18cc7351792828123cbe",
-    "printform.authoring.add_field": "3702f1c9d3b392bf5f59ea8c386db51240f420e034acd20cdde54ea39d444e48",
-    "printform.authoring.remove_field": "9d6f7a62b50b2e51f3b1d32b7f78fbecbab959a80c2a8e6acfa483af69370bb2",
-    "printform.authoring.reorder_fields": "11f08ccd7d1d2fa796c087a4d26864d955e10a39af76f95f7d410d00b83ba736",
-    "printform.authoring.set_section": "481be104e8fdf0d4905af25bc2175e6a26859b1f0e26275ce681a4b7e18f19fc",
-    "printform.authoring.reorder_sections": "c407107a180789dc571313bbe0cfc825514d613e9bf0d452414794dc6359b979",
-    "printform.authoring.set_page": "229eb525c62c828c0d716e973915a5acfa93a3324020b482fd114cda1f1a56fd",
-    "printform.authoring.set_logo": "65b5d0641ef1c3c77ad2ee42f69b38fd57098c9a84fcedfe0e5be4de3cce7291",
-    "printform.authoring.set_collection": "a6d9ed046c30a309c38fcbb12c8a9a5d913d2301e4a62f9d0dd6c46159982cd8",
-    "printform.authoring.set_heading": "85e73b5d450dd67757e32da801dd5b06cc663966e6f5ccc740104f63dc7fb324"
+    "printform.authoring.set_style": "7930680778b3c09284b3803ca89f78ee2a032aef55587a824699fd9f93755af2",
+    "printform.authoring.set_field": "52155a42d3de2e498f6b3d29619e64a6cf347294732f79c2e94a3eaadffa4f09",
+    "printform.authoring.add_field": "157d5c32d81639de3221d9e33c3648d67c2cc6c97ff41a4bde1940ab82ca1782",
+    "printform.authoring.remove_field": "fd55843847d4312916248a3e26da23971e1454a66fe529178ec7f89fe918e97d",
+    "printform.authoring.reorder_fields": "e321107db4d6d6ad45f92a2b0796551b4c7e058aab5153c99696198d552462ad",
+    "printform.authoring.set_section": "5386eaf3df510d7c3b96c25536792fbb2881858a4c9eb306471888f94e01c7d5",
+    "printform.authoring.reorder_sections": "2474422f135c51dfef46614e00a9d40191afc7214c78777c6f288380005f765f",
+    "printform.authoring.set_page": "6fd7461cbbb5583819ca1a0a1d863df555520ab6887a15039c1091580a19eb5e",
+    "printform.authoring.set_logo": "0f314864bfc2c76e8156b6ce8845d6787d3f74199751d6771df2b34bee59cb7a",
+    "printform.authoring.set_collection": "002c31ec06941bfd32181b04a9cf7cdb4001bd067927ddcc3019c93f38d9101e",
+    "printform.authoring.set_heading": "92f6df360a0b7da4688e827eb8d4b252a5384a6bccd8470083f9d68cd8f1d1e5"
    },
    "disposition": "updated",
    "justification": "Retains prior CA-04/CA-05 effects and scoped authoring. ERP changes tighten shared schema, row preflight and formatting diagnostics; the closed binding vocabulary now includes PCAR/CCAR receivable-stage paths. Source dependencies and affected behavior are reconciled without changing grant or financial-value authority. Existing authoring and binding evaluations remain required; current verification is recorded in the ERP audit.",
    "evidence": [
+    "studio-v3/dataset-schema.js",
     "studio-v3/json-safety.js",
     "studio-v2/core/monetary-inspection.js",
     "studio-v2/core/schema.js",
@@ -89,11 +93,12 @@
   },
   {
    "entries": {
-    "printform.knowledge.form-authoring": "4ec0bae308e8619a35e9ff640fa2d59e6dce228e41a424d5500da924be5d2d45"
+    "printform.knowledge.form-authoring": "c62795717630b587601734f74afde70664af9675367563a0a152c133afa7c739"
    },
    "disposition": "updated",
    "justification": "The form-authoring guide documents numeric and semantic receipt custody, default-off single-run fictional text/pixel consent, independent host value/pixel-denial policies, asset/signature rejection, expiry and candidate/undo invalidation. It describes qualified DOM raster page/crop retrieval, paired host image inputs that survive compaction and guarded dispatch, while final visual comparison, real-data transmission and sensitive-asset qualification remain open. Protected answers retain local-only history handling. Existing shared row-fill/element typography semantics and separate UI commit/Pi draft authority are retained. The guide now documents current completion citations, optional exact receipt IDs and length rejection; receipt identity is explicitly not a visual-similarity approval.",
    "evidence": [
+    "studio-v3/dataset-schema.js",
     "studio-v3/json-safety.js",
     "studio-v2/core/monetary-inspection.js",
     "studio-v2/core/schema.js",
@@ -121,14 +126,15 @@
   },
   {
    "entries": {
-    "printform.agent.inspect_draft": "ce73079f8e08884102ea9197f15c752a73de924970e64f22ff8dede9511a049b",
-    "printform.agent.apply_operations": "ae0ac8e623314ce70fb06a0f2503709ff96c73a9505507d29d2b248566c04ff4",
-    "printform.agent.undo_step": "d617a7d5fc0298f75b4958ced3243afc5354eb1cbd8b5af5edd42e28c4259f99",
-    "printform.agent.finish": "734afd78cf2236840ff40d8a2e2a9a2d0b083f9267d03f0331ddaa98c57c3d32"
+    "printform.agent.inspect_draft": "01a23f2d0054c008e8547bc903a5e80cd5c4c7a0f2c8fbaeffdb8260548e09fa",
+    "printform.agent.apply_operations": "4e304286c29d960908fae8b1115578df28f7507657a2b6759c4a2f51b0002bbd",
+    "printform.agent.undo_step": "b78dc69407dc5433025a262fc95166b91c33802be7fc5ffa840ec47cb57072c6",
+    "printform.agent.finish": "709cf9cb07db0153bcf575e2e07b7af4f9b0ac8ee5921a99accf2e2cadd08cd0"
    },
    "disposition": "updated",
    "justification": "Retains the shared scenario-matrix and receipt slice. Agent tools now check current host state before effects; provider dispatch and completion recheck run-bound semantic authorization. Existing draft, numeric inspection, scenario and answer effects stay registered under their original grants; observe_context alone admits authorized semantic content. CA-04 row fill now reuses the inspector transformation without merging effect authority; the real registered schema/grant/scope and candidate parity fixtures pass. Element typography now shares inspector validation/transformation while retaining draft/grant/scope authority; new direct parity and recovery evaluations are registered. CA-05 slice 3 adds fictional receipt-bound page/crop capture with separate host pixel consent, denied-value/asset guards, paired host follow-up image input and compaction/dispatch freshness checks; existing effect grants and CA-04 services are retained.",
    "evidence": [
+    "studio-v3/dataset-schema.js",
     "studio-v3/json-safety.js",
     "studio-v2/core/monetary-inspection.js",
     "studio-v2/core/schema.js",
@@ -148,11 +154,12 @@
   },
   {
    "entries": {
-    "printform.agent.observe_context": "850786b02a90f4d5c9fcefc36d9909dccf92b79a23011840ccf5458718dd90fb"
+    "printform.agent.observe_context": "e1804346a6de774270a6cd15f7bd42c3c4fa2ba12cefdb99a02d133241a8173b"
    },
    "disposition": "updated",
    "justification": "New read-only semantic observation service with host-minted, document/revision/content/run/policy-bound authorization. Projects only authorized text/assigned bindings and host-permitted synthetic values, selected targets and real numeric print evidence. Pixels remain blocked. Positive and rejection/recovery fixtures inspect actual outgoing provider bodies and refresh-time guards. CA-05 slice 3 adds fictional receipt-bound page/crop capture with separate host pixel consent, denied-value/asset guards, paired host follow-up image input and compaction/dispatch freshness checks; existing effect grants and CA-04 services are retained.",
    "evidence": [
+    "studio-v3/dataset-schema.js",
     "studio-v3/json-safety.js",
     "studio-v2/core/monetary-inspection.js",
     "studio-v2/core/schema.js",
@@ -167,11 +174,12 @@
   },
   {
    "entries": {
-    "printform.authoring.set_table_style": "fd92bdd1a957466328e5925a3ebe3e0eeaf81bb48fdd104b7266594468ab8f33"
+    "printform.authoring.set_table_style": "78f9ca87f8fec854f337fa0e33ca7276f68505357deb23ab559fb8affe319399"
    },
    "disposition": "updated",
    "justification": "The existing items row-fill operation now calls the same pure tableStyleChange service as the real inspector. Its six-digit hex/null schema and effect contract stay at 1.0.0; canonical service errors and normalized candidate/binding diagnostics agree. Pi schema, read-only grants, selected scopes and private proposal approval remain independently enforced. Differential fixtures cover fill/reset, invalid inputs, atomic candidate rejection and recovery; recorded browser requests verify the actual transport path.",
    "evidence": [
+    "studio-v3/dataset-schema.js",
     "studio-v3/json-safety.js",
     "studio-v2/core/monetary-inspection.js",
     "studio-v2/core/schema.js",
@@ -183,11 +191,12 @@
   },
   {
    "entries": {
-    "printform.authoring.set_element_style": "d9671e51a0351ed2d1941032801c5925ab102e71a880fce2486a7360fd295c14"
+    "printform.authoring.set_element_style": "a5fa939a6c42964c42a45d355d999447806d4dc787bb84f74a30818b3a5fa2b0"
    },
    "disposition": "updated",
    "justification": "The heading/page-number operation and real inspector now reuse elementStyleChange. Typography bounds, closed keys, value spelling and replacement semantics stay typed under 1.0.0. Empty overrides normalize to removal/inheritance in both paths, avoiding a spurious empty-object proposal. Identical defined key/value overrides retain their existing representation, so JSON key order alone reports NO_CHANGES. Added versioned examples cover page-number typography and inherited NO_CHANGES. Direct differential fixtures cover normalized candidates, existing validation, identical service errors, selected/read-only denial, private-batch recovery and separate human approval; browser fixtures record the real provider transport.",
    "evidence": [
+    "studio-v3/dataset-schema.js",
     "studio-v3/json-safety.js",
     "studio-v2/core/monetary-inspection.js",
     "studio-v2/core/schema.js",
@@ -200,11 +209,12 @@
   },
   {
    "entries": {
-    "printform.agent.retrieve_page": "7b8c957cec91ba57213ecf90c7af0718da512154591fc799d645425145efa178"
+    "printform.agent.retrieve_page": "1a359b3a06b8e4f5dfcc6003cf2bc325206034b2600ccaf4bfe9be47304a34c9"
    },
    "disposition": "updated",
    "justification": "CA-05 slice 3 introduces versioned receipt-bound retrieval under explicit single-run fictional pixel and existing text/value authority. The qualified sandbox DOM raster bridge preserves project isolation. Run-owned PNG bytes are validated, hashed and paired with the actual tool call/result on the outgoing wire, including after compaction. Negative/recovery fixtures cover stale/revoked grants, denied values/assets, bounds, byte limits and unsupported modalities. This does not qualify final visual comparison, real-data publication or sensitive assets. The existing default-off permission labels now share a bounded scroll area so they cannot collapse selected element references in the fixed composer. Checkbox IDs, exact labels, defaults and grant policy remain unchanged. The native fixture measures desktop/mobile references, permission scrolling, comment/input controls and close/reopen without provider inference; CSS and the fixture now participate in release identity.",
    "evidence": [
+    "studio-v3/dataset-schema.js",
     "studio-v3/json-safety.js",
     "studio-v2/core/monetary-inspection.js",
     "studio-v2/core/schema.js",

@@ -6,11 +6,13 @@ import { inspectProject } from './validation.js';
 import { runtimeSources } from './runtime-assets.js';
 import { assertBoundedJson, assertJsonBytes, assertJsonStructure, JSON_PROJECT_LIMITS, parseBoundedJson } from './json-safety.js';
 
+import { assertProjectSchema } from './dataset-schema.js';
 export { validateDesign } from './design-validation.js';
 import { validateDesign } from './design-validation.js';
 
 export function saveProject(project) {
-  return JSON.stringify({format:'printform-studio-v3',version:1,project:{manifest:project.manifest,sampleData:project.sampleData,revision:project.revision}}, null, 2);
+  assertProjectSchema(project);
+  return JSON.stringify({format:'printform-studio-v3',version:1,project:{manifest:project.manifest,schema:project.schema,sampleData:project.sampleData,revision:project.revision}}, null, 2);
 }
 export function readProject(source, name = '') {
   assertJsonBytes(source,JSON_PROJECT_LIMITS);
@@ -34,7 +36,9 @@ export function readProject(source, name = '') {
   base.manifest = {...base.manifest,title:manifest.title,documentId:`v3-${crypto.randomUUID()}`,locale:manifest.locale,currency:manifest.currency};
   if (manifest.sampleDataTitle !== undefined) base.manifest.sampleDataTitle = datasetName(manifest.sampleDataTitle);
   base.sampleData = structuredClone(imported.sampleData);
-  base.schema = {type:'object',additionalProperties:true};
+  base.schema = structuredClone(imported.schema ?? {type:'object',additionalProperties:true});
+  if (manifest.datasetSchema !== undefined) base.manifest.datasetSchema = structuredClone(manifest.datasetSchema);
+  assertProjectSchema(base);
   base.revision = Number.isInteger(imported.revision) && imported.revision >= 0 ? imported.revision : 0;
   return compileProject(base, design);
 }
