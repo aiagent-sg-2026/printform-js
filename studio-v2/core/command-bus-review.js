@@ -1,4 +1,4 @@
-import { createScenario } from "./sample-scenarios.js";
+import { createProjectScenario } from "./sample-scenarios.js";
 import {
   createEvidenceReceipt,
   createLayoutObservation,
@@ -68,7 +68,7 @@ async function captureEvidence(bus, input, context) {
   }
   const candidate = {
     ...bus.project,
-    sampleData: createScenario(bus.project.sampleData, input.scenario)
+    sampleData: createProjectScenario(bus.project, input.scenario)
   };
   const visualMode = input.visualMode === "pixels" ? "pixels" : "geometry";
   const { report } = await bus.getCandidateReport(candidate, bus.revision, input.scenario, { visualMode });

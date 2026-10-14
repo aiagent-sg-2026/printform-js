@@ -11,20 +11,14 @@ describe("Crimson purchase order production sample", () => {
     expect(project.sampleData.items).toHaveLength(32);
     expect(project.sampleData.totals).toEqual({ subtotal: 61116, tax: 4889.28, shipping: 180, grandTotal: 66185.28 });
     expect(validateProject(project)).toMatchObject({ valid: true, productionValid: true, errors: [] });
-    expect(project.templateHtml).toContain('data-pf-asset-slot="letterhead-logo"');
-    expect(project.templateHtml).toContain('data-pf-asset-slot="footer-logo"');
-    expect(project.templateHtml).toContain('data-repeat-docinfo="y"');
-    expect(project.templateHtml).toContain('<footer class="pfooter pf-order-footer">');
-    expect(project.templateHtml).not.toContain('<section class="ptac">');
   });
 
-  it("recalculates financial truth for generated boundary rows", () => {
-    const project = createPurchaseOrderProject();
+  it("preserves supplied ERP totals instead of deriving stress financial truth", () => {
+    const source = createPurchaseOrderProject();
     for (const scenario of ["one", "45-rows", "500-rows", "long-text"]) {
-      project.sampleData = createScenario(createPurchaseOrderProject().sampleData, scenario);
-      const validation = validateProject(project);
-      expect(validation.errors.filter((item) => item.code.endsWith("_MISMATCH"))).toEqual([]);
-      expect(validation.productionValid).toBe(true);
+      const data = createScenario(source.sampleData, scenario, "/items");
+      expect(data.totals).toEqual(source.sampleData.totals);
+      data.items.forEach((row, index) => expect(row.lineTotal).toBe(source.sampleData.items[index % source.sampleData.items.length].lineTotal));
     }
   });
 

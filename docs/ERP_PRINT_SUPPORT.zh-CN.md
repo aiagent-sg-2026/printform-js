@@ -145,3 +145,11 @@ try {
 - [MyInvois：Document types](https://sdk.myinvois.hasil.gov.my/types/)：Invoice/Credit/Debit/Refund/Self-Billed 类型及 UBL JSON/XML；HTML 打印不替代法定电子文档。
 - [W3C：CSS Paged Media Level 3](https://www.w3.org/TR/css-page-3/)：纸型、方向、边距、运行页眉/页脚和页码；规范能力不表示所有浏览器/驱动已支持。
 - [JSON Schema Core 2020-12 §4.2.2](https://json-schema.org/draft/2020-12/json-schema-core#section-4.2.2)、[Validation 2020-12](https://json-schema.org/draft/2020-12/json-schema-validation)：结构相等、约束与字符串长度；本仓库仍只支持明确的受限 profile。
+
+## 9. 工程安全与业务 stress 的独立契约
+
+- [安全导入](ERP_PROJECT_IMPORT_SAFETY.zh-CN.md)：JSON/HTML重开与数据导入/编辑共享bounded JSON；工程自定义集合保留，dataset仍按其既有/items业务profile校验。未知正常字段不被删除，危险或超预算输入不被清洗成“有效”。
+- [业务场景](ERP_BUSINESS_SCENARIO_CONTRACT.zh-CN.md)：已声明kind使用公开exact-kind fixture，而非generic family或私有ERP复制；合成行只作排版，不重算税额/总计/余额。v2明确repeat collection，claim字符串行号和其他数组不变。
+- 原样货币字符串声明`data-pf-monetary="currency"`，不经Intl再格式化；真实Range/clip检查发现问题仍阻断。实际普通v2claim22pt行框已补足，未减字号/增纸/放宽容差；长文本legacy输入仍有真实blocked边界。
+- 本轮Node24完整224文件/2279项与三引擎24项consumer通过；这不认证任意custom kind、实际ERP、银行或所有claim长文本。
+

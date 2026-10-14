@@ -1,16 +1,16 @@
 import { compactA5Record } from './compact-a5-demo.js';
 import { demoStarterRecords } from './demo-catalog.js';
 import { sampleData } from './model.js';
+import { assertBoundedJson, parseBoundedJson, unsafeJsonKey } from './json-safety.js';
 
 export const DATASET_FORMAT = 'printform-studio-v3-dataset';
 export const DATA_TYPES = ['invoice', 'purchase', 'delivery'];
 export const DATA_GROUPS = [['document','Document'],['company','Company'],['customer','Customer'],['shipTo','Ship to'],['items','Items'],['summary','Totals'],['other','Notes & other'],['json','Advanced JSON']];
-const forbidden = new Set(['__proto__','prototype','constructor']);
 export const encodeKey = key => String(key).replaceAll('~','~0').replaceAll('/','~1');
 export function pathParts(pointer) {
   if (typeof pointer !== 'string' || !pointer.startsWith('/')) throw new Error('Use an absolute data path.');
   const parts = pointer.slice(1).split('/').map(k => k.replaceAll('~1','/').replaceAll('~0','~'));
-  if (parts.some(k => forbidden.has(k))) throw new Error('Unsafe data path.');
+  if (parts.some(unsafeJsonKey)) throw new Error('Unsafe data path.');
   return parts;
 }
 export function dataValue(data, pointer) {
@@ -30,7 +30,7 @@ export function scalarFields(data, prefix = '') {
     if (depth > 12 || result.length >= 250) return;
     if (value && typeof value === 'object') {
       if (Array.isArray(value)) return;
-      for (const [key,next] of Object.entries(value)) if (!forbidden.has(key)) walk(next,`${path}/${encodeKey(key)}`,depth+1);
+      for (const [key,next] of Object.entries(value)) if (!unsafeJsonKey(key)) walk(next,`${path}/${encodeKey(key)}`,depth+1);
     } else result.push({pointer:path,value,type:typeof value === 'number' ? 'number' : typeof value === 'boolean' ? 'boolean' : 'text'});
   };
   walk(data,prefix,0); return result;
@@ -65,26 +65,16 @@ export function newItem(data, design, types = new Map()) {
   return row;
 }
 export function validateDataset(data) {
+  assertBoundedJson(data);
   if (!data || typeof data !== 'object' || Array.isArray(data)) throw new Error('Dataset must be a JSON object.');
   if (data.document?.currency !== undefined && !['MYR','USD','SGD','EUR','CNY','JPY'].includes(data.document.currency)) throw new Error('Dataset currency is unsupported.');
   if (data.document?.currency && data.summary?.currency && data.summary.currency !== data.document.currency) throw new Error('Document and totals currencies must match.');
   if (!Array.isArray(data.items) || data.items.length > 500) throw new Error('Dataset /items must be an array with at most 500 records.');
   if (data.items.some(row => !row || typeof row !== 'object' || Array.isArray(row))) throw new Error('Each item record must be an object.');
-  let nodes = 0;
-  const visit = (value,depth = 0) => {
-    if (++nodes > 50000 || depth > 16) throw new Error('Dataset structure is too large or deeply nested.');
-    if (typeof value === 'number' && !Number.isFinite(value)) throw new Error('Numbers must be finite.');
-    if (value && typeof value === 'object') for (const [key,next] of Object.entries(value)) {
-      if (forbidden.has(key)) throw new Error('Prototype and constructor fields are not supported.');
-      visit(next,depth+1);
-    }
-  };
-  visit(data);
   for (const row of data.items) for (const key of ['no','quantity','rate','amount']) {
     if (Object.hasOwn(row,key) && (typeof row[key] !== 'number' || !Number.isFinite(row[key]))) throw new Error(`/items/${key} requires a finite number.`);
   }
   for (const key of ['subtotal','tax','total']) if (data.summary && Object.hasOwn(data.summary,key) && (typeof data.summary[key] !== 'number' || !Number.isFinite(data.summary[key]))) throw new Error(`/summary/${key} requires a finite number.`);
-  if (new TextEncoder().encode(JSON.stringify(data)).length > 2*1024*1024) throw new Error('Dataset exceeds the 2 MB limit.');
   return structuredClone(data);
 }
 export function datasetName(value) {
@@ -119,9 +109,8 @@ export function exportDataset(record) {
   return JSON.stringify({format:DATASET_FORMAT,version:1,dataset:{type:record.type,title:record.title,data:record.data}},null,2);
 }
 export function importDataset(source, type) {
-  if (new TextEncoder().encode(source).length > 2*1024*1024) throw new Error('Dataset exceeds the 2 MB limit.');
-  const parsed = JSON.parse(source);
-  if (parsed.format === DATASET_FORMAT) {
+  const parsed = parseBoundedJson(source,{maxDepth:18});
+  if (parsed && typeof parsed === 'object' && parsed.format === DATASET_FORMAT) {
     if (parsed.version !== 1 || !parsed.dataset) throw new Error('Unsupported dataset file version.');
     if (parsed.dataset.type !== type) throw new Error('Start a matching document template before importing this dataset.');
     return {...datasetRecord(type,parsed.dataset.data,parsed.dataset.title),origin:'imported-data'};

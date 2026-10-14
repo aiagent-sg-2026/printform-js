@@ -1,3 +1,5 @@
+import { parseBoundedJson } from './json-safety.js';
+
 function errorPosition(source) {
   let index = 0;
   const fail = () => { throw index; };
@@ -37,7 +39,8 @@ function errorPosition(source) {
   return index;
 }
 export function parseSampleJSON(source) {
-  try { return JSON.parse(source); } catch (error) {
+  try { return parseBoundedJson(source); } catch (error) {
+    if (!(error instanceof SyntaxError)) throw error;
     const position = errorPosition(source), before = source.slice(0,position);
     const line = before.split('\n').length, column = position-before.lastIndexOf('\n');
     throw Object.assign(new Error(`Invalid JSON at line ${line}, column ${column}. ${error.message}`),{code:'INVALID_JSON',line,column});

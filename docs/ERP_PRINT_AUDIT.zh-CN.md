@@ -81,10 +81,10 @@
 
 | ID | 原证据/条件 | 判定与处理 |
 | --- | --- | --- |
-| E01 | v3 `file-io.js:27-35` project reopen 与 database-model 严格 dataset import 验证边界不同 | 开放：应复用 bounded JSON safety，但不能删除自定义 collection 支持；实际安全后果未验证 |
-| E02 | `scenario-matrix.js:20-23` 用 generic family 数据替换 exact kind | 开放：Payment/Receipt/claims/custom fields 缺失；generic matrix 不是全部业务验收；需 kind-specific synthetic fixtures |
-| E03 | v2 `sample-scenarios.js:20-32` 假定首数组、numeric no；ProgressClaim no 是 string | 开放：claim row stress 可 TYPE_MISMATCH，多 collection 未覆盖；需声明 per-fixture stress contract |
-| E04 | v2 ProgressClaim 金额是 string，无 currency marker | 开放：不受专项 monetary-inspection 覆盖；通用 overflow 仍有效；需货币 semantic marker |
+| E01 | v3 `file-io.js:27-35` project reopen 与 database-model 严格 dataset import 验证边界不同 | 已修：共享字节／深度／节点／危险键安全边界，自定义集合保留；真实旧版project接受危险键、修复后project与dataset均拒绝且状态不变 |
+| E02 | `scenario-matrix.js:20-23` 用 generic family 数据替换 exact kind | 已修：已声明kind用公开独立fixture，Payment/Receipt/PCAR/CCAR来源字段与合成seed保留；未知kind／custom缺字段仍明确拒绝，不复制私有ERP来伪造通过 |
+| E03 | v2 `sample-scenarios.js:20-32` 假定首数组、numeric no；ProgressClaim no 是 string | 已修：声明或唯一table collection，typed no及其他集合保留，不重算钱；真实45个TYPE_MISMATCH消失，empty仍遵守minItems |
+| E04 | v2 ProgressClaim 金额是 string，无 currency marker | 已修：非格式化semantic marker纳入真实金额geometry检查；源码字符串保留，22pt标题补足真实行框；长文本真实失败继续blocked |
 | E05 | `data-source-adapter.js:27-36` 只描述 /items，scalarFields 跳过数组 | 开放：allocations/parentDocuments/nested collections schema 不完整；空数组需要权威 schema |
 | E06 | v3 BankPayment/BankReceipt 仅虚构本地 fixtures，用户编辑无真实清算校验 | 开放：真实 ERP 授权、多发票/币种/扣款/银行 settlement 未认证；不应自动修改金额来通过 |
 | E07 | HTTP 可非 loopback+empty token，owner/agentId 由 caller header 声明 | 部分已修：非 loopback 无有效 token 拒绝启动；shared-token 内 caller identity 仍不是 authenticated principal |
@@ -232,4 +232,13 @@ Playwright 截图、HTML 与 Chromium PDF 写入各 case 的 `test-results/`；�
 - 实际Node24/npm11完整build:site **222 files / 2,259 tests passed**，runtime/site/agent release gate完成；没有为major升级改测试、deadline或业务实现。
 - 真正SourceMapConsumer调用：原1.2.1接受10,000,001 offset，1.2.2立即拒绝；合法映射到erp.js line1/column0仍正确。只测constructor边界，不运行旧巨大循环。
 - [安全修复契约](DEPENDENCY_SECURITY_REMEDIATION.zh-CN.md)记录四项官方advisory及实际前提；audit0不是未知漏洞/线上系统认证，install-script/模块类型等日志仍保留。hosted main验收由GitHub不可变run与PR评论/KBverification记录。
+
+## 15. 安全导入与业务场景（本轮 B）
+
+- 共享JSON安全实现先限文本字节、再限解析结构；工程允许自定义collection，dataset保持原/items业务约束；导入失败不改保存记录、选择、修订或草稿。
+- 实际before/after：project接受`__proto__`而dataset拒绝→两者均UNSAFE_JSON_KEY；自定义/shipments与普通未知键保留。claim45行原numeric no产生45个TYPE_MISMATCH→typed string/schema valid；PCAR原generic候选kind null→PCAR。
+- Payment/Receipt/PCAR/CCAR的合成public seed与真实ERP恢复分别验收；不通过复制私有数据、重算税/总额或捏造custom字段完成matrix。
+- 原样SGD逗号、负号、会计括号经真实Range检测裁剪和恢复。新marker检出22pt TOTAL CLAIM行框字形越过owner1.67px，保留字体与金额、将行高1→1.2；真实普通claim2页ready且截图已查看，long仍1051.90625px>1050px原子回滚，0页。
+- 最终实际Node24 build:site **224 files / 2,279 tests passed**；runtime/site/publication gate完成。三引擎实际consumer **24/24 passed**。首轮8个5s timeout、27-stale-review阻断以及18/6、12/12、21/3浏览器中间结果不冒充通过；没有提高timeout、缩断言或隐藏几何错误。
+- [导入契约](ERP_PROJECT_IMPORT_SAFETY.zh-CN.md)／[业务与金额契约](ERP_BUSINESS_SCENARIO_CONTRACT.zh-CN.md)记录修复、边界与实际证据；publication owner对真实传递依赖重新review，不前移baseline或改变授权。
 
