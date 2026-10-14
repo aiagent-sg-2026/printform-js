@@ -21,6 +21,12 @@ E14 UI includes four layers, context badges, structured change cards, apply-mode
 batch history controls, session/settings/trace surfaces and a resizable rail.
 
 
+### Patched testing and source-map dependencies — 2026-10-14
+
+- Pinned the minimum patched Vitest4.1.11 / mocker4.1.11, removing vulnerable tinypool and obsolete vite-node dependency paths; updated compatible source-map-js to1.2.2 without forced overrides.
+- Actual Node24 build preserves all222 files/2259 tests and produces runtime/site artifacts; audit reports0 known advisories, not universal security certification.
+- Actual indexed-map smoke: old consumer accepts10,000,001 line offset, patched consumer rejects immediately; valid original source position remains correct. [Conditions, official sources and evidence](docs/DEPENDENCY_SECURITY_REMEDIATION.zh-CN.md).
+
 ### Node24 Actions and deterministic hosted runner — 2026-10-14
 
 - Upgraded Pages checkout/setup-node/upload-pages-artifact/deploy-pages to verified Node24 releases and project build Node24; pinned both jobs to ubuntu-24.04 instead of the rolling latest label.
