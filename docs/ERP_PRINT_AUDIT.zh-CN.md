@@ -217,3 +217,11 @@ Playwright 截图、HTML 与 Chromium PDF 写入各 case 的 `test-results/`；�
 - 真实 Chrome 另开离线标签：ready、3 页/3 行，每张约377.945×264.563px；三个金额原文、CJK/Arabic 与 Code39 reference asset 显示正确。只证明资产保留，不证明扫码或硬件。
 - [特殊纸型契约](ERP_SPECIAL_PAPER_ACCEPTANCE.zh-CN.md) 区分有限 CSS/PDF 页、设备不可打印区、切刀/传感器/驱动/连续介质；不认证无限 spool、ESC/POS、ZPL、真实切纸或全部字体。已有业务/会计安全边界不变。
 
+## 13. CI Node24 与固定 hosted runner（本轮选项 3）
+
+- 官方 release API 与 action.yml 核验后升级 checkout v7.0.1、setup-node v7.1.0、upload-pages-artifact v5.0.0、deploy-pages v5.0.1；所有 JS action 包括 upload 的内部依赖为 Node24，项目构建另设 node-version24。
+- 两个 job 固定 ubuntu-24.04，不让 latest 标签未经本仓库验收就转到 Ubuntu26；不宣称已支持/验证所有 runner。main-only环境保护、权限、cache、不可取消串行部署保持原样。
+- 首次实际 Node24 全构建暴露13个 HTTP boundary 测试的 DOM/native AbortSignal realm 冲突，改为 native Node 环境；signal deadline、IPv6/token/fault/evidence行为保留，37/37专项通过。
+- 实际 Node24 v24.20.0 完整 `build:site` **222 files / 2,259 tests passed**，runtime/site/agent release gate成功。本机 macOS证据不冒充hosted Ubuntu24；真实main run/SHA/annotations由GitHub记录、PR验收评论与KBverification留存，不能从YAML或版本字符串推断通过。
+- [CI 契约](CI_RUNTIME_COMPATIBILITY.zh-CN.md) 收录官方来源与真实保护策略；不为非main测试开放部署权限、不跳过旧测试或提高deadline掩盖错误。
+

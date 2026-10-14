@@ -21,6 +21,13 @@ E14 UI includes four layers, context badges, structured change cards, apply-mode
 batch history controls, session/settings/trace surfaces and a resizable rail.
 
 
+### Node24 Actions and deterministic hosted runner — 2026-10-14
+
+- Upgraded Pages checkout/setup-node/upload-pages-artifact/deploy-pages to verified Node24 releases and project build Node24; pinned both jobs to ubuntu-24.04 instead of the rolling latest label.
+- Preserved main-only deployment protection, existing least permissions, npm cache/lockfile, artifact directory and non-canceling serial deployment; no forced old-runtime opt-out or new credentials.
+- Corrected native HTTP boundary tests to use the Node environment: Node24 native fetch rejects JSDOM AbortSignal branding. All37 boundary cases and the full2259-test build pass without removing deadlines, mocking fetch or weakening assertions.
+- Added [runtime/runner compatibility and actual verification contract](docs/CI_RUNTIME_COMPATIBILITY.zh-CN.md); hosted run results are recorded on GitHub and KB-MCP, not inferred from local macOS success.
+
 ### Finite special-paper browser/PDF acceptance — 2026-10-14
 
 - Added direct and offline standalone 58/80mm receipts, 100x70mm labels and 210x140mm finite continuous-stock page scenarios; all three browser engines exercise actual layout, Chromium additionally checks real PDF pages, dimensions and per-page financial/text/asset conservation.
