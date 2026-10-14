@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { cloneContentRange, contentBoundaries } from "../src/printform/text-ranges.js";
+import { wordCeilingEnd } from "../src/printform/text.js";
 
 describe("atomic content in Unicode ranges", () => {
   it("copies an authored asset and currency token once while retaining surrounding text", () => {
@@ -29,5 +30,22 @@ describe("atomic content in Unicode ranges", () => {
     expect(first.querySelector("b").textContent).toBe("Fictional appendix A");
     expect(first.querySelector("p").innerHTML).toContain("<!--kept-->");
     expect(first.textContent + last.textContent).toBe(root.textContent);
+  });
+  it("keeps ERP monetary display strings indivisible without parsing or reformatting them", () => {
+    const root = document.createElement("div");
+    root.innerHTML = 'Claim <strong data-pf-monetary="currency">(645,650.00)</strong> 支付';
+    const points = contentBoundaries(root);
+    const chunks = points.slice(1).map((_point, index) => cloneContentRange(root, points, index, index + 1));
+    expect(chunks.map(node => node.textContent).join("")).toBe(root.textContent);
+    expect(chunks.flatMap(node => Array.from(node.querySelectorAll("[data-pf-monetary]"), money => money.textContent))).toEqual(["(645,650.00)"]);
+    expect(chunks.filter(node => node.textContent.includes("645"))).toHaveLength(1);
+  });
+  it("keeps a consumed cell at its terminal Range boundary under a finite word budget", () => {
+    const root = document.createElement("div");
+    root.textContent = "ID-001";
+    const points = contentBoundaries(root), terminal = points.length - 1;
+    const end = wordCeilingEnd(points, terminal, 2);
+    expect(end).toBe(terminal);
+    expect(cloneContentRange(root, points, terminal, end).textContent).toBe("");
   });
 });

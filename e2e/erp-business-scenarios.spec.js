@@ -37,6 +37,9 @@ async function renderClaim(page,{scenario='default',retention,monetaryOnly=false
     const sourceGeometry={width:sourceRect.width,height:sourceRect.height};
     const configuredGeometry={width:Number(form.dataset.papersizeWidth),height:Number(form.dataset.papersizeHeight)};
     const sourceRows=[...mount.querySelectorAll('[data-pf-text="./description"]')].map(node=>node.textContent);
+    const money = root => [...root.querySelectorAll('[data-pf-monetary="currency"],[data-pf-format="currency"]')]
+      .filter(node=>node.textContent).map(node=>({pointer:node.getAttribute('data-pf-text'),text:node.textContent}));
+    const sourceMoney=money(mount);
     let formatErrors=[],formatReport=null;
     if(!monetaryOnly) {
       try {formatReport=await window.PrintForm.formatAll({force:true});}
@@ -48,7 +51,7 @@ async function renderClaim(page,{scenario='default',retention,monetaryOnly=false
     const inspection=monetaryOnly ? null : inspectRenderedDocument(document,project.manifest,{expectedRowCount:bound.report.tableRows,expectedRowsByRepeat:bound.report.expectedRowsByRepeat});
     window.__businessScenario={inspectMonetaryTokens,data};
     const retainedSourceRows=[...mount.querySelectorAll('.prowitem [data-pf-text="./description"]')].map(node=>node.textContent);
-    return {binding:bound.report.errors,formatErrors,formatReport,formatted:window.__printFormProcessed,valid:inspection?.valid,codes:inspection?.errors.map(error=>error.code)||[],pageGeometry:inspection?.pageGeometry||[],retainedSourceRows,sourceRows,sourceGeometry,configuredGeometry,descriptions:(data.valuationRows||data.items).map(row=>row.description),currency:project.manifest.currency};
+    return {binding:bound.report.errors,formatErrors,formatReport,formatted:window.__printFormProcessed,valid:inspection?.valid,codes:inspection?.errors.map(error=>error.code)||[],pageGeometry:inspection?.pageGeometry||[],retainedSourceRows,sourceRows,sourceMoney,renderedMoney:money(mount),sourceGeometry,configuredGeometry,descriptions:(data.valuationRows||data.items).map(row=>row.description),currency:project.manifest.currency};
   },{scenario,retention,monetaryOnly});
 }
 
@@ -71,10 +74,18 @@ for(const supplied of ['(645,650.00)','-645,650.00','6,023,176.50']) {
   });
 }
 
-test('long claim source is conserved in complete output or atomic blocked rollback',async({page})=> {
+test('default legacy claim remains ready with every supplied monetary fact',async({page})=> {
   const control=await renderClaim(page);
   expect(control.binding).toEqual([]);expect(control.formatErrors).toEqual([]);
-  expect(control.valid).toBe(true);expect(control.pageGeometry).toHaveLength(2);
+  expect(control.valid).toBe(true);expect(control.pageGeometry.length).toBeGreaterThan(0);
+  expect(control.renderedMoney).toEqual(control.sourceMoney);
+  for(const geometry of control.pageGeometry) {
+    expect(geometry.width).toBe(control.configuredGeometry.width);
+    expect(geometry.height).toBe(control.configuredGeometry.height);
+  }
+});
+
+test('clean legacy long claim is ready with complete rows and exact monetary facts',async({page})=> {
   const result=await renderClaim(page,{scenario:'long-text'});
   expect(result.binding).toEqual([]);
   expect(result.descriptions).toHaveLength(6);
@@ -82,22 +93,17 @@ test('long claim source is conserved in complete output or atomic blocked rollba
   expect(result.sourceGeometry.width).toBe(750);
   expect(result.sourceGeometry.height).toBeGreaterThan(result.configuredGeometry.height);
   expect(result.sourceRows).toEqual(result.descriptions);
-  if(result.formatErrors.length) {
-    expect(result.formatReport).toEqual({formattedCount:0,failedCount:1});
-    expect(result.formatted).toBe(false);expect(result.valid).toBe(false);
-    expect(result.pageGeometry).toEqual([]);
-    expect(result.formatErrors.map(error=>error.name)).toContain('RangeError');
-    expect(result.retainedSourceRows).toEqual(result.descriptions);
-  } else {
-    expect(result.formatReport).toEqual({formattedCount:1,failedCount:0});
-    expect(result.formatted).toBe(true);expect(result.valid).toBe(true);
-    for(const geometry of result.pageGeometry) {
-      expect(geometry.width).toBe(result.configuredGeometry.width);
-      expect(geometry.height).toBe(result.configuredGeometry.height);
-    }
-    const rendered=await page.locator('.prowitem_processed [data-pf-text="./description"]').allTextContents();
-    expect(rendered.join('')).toBe(result.descriptions.join(''));
+  expect(result.renderedMoney).toEqual(result.sourceMoney);
+  expect(result.formatErrors).toEqual([]);
+  expect(result.formatReport).toEqual({formattedCount:1,failedCount:0});
+  expect(result.formatted).toBe(true);expect(result.valid).toBe(true);
+  expect(result.pageGeometry.length).toBeGreaterThan(2);
+  for(const geometry of result.pageGeometry) {
+    expect(geometry.width).toBe(result.configuredGeometry.width);
+    expect(geometry.height).toBe(result.configuredGeometry.height);
   }
+  const rendered=await page.locator('.prowitem_processed [data-pf-text="./description"]').allTextContents();
+  expect(rendered.join('')).toBe(result.descriptions.join(''));
 });
 
 for(const kind of ['BankPayment','BankReceipt','PCAR','CCAR']) {

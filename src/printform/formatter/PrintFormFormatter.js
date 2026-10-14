@@ -168,6 +168,7 @@ export class PrintFormFormatter {
       }
 
       this.updatePageNumberTotals();
+      this.applyDeferredRemainderSpacing();
 
       // Finalize all page heights with precise calculations instead of min-height
       const allPages = container.querySelectorAll(".printform_page");

@@ -84,7 +84,7 @@
 | E01 | v3 `file-io.js:27-35` project reopen 与 database-model 严格 dataset import 验证边界不同 | 已修：共享字节／深度／节点／危险键安全边界，自定义集合保留；真实旧版project接受危险键、修复后project与dataset均拒绝且状态不变 |
 | E02 | `scenario-matrix.js:20-23` 用 generic family 数据替换 exact kind | 已修：已声明kind用公开独立fixture，Payment/Receipt/PCAR/CCAR来源字段与合成seed保留；未知kind／custom缺字段仍明确拒绝，不复制私有ERP来伪造通过 |
 | E03 | v2 `sample-scenarios.js:20-32` 假定首数组、numeric no；ProgressClaim no 是 string | 已修：声明或唯一table collection，typed no及其他集合保留，不重算钱；真实45个TYPE_MISMATCH消失，empty仍遵守minItems |
-| E04 | v2 ProgressClaim 金额是 string，无 currency marker | 已修：非格式化semantic marker纳入真实金额geometry检查；源码字符串保留，22pt标题补足真实行框；长文本真实失败继续blocked |
+| E04 | v2 ProgressClaim 金额是 string，无 currency marker；估价总计未注册协议区 | 已修：字符串原样几何检查；四个原总计移入既有最终footer，不重算金额；长claim改为真实末页预算，详见§18 |
 | E05 | `data-source-adapter.js:27-36` 只描述 /items，scalarFields 跳过数组 | 已修：显式复用JSON Schema profile，区分observed/authoritative；空数组字段只取声明契约，nested/allocations按具体父scope实际绑定、保存与表格编辑，未知安全字段保留 |
 | E06 | v3 BankPayment/BankReceipt 仅虚构本地 fixtures，用户编辑无真实清算校验 | 开放：真实 ERP 授权、多发票/币种/扣款/银行 settlement 未认证；不应自动修改金额来通过 |
 | E07 | HTTP 可非 loopback+empty token，owner/agentId 由 caller header 声明 | 部分已修：非 loopback 无有效 token 拒绝启动；shared-token 内 caller identity 仍不是 authenticated principal |
@@ -260,6 +260,14 @@ Playwright 截图、HTML 与 Chromium PDF 写入各 case 的 `test-results/`；�
 - 集成实际发现nullable数组被误列为标量、合法null被当作missing；修正为既有profile语义，实际数组仍是集合、null标量为空白，缺失undefined仍拒绝。
 - 首次完整构建21项New-dataset消费者失败，根因是纯databaseView新增隐式controller.project依赖；改用已有显式project参数传schema，未修改原消费者测试或添加假fallback。最终Node24完整227文件/2365项通过，runtime/site/publication gate完成；新增14项业务边界。
 - 三引擎完整UI生命周期3/3通过，实际managed离线ready/1页与原样身份/金额截图已查看；先前Node-DOMParser宿主错误与Firefox布局warning如实记录。warning仍打印并附JSON，不放宽deadline/业务断言；完整历史见[嵌套数据契约](ERP_NESTED_DATASET_SCHEMA.zh-CN.md)。不新增AI原值/const/enum曝光或改变grant，发布baseline不前移。
+
+## 18. 长 claim 与多行表格（后续选项 2）
+
+- 旧默认claim虽报告2页成功，却漏掉valuationTotal四个源金额；完整保留原表并移入既有最终footer，不新增重复footer或计算。
+- 旧长claim实际1051.90625>1050：footer完成后只余20.09375，却提前补入22高dummy。改为所有footer/页码完成后按真实剩余预算填充，最终严格页高检查不变。
+- 多tr/rowspan/colspan共享原DOM Range与二维cell网格，独立游标/窗口交集；内部tr不冒充新增业务行。嵌套table、超大资产与chrome仍原子失败、回滚DOM身份/监听器。
+- 首轮真实浏览器另捕获耗尽cell的有限word预算越界、跨行窗口last-policy金额遗漏；修复端点与cell结束窗口语义，保留逐格/逐金额守恒断言。详细执行证据见[续片契约](ERP_MULTIROW_CONTINUATION.zh-CN.md)。
+- 开放环境风险：综合矩阵WebKit曾在HTTP/file:导航未提交时45s挂起，根因未确认；同一HTML在独立真实进程load/ready/6页。完整文件分进程验收不等于长期WebKit会话、系统打印或硬件认证；原失败trace保留，未提高deadline。
 
 
 

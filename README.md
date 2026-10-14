@@ -142,9 +142,9 @@ Note: Do not rely on `data-*` attributes for styling. During formatting, the eng
 | `.pheader` | **Header** | Repeats on **every page**. |
 | `.pdocinfo` | **Doc Info** | Document metadata (e.g. invoice details), repeats on **every page** (configurable). |
 | `.prowheader` | **Table Header** | Table column headers, repeats on **every page**. |
-| `.prowitem` | **Data Row** | The **smallest unit** for splitting. The script will not split content inside a single `.prowitem`, but decides pagination row by row. |
+| `.prowitem` | **Business Row** | Measured DOM Range continuations retain one semantic identity across multi-cell/multirow fragments; indivisible content must fit. See [continuation limits](docs/ERP_MULTIROW_CONTINUATION.zh-CN.md). |
 | `.pfooter` | **Footer** | Defaults to **last page only** (can be configured to repeat). |
-| `.ptac` | **Terms/Text** | For legal terms or long text, automatically splits by paragraph. |
+| `.ptac` | **Terms/Text** | Measured rich-text and table-cell continuations; preserves graphemes and authored inline content. |
 | `.paddt` | **Audit/Addendum** | PADDT rows rendered after main pages. |
 
 ---
@@ -283,7 +283,7 @@ Output is in `dist/printform.js` (and root `*.html` + `README.md`/`README.zh-CN.
 ## FAQ
 
 **Q: Why is my content cut off?**
-A: Check if a single `.prowitem` height exceeds `data-papersize-height` minus header/footer space. If one row is too tall, it won't fit on any page.
+A: Check the configured height after headers/footers. Text and supported table cells can continue; oversized atomic assets, money, nested tables or chrome fail instead of silently clipping. See [measured continuation limits](docs/ERP_MULTIROW_CONTINUATION.zh-CN.md).
 
 **Q: How to hide the header on the first page?**
 A: The logic prefers consistency. For special cases, hide the header via CSS using a wrapper selector or split the DOM before formatting.

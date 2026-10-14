@@ -43,3 +43,26 @@ export function autoLayoutPaginationFixture() {
       </tr></table><div class="pfooter_pagenum" style="height:18px"><span data-page-number>?</span>/<span data-page-total>?</span></div>`
   };
 }
+
+export function multirowPaginationFixture({ rowspan = true, zeroSpan = false, spanningText = false, packedRows = false } = {}) {
+  const span = rowspan ? ` rowspan="${zeroSpan ? 0 : 3}"` : "";
+  const identity = rowspan ? `<th${span} data-fixture-cell="identity" scope="rowgroup">${spanningText ? CJK_DESCRIPTION : "CLAIM-A"}</th>` : "";
+  const description = (key, text) => `<td data-fixture-cell="${key}"${key === "scope-b" ? ' dir="rtl" lang="ar"' : ""}><p style="margin:0"><a href="https://example.invalid/claim">${text}</a>甲e<em>\u0301</em>👨‍👩‍👧‍👦乙<!--authored-marker--></p></td>`;
+  return {
+    width: 320, height: 180, expectedRows: 2,
+    html: `<div class="pheader" style="height:15px">Fictional multirow claim</div>
+      <table class="prowheader" data-pf-table-id="maintenance" style="width:100%;height:20px"><tr><th>Claim detail</th></tr></table>
+      <table class="prowitem" data-pf-table-id="maintenance" data-pf-row-repeat="maintenance" data-pf-row-index="0"
+        style="width:100%;table-layout:fixed;border-collapse:collapse">
+        <colgroup>${rowspan ? '<col style="width:65px">' : ""}<col style="width:160px"><col style="width:95px"></colgroup>
+        <tbody>
+        <tr>${identity}${description("scope-a", packedRows ? "Approval details" : CJK_DESCRIPTION.slice(0, 380))}<td data-fixture-cell="amount-a" data-pf-monetary="currency" style="white-space:nowrap">MYR 123.45</td></tr>
+        <tr>${description("scope-b", packedRows ? "Inspection metadata" : RTL_DESCRIPTION.slice(0, 450))}<td data-fixture-cell="amount-b" data-pf-format="currency" data-pf-cell-policy="last" style="white-space:nowrap">MYR 67.89</td></tr>
+        <tr><td data-fixture-cell="scope-c">${packedRows ? CJK_DESCRIPTION : "Final inspection"} <strong>ready</strong></td><td data-fixture-cell="reference" data-pf-cell-policy="repeat">REF-C</td></tr>
+        </tbody>
+      </table>
+      <table class="prowitem" data-pf-table-id="maintenance" data-pf-row-repeat="maintenance" data-pf-row-index="1"
+        style="width:100%;table-layout:fixed"><tbody><tr><td data-fixture-cell="next-description">Next business item.</td><td data-fixture-cell="next-amount" data-pf-format="currency">MYR 10.00</td></tr></tbody></table>
+      <div class="pfooter_pagenum" style="height:18px"><span data-page-number>?</span>/<span data-page-total>?</span></div>`
+  };
+}

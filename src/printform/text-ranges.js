@@ -20,7 +20,8 @@ export function hasGeneratedContent(node) {
 
 export function isAtomicContent(node) {
   if (node.nodeType !== 1) return false;
-  if (ATOMIC_TAGS.has(node.localName.toUpperCase()) || node.dataset.pfKeepTogether === "true" || node.dataset.pfFormat === "currency") return true;
+  if (ATOMIC_TAGS.has(node.localName.toUpperCase()) || node.dataset.pfKeepTogether === "true" ||
+    node.dataset.pfFormat === "currency" || node.dataset.pfMonetary === "currency") return true;
   const view = node.ownerDocument.defaultView;
   const style = view?.getComputedStyle(node);
   if (!style) return false;

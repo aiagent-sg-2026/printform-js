@@ -37,7 +37,7 @@ export function createDummyRowItem(config) {
 
 // Measure at the actual output width. Each insertion is checked against the
 // remaining budget; zero-height or shrinking layout stops without a fake height.
-export function appendMeasuredDummyRows(config, target, availableHeight, measure) {
+export function appendMeasuredDummyRows(config, target, availableHeight, measure, before = null) {
   if (!config.insertDummyRowItemWhileFormatTable || availableHeight <= 0) return 0;
   const initialHeight = measure(target);
   let usedHeight = 0;
@@ -45,7 +45,7 @@ export function appendMeasuredDummyRows(config, target, availableHeight, measure
   let maxRows = 1;
   for (let index = 0; index < maxRows; index += 1) {
     const node = template.cloneNode(true);
-    target.appendChild(node);
+    target.insertBefore(node, before);
     const nextHeight = measure(target) - initialHeight;
     const increment = nextHeight - usedHeight;
     if (increment <= 0 || nextHeight > availableHeight) {

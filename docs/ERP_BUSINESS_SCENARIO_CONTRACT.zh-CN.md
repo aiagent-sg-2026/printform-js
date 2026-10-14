@@ -47,7 +47,7 @@ npx playwright test e2e/erp-business-scenarios.spec.js --project=chromium --work
 
 首次完整集成实际为224 files：2,270 pass／9 fail，其中8项默认5s timeout，另1项发布gate正确阻断27个过期的传递依赖review。现场`vm.loadavg`为119.90、activecpu10；该事实不被当作所有timeout的因果证明。没有提高timeout、缩减断言或跳过旧测试。核对JSON安全／scenario／monetary的真实依赖后，更新对应owner disposition并保留baseline与授权：实际`check:studio-v3-agent`为13 tools／13 operations／2 skills／76 examples、28 changes全部reviewed，runtime/site重建成功。完整测试成功与浏览器成功不能由此推断，另记录真实结果。
 
-## 首次浏览器失败与边界修复
+## 首次浏览器失败与边界修复（历史 B 阶段）
 
 父任务第一次执行三个浏览器，共 **18 failed / 6 passed**；PCAR/CCAR 六项通过。该失败记录不能写成浏览器验收已完成。原始日志 `artifact://412` 显示：
 
@@ -62,6 +62,10 @@ npx playwright test e2e/erp-business-scenarios.spec.js --project=chromium --work
 中间第二次三引擎为12failed／12passed：四类UI public-seed与ERP恢复均通过，另12项因控制用例错误引入v3/model的未发布`/src/printform/helpers.js`依赖而未运行consumer。换用同一claim模板作为正向控制，不以可打印bare-core样本假定另一种v2模板已自带printform根。C任务已只补齐此必需leaf；实际公开原始退货模块动态import与五种完整生命周期三引擎15/15通过，另有不使用测试init script的原生UI Open/ready证明。中间模块加载失败仍不是打印失败或成功。
 
 中间bare-core invoice控制又有21passed／3failed：该v2模板本来由DocumentRuntime补齐printform根，不能作为裸PrintForm调用的同形控制。最终使用同一个claim模板作为default/long对照，三引擎**24/24 passed**。不是换成较容易的业务样本绕开失败：真实default修复且ready，真实long仍blocked，安全原子回滚不被固定错误文案或永久pin旧失败实现代替。
+
+## 后续选项 2：现行回归契约
+
+上述blocked及允许安全失败分支是历史B阶段证据，不再是当前长claim成功标准。现行default/long都必须ready、inspection有效、全部源业务行及完整金额字符串序列一致；不能用RangeError分支通过。已修正四个valuationTotal静默遗漏与footer前提前填充dummy的真实预算错误；多tr/rowspan及额外浏览器发现详见[续片契约](ERP_MULTIROW_CONTINUATION.zh-CN.md)。不扩大纸高、容差或文字缩放。
 
 
 

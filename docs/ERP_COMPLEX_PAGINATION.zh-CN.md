@@ -16,7 +16,7 @@ CSS Fragmentation 把页面剩余块轴空间视为真正的分页预算；同�
 2. PTAC/PADDT 先注册为可分页行，不提前克隆第一格并重复其它格。
 3. 为待分行计算预算：逻辑纸高减第一页页眉/文档信息、当前表头、重复页脚。第一页非重复 chrome 也预留；后续页可能留白更多，但不会因过于乐观而遗漏这些高度。
 4. 表头切换时按当前表的实际重复表头高度更新 page context，不沿用其它表的预算。
-5. 单行表格以目标纸宽约束表宽，扣除 table border/padding/separate border-spacing，再按源格实测外框比例分配列宽；不把 `td` 的 CSS content-box 宽度误当成外框宽度。每格独立取得最大可容纳的 DOM Range 前缀。Range 端点只能落在完整 grapheme 边界，已消费的完整 block 端点提升到其外侧 sibling gap，避免下一片克隆空的固定高度段落。
+5. 表格先建立真实row/column占用网格，以目标纸宽扣除border/padding/separate border-spacing并分配实测列宽。多tr与rowspan按源row窗口重建，跨度裁到窗口交集；每格独立消费DOM Range，不flatten或重复金额。Range端点只能落在完整grapheme边界，已消费block提升到其外侧sibling gap，避免下一片克隆空固定高度段落。
 6. 二分搜索前缀时检查真实行高、单元格/文本 Range 宽度、scroll geometry；拼回多格后再次检查组合续片。
 7. 普通分页器按原有页眉、页脚、显式换页和页码流程放置这些续片；最终逻辑纸高检查仍然有效。
 
@@ -77,7 +77,7 @@ CSS Paged Media 明确区分 page box、page sheet 与设备可打印区域；�
 
 ## 5. 明确失败，而非虚称全面支持
 
-自动续片支持独立文本行与**一个实际 table row、无 rowspan** 的多格行。现有多行 table/rowspan 在整体适配时仍按原布局处理；其超高情况下不是自动跨行表格引擎。
+自动续片支持独立文本行、单tr多格，以及同一业务table内多tr、rowspan（包括0的当前行组余行语义）、colspan；内部tr不重算为新业务行。first/last/repeat相对于cell参与的片段定义；详情与实际验收见[多行续片契约](ERP_MULTIROW_CONTINUATION.zh-CN.md)。并非任意嵌套table、富文本CSS或全部字体组合已认证。
 
 以下内容无法完整适配时明确失败：
 

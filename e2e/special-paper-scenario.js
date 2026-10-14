@@ -3,8 +3,14 @@ import { pathToFileURL } from 'node:url';
 import { SPECIAL_PAPER_FIELDS } from '../tests/fixtures/special-paper.js';
 
 export async function openPaperScenario(page, context, fixture, mode, info) {
-  await page.goto('/index001.html');
-  await page.waitForFunction(() => window.__printFormProcessed === true);
+  // Use the same isolated public-runtime host as the claim consumers, not the
+  // unrelated legacy index001 invoice, CSS and automatic formatting workload.
+  await page.route('**/erp-paper-fixture.html', route => route.fulfill({
+    contentType: 'text/html',
+    body: '<!doctype html><html><head><meta charset="utf-8"><script src="/dist/printform.js"></script></head><body></body></html>'
+  }));
+  await page.goto('/erp-paper-fixture.html');
+  await page.waitForFunction(() => window.__printFormProcessed === true && window.__printFormProcessing === false);
   const exported = await page.evaluate(async ({ fixture, mode }) => {
     const { createEmptyProject } = await import('/studio-v2/core/project-model.js');
     const project = createEmptyProject();
