@@ -225,3 +225,11 @@ Playwright 截图、HTML 与 Chromium PDF 写入各 case 的 `test-results/`；�
 - 实际 Node24 v24.20.0 完整 `build:site` **222 files / 2,259 tests passed**，runtime/site/agent release gate成功。本机 macOS证据不冒充hosted Ubuntu24；真实main run/SHA/annotations由GitHub记录、PR验收评论与KBverification留存，不能从YAML或版本字符串推断通过。
 - [CI 契约](CI_RUNTIME_COMPATIBILITY.zh-CN.md) 收录官方来源与真实保护策略；不为非main测试开放部署权限、不跳过旧测试或提高deadline掩盖错误。
 
+## 14. 依赖 advisory 修复（本轮 A）
+
+- 原npm audit为4个受影响package（1moderate/1high/2critical）：Vitest/mocker redirect读取边界、source-map-js indexed offset DoS、tinypool两类prototype-pollution gadget；未声称已证明本仓库远程RCE链。
+- 最小官方修复Vitest4.1.11移除tinypool与旧vite-node，source-map-js按原兼容范围更新1.2.2；不使用force升级、major override或忽略advisory。实际audit为0。
+- 实际Node24/npm11完整build:site **222 files / 2,259 tests passed**，runtime/site/agent release gate完成；没有为major升级改测试、deadline或业务实现。
+- 真正SourceMapConsumer调用：原1.2.1接受10,000,001 offset，1.2.2立即拒绝；合法映射到erp.js line1/column0仍正确。只测constructor边界，不运行旧巨大循环。
+- [安全修复契约](DEPENDENCY_SECURITY_REMEDIATION.zh-CN.md)记录四项官方advisory及实际前提；audit0不是未知漏洞/线上系统认证，install-script/模块类型等日志仍保留。hosted main验收由GitHub不可变run与PR评论/KBverification记录。
+

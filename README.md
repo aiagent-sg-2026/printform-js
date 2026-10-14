@@ -39,7 +39,7 @@ Studio v2 is the intended production path and remains **Production Pilot**. It e
 | I want to... | Read this |
 |--------------|-----------|
 | **Understand the code structure** | [Code Structure](CODE_STRUCTURE.md) - File organization, data flow |
-| **Develop and extend** | [Developer Handbook](DEVELOPER_BOOK.md) · [Node24 / fixed runner CI contract](docs/CI_RUNTIME_COMPATIBILITY.zh-CN.md) |
+| **Develop and extend** | [Developer Handbook](DEVELOPER_BOOK.md) · [Node24 CI](docs/CI_RUNTIME_COMPATIBILITY.zh-CN.md) · [Dependency advisory remediation](docs/DEPENDENCY_SECURITY_REMEDIATION.zh-CN.md) |
 | **Learn about auto-docs** | [Auto Documentation Guide](docs/AUTO_DOC_GENERATION_GUIDE.md) - How docs are generated |
 
 ### 🔧 Reference
