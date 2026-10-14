@@ -1,7 +1,8 @@
 import { afterEach, describe, expect, it } from "vitest";
 import { PrintFormFormatter } from "../src/printform/formatter/PrintFormFormatter.js";
 import { CONFIG_DESCRIPTORS, PADDT_CONFIG_DESCRIPTORS, getPaddtConfig, getPrintformConfig } from "../src/printform/config.js";
-import { splitParagraphIntoHtmlChunks } from "../src/printform/text.js";
+import { cloneContentRange, contentBoundaries } from "../src/printform/text-ranges.js";
+import { wordCeilingEnd } from "../src/printform/text.js";
 
 function source(html = "") {
   const form = document.createElement("div");
@@ -34,9 +35,13 @@ describe("renderer integrity", () => {
   it.each([1.5, "2.9", Infinity, NaN, 0, -2])("normalizes exported splitter limits without losing content: %s", (limit) => {
     const paragraph = document.createElement("p");
     paragraph.innerHTML = "one <b>two three</b> four";
-    const chunks = splitParagraphIntoHtmlChunks(paragraph, limit);
+    const points = contentBoundaries(paragraph);
     const combined = document.createElement("div");
-    combined.innerHTML = chunks.join("");
+    for (let start = 0; start < points.length - 1;) {
+      const end = wordCeilingEnd(points, start, limit);
+      combined.append(cloneContentRange(paragraph, points, start, end));
+      start = end;
+    }
     expect(combined.textContent).toBe(paragraph.textContent);
     expect(combined.querySelector("b")).not.toBeNull();
   });

@@ -167,7 +167,7 @@ For the full list, see [docs/CONFIGURATION.md](docs/CONFIGURATION.md).
 | `data-repeat-footer` | `y` / `n` | Repeat footer on every page (Default `n`). |
 | `data-show-logical-page-number`| `y` / `n` | Show page numbers (e.g. "Page 1 of 3"). |
 | `data-show-physical-page-number`| `y` / `n` | Show physical page numbers (for N-up). |
-| `data-n-up` | `1` / `2` | **N-Up Printing**: Multiple logical pages per physical sheet. |
+| `data-n-up` | Positive integer | **N-Up Printing**: Validated logical pages uniformly scaled into physical sheet cells; see [geometry and limits](docs/ERP_COMPLEX_PAGINATION.zh-CN.md). |
 
 ### Row / Footer Controls
 

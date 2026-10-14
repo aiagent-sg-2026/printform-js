@@ -10,7 +10,7 @@ import { collectPaginationDiagnostics } from "./render-diagnostics.js";
 import { validateTrustedContent } from "./content-security.js";
 import { contrastFailures } from "./contrast.js";
 import { countBoundRows, measureBoundRows, resolveRowLimits, rowLimitErrors } from "./row-limits.js";
-import { inspectRowIntegrity } from "./row-integrity.js";
+import { analyzeRowIntegrity } from "./row-integrity.js";
 import { inspectTemplateFormats } from "./binding-format.js";
 
 function error(code, message, path = "/") {
@@ -134,8 +134,8 @@ export function inspectRenderedDocument(doc, manifest, options = {}) {
   if (pages.length > limit) errors.push(error("PAGE_LIMIT", `${pages.length} pages exceed the ${limit} page limit`));
   const expectedRowCount = options.expectedRowCount;
   const rowNodes = Array.from(doc.querySelectorAll(".prowitem_processed"));
-  const actualRowCount = rowNodes.length;
-  errors.push(...inspectRowIntegrity(rowNodes, options));
+  const rowIntegrity = analyzeRowIntegrity(rowNodes, options);
+  errors.push(...rowIntegrity.errors);
   const overflow = pageList.flatMap((page, pageIndex) => {
     const pageRect = page.getBoundingClientRect();
     return Array.from(page.querySelectorAll("table,td,th,img,[data-pf-text],[data-pf-href]")).filter((node) => {
@@ -248,7 +248,8 @@ export function inspectRenderedDocument(doc, manifest, options = {}) {
       overflowElements: overflow.length,
       verticalOverflowPages: verticalOverflow.length,
       contrastFailures: lowContrast.length,
-      renderedRows: actualRowCount,
+      renderedRows: rowIntegrity.renderedRows,
+      renderedRowFragments: rowIntegrity.renderedRowFragments,
       ...paginationDiagnostics.metrics,
       ...(Number.isFinite(expectedRowCount) ? { expectedRows: expectedRowCount } : {})
     }

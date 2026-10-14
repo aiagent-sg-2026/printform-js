@@ -189,3 +189,13 @@ Playwright 截图、HTML 与 Chromium PDF 写入各 case 的 `test-results/`；�
 - 使用 `/printRows` 事实集合；空 allocation 的真正预收预付没有假商品行、发票、已收余额或审批。保留来源单据、状态与 bank snapshot；打印不使付款自动过账、到账或核销。
 - **隔离选项 3** 后完整构建 218 files / 2,132 tests；三浏览器四种业务旅程 12/12 passed。实测截图与四份 Chromium PDF.js 金额/日期保真证据见契约 §8；仍为 Pilot。
 
+## 10. 多格 Unicode 续片与物理拼版（选项 3 独立验收）
+
+- 用 DOM Range 与实际纸面预算替代 first-cell whitespace 克隆；PTAC/PADDT 和普通超高行独立拆分并行格，保留 grapheme、inline、金额/短字段及显式 split/first/last/repeat。身份必须完整、连续、同组且数量一致；物理片仍逐一检查越界。
+- 本轮修复的产品缺陷：SVG tag name 大小写导致原子资产重复；已耗尽固定高度段落被带入下一 Range；intrinsic table/cell 宽度阻止窄纸重排；transform-only 拼版的屏幕正确但 PDF 页脚跨页。实际 PDF 用布局缩放 `zoom` 修复，不靠 clip 或删除页脚。
+- 旧公开 runtime 的同一 260×180px CJK/RTL 四格输入因高度 2706px 拒绝；当前真实 Chrome 输出 20 页、最高 168px、各格文本守恒、金额一次。已检查实际表面。
+- 完整 `npm run build:site`：**221 files / 2,174 tests passed**。七组相关三引擎 browser journeys：**112 passed / 2 intentional PDF-only skips**；含 options 1/2 和原 claim 生命周期回归。
+- 实际 Chromium PDF：四联 2 页、三联 3 页、Letter 双联 4 页、混合 custom/Letter 4 页；逐页 ID/金额恰好一次，纸型尺寸正确。不能用 wrapper 数量或 screen bounds 代替此检查。
+- 配置素材的重复页码缺失与字形高于固定 chrome 另行纠正，未把它们伪报产品缺陷或改变 nonrepeat 默认；所有金额/几何/页数断言保留。源码与详细事实见[复杂分页契约](ERP_COMPLEX_PAGINATION.zh-CN.md)。
+- §2/§3 的历史审计状态与计数保留为当时快照；本节关闭实测适配/多格续片/物理 n-up 的限定缺口，仍不授予任意 DOM、多 row/rowspan、全部语言字体或打印硬件认证。
+

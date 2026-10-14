@@ -99,8 +99,9 @@ Physical page numbers (for N-up):
 - Toggle with `data-show-physical-page-number`.
 
 N-up:
-- `data-n-up="2"` renders two logical pages inside one physical wrapper
-  (`.physical_page_wrapper`).
+- `data-n-up="2"` imposes two logical pages in a physical sheet grid with uniform scaling, after validating unscaled content geometry.
+- For `nUp > 1`, named `@page` rules scope the configured paper size to that output; host padding/borders reduce usable space. `nUp=1` leaves paper styling to the host.
+- See [measured pagination, cell policies, and explicit limits](ERP_COMPLEX_PAGINATION.zh-CN.md); browser PDF proof is not printer certification.
 
 ---
 
@@ -108,8 +109,8 @@ N-up:
 
 PTAC (`.ptac`):
 - Intended for long terms/clauses.
-- Each paragraph is split into segments (~200 words max) and converted into
-  `.ptac-rowitem` blocks.
+- DOM Range measurement splits parallel cells within the actual page budget, preserving inline markup and Unicode grapheme clusters.
+- The 200-word PTAC ceiling can shorten a fragment but never overrides width/height checks; unsplittable content fails without clipping.
 - Use `data-repeat-ptac-rowheader="n"` to hide `.prowheader` on PTAC pages.
 - Use `data-insert-ptac-dummy-row-items="n"` to disable dummy rows on PTAC pages.
 
@@ -118,6 +119,7 @@ PADDT (`.paddt`):
 - PADDT pages only include `.pfooter_logo` and `.pfooter_pagenum`.
 - Controls: `data-repeat-paddt-rowheader`, `data-insert-paddt-dummy-row-items`,
   and PADDT-only docinfo toggles (`data-repeat-paddt-docinfo*`).
+- `paddtMaxWordsPerSegment` remains an additional readability ceiling; physical fit still uses measured geometry.
 - `data-repeat-paddt` is read but currently reserved.
 
 ---

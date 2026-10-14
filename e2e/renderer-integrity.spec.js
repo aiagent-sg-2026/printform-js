@@ -39,12 +39,12 @@ async function render(page, html, overrides = {}, rootStyle = "") {
 }
 
 for (const kind of ["ptac", "paddt"]) {
-  test(`${kind} conserves mixed text and uses integer API segmentation`, async ({ page }) => {
+  test(`${kind} conserves mixed text with an additional readability ceiling`, async ({ page }) => {
     const result = await render(page, `<table class="${kind}" style="border-spacing:0"><tr><td style="padding:0"><div>Prefix &lt;<!--note--><p style="margin:0">one <b>two three</b></p> Tail &amp;</div></td></tr></table>`, {
       paddtMaxWordsPerSegment: 1.5
     });
     expect(result.rowTexts.join("")).toBe("Prefix <one two three Tail &");
-    if (kind === "paddt") expect(result.rowTexts).toHaveLength(3);
+    expect(result.rowTexts.every(text => (text.match(/\S+/g) || []).length <= (kind === "paddt" ? 1 : 200))).toBe(true);
     result.pages.forEach(({ height }) => expect(height).toBeLessThanOrEqual(150.01));
   });
 }

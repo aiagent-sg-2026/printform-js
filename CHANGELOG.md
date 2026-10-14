@@ -21,6 +21,14 @@ E14 UI includes four layers, context badges, structured change cards, apply-mode
 batch history controls, session/settings/trace surfaces and a resizable rail.
 
 
+### Measured Unicode pagination and physical n-up — 2026-10-14
+
+- Replaced first-cell whitespace cloning with DOM Range fragments measured against active page chrome and configured paper width, including parallel CJK/RTL cells, inline graphemes, oversized ordinary rows and retained PTAC/PADDT readability ceilings.
+- Preserved atomic assets, amounts, short fields and explicit split/first/last/repeat policies; added complete ordered fragment identity validation without discarding physical overflow checks.
+- Fixed exhausted fixed-height paragraph wrappers leaking into the next fragment and intrinsic table/cell widths preventing narrow-paper reflow.
+- Added validated physical sheet grids, uniform layout-aware CSS zoom, scoped named paper rules, mixed paper sizes and partial forced-sheet boundaries; transform-only printing had moved footer text into extra PDF pages.
+- Updated usage, support and [complex pagination contract](docs/ERP_COMPLEX_PAGINATION.zh-CN.md). Oversized atomic content still fails with original DOM preserved; no universal font/DOM/printer certification.
+
 ### ERP settlement projections — 2026-10-14
 
 - Added explicit canonical BankReceipt/BankPayment input and portable projects for multi-document full/partial allocations and zero-allocation advances/prepayments.
