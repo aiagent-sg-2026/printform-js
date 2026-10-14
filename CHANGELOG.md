@@ -21,6 +21,14 @@ E14 UI includes four layers, context badges, structured change cards, apply-mode
 batch history controls, session/settings/trace surfaces and a resizable rail.
 
 
+### Finite special-paper browser/PDF acceptance — 2026-10-14
+
+- Added direct and offline standalone 58/80mm receipts, 100x70mm labels and 210x140mm finite continuous-stock page scenarios; all three browser engines exercise actual layout, Chromium additionally checks real PDF pages, dimensions and per-page financial/text/asset conservation.
+- Fixed whole-pixel body-height rounding that produced leading/trailing blank sheets for exact fractional-mm labels; preserved measured fractions and shared one-layout-unit fit comparisons without clipping.
+- Pinned licensed inline Amiri Arabic font to avoid Arial PDF ToUnicode changing distinct Yeh characters; authored adequate RTL line boxes and awaited actual font use/layout before direct measurement.
+- Kept headerless repetition policy explicit and attached real offline runtime reports; no fake ready status, character coalescing or relaxed geometry/financial assertions.
+- Documented [profiles, actual results, font license and device limits](docs/ERP_SPECIAL_PAPER_ACCEPTANCE.zh-CN.md). No native endless spool, cutter/sensor, ESC/POS/ZPL or scanner certification.
+
 ### ERP receipt, return, adjustment and cash refund contracts — 2026-10-14
 
 - Added explicit canonical PurchaseReceipt, PurchaseReturn, SalesReturn, CreditNote, DebitNote and Refund normalization and portable Studio project creation.

@@ -35,7 +35,7 @@ for (const kind of ['PCAR', 'CCAR']) {
     const filename = info.outputPath(`${kind}-period-2.html`);
     await download.saveAs(filename);
     const printed = await context.newPage();
-    await printed.goto(pathToFileURL(filename).href);
+    await printed.goto(pathToFileURL(filename).href, { waitUntil: 'domcontentloaded' });
     await expect(printed.locator('html')).toHaveAttribute('data-printform-status', 'ready');
     await expect(printed.locator('table.prowitem_processed')).toHaveCount(record.data.items.length);
     await expect(printed.locator('[data-v3-id=totals-total]').last()).toHaveText(money(record.data.summary.total));

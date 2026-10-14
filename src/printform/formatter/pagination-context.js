@@ -59,6 +59,6 @@ export function attachPaginationContextMethods(FormatterClass) {
     // on mobile Safari/Chrome during tight pagination loops, causing 0-height reads and
     // repeated section appends.
     const total = DomHelpers.measureHeightRaw(container);
-    return normalizeHeight(total - (repeatingHeight || 0));
+    return Math.max(0, total - (repeatingHeight || 0));
   };
 }

@@ -99,7 +99,7 @@ HTML 可表示这些内容不等于本仓库已有业务 schema、完整样张�
 | A4/A5/Letter/Legal | 已有纸张参数和预设 | 目标浏览器/PDF/驱动的实际物理尺寸、边距和缩放 |
 | 横向/自定义尺寸 | 配置层可表示 | 长表头、页脚、窄宽度重排的真实几何 |
 | 连续页/多表 | 重复区、表 ID、行身份、逻辑页码 | 不同表头高度、嵌套重复、合计/签字区边界 |
-| 热敏票据/标签 | 可用自定义尺寸构造 HTML | 58/80 mm、连续卷纸、DPI、切纸和条码扫描；无 ESC/POS/ZPL 原生协议 |
+| 热敏票据/标签/连续介质 | [特殊纸型矩阵](ERP_SPECIAL_PAPER_ACCEPTANCE.zh-CN.md)：58/80mm、100×70mm 标签、210×140mm 有限连续页，三引擎 direct/offline 24/24；8 份真实 PDF | 不可打印区、驱动/DPI、原生 endless spool、切刀、穿孔/传感器、扫码；无 ESC/POS/ZPL |
 | PTAC/PADDT/普通超高行 | DOM Range 实测并行单元格；保留 inline、grapheme、身份；可配置 split/first/last/repeat | 任意富文本、多 row/rowspan 拆分、超大原子资产及全部字体；见[复杂分页契约](ERP_COMPLEX_PAGINATION.zh-CN.md) |
 | n-up | 校验未缩放逻辑页后，真实 sheet grid、统一比例、输出专属纸型规则与部分末页 | 浏览器 PDF 与目标打印机分别验收；设备不可打印边界/驱动不由 wrapper 数量认证 |
 | 离线 HTML | runtime/数据/资源内联；可独立打开 | 首次离线导出与缓存完整性另测；允许外部资源的 opt-in 不能宣称完全断网 |

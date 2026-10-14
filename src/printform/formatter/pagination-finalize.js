@@ -1,6 +1,7 @@
 /* eslint-disable no-console */
 
 import { attachRowHeaderPolicyMethods } from "./row-header-policy.js";
+import { fitsWithinHeight } from "./pagination-fit.js";
 
 export function attachPaginationFinalizeMethods(FormatterClass) {
   if (!FormatterClass.prototype.maxRepeatingRowHeaderHeight) attachRowHeaderPolicyMethods(FormatterClass);
@@ -116,7 +117,7 @@ export function attachPaginationFinalizeMethods(FormatterClass) {
     );
     const allowance = footerState.totalFinal - footerState.repeating;
     const heightWithFinalFooters = baseHeight + allowance;
-    if (heightWithFinalFooters <= lastPageLimit) {
+    if (fitsWithinHeight(heightWithFinalFooters, lastPageLimit)) {
       const container = this.getCurrentPageContainer(outputContainer);
       this.applyRemainderSpacing(
         container,
