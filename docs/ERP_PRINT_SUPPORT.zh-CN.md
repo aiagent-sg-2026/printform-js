@@ -15,7 +15,7 @@
 
 ## 2. 明确的业务类型
 
-以下目录提供模板和虚构数据；可供开发/打印验证，不证明真实 ERP 会计正确性。
+以下目录及明确 canonical 契约提供模板和虚构数据；可供开发/打印验证，不证明真实 ERP 会计正确性。新增六种收货/退货/调整/现金退款通过专用 creator 导入，未冒充 catalogue 内置模板或 raw 数据库适配。
 
 | 类型 | exact `document.kind` | 打印语义与约束 |
 | --- | --- | --- |
@@ -36,6 +36,12 @@
 | 认证申请应收 | `CCAR` | **Certified Claim Account Receivable**；认证阶段应收，保留认证和来源申请关联 |
 | 通用应收申请 | `AccountsReceivableClaim` | 独立的通用虚构示例，不作为 PCAR/CCAR 兼容别名 |
 | 通用应付申请 | `AccountsPayableClaim` | 来源采购发票的通用示例，不替未定义缩写赋予业务含义 |
+| 采购收货 | `PurchaseReceipt` | accepted/received/rejected、UOM、库存 inflow；不是供应商发票 |
+| 采购退货 | `PurchaseReturn` | 原收货单/原行、returned、库存 outflow；应付调整另用 DebitNote |
+| 销售退货 | `SalesReturn` | 原发货单/原行、returned、库存 inflow；应收调整另用 CreditNote |
+| 贷项 | `CreditNote` | 明确 receivable/payable decrease；库存退回须另外显式声明 |
+| 借项 | `DebitNote` | 明确账款方向；supplier 的 ERPNext decrease/Odoo increase 不按标题推定 |
+| 现金退款 | `Refund` | 明确 customer outflow/supplier inflow 与退款依据分配；不是 vendor credit-note 名称别名 |
 
 `PCA`、`PCAP`、`CCAP` 仍无已确认定义，不能由 PCAR/CCAR 推导。PCAR/CCAR 的全称由用户在本次任务中明确提供；它们不是由网络检索推定的行业标准代码。
 
@@ -76,9 +82,9 @@ corrected-basis migration 使用独立标识的虚构数据，不覆盖用户记
 
 ## 4. 其它交易的准入
 
-必须允许客户按现有模板/绑定协议扩展，而不是把示例目录当成封闭 ERP 枚举。下列交易需单独字段与验收：
+必须允许客户按现有模板/绑定协议扩展，而不是把示例目录当成封闭 ERP 枚举。[六种新增 canonical 契约](ERP_TRANSACTION_BUSINESS_CONTRACT.zh-CN.md) 已明确身份、原单、数量/币种/精度/provenance、独立库存与账款方向和真正现金退款；上游提交、原单可退余量、税务/银行认证仍不在打印器内。其它下列交易需单独字段与验收：
 
-- 采购收货/采购退货、销售退货、贷项/借项/退款、self-billed 发票与调整。
+- self-billed 发票与调整、尚未声明语义的其它交易；不以已有 CreditNote/DebitNote 推定任何地区的法定电子文档。
 - 库存调拨、领料、生产、批号/序列号、仓位和条码标签。
 - 对账单、账龄、付款通知、总账凭证、工资/人事、费用报销。
 - 合同变更、保留款释放、进度/认证差额、抵扣与负额修订。

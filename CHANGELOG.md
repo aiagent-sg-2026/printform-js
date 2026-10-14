@@ -21,6 +21,14 @@ E14 UI includes four layers, context badges, structured change cards, apply-mode
 batch history controls, session/settings/trace surfaces and a resizable rail.
 
 
+### ERP receipt, return, adjustment and cash refund contracts — 2026-10-14
+
+- Added explicit canonical PurchaseReceipt, PurchaseReturn, SalesReturn, CreditNote, DebitNote and Refund normalization and portable Studio project creation.
+- Kept inventory quantities/UOM, receivable/payable adjustment, original document references and actual cash movement separate; supplier debit direction is explicitly supplied for ERPNext/Odoo differences.
+- Preserved signed source decimal strings, per-fact currency/precision/provenance, optional warehouse/item/approval facts, taxes, summaries and independent refund allocations without inventing missing data or calculating totals/FX.
+- Added behavioral rejection/boundary regressions and nine real Open/save/reopen/offline-export journeys; copying/wiring-only unit round trips were removed in favor of actual lifecycle acceptance.
+- Documented [API, supported semantics, sources and limits](docs/ERP_TRANSACTION_BUSINESS_CONTRACT.zh-CN.md). No stock/accounting/refund execution, raw ERP schema mapping or bank-clearance certification.
+
 ### Measured Unicode pagination and physical n-up — 2026-10-14
 
 - Replaced first-cell whitespace cloning with DOM Range fragments measured against active page chrome and configured paper width, including parallel CJK/RTL cells, inline graphemes, oversized ordinary rows and retained PTAC/PADDT readability ceilings.
