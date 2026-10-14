@@ -43,7 +43,7 @@
 
 入口：`newDemoProject('PCAR')` / `newDemoProject('CCAR')`，通过现有 New 对话框选择；不是只改标题的发票。
 
-Globe3 实际输入另见 [PCAR/CCAR 业务与导入契约](ERP_CLAIM_BUSINESS_CONTRACT.zh-CN.md)：raw CCAR 支持限定 financial-tab normalization 与 `/financialRows` 项目；PCAR 仅接受上游解析完成的 canonical 数据，不宣称完整 raw PCAR 数据库适配。下表是 catalogue 示例字段，不能代替 raw ledger schema。
+Globe3 实际输入另见 [PCAR/CCAR 业务与导入契约](ERP_CLAIM_BUSINESS_CONTRACT.zh-CN.md)：raw CCAR 支持限定 financial-tab normalization 与 `/financialRows` 项目；[raw PCAR / SO work-done](ERP_RAW_PCAR_WORK_DONE.zh-CN.md) 提供精确来源 join、显式 quantity/fraction 与 Previous basis 的 gross projection，净额仍可由 canonical PCAR 输入；不宣称完整 raw PCAR main financial 或所有版本适配。下表是 catalogue 示例字段，不能代替 raw schema。
 
 | 路径 | 含义 |
 | --- | --- |

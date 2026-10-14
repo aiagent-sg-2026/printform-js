@@ -21,6 +21,14 @@ E14 UI includes four layers, context badges, structured change cards, apply-mode
 batch history controls, session/settings/trace surfaces and a resizable rail.
 
 
+### Raw PCAR / SO work-done mapping — 2026-10-14
+
+- Added explicit AR link/numeric/measurement profiles, exact SO header+line-group resolution and source `idcode` provenance; ambiguous joins fail instead of taking the first row.
+- Kept original `extnamt_orig_forex` distinct from distributed amounts; copied authoritative Work Done figures and derived only the researched Previous/Current gross and quantity/percentage movements.
+- Latest eligible supplied certification, stored Last Claim, explicit new work and absent certification are independently represented; no unknown prior value is filled with zero.
+- Added a landscape `/valuations` portable project with four-digit valuation amounts, independently precise ERP header figures and transaction payment terms; no net-payable, tax, FX, booked-AR or full raw financial variant claim.
+- Exact inputs, variants and source evidence: [raw PCAR contract](docs/ERP_RAW_PCAR_WORK_DONE.zh-CN.md).
+
 ### Globe3 claim business contracts — 2026-10-14
 
 - Added a fail-closed raw CCAR financial-tab normalizer and portable print-project creator using `financialRows`, with explicit numeric profiles, supplied currency precision and optional ERP balances; no invented commodity rows or accounting recognition.

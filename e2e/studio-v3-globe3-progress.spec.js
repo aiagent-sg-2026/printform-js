@@ -1,0 +1,39 @@
+import { test, expect } from './studio-v3-test.js';
+import { createGlobe3RawProgressClaimProject } from '../studio-v3/globe3-progress-claim-project.js';
+import { rawProgressClaimInput, fractionalProgressClaimInput } from '../tests/fixtures/globe3-progress-claim.js';
+import { saveProject } from '../studio-v3/file-io.js';
+import { pathToFileURL } from 'node:url';
+
+const ready = page => expect(page.locator('[data-action=export]')).toBeEnabled({ timeout: 30000 });
+for (const mode of ['quantity-certified', 'fraction-last-claim']) test(`raw PCAR ${mode}: exact source joins and monetary figures survive Open/save/offline printing`, async ({ page, context, browserName }, info) => {
+  const input = mode === 'quantity-certified' ? rawProgressClaimInput() : fractionalProgressClaimInput();
+  const project = createGlobe3RawProgressClaimProject(input), expected = project.sampleData;
+  page.on('dialog', dialog => dialog.accept()); await page.goto('/studio-v3/'); await ready(page);
+  await page.locator('#open-file').setInputFiles({ name: 'raw-pcar.printform.json', mimeType: 'application/json', buffer: Buffer.from(saveProject(project)) });
+  await expect(page.locator('#document-name')).toHaveValue(project.manifest.title); await ready(page);
+  const paper = page.frameLocator('#preview-frame');
+  await expect(paper.locator('[data-v3-id=items-source]')).toHaveText(expected.valuations.map(row => row.sourceReference));
+  await expect(paper.locator('[data-v3-id=items-contract-amount]')).toHaveText(['SGD 2005.000', 'SGD 500.000']);
+  await expect(paper.locator('[data-v3-id=items-current-gross]')).toHaveText(expected.valuations.map(row => row.display.currentGross));
+  await expect(paper.locator('[data-v3-id=items-current-measure]')).toHaveText(expected.valuations.map(row => row.display.currentMeasure));
+  await expect(paper.locator('[data-v3-id=footer-credit-terms]').last()).toHaveText('Fictional claim-snapshot terms');
+  await expect(paper.locator('[data-v3-id=totals-header-amount-1]').last()).toHaveText('SGD 271.471');
+  const savedPromise = page.waitForEvent('download'); await page.locator('[data-action=save]').click();
+  const saved = await savedPromise, savedPath = info.outputPath(`${mode}.printform.json`); await saved.saveAs(savedPath);
+  await page.locator('#open-file').setInputFiles(savedPath); await ready(page);
+  const exportedPromise = page.waitForEvent('download'); await page.locator('[data-action=export]').click();
+  const exported = await exportedPromise, htmlPath = info.outputPath(`${mode}.html`); await exported.saveAs(htmlPath);
+  const printed = await context.newPage(); await printed.goto(pathToFileURL(htmlPath).href);
+  await expect(printed.locator('html')).toHaveAttribute('data-printform-status', 'ready');
+  await expect(printed.locator('[data-v3-id=items-current-gross]')).toHaveText(expected.valuations.map(row => row.display.currentGross));
+  await expect(printed.locator('[data-v3-id=totals-current-gross]').last()).toHaveText(expected.summary.display.currentGross);
+  const errors = await printed.locator('.printform_page').evaluateAll(pages => pages.flatMap(page => {
+    const bounds = page.getBoundingClientRect();
+    return [...page.querySelectorAll('[data-v3-role=value],h1')].filter(node => { const rect = node.getBoundingClientRect(); return rect.right > bounds.right + 1 || rect.left < bounds.left - 1 || rect.bottom > bounds.bottom + 1; }).map(node => node.dataset.v3Id);
+  }));
+  expect(errors).toEqual([]);
+  expect(await printed.locator('table.prowitem_processed').evaluateAll(rows => rows.map(row => Number(row.dataset.pfRowIndex)))).toEqual([0, 1]);
+  await printed.screenshot({ path: info.outputPath(`${mode}.png`), fullPage: true });
+  if (browserName === 'chromium') await printed.pdf({ path: info.outputPath(`${mode}.pdf`), preferCSSPageSize: true, printBackground: true });
+  await printed.close();
+});

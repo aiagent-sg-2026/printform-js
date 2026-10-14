@@ -175,3 +175,10 @@ Playwright 截图、HTML 与 Chromium PDF 写入各 case 的 `test-results/`；�
 - 初次新增 creator smoke 揭露内部 camelCase field ID 不符合受控设计规则；已统一生成合法 ID，含可选 paid/outstanding 字段，并由上述项目生命周期回归覆盖。
 - 用 PDF.js 实际读取生成的 Chromium PDF：CCAR **2 页**，`SGD 3790.471`、`SGD 0.000`、`SGD -61.200` 和 `2026-08-18 / 2026-08-01 / 2026-08-15` 保真；PCAR **1 页**，`MYR 5028.221` 与 `2026-08-02` 保真。通用 PDF 文本 reader 对日期出现错误字符映射，已用真实 PDF.js textContent 区分工具提取问题与文件内容，未掩盖产品错误。
 
+
+## 8. Raw PCAR / SO work-done（选项 1 独立验收）
+
+- 从跨 KB 原始 schema 和已核验 CFML 行为建立 [raw PCAR 契约](ERP_RAW_PCAR_WORK_DONE.zh-CN.md)：两种精确 AR line links、quantity/fraction 语义、d/d0 numeric profiles、`idcode` 与非唯一 group key、`extnamt_orig_forex` 与 distributed 区分。
+- latest eligible supplied prior certificate 与 stored Last Claim 各有明确基准；缺 prior line 拒绝，只有显式新工作声明可归零；gross movement 不伪装净应付或 booked AR。
+- **隔离选项 2/3** 后 `npm run build:site`：217 files / 2,072 tests passed；raw PCAR 三浏览器 Open/save/reopen/offline export：6/6 passed。实际截图与 PDF.js 保真证据见新契约 §8；不是 live ERP 或硬件认证。
+
