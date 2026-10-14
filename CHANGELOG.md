@@ -21,6 +21,13 @@ E14 UI includes four layers, context badges, structured change cards, apply-mode
 batch history controls, session/settings/trace surfaces and a resizable rail.
 
 
+### Bounded ERP imports and exact business stress — 2026-10-15
+
+- Unified project reopen, dataset import and JSON editor safety without imposing the database /items schema on custom projects; unsafe/budget-exceeding input rejects before mutation.
+- Exact-kind synthetic scenarios retain payment/receipt/PCAR/CCAR source fields; explicit repeated collections preserve string identity and supplied financial facts, with no tax/total recalculation.
+- Added non-formatting source-currency geometry markers; corrected the real22pt claim caption line box to1.2 line-height without changing font, paper, tolerance or source text.
+- Node24 full224 files/2279 tests and three-browser24/24 consumer journeys pass; actual default claim2page ready, long legacy claim still atomically blocked. [Import safety](docs/ERP_PROJECT_IMPORT_SAFETY.zh-CN.md) / [business and actual failure history](docs/ERP_BUSINESS_SCENARIO_CONTRACT.zh-CN.md).
+
 ### Patched testing and source-map dependencies — 2026-10-14
 
 - Pinned the minimum patched Vitest4.1.11 / mocker4.1.11, removing vulnerable tinypool and obsolete vite-node dependency paths; updated compatible source-map-js to1.2.2 without forced overrides.

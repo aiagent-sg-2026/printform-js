@@ -1,5 +1,6 @@
 // Range geometry detects broken monetary tokens even when their enclosing
-// element itself remains inside the logical page. Text/data are never changed.
+// element itself remains inside the logical page. data-pf-monetary marks supplied
+// display strings without Intl coercion; text/data are never parsed or changed.
 export function inspectMonetaryTokens(doc) {
   const failures = [];
   const styles = new WeakMap(), clips = new WeakMap();
@@ -25,7 +26,7 @@ export function inspectMonetaryTokens(doc) {
     }
     clips.set(node,clip);return clip;
   };
-  for (const node of doc.querySelectorAll('.printform_page [data-pf-format="currency"]')) {
+  for (const node of doc.querySelectorAll('.printform_page [data-pf-format="currency"],.printform_page [data-pf-monetary="currency"]')) {
     if (!node.textContent.trim()) continue;
     const range = doc.createRange();
     range.selectNodeContents(node);

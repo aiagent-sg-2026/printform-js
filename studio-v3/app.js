@@ -1,4 +1,4 @@
-import { newProject, designOf, sampleData, newDemoProject, setupDemoTemplatePicker } from './demo-templates.js';
+import { newProject, designOf, newDemoProject, setupDemoTemplatePicker } from './demo-templates.js';
 import { createBus, editProject, replaceData, designOperations, formDesign, alterFields, importRasterAsset } from './controller.js';
 import { icon } from './icons.js';
 import { leftView, rightView } from './views.js';
@@ -19,6 +19,7 @@ import { createUpdateWork } from './update-work.js';
 import { pageDimensions, pageSettings } from './design-authoring.js';
 import { syncPageControls, navigatePages } from './page-navigation.js';
 import { createValidateAll } from './validate-all.js';
+import { scenarioCandidate } from './scenario-matrix.js';
 const $ = selector => document.querySelector(selector); setupDemoTemplatePicker();
 const state = {mode:'design',selected:'items',tab:'properties',sample:'erp',report:null,matrix:{},dirty:false,dataDraft:null,running:false,runId:0,collapsed:{},search:'',jsonError:'',fileReads:0};
 let bus, displayed, zoom = 1, pageIndex = 0, editQueue = Promise.resolve();
@@ -148,7 +149,7 @@ function install(project, reference = null, source = 'imported-data') {
 async function switchSample(id) {
   if (!database.guardDraft()) return;
   stopRun();
-  const data = id === 'erp' ? bus.project.studioV3Session.erpData : sampleData(designOf(bus.project).type,id === 'long' ? 45 : Number(id),id === 'long');
+  const data = id === 'erp' ? bus.project.studioV3Session.erpData : scenarioCandidate(bus.project,id).sampleData;
   state.dataDraft = null;
   await replaceData(bus,data,id); await changed();
 }

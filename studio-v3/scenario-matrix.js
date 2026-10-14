@@ -1,12 +1,15 @@
 import { designOf, sampleData } from './model.js';
+import { demoDataForKind } from './demo-catalog.js';
+import { compactA5Record } from './compact-a5-demo.js';
+import { createScenario } from '../studio-v2/core/sample-scenarios.js';
 import { inspectProject } from './validation.js';
 import { safeRunDiagnostics } from './ai-inspection.js';
 import { fail } from './ai-edits.js';
 
 // Shared service for "check this form against the built-in row-count scenarios". The Validate panel and the agent's
 // validate_scenarios tool both call runScenarioMatrix, so equivalent input gives equivalent diagnostics (COV-03).
-// Scenarios replace the form's data with built-in synthetic data of the form's document type; they never read or send
-// the person's own data, and fields bound to custom paths report missing values exactly as they do in the panel.
+// Scenarios use built-in synthetic data of the exact document kind, or the generic family when no kind is declared.
+// They never copy a person's ERP data; custom bindings absent from that fixture remain visible missing values.
 export const SCENARIOS = Object.freeze([['0','Empty','0 rows'],['1','Single item','1 row'],['45','Standard','45 rows'],['100','Multi-page','100 rows'],['500','Stress','500 rows'],['long','Long & bilingual','45 rows']]
   .map(row=>Object.freeze(row)));
 export const SCENARIO_IDS = Object.freeze(SCENARIOS.map(([id])=>id));
@@ -20,7 +23,11 @@ export function scenarioIds(ids = SCENARIO_IDS) {
 export function scenarioCandidate(project, id) {
   scenarioIds([id]);
   const count = id === 'long' ? 45 : Number(id);
-  return {...project,sampleData:sampleData(designOf(project).type,count,id === 'long')};
+  const kind = project.sampleData?.document?.kind || project.studioV3Session?.erpData?.document?.kind;
+  if (!kind) return {...project,sampleData:sampleData(designOf(project).type,count,id === 'long')};
+  const data = kind === 'CompactA5Invoice' ? compactA5Record().data : demoDataForKind(kind);
+  const generated = createScenario(data,count === 1 ? 'one' : count === 0 ? 'empty' : `${count}-rows`);
+  return {...project,manifest:{...project.manifest,currency:data.document.currency},sampleData:id === 'long' ? createScenario(generated,'long-text') : generated};
 }
 // The contract view of one scenario: what the agent receives and what parity is judged on. The page geometry is
 // left out to keep the result bounded; the Validate panel keeps the full `quality` next to it.

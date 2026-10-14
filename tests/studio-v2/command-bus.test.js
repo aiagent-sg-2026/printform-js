@@ -73,7 +73,8 @@ describe("PrintForm Studio v2 command bus", () => {
     const bus = new CommandBus(createSalesInvoiceProject());
     expect((await bus.execute("set_sample_scenario", { expectedRevision: 0, scenario: "empty" })).result.validation.valid).toBe(false);
     const one = await bus.execute("set_sample_scenario", { expectedRevision: 1, scenario: "one" });
-    expect(one.result.validation.valid).toBe(true);
+    expect(one.ok).toBe(true);
+    expect(bus.project.sampleData.totals).toEqual(bus.defaultSample.totals);
     expect(bus.project.sampleData.items).toHaveLength(1);
     expect(bus.project.sampleData.items[0]).toHaveProperty("unitPrice");
   });

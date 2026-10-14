@@ -1,6 +1,6 @@
 import { AGENT_CONTRACT_VERSION, PROTOCOL_VERSION, STUDIO_VERSION } from "./constants.js";
 import { TOOL_CONTRACTS } from "./tool-contracts.js";
-import { createScenario, SAMPLE_SCENARIOS } from "./sample-scenarios.js";
+import { createProjectScenario, SAMPLE_SCENARIOS } from "./sample-scenarios.js";
 import { PRINT_LOCALES } from "./i18n.js";
 import { layoutReviewStatus, LAYOUT_REVIEW_CHECKLIST } from "./layout-review.js";
 import { executeReviewCommand, REVIEW_COMMANDS } from "./command-bus-review.js";
@@ -93,7 +93,7 @@ export async function dispatchCommand(bus, name, input = {}, context = null) {
     }
     if (name === "set_sample_scenario") {
       const result = await bus.commitConvenienceTransaction(
-        [{ type: "replace_sample_data", value: createScenario(bus.defaultSample, input.scenario) }],
+        [{ type: "replace_sample_data", value: createProjectScenario(bus.project, input.scenario, bus.defaultSample) }],
         input.expectedRevision,
         `sample scenario: ${input.scenario}`,
         context,
