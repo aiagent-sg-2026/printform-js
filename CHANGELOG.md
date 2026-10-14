@@ -21,6 +21,13 @@ E14 UI includes four layers, context badges, structured change cards, apply-mode
 batch history controls, session/settings/trace surfaces and a resizable rail.
 
 
+### ERP settlement projections — 2026-10-14
+
+- Added explicit canonical BankReceipt/BankPayment input and portable projects for multi-document full/partial allocations and zero-allocation advances/prepayments.
+- Kept cash movement, source cash, invoice applied/cleared, cash applied, balances and unapplied cash distinct across independently declared currencies/precisions; supplied bank fees, withholding, discounts and FX adjustments are separately labeled.
+- Missing bank/approval/balance facts remain absent. No commodity rows, automatic posting, reconciliation, exchange/tax computation or bank-clearance inference.
+- Added exact [settlement API and primary-source boundaries](docs/ERP_SETTLEMENT_BUSINESS_CONTRACT.zh-CN.md); raw database field mapping is not invented.
+
 ### Raw PCAR / SO work-done mapping — 2026-10-14
 
 - Added explicit AR link/numeric/measurement profiles, exact SO header+line-group resolution and source `idcode` provenance; ambiguous joins fail instead of taking the first row.
