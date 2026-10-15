@@ -4,10 +4,13 @@ import { getDemoCatalog, demoRecordForKind } from './demo-catalog.js';
 import { newProject, compileProject, designOf } from './model.js';
 import { applyA4DemoDesign } from './a4-demo-designs.js';
 import { a4PresetForKind } from './a4-presets.js';
+import { BUSINESS_DEMO_TEMPLATES, businessDemoInput } from './business-document-demos.js';
+import { createBusinessDocumentProject } from './business-document-project.js';
 const field=(id,label,pointer,format='')=>({id,label,pointer,format});
 const column=(id,label,pointer,width,format='')=>({...field(id,label,pointer,format),width});
 export function newDemoProject(kind) {
   if(kind==='CompactA5Invoice')return newCompactA5Project();
+  if(BUSINESS_DEMO_TEMPLATES.some(entry=>entry.documentKind===kind))return createBusinessDocumentProject(businessDemoInput(kind));
   const entry=getDemoCatalog({includePending:false}).find(e=>e.documentKind===kind);
   if(!entry)throw new Error('Choose a defined demo document type.');
   const record=demoRecordForKind(kind),project=newProject(entry.baseType),design=designOf(project);
@@ -72,7 +75,7 @@ export function setupDemoTemplatePicker() {
   const dialog=document.querySelector('#new-dialog'),holder=dialog?.querySelector('.template-options');if(!holder)return;
   const details=document.createElement('details'),summary=document.createElement('summary');summary.textContent='Business demo templates';details.append(summary);
   const list=document.createElement('div');list.className='demo-template-grid';
-  for(const entry of [...getDemoCatalog(),{documentKind:'CompactA5Invoice',label:'Compact A5 invoice',status:'ready',scenarioCount:1,description:'45 rows · first-page company header, repeating table headings, 9pt text'}]) {
+  for(const entry of [...getDemoCatalog(),...BUSINESS_DEMO_TEMPLATES,{documentKind:'CompactA5Invoice',label:'Compact A5 invoice',status:'ready',scenarioCount:1,description:'45 rows · first-page company header, repeating table headings, 9pt text'}]) {
     const button=document.createElement('button');button.type='button';button.textContent=entry.label;button.disabled=entry.status!=='ready';
     const preset=a4PresetForKind(entry.documentKind);
     const hint=document.createElement('span');hint.textContent=entry.status==='ready'?`${preset ? `A4 · ${preset.label} · ` : ''}${entry.scenarioCount} fictional datasets · ${entry.description}`:'Definition pending confirmation';button.append(hint);
