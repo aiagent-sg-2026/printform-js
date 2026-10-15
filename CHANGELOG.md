@@ -27,6 +27,7 @@ who don't need the diary.
 - Fix an actual published-origin read-only run ending as unvalidated plain text: registered-tool turns now require function use while retaining evidence/freshness checks and explicit terminal handoffs.
 - Make explicit null remove both an embedded logo and the starter mark, across human/AI edits, saved/reopened projects, component projection and print layout; preserve source data and reject repeated no-op removals.
 - Make human New Blank genuinely empty in all layout collections with a neutral heading and no starter mark, without erasing supplied data/schema or changing populated transaction starters. Guide existing static fields toward visible write-in/signature lines instead of empty text; retain actual goal failures and capability-admission evidence.
+- Correct the actual model's rejected general-form fields: document that non-items static/bound fields omit `width` and use section grids; return recoverable `FIELD_WIDTH_UNSUPPORTED` through both agent and single-step repair without relaxing validation or dropping input. Preserve table/image widths and supplied data; correct the authoring guide's obsolete null-logo semantics.
 
 ### Fixed ERPNext Payment Entry and physical-paper boundaries
 

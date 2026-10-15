@@ -14,7 +14,7 @@ const identity = open({release:Type.String()});
 const list = Type.Array(open({}));
 const ARGS = 'AGENT_ARGUMENTS_INVALID';
 export const ANSWER_MAX = 4000;
-const AUTHORING_ERRORS = [ARGS,'GRANT_DENIED','MALFORMED_PROPOSAL','AUTHORING_OPERATION_LIMIT','GLOBAL_FONT_PROPERTY_UNSUPPORTED','TABLE_SECTION_GRID_UNSUPPORTED','LOGO_ASSET_UNAVAILABLE','UNSAFE_PROPOSAL','UNSAFE_SCOPE','COLUMN_WIDTH_LIMIT','NO_CHANGES'];
+const AUTHORING_ERRORS = [ARGS,'GRANT_DENIED','MALFORMED_PROPOSAL','AUTHORING_OPERATION_LIMIT','GLOBAL_FONT_PROPERTY_UNSUPPORTED','TABLE_SECTION_GRID_UNSUPPORTED','FIELD_WIDTH_UNSUPPORTED','LOGO_ASSET_UNAVAILABLE','UNSAFE_PROPOSAL','UNSAFE_SCOPE','COLUMN_WIDTH_LIMIT','NO_CHANGES'];
 const navy = {type:'set_style',patch:{color:'#163a65'}};
 const prepared = [['apply_operations',{summary:'Navy accents',operations:[navy]}],['inspect_draft',{}]];
 const digest = Type.String({pattern:'^[a-f0-9]{64}$'});
@@ -78,9 +78,12 @@ export const OPERATION_CONTRACTS = Object.freeze({
     invalid:[{operation:{type:'set_element_style',target:'header-title',patch:{fontSize:2}},error:ARGS},{operation:{type:'set_element_style',target:'page-number',patch:{}},error:'NO_CHANGES'}]},
   set_style:{examples:[{operation:navy}],invalid:[{operation:{type:'set_style',patch:{fontSize:12}},error:ARGS}]},
   set_table_style:{examples:[{operation:{type:'set_table_style',target:'items',patch:{rowBackground:'#f5f7fa'}}}],invalid:[{operation:{type:'set_table_style',target:'items',patch:{rowBackground:'blue'}},error:ARGS}]},
-  set_field:{examples:[{operation:{type:'set_field',target:'footer-notes',patch:{label:'Terms'}}}],invalid:[{operation:{type:'set_field',target:'footer-missing',patch:{label:'Terms'}},error:'UNSAFE_PROPOSAL'}]},
+  set_field:{examples:[{operation:{type:'set_field',target:'footer-notes',patch:{label:'Terms'}}}],invalid:[
+    {operation:{type:'set_field',target:'footer-missing',patch:{label:'Terms'}},error:'UNSAFE_PROPOSAL'},
+    {operation:{type:'set_field',target:'footer-notes',patch:{width:100}},error:'FIELD_WIDTH_UNSUPPORTED'}]},
   add_field:{examples:[{operation:{type:'add_field',section:'footer',field:{id:'thanks',kind:'static',text:'Thank you for your business.'}}}],
-    invalid:[{operation:{type:'add_field',section:'footer',field:{id:'notes',kind:'static',text:'Duplicate'}},error:'UNSAFE_PROPOSAL'}]},
+    invalid:[{operation:{type:'add_field',section:'footer',field:{id:'notes',kind:'static',text:'Duplicate'}},error:'UNSAFE_PROPOSAL'},
+      {operation:{type:'add_field',section:'customer',field:{id:'employee',kind:'static',text:'________________',width:100}},error:'FIELD_WIDTH_UNSUPPORTED'}]},
   remove_field:{examples:[{operation:{type:'remove_field',target:'footer-signature'}}],invalid:[{operation:{type:'remove_field',target:'label-footer-notes'},error:'UNSAFE_PROPOSAL'}]},
   reorder_fields:{examples:[{operation:{type:'reorder_fields',section:'footer',order:['footer-signature','footer-notes']}}],invalid:[{operation:{type:'reorder_fields',section:'footer',order:['footer-notes']},error:'UNSAFE_PROPOSAL'}]},
   set_section:{examples:[{operation:{type:'set_section',target:'footer',patch:{label:'Terms'}}}],invalid:[{operation:{type:'set_section',target:'items',patch:{layout:{columns:2}}},error:'TABLE_SECTION_GRID_UNSUPPORTED'}]},

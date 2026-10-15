@@ -9,6 +9,9 @@ import { elementStyleChange } from './element-style.js';
 import { projectDescriptor } from './dataset-schema.js';
 
 const unsafe = () => { throw Object.assign(new Error('UNSAFE_PROPOSAL'),{code:'UNSAFE_PROPOSAL'}); };
+const assertFieldWidth = (section,kind,width) => {
+  if (section !== 'items' && kind !== 'image' && width !== undefined) throw contractError('FIELD_WIDTH_UNSUPPORTED');
+};
 const fieldKeys = ['label','pointer','format','kind','text','showLabel','labelStyle','valueStyle','width','assetId','height','fit'];
 const sectionKeys = ['enabled','label','layout','breakBefore','keepTogether'];
 const object = (value,keys) => {
@@ -57,6 +60,7 @@ export function applyAuthoring(design,operations,project,explicitPointers=[]) {
       object(op,['type','target','patch']); object(op.patch,fieldKeys);
       const selected = selectionField(design,op.target); if (!selected) unsafe();
       if (op.target.startsWith('label-') && Object.keys(op.patch).some(key=>!['label','showLabel','labelStyle'].includes(key))) unsafe();
+      assertFieldWidth(selected.block,op.patch.kind ?? selected.field.kind,op.patch.width);
       const financial = financialField(selected.field);
       const suppliedNumber = selected.field.pointer && (['currency','number','percent'].includes(selected.field.format) || financial);
       if (suppliedNumber && (Object.hasOwn(op.patch,'text') || (op.patch.kind !== undefined && op.patch.kind !== 'bound') || (financial && op.patch.pointer !== undefined && op.patch.pointer !== selected.field.pointer) || (op.patch.format !== undefined && op.patch.format !== selected.field.format))) unsafe();
@@ -72,6 +76,7 @@ export function applyAuthoring(design,operations,project,explicitPointers=[]) {
       object(op,['type','section','field']); object(op.field,['id',...fieldKeys]);
       if (!BLOCKS.includes(op.section)) unsafe();
       const list = fieldList(design,op.section), f = structuredClone(op.field);
+      assertFieldWidth(op.section,f.kind,f.width);
       if (list.some(item=>item.id === f.id)) unsafe();
       if (!Object.hasOwn(f,'format')) f.format = '';
       if (!Object.hasOwn(f,'label')) f.label = '';

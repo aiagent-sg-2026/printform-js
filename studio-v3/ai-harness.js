@@ -98,7 +98,7 @@ export async function runLayoutHarness(options) {
         return {...result,iterations:attempt,usage:Object.fromEntries(Object.keys(totals).map(key=>[key,unknown.has(key) ? null : totals[key]]))};
       }
     } catch (error) {
-      if (signal.aborted || !['LOGO_ASSET_UNAVAILABLE','TABLE_SECTION_GRID_UNSUPPORTED','AUTHORING_OPERATION_LIMIT','GLOBAL_FONT_PROPERTY_UNSUPPORTED','MALFORMED_PROPOSAL','UNSAFE_PROPOSAL','UNSAFE_SCOPE','COLUMN_WIDTH_LIMIT','NO_CHANGES','TABLE_BACKGROUND_INTENT'].includes(error.code) || attempt === limit) throw error;
+      if (signal.aborted || !['LOGO_ASSET_UNAVAILABLE','TABLE_SECTION_GRID_UNSUPPORTED','FIELD_WIDTH_UNSUPPORTED','AUTHORING_OPERATION_LIMIT','GLOBAL_FONT_PROPERTY_UNSUPPORTED','MALFORMED_PROPOSAL','UNSAFE_PROPOSAL','UNSAFE_SCOPE','COLUMN_WIDTH_LIMIT','NO_CHANGES','TABLE_BACKGROUND_INTENT'].includes(error.code) || attempt === limit) throw error;
       // Failed completions have unavailable usage; never report zero consumption.
       for (const key of Object.keys(totals)) unknown.add(key);
       previous = {envelope:error.proposalEnvelope};

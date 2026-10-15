@@ -11,7 +11,9 @@ const typography = object(optional({fontSize:Type.Number({minimum:6,maximum:72})
 export const GLOBAL_STYLE_SCHEMA = object(optional({color,font:Type.Number({minimum:6,maximum:14}),padding:Type.Number({minimum:2,maximum:16}),
   ...Object.fromEntries(['striped','borders','repeatHeader','repeatTable','pageNumbers','breakBefore'].map(key=>[key,Type.Boolean()]))}));
 const fieldProperties = {label:Type.String({maxLength:100}),kind:choice(FIELD_KINDS),pointer:Type.String({maxLength:240}),text:Type.String({maxLength:10000}),format:choice(FORMATS),
-  showLabel:Type.Boolean(),labelStyle:typography,valueStyle:typography,width:Type.Number({minimum:1,maximum:400}),assetId:Type.String({pattern:'^[a-z0-9-]{1,60}$'}),height:Type.Number({minimum:8,maximum:200}),fit:choice(['contain','cover'])};
+  showLabel:Type.Boolean(),labelStyle:typography,valueStyle:typography,
+  width:Type.Number({minimum:1,maximum:400,description:'Only items columns (1..100 percent) or image fields (8..400 pixels). Omit on non-items static/bound fields; use section layout.columns.'}),
+  assetId:Type.String({pattern:'^[a-z0-9-]{1,60}$'}),height:Type.Number({minimum:8,maximum:200}),fit:choice(['contain','cover'])};
 const operation = (type,properties) => object({type:Type.Literal(type),...properties});
 // These transport schemas describe shapes/bounds. Dynamic binding, scope and final design invariants stay local.
 export const OPERATION_SCHEMAS = Object.freeze({
