@@ -26,6 +26,7 @@ who don't need the diary.
 - Correct the publication omission of the compact authorization component and its lifecycle regressions; the release gate blocked the incomplete commit. Retain the reviewed baseline, remove wording/forwarding-only assertions, and verify the committed package rather than bypass the stale-review check.
 - Fix an actual published-origin read-only run ending as unvalidated plain text: registered-tool turns now require function use while retaining evidence/freshness checks and explicit terminal handoffs.
 - Make explicit null remove both an embedded logo and the starter mark, across human/AI edits, saved/reopened projects, component projection and print layout; preserve source data and reject repeated no-op removals.
+- Make human New Blank genuinely empty in all layout collections with a neutral heading and no starter mark, without erasing supplied data/schema or changing populated transaction starters. Guide existing static fields toward visible write-in/signature lines instead of empty text; retain actual goal failures and capability-admission evidence.
 
 ### Fixed ERPNext Payment Entry and physical-paper boundaries
 
