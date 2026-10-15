@@ -36,6 +36,7 @@
     "check:agrun:upstream": "node scripts/sync-agrun.mjs --check-upstream",
     "doctor": "node scripts/doctor.mjs",
     "studio:transaction-server": "node scripts/transaction-server.mjs",
+    "studio:coding-runner": "node scripts/coding-runner.mjs",
     "studio:mcp": "node mcp/server.mjs",
     "studio:agent-browser": "node scripts/launch-studio-agent-browser.mjs",
     "docs": "node scripts/generate-config-docs.js",
@@ -45,6 +46,7 @@
   },
   "devDependencies": {
     "@playwright/test": "^1.62.0",
+    "es-module-lexer": "2.3.2",
     "vite": "^8.1.5",
     "vitest": "4.1.11",
     "ws": "^8.21.1"

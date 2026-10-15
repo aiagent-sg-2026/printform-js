@@ -5,6 +5,7 @@ import { fail } from './ai-edits.js';
 import { AGENT_TOOL_DEFINITIONS } from './agent-registry.js';
 import { TOOL_HANDLERS } from './agent-handlers.js';
 import { createGrant, assertEffect, grantedDefinitions } from './agent-effects.js';
+import { isSourceAuthorization } from './source-workspace-run.js';
 import { createObservationRecords, DIAGNOSTIC_POLICY } from './observation-records.js';
 import { observationDisclosure, pixelDisclosure, canonicalObservation, assertObservationAuthorization } from './observation-policy.js';
 import { createPixelEvidence } from './observation-pixels.js';
@@ -15,9 +16,9 @@ export { AGENT_TOOL_NAMES } from './agent-registry.js';
 // the model is only shown the granted ones (`visible`); a hidden tool never reaches a handler.
 export function createAgentTools({draft,context,inspect,signal,outcome,limits,identity,stopRun=()=>{},memory = createAgentMemory(),onStep = () => {},
   definitions = AGENT_TOOL_DEFINITIONS,handlers = TOOL_HANDLERS,grant = createGrant('design'),finalizeAnswer,
-  runId = crypto.randomUUID(),baseRevision = 0,assertCurrent = () => {},observationAuthorization,readObservationHost = () => ({dataPolicy:null,selectedTargets:[]}),capturePixels}) {
+  runId = crypto.randomUUID(),baseRevision = 0,assertCurrent = () => {},observationAuthorization,readObservationHost = () => ({dataPolicy:null,selectedTargets:[]}),capturePixels,workspace}) {
   const visible = grantedDefinitions(grant,definitions);
-  const run = {calls:0,failure:'',repeats:0,inspected:null,evidence:false,draft,context,inspect,signal,outcome,limits,identity,memory,definitions,visible,grant,finalizeAnswer,runId,baseRevision};
+  const run = {calls:0,failure:'',repeats:0,inspected:null,evidence:false,draft,context,inspect,signal,outcome,limits,identity,memory,definitions,visible,grant,finalizeAnswer,runId,baseRevision,workspace,assertCurrent};
   const releaseIdentity = Object.freeze(structuredClone(identity || {release:'development',verified:false}));
   run.observationKind = 'print-diagnostics'; run.authorization = observationAuthorization; run.readObservationHost = readObservationHost;
   run.observations = createObservationRecords({assertCurrent,readState:()=> {
@@ -29,6 +30,7 @@ export function createAgentTools({draft,context,inspect,signal,outcome,limits,id
   run.pixels = createPixelEvidence(run,capturePixels); memory.latestVisual = ()=>run.pixels.current();
   const begin = name => {
     signal.throwIfAborted(); outcome.turns = ++run.calls;
+    if (workspace && !isSourceAuthorization(workspace)) { outcome.blocked = {code:'WORKSPACE_AUTH_EXPIRED'}; stopRun(); throw fail('WORKSPACE_AUTH_EXPIRED'); }
     if (run.calls > limits.maxTurns) {
       outcome.blocked = {code:'AGENT_BUDGET'}; onStep({name,ok:false,code:'AGENT_BUDGET'}); stopRun(); throw fail('AGENT_BUDGET');
     }
@@ -60,10 +62,12 @@ export function createAgentTools({draft,context,inspect,signal,outcome,limits,id
         if (!prepared) begin(name); prepared = false;
         try {
           assertCurrent();
+          if (workspace && !isSourceAuthorization(workspace)) throw fail('WORKSPACE_AUTH_EXPIRED');
           if (run.authorization) assertObservationAuthorization(run.authorization,{...readObservationHost(),runId});
           assertEffect(grant,definition);
           run.toolCallId = _id;
           const result = await handlers[name](args || {},run);
+          assertCurrent(); signal.throwIfAborted();
           run.failure = ''; run.repeats = 0; onStep({name,ok:true,detail:result.details?.detail}); return result;
         } catch (error) { return rejected(name,args,error); }
       }

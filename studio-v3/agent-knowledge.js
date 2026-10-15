@@ -1,7 +1,8 @@
 import { LEDGER_WORKFLOWS } from './agent-workflows.js';
+import { SOURCE_WORKSPACE_SKILL } from './agent-source-guide.js';
 
 // Planned agent capabilities that are not Studio workflows, so they have no ledger row yet.
-export const PLANNED_CAPABILITIES = Object.freeze([['source/shell execution','planned isolated coding runner (CA-07)'],['sensitive pixel evidence','separate asset/real-data authorization and remaining G4 qualification (CA-05)']]);
+export const PLANNED_CAPABILITIES = Object.freeze([['networked/arbitrary repository and HTML execution','the optional CA-07 local Node/JSON profile does not grant these capabilities'],['sensitive pixel evidence','separate asset/real-data authorization and remaining G4 qualification (CA-05)']]);
 const GROUPS = [['human-mediated','Human-mediated: the person completes these in Studio'],['not-yet-callable','Not yet callable: an agent adapter is planned'],
   ['intentionally-unavailable','Intentionally unavailable: host mechanisms or view preferences']];
 function workflowGuide() {
@@ -17,7 +18,7 @@ export const AGENT_SKILLS = Object.freeze([Object.freeze({
 
 Start with get_capabilities and get_context. Read this guide before edits. The capability response lists exact operation schemas and current run limits. Use only those capabilities; a product UI action is not automatically a callable tool.
 
-Work on the private draft using apply_operations. Combine properties of one target into one patch; use at most 24 operations per call. Prefer a compact structural plan over repeated cosmetic changes. Every operation must include its type. No HTML, CSS, JavaScript, shell, filesystem or remote URL execution is available.
+Work on the private draft using apply_operations. Combine properties of one target into one patch; use at most24 operations per call. Prefer a compact structural plan over repeated cosmetic changes. Every operation must include its type. No generated HTML/CSS/script executes in Studio. Filesystem and isolated commands exist only under the separate host-paired fictional-source grant described by source-workspace; reading a guide cannot grant it.
 
 The form has five sections: header, customer, items, totals and footer. Use stable semantic IDs from context. add_field, remove_field and reorder_fields manage fields/columns; each section supports at most 30 fields. Item column widths are 1..100 percent and sum to at most 100. Reordering requires every current field ID exactly once. reorder_sections requires all five sections; a repeating header stays first.
 
@@ -61,7 +62,7 @@ Observe the capability response's actual tool-call, time, token, repeated-failur
   id:'product-workflows',description:'Which Studio workflows are not agent tools, and the human path for each.',
   sources:['studio-v3/agent-workflows.js','docs/STUDIO_V3_FEATURE_LEDGER.csv','scripts/generate-studio-v3-workflows.mjs'],
   evaluations:['tests/studio-v3-agent-discovery.test.js','tests/studio-v3-feature-ledger.test.js'],content:workflowGuide()
-})]);
+}),SOURCE_WORKSPACE_SKILL]);
 export function skillIndex() { return AGENT_SKILLS.map(({id,description,sources,evaluations})=>({id,description,sources,evaluations})); }
 export function readSkill(id) {
   const skill = AGENT_SKILLS.find(item=>item.id === id);

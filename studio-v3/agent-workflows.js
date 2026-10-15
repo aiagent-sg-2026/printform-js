@@ -48,4 +48,6 @@ export const LEDGER_WORKFLOWS = Object.freeze([
   ["printform.ai.clear-conversation","Clear conversation","human-mediated","User-owned file, download, persistence or review step"],
   ["printform.update.choice","Keep or discard work on update","human-mediated","User-owned file, download, persistence or review step"],
   ["printform.workspace.layout-toggles","Panel toggles, zoom, fold","intentionally-unavailable","Host mechanism or view preference; not a model capability"],
+  ["printform.source.pairing","Pair or revoke an owned local companion","human-mediated","AI settings > Isolated source workspace > Pair or Disconnect"],
+  ["printform.source.disclosure","Authorize fictional source for one run","human-mediated","Sharing permissions > Use isolated source for one request"],
 ].map(row=>Object.freeze(row)));

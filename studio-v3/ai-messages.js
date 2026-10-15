@@ -1,3 +1,4 @@
+import { SOURCE_ERROR_CONTRACTS } from './source-workspace-errors.js';
 export const AI_MESSAGES = {
   AGENT_RELEASE_MISMATCH:'The assistant and product resources belong to different versions. Reload Studio before retrying. Nothing changed.',
   AGENT_KNOWLEDGE_UNAVAILABLE:'This version’s assistant resources are unavailable. Retry when online or reload a complete offline installation. Nothing changed.',
@@ -40,4 +41,4 @@ export const AI_MESSAGES = {
   AI_TIMEOUT:'The AI service is slow and the request timed out. Use Edit & resend to try again. Nothing changed.',
   AI_RUN_FAILED:'Pi could not complete a validated answer or proposal. Nothing changed.'
 };
-export const errorMessage = error=>error.name === 'AbortError' ? 'Cancelled. Nothing changed.' : AI_MESSAGES[error.code] || 'AI request failed. Nothing changed.';
+export const errorMessage = error=>error.name === 'AbortError' ? 'Cancelled. Live form unchanged.' : SOURCE_ERROR_CONTRACTS[error.code]?.retryAdvice || AI_MESSAGES[error.code] || 'AI request failed. Nothing changed.';

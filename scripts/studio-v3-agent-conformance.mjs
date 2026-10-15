@@ -1,5 +1,5 @@
-// Executes every registered tool/operation example through the real agent tool handlers (COV-04).
-// A broken example, an undeclared error code or a result outside its outputSchema fails the build.
+// Executes registered examples through the real tool boundary and authorized handlers (COV-04).
+// Optional source examples prove missing-session rejection; positive source proof uses real Docker/browser separately.
 import { JSDOM } from 'jsdom';
 import { validateToolArguments } from '@earendil-works/pi-ai';
 import { AGENT_TOOL_DEFINITIONS, OPERATION_CAPABILITIES } from '../studio-v3/agent-registry.js';
@@ -22,17 +22,20 @@ const FIXTURES = Object.freeze({
 });
 const INSPECTIONS = {ready:{report:{status:'ready'}},blocked:{report:{status:'blocked',issues:[{code:'OVERFLOW'}]}},stale:{report:{status:'ready'}}};
 
-async function harness({request = 'Change the form',fixture = 'invoice',inspection = 'ready',grant = 'design',authorization} = {}) {
+async function harness({request = 'Change the form',fixture = 'invoice',inspection = 'ready',grant = 'design',authorization,sourceFixture} = {}) {
   if (!FIXTURES[fixture] || !INSPECTIONS[inspection]) throw new Error(`Unknown conformance fixture: ${fixture}/${inspection}.`);
   const project = FIXTURES[fixture](), draft = createDraft(project,{request});
   const context = (current,info) => chatRequest(current,{request,scope:{mode:'whole'},typography:[],conversation:[]},{mode:'steps',...info});
   const runId = 'conformance', readObservationHost = ()=>({project,baseRevision:0,dataPolicy:null,selectedTargets:['items']});
   const observationAuthorization = ['text','pixels'].includes(authorization) ? await authorizeObservation({...readObservationHost(),runId},{text:true,pixels:authorization==='pixels'}) : undefined;
+  // Grant-only forgery must never create source authority. No fake files, process
+  // output or workspace session is supplied by this negative contract fixture.
+  const hostGrant = sourceFixture === 'missing-session' ? Object.freeze({profile:'coding',scope:Object.freeze({mode:'whole'}),effects:Object.freeze(['read','memory','answer','stop','workspace-read','workspace'])}) : createGrant(grant);
   const tools = createAgentTools({draft,context,inspect:async () => {
     if (inspection === 'stale') draft.apply('Concurrent edit',[{type:'set_style',patch:{color:'#a82938'}}]);
     return INSPECTIONS[inspection];
   },signal:new AbortController().signal,outcome:{},
-    limits:{...DEMO_CONFIG.agent,maxRepeatedFailures:1000},identity:{release:'development',verified:false},grant:createGrant(grant),runId,observationAuthorization,readObservationHost,capturePixels:async(_candidate,region)=>unitImage(region)});
+    limits:{...DEMO_CONFIG.agent,maxRepeatedFailures:1000},identity:{release:'development',verified:false},grant:hostGrant,runId,observationAuthorization,readObservationHost,capturePixels:async(_candidate,region)=>unitImage(region)});
   return Object.fromEntries(tools.map(tool => [tool.name,tool]));
 }
 async function call(tool,args) {

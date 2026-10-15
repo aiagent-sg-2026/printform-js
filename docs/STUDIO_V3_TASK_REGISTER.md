@@ -52,3 +52,6 @@ Essential slots, each owned by exactly one task and required to pass 3/3: `ESS-Q
 Not covered yet: binomial confidence intervals, paired built-in-advantage comparison, blinded-reviewer agreement for reference reconstruction, and cost reporting. They belong to later CA-09 work.
 
 2026-10-15: direct qualification consumers now reject the formerly accepted duplicate-row and missing-execution-evidence cases. [Observed guard smoke](acceptance/STUDIO_V3_QUALIFICATION_GUARD_20261015.json) uses zero network/model calls; the actual CSV remains 0/60 frozen tasks and 0/180 attempts, unqualified. Metadata validation is not evidence-byte, gateway-contract or upstream-identity verification.
+
+2026-10-16：本地Node/JSON源码profile的实际进程、失败修复、制品及权限机械检查不写入本正式任务CSV。新增 `printform.source.files/execute/artifact` 工作流可用于将来冻结任务；独立oracle、完整版本/成本/来源与180次尝试要求不变，仍0/60、0/180。[当前有界源码证据](STUDIO_V3_CODING_RUNNER.zh-CN.md)。
+

@@ -5,17 +5,20 @@ import { readSkill } from './agent-knowledge.js';
 import { runScenarioMatrix, canonicalScenario } from './scenario-matrix.js';
 import { semanticObservation } from './observation-context.js';
 import { ANSWER_MAX } from './agent-contracts.js';
+import { sourceToolHandlers } from './agent-source-handlers.js';
 
 export const reply = (value,extra = {}) => ({content:[{type:'text',text:typeof value === 'string' ? value : JSON.stringify(value)}],details:{},...extra});
 // Trusted, compiled handlers keyed by tool name. A feature adds its handler here next to its registry descriptor;
 // a descriptor alone never grants an effect. `run` is the per-run state built by createAgentTools.
 export const TOOL_HANDLERS = Object.freeze({
+  ...sourceToolHandlers(reply),
   get_capabilities:async (_args,run) => reply(capabilityCatalog({identity:run.identity,limits:run.limits,tools:run.visible,grant:run.grant})),
   read_skill:async ({id},run) => { const skill = readSkill(id); run.evidence = true; return reply({...skill,identity:run.identity}); },
   get_context:async (_args,run) => { const text = run.context(run.draft.project,{identity:run.identity,limits:run.limits}); run.evidence = true; return reply(text); },
   apply_operations:async ({summary,operations},run) => {
     const step = run.draft.apply(summary,operations), n = step.diff.length;
     run.pixels.clear();
+    run.sourceArtifact = null;
     run.observations.invalidate(); run.inspected = null;
     run.memory.addStep(summary,n);
     return reply(`Applied. ${n} changes in this step, ${run.draft.count} steps in the draft.`,{details:{detail:`${n} change${n === 1 ? '' : 's'}`}});
@@ -57,12 +60,18 @@ export const TOOL_HANDLERS = Object.freeze({
   },
   undo_step:async (_args,run) => {
     run.pixels.clear();
+    run.sourceArtifact = null;
     if (!run.draft.undo()) return reply('There is nothing to undo.');
     run.observations.invalidate(); run.inspected = null;
     run.memory.dropStep(); return reply(`Removed. ${run.draft.count} steps remain.`);
   },
   take_notes:async ({notes},run) => { run.memory.note(notes); return reply('Noted.',{details:{detail:'saved'}}); },
   finish:async ({summary},run) => {
+    if (run.grant.profile === 'coding') {
+      if (!run.sourceArtifact || run.sourceArtifact.draftVersion !== run.draft.version) throw fail('SOURCE_ARTIFACT_REQUIRED');
+      await run.workspace.confirmImported(run.sourceArtifact.evidence,run.signal);
+      run.signal.throwIfAborted(); run.assertCurrent();
+    }
     const proposal = run.draft.proposal(summary);
     if (!run.inspected) throw fail('AGENT_INSPECTION_REQUIRED');
     let observed;
@@ -70,7 +79,7 @@ export const TOOL_HANDLERS = Object.freeze({
     catch (error) { if (error.code === 'EVIDENCE_STALE') throw fail('AGENT_INSPECTION_REQUIRED'); throw error; }
     const inspection = {...observed.content,observation:observed.receipt};
     if (!inspection.ready) throw fail('AGENT_INSPECTION_BLOCKED');
-    run.outcome.proposal = {...proposal,inspection,identity:run.identity};
+    run.outcome.proposal = {...proposal,inspection,identity:run.identity,...(run.sourceArtifact ? {sourceEvidence:run.sourceArtifact.evidence} : {})};
     return reply('Done. The person reviews and applies it.',{terminate:true});
   },
   finish_answer:async ({message,observationId},run) => {

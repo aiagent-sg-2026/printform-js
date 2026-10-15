@@ -2,289 +2,40 @@
  "version": 1,
  "gate": "COV-03",
  "entries": [
-  {
-   "id": "printform.style.global",
-   "status": "parallel",
-   "service": null,
-   "ui": "studio-v3/controller.js", "pi": "studio-v3/ai-authoring.js",
-   "test": null,
-   "note": "UI edits through formDesign (style form); the agent edits through applyAuthoring. Two implementations that are not yet shown to agree.",
-   "next": "differential test: the same change through the inspector form and through the operation, compared on the resulting design"
-  },
-  {
-   "id": "printform.style.element",
-   "status": "shared",
-   "service": "studio-v3/element-style.js",
-   "ui": "studio-v3/controller.js", "pi": "studio-v3/ai-authoring.js",
-   "test": {
-    "file": "tests/studio-v3-element-style-parity.test.js",
-    "test": "element-style inspector and operation produce equivalent candidates"
-   },
-   "note": "The actual heading/page-number inspector and Pi authoring reuse elementStyleChange and one stored typography validator. Normalized replacement/reset candidates, static diagnostics and common errors agree; native fractional bounds align with the existing numeric operation contract. Real rendered/provider-wire success, low-contrast rejection and fresh recovery are separate evaluations. UI commits and Pi private draft/grant/scope/approval authority remain distinct."
-  },
-  {
-   "id": "printform.table.row-fill",
-   "status": "shared",
-   "service": "studio-v3/table-style.js",
-   "ui": "studio-v3/controller.js", "pi": "studio-v3/ai-authoring.js",
-   "test": {
-    "file": "tests/studio-v3-row-fill-parity.test.js",
-    "test": "row-fill inspector and operation produce equivalent candidates"
-   },
-   "note": "The real inspector form and Pi applyAuthoring/draft operation reuse tableStyleChange for color/reset validation and transformation. Differential candidates, binding diagnostics, common service errors, scope/grant rejection and unchanged data are covered; adapters retain separate commit authority."
-  },
-  {
-   "id": "printform.field.properties",
-   "status": "parallel",
-   "service": null,
-   "ui": "studio-v3/controller.js", "pi": "studio-v3/ai-authoring.js",
-   "test": null,
-   "note": "UI edits through formDesign (field form); the agent edits through applyAuthoring. Two implementations that are not yet shown to agree.",
-   "next": "differential test: the same change through the inspector form and through the operation, compared on the resulting design"
-  },
-  {
-   "id": "printform.field.binding",
-   "status": "parallel",
-   "service": null,
-   "ui": "studio-v3/controller.js", "pi": "studio-v3/ai-authoring.js",
-   "test": null,
-   "note": "UI edits through formDesign (binding form); the agent edits through applyAuthoring. Two implementations that are not yet shown to agree.",
-   "next": "differential test: the same change through the inspector form and through the operation, compared on the resulting design"
-  },
-  {
-   "id": "printform.field.static",
-   "status": "parallel",
-   "service": null,
-   "ui": "studio-v3/controller.js", "pi": "studio-v3/ai-authoring.js",
-   "test": null,
-   "note": "UI edits through formDesign (binding form, static text); the agent edits through applyAuthoring. Two implementations that are not yet shown to agree.",
-   "next": "differential test: the same change through the inspector form and through the operation, compared on the resulting design"
-  },
-  {
-   "id": "printform.field.image",
-   "status": "parallel",
-   "service": null,
-   "ui": "studio-v3/controller.js", "pi": "studio-v3/ai-authoring.js",
-   "test": null,
-   "note": "UI edits through formDesign (binding form, image); the agent edits through applyAuthoring. Two implementations that are not yet shown to agree.",
-   "next": "differential test: the same change through the inspector form and through the operation, compared on the resulting design"
-  },
-  {
-   "id": "printform.field.add",
-   "status": "parallel",
-   "service": null,
-   "ui": "studio-v3/controller.js", "pi": "studio-v3/ai-authoring.js",
-   "test": null,
-   "note": "UI edits through alterFields (add-field); the agent edits through applyAuthoring. Two implementations that are not yet shown to agree.",
-   "next": "differential test: the same change through the inspector form and through the operation, compared on the resulting design"
-  },
-  {
-   "id": "printform.field.remove",
-   "status": "parallel",
-   "service": null,
-   "ui": "studio-v3/controller.js", "pi": "studio-v3/ai-authoring.js",
-   "test": null,
-   "note": "UI edits through alterFields (remove-field); the agent edits through applyAuthoring. Two implementations that are not yet shown to agree.",
-   "next": "differential test: the same change through the inspector form and through the operation, compared on the resulting design"
-  },
-  {
-   "id": "printform.field.reorder",
-   "status": "parallel",
-   "service": null,
-   "ui": "studio-v3/controller.js", "pi": "studio-v3/ai-authoring.js",
-   "test": null,
-   "note": "UI edits through alterFields (move-up, move-down); the agent edits through applyAuthoring. Two implementations that are not yet shown to agree.",
-   "next": "differential test: the same change through the inspector form and through the operation, compared on the resulting design"
-  },
-  {
-   "id": "printform.table.column-width",
-   "status": "parallel",
-   "service": null,
-   "ui": "studio-v3/controller.js", "pi": "studio-v3/ai-authoring.js",
-   "test": null,
-   "note": "UI edits through formDesign (field width); the agent edits through applyAuthoring. Two implementations that are not yet shown to agree.",
-   "next": "differential test: the same change through the inspector form and through the operation, compared on the resulting design"
-  },
-  {
-   "id": "printform.section.properties",
-   "status": "parallel",
-   "service": null,
-   "ui": "studio-v3/controller.js", "pi": "studio-v3/ai-authoring.js",
-   "test": null,
-   "note": "UI edits through formDesign (block form); the agent edits through applyAuthoring. Two implementations that are not yet shown to agree.",
-   "next": "differential test: the same change through the inspector form and through the operation, compared on the resulting design"
-  },
-  {
-   "id": "printform.section.grid",
-   "status": "parallel",
-   "service": null,
-   "ui": "studio-v3/controller.js", "pi": "studio-v3/ai-authoring.js",
-   "test": null,
-   "note": "UI edits through formDesign (block layout); the agent edits through applyAuthoring. Two implementations that are not yet shown to agree.",
-   "next": "differential test: the same change through the inspector form and through the operation, compared on the resulting design"
-  },
-  {
-   "id": "printform.section.reorder",
-   "status": "parallel",
-   "service": null,
-   "ui": "studio-v3/controller.js", "pi": "studio-v3/ai-authoring.js",
-   "test": null,
-   "note": "UI edits through formDesign (sectionPosition); the agent edits through applyAuthoring. Two implementations that are not yet shown to agree.",
-   "next": "differential test: the same change through the inspector form and through the operation, compared on the resulting design"
-  },
-  {
-   "id": "printform.page.geometry",
-   "status": "parallel",
-   "service": null,
-   "ui": "studio-v3/controller.js", "pi": "studio-v3/ai-authoring.js",
-   "test": null,
-   "note": "UI edits through formDesign (style form, paper and margins); the agent edits through applyAuthoring. Two implementations that are not yet shown to agree.",
-   "next": "differential test: the same change through the inspector form and through the operation, compared on the resulting design"
-  },
-  {
-   "id": "printform.table.collection",
-   "status": "parallel",
-   "service": null,
-   "ui": "studio-v3/controller.js", "pi": "studio-v3/ai-authoring.js",
-   "test": null,
-   "note": "UI edits through formDesign (collection form); the agent edits through applyAuthoring. Two implementations that are not yet shown to agree.",
-   "next": "differential test: the same change through the inspector form and through the operation, compared on the resulting design"
-  },
-  {
-   "id": "printform.heading.text",
-   "status": "parallel",
-   "service": null,
-   "ui": "studio-v3/controller.js", "pi": "studio-v3/ai-authoring.js",
-   "test": null,
-   "note": "UI edits through formDesign (header block title); the agent edits through applyAuthoring. Two implementations that are not yet shown to agree.",
-   "next": "differential test: the same change through the inspector form and through the operation, compared on the resulting design"
-  },
-  {
-   "id": "printform.logo.reference",
-   "status": "parallel",
-   "service": null,
-   "ui": "studio-v3/controller.js", "pi": "studio-v3/ai-authoring.js",
-   "test": null,
-   "note": "UI edits through formDesign (logo form); the agent edits through applyAuthoring. Two implementations that are not yet shown to agree.",
-   "next": "differential test: the same change through the inspector form and through the operation, compared on the resulting design"
-  },
-  {
-   "id": "printform.context.structure",
-   "status": "agent-only",
-   "service": null,
-   "ui": null, "pi": "studio-v3/agent-handlers.js",
-   "test": null,
-   "note": "Host-provided input or agent runtime; the person has no separate editing workflow to keep in step with."
-  },
-  {
-   "id": "printform.context.selection",
-   "status": "agent-only",
-   "service": null,
-   "ui": null, "pi": "studio-v3/agent-handlers.js",
-   "test": null,
-   "note": "Host-provided input or agent runtime; the person has no separate editing workflow to keep in step with."
-  },
-  {
-   "id": "printform.preview.inspect",
-   "status": "shared",
-   "service": "studio-v3/validation.js",
-   "ui": "studio-v3/app.js", "pi": "studio-v3/agent-handlers.js",
-   "test": {
-    "file": "tests/studio-v3-agent-loop.test.js",
-    "test": "requires another inspection when an edit or undo makes the last one stale"
-   },
-   "note": "Both judge a rendered candidate with inspectProject; the agent receives its allowlisted projection (safeRunDiagnostics)."
-  },
-  {
-   "id": "printform.preview.typography",
-   "status": "agent-only",
-   "service": null,
-   "ui": null, "pi": "studio-v3/agent-handlers.js",
-   "test": null,
-   "note": "Host-provided input or agent runtime; the person has no separate editing workflow to keep in step with."
-  },
-  {
-   "id": "printform.validation.matrix",
-   "status": "shared",
-   "service": "studio-v3/scenario-matrix.js",
-   "ui": "studio-v3/validate-all.js", "pi": "studio-v3/agent-handlers.js",
-   "test": {
-    "file": "tests/studio-v3-scenario-matrix.test.js",
-    "test": "gives the Validate panel and the agent tool equivalent diagnostics for the same project and renderer"
-   },
-   "note": "Both call runScenarioMatrix; the agent sees the canonical view and the panel keeps the full quality."
-  },
-  {
-   "id": "printform.reference.pdf-text",
-   "status": "agent-only",
-   "service": null,
-   "ui": null, "pi": "studio-v3/agent-handlers.js",
-   "test": null,
-   "note": "Host-provided input or agent runtime; the person has no separate editing workflow to keep in step with."
-  },
-  {
-   "id": "printform.reference.visual",
-   "status": "agent-only",
-   "service": null,
-   "ui": null, "pi": "studio-v3/agent-handlers.js",
-   "test": null,
-   "note": "Host-provided input or agent runtime; the person has no separate editing workflow to keep in step with."
-  },
-  {
-   "id": "printform.reference.element-tags",
-   "status": "agent-only",
-   "service": null,
-   "ui": null, "pi": "studio-v3/agent-handlers.js",
-   "test": null,
-   "note": "Host-provided input or agent runtime; the person has no separate editing workflow to keep in step with."
-  },
-  {
-   "id": "printform.agent.draft",
-   "status": "agent-only",
-   "service": null,
-   "ui": null, "pi": "studio-v3/agent-handlers.js",
-   "test": null,
-   "note": "Host-provided input or agent runtime; the person has no separate editing workflow to keep in step with."
-  },
-  {
-   "id": "printform.agent.undo-step",
-   "status": "agent-only",
-   "service": null,
-   "ui": null, "pi": "studio-v3/agent-handlers.js",
-   "test": null,
-   "note": "Host-provided input or agent runtime; the person has no separate editing workflow to keep in step with."
-  },
-  {
-   "id": "printform.agent.notes",
-   "status": "agent-only",
-   "service": null,
-   "ui": null, "pi": "studio-v3/agent-handlers.js",
-   "test": null,
-   "note": "Host-provided input or agent runtime; the person has no separate editing workflow to keep in step with."
-  },
-  {
-   "id": "printform.agent.finish",
-   "status": "agent-only",
-   "service": null,
-   "ui": null, "pi": "studio-v3/agent-handlers.js",
-   "test": null,
-   "note": "Host-provided input or agent runtime; the person has no separate editing workflow to keep in step with."
-  },
-  {
-   "id": "printform.agent.blocked",
-   "status": "agent-only",
-   "service": null,
-   "ui": null, "pi": "studio-v3/agent-handlers.js",
-   "test": null,
-   "note": "Host-provided input or agent runtime; the person has no separate editing workflow to keep in step with."
-  },
-  {
-   "id": "printform.agent.question-route",
-   "status": "agent-only",
-   "service": null,
-   "ui": null, "pi": "studio-v3/agent-handlers.js",
-   "test": null,
-   "note": "Host-provided input or agent runtime; the person has no separate editing workflow to keep in step with."
-  }
+  {"id":"printform.style.global","status":"parallel","service":null,"ui":"studio-v3/controller.js","pi":"studio-v3/ai-authoring.js","test":null,"note":"UI edits through formDesign (style form); the agent edits through applyAuthoring. Two implementations that are not yet shown to agree.","next":"differential test: the same change through the inspector form and through the operation, compared on the resulting design"},
+  {"id":"printform.style.element","status":"shared","service":"studio-v3/element-style.js","ui":"studio-v3/controller.js","pi":"studio-v3/ai-authoring.js","test":{"file":"tests/studio-v3-element-style-parity.test.js","test":"element-style inspector and operation produce equivalent candidates"},"note":"The actual heading/page-number inspector and Pi authoring reuse elementStyleChange and one stored typography validator. Normalized replacement/reset candidates, static diagnostics and common errors agree; native fractional bounds align with the existing numeric operation contract. Real rendered/provider-wire success, low-contrast rejection and fresh recovery are separate evaluations. UI commits and Pi private draft/grant/scope/approval authority remain distinct."},
+  {"id":"printform.table.row-fill","status":"shared","service":"studio-v3/table-style.js","ui":"studio-v3/controller.js","pi":"studio-v3/ai-authoring.js","test":{"file":"tests/studio-v3-row-fill-parity.test.js","test":"row-fill inspector and operation produce equivalent candidates"},"note":"The real inspector form and Pi applyAuthoring/draft operation reuse tableStyleChange for color/reset validation and transformation. Differential candidates, binding diagnostics, common service errors, scope/grant rejection and unchanged data are covered; adapters retain separate commit authority."},
+  {"id":"printform.field.properties","status":"parallel","service":null,"ui":"studio-v3/controller.js","pi":"studio-v3/ai-authoring.js","test":null,"note":"UI edits through formDesign (field form); the agent edits through applyAuthoring. Two implementations that are not yet shown to agree.","next":"differential test: the same change through the inspector form and through the operation, compared on the resulting design"},
+  {"id":"printform.field.binding","status":"parallel","service":null,"ui":"studio-v3/controller.js","pi":"studio-v3/ai-authoring.js","test":null,"note":"UI edits through formDesign (binding form); the agent edits through applyAuthoring. Two implementations that are not yet shown to agree.","next":"differential test: the same change through the inspector form and through the operation, compared on the resulting design"},
+  {"id":"printform.field.static","status":"parallel","service":null,"ui":"studio-v3/controller.js","pi":"studio-v3/ai-authoring.js","test":null,"note":"UI edits through formDesign (binding form, static text); the agent edits through applyAuthoring. Two implementations that are not yet shown to agree.","next":"differential test: the same change through the inspector form and through the operation, compared on the resulting design"},
+  {"id":"printform.field.image","status":"parallel","service":null,"ui":"studio-v3/controller.js","pi":"studio-v3/ai-authoring.js","test":null,"note":"UI edits through formDesign (binding form, image); the agent edits through applyAuthoring. Two implementations that are not yet shown to agree.","next":"differential test: the same change through the inspector form and through the operation, compared on the resulting design"},
+  {"id":"printform.field.add","status":"parallel","service":null,"ui":"studio-v3/controller.js","pi":"studio-v3/ai-authoring.js","test":null,"note":"UI edits through alterFields (add-field); the agent edits through applyAuthoring. Two implementations that are not yet shown to agree.","next":"differential test: the same change through the inspector form and through the operation, compared on the resulting design"},
+  {"id":"printform.field.remove","status":"parallel","service":null,"ui":"studio-v3/controller.js","pi":"studio-v3/ai-authoring.js","test":null,"note":"UI edits through alterFields (remove-field); the agent edits through applyAuthoring. Two implementations that are not yet shown to agree.","next":"differential test: the same change through the inspector form and through the operation, compared on the resulting design"},
+  {"id":"printform.field.reorder","status":"parallel","service":null,"ui":"studio-v3/controller.js","pi":"studio-v3/ai-authoring.js","test":null,"note":"UI edits through alterFields (move-up, move-down); the agent edits through applyAuthoring. Two implementations that are not yet shown to agree.","next":"differential test: the same change through the inspector form and through the operation, compared on the resulting design"},
+  {"id":"printform.table.column-width","status":"parallel","service":null,"ui":"studio-v3/controller.js","pi":"studio-v3/ai-authoring.js","test":null,"note":"UI edits through formDesign (field width); the agent edits through applyAuthoring. Two implementations that are not yet shown to agree.","next":"differential test: the same change through the inspector form and through the operation, compared on the resulting design"},
+  {"id":"printform.section.properties","status":"parallel","service":null,"ui":"studio-v3/controller.js","pi":"studio-v3/ai-authoring.js","test":null,"note":"UI edits through formDesign (block form); the agent edits through applyAuthoring. Two implementations that are not yet shown to agree.","next":"differential test: the same change through the inspector form and through the operation, compared on the resulting design"},
+  {"id":"printform.section.grid","status":"parallel","service":null,"ui":"studio-v3/controller.js","pi":"studio-v3/ai-authoring.js","test":null,"note":"UI edits through formDesign (block layout); the agent edits through applyAuthoring. Two implementations that are not yet shown to agree.","next":"differential test: the same change through the inspector form and through the operation, compared on the resulting design"},
+  {"id":"printform.section.reorder","status":"parallel","service":null,"ui":"studio-v3/controller.js","pi":"studio-v3/ai-authoring.js","test":null,"note":"UI edits through formDesign (sectionPosition); the agent edits through applyAuthoring. Two implementations that are not yet shown to agree.","next":"differential test: the same change through the inspector form and through the operation, compared on the resulting design"},
+  {"id":"printform.page.geometry","status":"parallel","service":null,"ui":"studio-v3/controller.js","pi":"studio-v3/ai-authoring.js","test":null,"note":"UI edits through formDesign (style form, paper and margins); the agent edits through applyAuthoring. Two implementations that are not yet shown to agree.","next":"differential test: the same change through the inspector form and through the operation, compared on the resulting design"},
+  {"id":"printform.table.collection","status":"parallel","service":null,"ui":"studio-v3/controller.js","pi":"studio-v3/ai-authoring.js","test":null,"note":"UI edits through formDesign (collection form); the agent edits through applyAuthoring. Two implementations that are not yet shown to agree.","next":"differential test: the same change through the inspector form and through the operation, compared on the resulting design"},
+  {"id":"printform.heading.text","status":"parallel","service":null,"ui":"studio-v3/controller.js","pi":"studio-v3/ai-authoring.js","test":null,"note":"UI edits through formDesign (header block title); the agent edits through applyAuthoring. Two implementations that are not yet shown to agree.","next":"differential test: the same change through the inspector form and through the operation, compared on the resulting design"},
+  {"id":"printform.logo.reference","status":"parallel","service":null,"ui":"studio-v3/controller.js","pi":"studio-v3/ai-authoring.js","test":null,"note":"UI edits through formDesign (logo form); the agent edits through applyAuthoring. Two implementations that are not yet shown to agree.","next":"differential test: the same change through the inspector form and through the operation, compared on the resulting design"},
+  {"id":"printform.context.structure","status":"agent-only","service":null,"ui":null,"pi":"studio-v3/agent-handlers.js","test":null,"note":"Host-provided input or agent runtime; the person has no separate editing workflow to keep in step with."},
+  {"id":"printform.context.selection","status":"agent-only","service":null,"ui":null,"pi":"studio-v3/agent-handlers.js","test":null,"note":"Host-provided input or agent runtime; the person has no separate editing workflow to keep in step with."},
+  {"id":"printform.preview.inspect","status":"shared","service":"studio-v3/validation.js","ui":"studio-v3/app.js","pi":"studio-v3/agent-handlers.js","test":{"file":"tests/studio-v3-agent-loop.test.js","test":"requires another inspection when an edit or undo makes the last one stale"},"note":"Both judge a rendered candidate with inspectProject; the agent receives its allowlisted projection (safeRunDiagnostics)."},
+  {"id":"printform.preview.typography","status":"agent-only","service":null,"ui":null,"pi":"studio-v3/agent-handlers.js","test":null,"note":"Host-provided input or agent runtime; the person has no separate editing workflow to keep in step with."},
+  {"id":"printform.validation.matrix","status":"shared","service":"studio-v3/scenario-matrix.js","ui":"studio-v3/validate-all.js","pi":"studio-v3/agent-handlers.js","test":{"file":"tests/studio-v3-scenario-matrix.test.js","test":"gives the Validate panel and the agent tool equivalent diagnostics for the same project and renderer"},"note":"Both call runScenarioMatrix; the agent sees the canonical view and the panel keeps the full quality."},
+  {"id":"printform.reference.pdf-text","status":"agent-only","service":null,"ui":null,"pi":"studio-v3/agent-handlers.js","test":null,"note":"Host-provided input or agent runtime; the person has no separate editing workflow to keep in step with."},
+  {"id":"printform.reference.visual","status":"agent-only","service":null,"ui":null,"pi":"studio-v3/agent-handlers.js","test":null,"note":"Host-provided input or agent runtime; the person has no separate editing workflow to keep in step with."},
+  {"id":"printform.reference.element-tags","status":"agent-only","service":null,"ui":null,"pi":"studio-v3/agent-handlers.js","test":null,"note":"Host-provided input or agent runtime; the person has no separate editing workflow to keep in step with."},
+  {"id":"printform.agent.draft","status":"agent-only","service":null,"ui":null,"pi":"studio-v3/agent-handlers.js","test":null,"note":"Host-provided input or agent runtime; the person has no separate editing workflow to keep in step with."},
+  {"id":"printform.agent.undo-step","status":"agent-only","service":null,"ui":null,"pi":"studio-v3/agent-handlers.js","test":null,"note":"Host-provided input or agent runtime; the person has no separate editing workflow to keep in step with."},
+  {"id":"printform.agent.notes","status":"agent-only","service":null,"ui":null,"pi":"studio-v3/agent-handlers.js","test":null,"note":"Host-provided input or agent runtime; the person has no separate editing workflow to keep in step with."},
+  {"id":"printform.agent.finish","status":"agent-only","service":null,"ui":null,"pi":"studio-v3/agent-handlers.js","test":null,"note":"Host-provided input or agent runtime; the person has no separate editing workflow to keep in step with."},
+  {"id":"printform.agent.blocked","status":"agent-only","service":null,"ui":null,"pi":"studio-v3/agent-handlers.js","test":null,"note":"Host-provided input or agent runtime; the person has no separate editing workflow to keep in step with."},
+  {"id":"printform.agent.question-route","status":"agent-only","service":null,"ui":null,"pi":"studio-v3/agent-handlers.js","test":null,"note":"Host-provided input or agent runtime; the person has no separate editing workflow to keep in step with."},
+  {"id":"printform.source.files","status":"agent-only","service":"studio-v3/source-workspace-run.js","ui":null,"pi":"studio-v3/agent-source-handlers.js","test":null,"note":"Run-owned source file/read/search/edit/diff tools; no separate human source editor or UI parity claim."},
+  {"id":"printform.source.execute","status":"agent-only","service":"studio-v3/source-workspace-run.js","ui":null,"pi":"studio-v3/agent-source-handlers.js","test":null,"note":"Actual isolated Node processes require paired one-run host authority; no human host-shell equivalent."},
+  {"id":"printform.source.artifact","status":"agent-only","service":"studio-v3/source-workspace-run.js","ui":null,"pi":"studio-v3/agent-source-handlers.js","test":null,"note":"Source-bound JSON handoff uses existing typed draft/financial/scope gates; final human Apply remains separate."}
  ]
 }

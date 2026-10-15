@@ -7,6 +7,8 @@ import { LEDGER_WORKFLOWS } from './agent-workflows.js';
 import { CONTRACT_VERSION, TOOL_CONTRACTS, OPERATION_CONTRACTS, ANSWER_MAX, PIXEL_CROP_SCHEMA } from './agent-contracts.js';
 import { SCENARIOS, SCENARIO_IDS, MAX_SCENARIOS } from './scenario-matrix.js';
 import { ERROR_CONTRACTS } from './agent-errors.js';
+import { SOURCE_TOOL_FEATURES } from './agent-source-definitions.js';
+import { SOURCE_WORKSPACE_SKILL } from './agent-source-guide.js';
 
 const object = properties => Type.Object(properties,{additionalProperties:false});
 const summary = Type.String({minLength:1,maxLength:500});
@@ -26,7 +28,11 @@ export const AGENT_TOOL_DEFINITIONS = Object.freeze([
   definition('take_notes','Replace your bounded run-local notes; they remain visible after older steps are folded.',object({notes:Type.String({minLength:1,maxLength:DEMO_CONFIG.agent.maxNoteChars})}),'memory','acknowledgment'),
   definition('finish','Hand an edited, currently inspected ready draft to the person for Preview and Apply.',object({summary}),'proposal','proposal-handoff',['tests/studio-v3-observation-tools.test.js']),
   definition('finish_answer','Complete a grounded answer. The host cites the latest observation when one was captured; an optional observationId must match it. Stale observations reject completion. No form change is proposed.',object({message:Type.String({minLength:1,maxLength:ANSWER_MAX}),observationId:Type.Optional(Type.String({minLength:1,maxLength:100}))}),'answer','answer-handoff',['tests/studio-v3-observation-completion.test.js','tests/studio-v3-observation-comparison.test.js','tests/support/observation-comparison.js','tests/support/static-observation-fixture.js','e2e/studio-v3-observation-comparison.spec.js']),
-  definition('report_blocked','Stop with the specific missing capability or reason the request cannot be met.',object({reason:summary}),'stop','blocked-handoff')
+  definition('report_blocked','Stop with the specific missing capability or reason the request cannot be met.',object({reason:summary}),'stop','blocked-handoff'),
+  ...SOURCE_TOOL_FEATURES.map(({name,description,parameters,effect,result})=> {
+    const tool = definition(name,description,parameters,effect,result,SOURCE_WORKSPACE_SKILL.evaluations);
+    return Object.freeze({...tool,skills:['form-authoring','source-workspace'],sources:[...new Set([...tool.sources,...SOURCE_WORKSPACE_SKILL.sources])]});
+  }),
 ]);
 export const AGENT_TOOL_NAMES = Object.freeze(AGENT_TOOL_DEFINITIONS.map(tool=>tool.name));
 // Bounded tombstones for removed capabilities: {id, name, replacementId (an active id or null), removedIn, advice}.

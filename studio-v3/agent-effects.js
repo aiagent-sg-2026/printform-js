@@ -1,4 +1,5 @@
 import { fail } from './ai-edits.js';
+import { isSourceAuthorization } from './source-workspace-run.js';
 
 // Effect profiles (docs/STUDIO_V3_CODING_AGENT_CONTRACTS.md). A grant is built by the host from host state when a run
 // starts and is frozen. No tool argument, model text, reference text or classifier output can add an effect to it.
@@ -7,15 +8,16 @@ import { fail } from './ai-edits.js';
 export const EFFECT_PROFILES = Object.freeze({
   'read-only':Object.freeze({available:true,effects:Object.freeze(['read','memory','answer','stop'])}),
   design:Object.freeze({available:true,effects:Object.freeze(['read','memory','answer','draft','proposal','stop'])}),
-  // Declared so a request for them fails with a specific code instead of silently widening a profile.
   data:Object.freeze({available:false,effects:Object.freeze([]),planned:'CA-04/CA-06'}),
-  coding:Object.freeze({available:false,effects:Object.freeze([]),planned:'CA-07'})
+  coding:Object.freeze({available:true,effects:Object.freeze(['read','memory','answer','draft','proposal','stop','workspace-read','workspace'])}),
+  'coding-read-only':Object.freeze({available:true,effects:Object.freeze(['read','memory','answer','stop','workspace-read'])})
 });
 
-export function createGrant(profile,{scope = {mode:'whole'}} = {}) {
+export function createGrant(profile,{scope = {mode:'whole'},workspace} = {}) {
   const entry = Object.hasOwn(EFFECT_PROFILES,profile) ? EFFECT_PROFILES[profile] : null;
   if (!entry) throw fail('GRANT_PROFILE_UNKNOWN');
   if (!entry.available) throw fail('GRANT_PROFILE_UNAVAILABLE');
+  if (profile.startsWith('coding') && (!isSourceAuthorization(workspace) || workspace.profile !== profile)) throw fail('WORKSPACE_DISCLOSURE_REQUIRED');
   return Object.freeze({profile,effects:entry.effects,scope:Object.freeze(structuredClone(scope))});
 }
 export const allows = (grant,effect) => grant.effects.includes(effect);

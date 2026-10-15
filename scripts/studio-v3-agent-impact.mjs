@@ -4,11 +4,10 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { createHash } from 'node:crypto';
+import { parse } from 'es-module-lexer/js';
 
 const hash = value => createHash('sha256').update(value).digest('hex');
 const SAFE = /^[a-zA-Z0-9_./-]+$/;
-const IMPORTS = /(?:import|export)\s[^'"]*?from\s*['"]([^'"]+)['"]|import\s*['"]([^'"]+)['"]|import\(\s*['"]([^'"]+)['"]\s*\)/g;
-const DYNAMIC = /import\(\s*[^'"\s)]/;
 
 function checkName(name) {
   if (!SAFE.test(name) || name.split('/').includes('..') || path.isAbsolute(name)) throw new Error(`Invalid agent dependency path: ${name}`);
@@ -31,9 +30,11 @@ export function importClosure(root,files) {
     fileHash(root,name); seen.add(name);
     if (!/\.(m?js)$/.test(name)) continue;
     const source = fs.readFileSync(path.resolve(root,name),'utf8');
-    if (DYNAMIC.test(source)) untracked.add(name);
-    for (const m of source.matchAll(IMPORTS)) {
-      const spec = m[1] || m[2] || m[3];
+    const [imports] = parse(source,name);
+    for (const entry of imports) {
+      if (entry.d === -2) continue; // import.meta is not a dependency.
+      const spec = entry.n;
+      if (typeof spec !== 'string') { if (entry.d >= 0) untracked.add(name); continue; }
       if (!spec.startsWith('.')) continue;
       const resolved = path.posix.normalize(path.posix.join(path.posix.dirname(name),spec));
       if (resolved.startsWith('..')) throw new Error(`Agent dependency escapes the repository: ${name} -> ${spec}`);

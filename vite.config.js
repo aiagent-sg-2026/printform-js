@@ -18,6 +18,6 @@ export default defineConfig({
   test: {
     environment: "jsdom",
     setupFiles: ["tests/setup/local-storage-polyfill.js"],
-    include: ["tests/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}"]
+    include: ["tests/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}", "coding-runner/**/*.test.mjs"]
   }
 });

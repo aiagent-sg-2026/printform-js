@@ -1,6 +1,6 @@
 # Studio v3 Coding-Agent Contracts
 
-Proposed contracts, 2026-10-09; no new runtime authority is implemented by this document. [Plan](STUDIO_V3_CODING_AGENT_PLAN.md) owns architecture; [acceptance](STUDIO_V3_CODING_AGENT_ACCEPTANCE.md) owns proof; [TASK.md](../TASK.md) owns status. Names below are proposals, not presently callable APIs.
+Historical target contracts, 2026-10-09; names below remain design proposals unless implemented by the current registry. The bounded2026-10-16 local Node/JSON implementation has real source tools and separate host grants: [actual protocol/operator scope](STUDIO_V3_CODING_RUNNER.zh-CN.md), [feature definitions](../studio-v3/agent-source-definitions.js). It does not implement every proposed repository/hosted/qualification capability. [Plan](STUDIO_V3_CODING_AGENT_PLAN.md) and [acceptance](STUDIO_V3_CODING_AGENT_ACCEPTANCE.md) retain their independent gates.
 
 ## Feature contract and registry
 
