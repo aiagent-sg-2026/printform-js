@@ -1,5 +1,6 @@
 import { fragmentMeasuredRow } from "./fragment-row.js";
 import { DEFAULT_READABILITY_WORD_LIMIT } from "../text.js";
+import { isKeepTogetherContent } from "../text-ranges.js";
 
 let documentSequence = 0;
 const RESERVED = ["data-pf-source-row", "data-pf-fragment-index", "data-pf-fragment-count"];
@@ -20,9 +21,13 @@ export function expandMeasuredRows(formatter, sections, heights, footerState) {
     const tableId = formatter.getRowTableId(row);
     const rowHeaderHeight = formatter.shouldSkipRowHeaderForRow(row) || !formatter.getSectionRowHeader(sections, tableId)
       ? 0 : (heights.rowHeaders?.[tableId] ?? heights.rowHeader ?? 0);
-    // First-page chrome is the largest reservation, even if later pages repeat
-    // fewer sections. Use the actual active table header, not another table's width.
-    const height = formatter.config.papersizeHeight - headerHeight - docInfoHeight - rowHeaderHeight - footerState.repeating;
+    // An indivisible group inside splittable notes needs the continuation
+    // window too; the surrounding prose still uses ordinary Range splitting.
+    const atomic = isKeepTogetherContent(row, true);
+    const headerReservation = atomic && !formatter.config.repeatHeader ? 0 : headerHeight;
+    const docInfoReservation = atomic ? sections.docInfos.reduce((sum, info) =>
+      sum + (formatter.config[info.repeatFlag] ? heights.docInfos[info.key] || 0 : 0), 0) : docInfoHeight;
+    const height = formatter.config.papersizeHeight - headerReservation - docInfoReservation - rowHeaderHeight - footerState.repeating;
     const fragments = fragmentMeasuredRow(row, {
       height, width: formatter.config.papersizeWidth, sourceId: `pf-${documentId}-${index}`,
       maxWords: formatter.isPaddtRow(row) ? formatter.paddtConfig.paddtMaxWordsPerSegment

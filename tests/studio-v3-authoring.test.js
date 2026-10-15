@@ -93,6 +93,21 @@ describe('Studio v3 framework-native authoring contract',()=> {
     expect(c.themeCss).toContain('grid-template-columns:repeat(3,minmax(0,1fr));gap:18px');
     expect(c.spec.pagination.keepTogether).toContain('totals');
   });
+  it('retains final-tail reservation and atomic signoff through compilation, binding and reopen',()=> {
+    const project=newProject('purchase'),design=designOf(project),before=structuredClone(project.sampleData);
+    design.sectionOrder=['header','customer','items','totals','footer'];
+    const candidate=readProject(saveProject(compileProject(project,design)));
+    const template=document.createElement('template');template.innerHTML=candidate.templateHtml;
+    const bound=bindTemplate(template,candidate.sampleData,candidate.manifest).fragment;
+    expect(bound.querySelector('[data-v3-id="totals"]').dataset.pfKeepWithNext).toBe('true');
+    expect([...bound.querySelectorAll('[data-pf-component-type="signature"]')].map(node=>node.textContent))
+      .toEqual(design.footer.filter(field=>['signature','approval'].includes(field.id)).map(field=>field.label+candidate.sampleData[field.pointer.slice(1)]));
+    expect(candidate.sampleData).toEqual(before);
+    design.blocks.footer.breakBefore=true;
+    expect(dom(compileProject(project,design)).querySelector('[data-v3-id="totals"]').hasAttribute('data-pf-keep-with-next')).toBe(false);
+    design.blocks.footer.breakBefore=false;design.sectionOrder=['header','customer','totals','items','footer'];
+    expect(dom(compileProject(project,design)).querySelector('[data-v3-id="totals"]').hasAttribute('data-pf-keep-with-next')).toBe(false);
+  });
   it('permits a moved non-repeating header and one-time table heading in flow order',()=> {
     const p=newProject(),d=designOf(p);d.repeatHeader=false;d.repeatTable=false;
     d.sectionOrder=['footer','items','header','customer','totals'];

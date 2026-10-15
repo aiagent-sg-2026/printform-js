@@ -3,6 +3,7 @@
 import { DomHelpers } from "../dom.js";
 import { renderSpecialRow } from "./pagination-render-special.js";
 import { fitsWithinHeight } from "./pagination-fit.js";
+import { shouldMoveKeepWithNextGroup } from "./pagination-keep-next.js";
 
 const ROW_HEIGHT_PREDICTION_SAFETY_MARGIN_PX = 50;
 
@@ -64,6 +65,17 @@ export function renderRows(outputContainer, sections, heights, footerState, heig
       this.refreshPageContextForRow(pageContext, row, heights, sections);
       pageContext.repeatingHeight = this.computeRepeatingHeightForPage(
         sections, heights, pageContext.skipRowHeader, pageContext.tableId
+      );
+      currentHeight = this.measureContentHeight(this.getCurrentPageContainer(outputContainer), pageContext.repeatingHeight);
+    }
+    if (shouldMoveKeepWithNextGroup(this, this.getCurrentPageContainer(outputContainer), sections, index)) {
+      this.prepareNextPage(
+        outputContainer, sections, logFn, pageContext.limit, currentHeight, footerState,
+        footerSpacerTemplate, pageContext.skipRowHeader,
+        this.shouldSkipDummyRowItemsForContext(pageContext), pageContext.repeatingHeight, activeTableId
+      );
+      pageContext.repeatingHeight = this.computeRepeatingHeightForPage(
+        sections, heights, pageContext.skipRowHeader, activeTableId
       );
       currentHeight = this.measureContentHeight(this.getCurrentPageContainer(outputContainer), pageContext.repeatingHeight);
     }

@@ -1,6 +1,7 @@
 /* eslint-disable no-console */
 
 import { DomHelpers, applyDummyRowItemsStep, applyDummyRowStep, applyFooterSpacerWithDummyStep, applyFooterSpacerStep } from "../dom.js";
+import { shouldCarryOneTimeTableHeader } from "./row-header-policy.js";
 
 export function attachPaginationSpacingMethods(FormatterClass) {
   FormatterClass.prototype.prepareNextPage = function prepareNextPage(
@@ -19,15 +20,11 @@ export function attachPaginationSpacingMethods(FormatterClass) {
     const container = this.getCurrentPageContainer(outputContainer);
     // Keep a nonrepeating table's first header with its first business row,
     // including explicit page breaks and rows that overflow after header insert.
-    if (!this.isRowHeaderRepeated(sections, tableId)) {
-      const hasTableRows = Array.from(container.querySelectorAll(".prowitem_processed, .ptac-rowitem_processed, .paddt-rowitem_processed"))
-        .some((row) => this.getRowTableId(row) === tableId);
-      if (!hasTableRows) {
-        Array.from(container.querySelectorAll(".prowheader_processed"))
-          .filter((header) => this.getRowTableId(header) === tableId)
-          .forEach((header) => header.remove());
-        this.seenTableHeaders?.delete(tableId);
-      }
+    if (shouldCarryOneTimeTableHeader(this, container, sections, tableId)) {
+      Array.from(container.querySelectorAll(".prowheader_processed"))
+        .filter((header) => this.getRowTableId(header) === tableId)
+        .forEach((header) => header.remove());
+      this.seenTableHeaders?.delete(tableId);
     }
     const filledHeight = this.applyRemainderSpacing(
       container,
