@@ -1,0 +1,73 @@
+{
+  "date": "2026-10-15",
+  "testedSource": "1b283f9258fab154c770af3228858293e214a7c9",
+  "classification": "Fictional-only general Studio trial, not G8 or confidential-data production approval",
+  "request": "Create a blank VISITOR CHECK-IN write-in form with Visitor name, Organisation, Visit date, Host, Purpose of visit, Arrival time, Departure time and Visitor signature, each with a visible printable blank line. Show the title. Do not add invoice prices, totals, logos, invented bindings or source data.",
+  "modelAlias": "demo-auto",
+  "underlyingModelVersion": "unknown",
+  "completedResponses": [
+    {
+      "status": 200
+    },
+    {
+      "status": 200
+    },
+    {
+      "status": 200
+    },
+    {
+      "status": 200
+    },
+    {
+      "status": 200
+    },
+    {
+      "status": 200
+    },
+    {
+      "status": 200
+    },
+    {
+      "status": 200
+    },
+    {
+      "status": 200
+    }
+  ],
+  "usage": "unavailable; new runner did not capture usage",
+  "actualPreviewText": "VISITOR CHECK-IN\nVisitor name\n____________________________\nOrganisation\n____________________________\nVisit date\n____________________________\nHost\n____________________________\nPurpose of visit\n____________________________\nArrival time\n____________________________\nDeparture time\n____________________________\nVisitor signature\n____________________________\nPage 1 of 1",
+  "explicitApply": {
+    "beforeRevision": 0,
+    "afterRevision": 1
+  },
+  "independentSavedAndOfflineAudit": {
+    "sourceBefore": "b4215677d573940411c01e9cd6799b50108e0b0e13268edf1106a8140433848e",
+    "sourceAfter": "b4215677d573940411c01e9cd6799b50108e0b0e13268edf1106a8140433848e",
+    "schemaBefore": "ac79d5f21b24bc32782380d222adfb19224f8c68945623ee78496c56c56d870e",
+    "schemaAfter": "ac79d5f21b24bc32782380d222adfb19224f8c68945623ee78496c56c56d870e",
+    "errors": [],
+    "inferenceRequests": [],
+    "originalTrial": "evidence.json; preserve harness failure after actual Apply",
+    "undoRedo": "Not run in this visitor trial; original handover proof remains separate",
+    "pdfText": "VISITOR CHECK-IN  Visitor name  ____________________________  Organisation  ____________________________  Visit date  ____________________________  Host  ____________________________  Purpose of visit  ____________________________  Arrival time  ____________________________  Departure time  ____________________________  Visitor signature  ____________________________  Page 1 of 1",
+    "outcome": "pass"
+  },
+  "visualReview": "Actual offline screenshot observed: visible title, eight printable write-in fields in two columns, no invoice prices or logo, one page",
+  "failuresPreserved": [
+    {
+      "path": "/tmp/printform-next-general-trial-20261015/evidence.json",
+      "failure": "Harness looked for a non-existent version title; no inference"
+    },
+    {
+      "path": "/tmp/printform-next-general-trial-corrected-20261015/evidence.json",
+      "failure": "Harness footer selector was not unique; no inference"
+    },
+    {
+      "path": "/tmp/printform-next-general-trial-native-20261015/evidence.json",
+      "failure": "After actual Preview/Apply/save, harness used top-level sampleData instead of project.sampleData. Independent readback and export audit corrected the observation without rerunning inference."
+    }
+  ],
+  "undoRedo": "Not run in this visitor trial; do not replace earlier separately recorded handover Undo/Redo evidence",
+  "physicalPrinter": "Not run",
+  "rawDirectory": "/tmp/printform-next-general-trial-native-20261015"
+}

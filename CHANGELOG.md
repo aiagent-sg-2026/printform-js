@@ -17,6 +17,8 @@ who don't need the diary.
 
 ### General browser-first AI form assistant — 2026-10-15
 
+- Archive a new real-model, fictional visitor check-in form: actual title/eight write-in fields, explicit Preview/Apply, unchanged saved data/schema, and independently reopened standalone HTML/single-page PDF. Preserve harness failures, unavailable usage and unrun visitor Undo/Redo; this is not formal production qualification.
+
 - Rework the conversation into one scrolling context area with anchored input, compact references, neutral scope, explicit message roles and expandable change details; keep Apply/Undo independently reachable.
 - Preserve actual Pi Harness/local typed tools and explicit Preview → Apply → Undo. General write-in forms can reuse sections and declared generic bindings without inventing source data or financial facts.
 - Narrow advice questions to read-only grants; retain aliases through step results and reject aborted/stale final responses even when a transport ignores abort.
