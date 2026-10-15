@@ -38,6 +38,13 @@ describe('source authority and structured artifact trust boundary',()=> {
     }
     expect(draft.project).toEqual(before); expect(project).toEqual(before); expect(outcome.proposal).toBeUndefined();
   });
+  it('keeps the workspace root expressible when a provider requires cwd, without granting execution',async()=> {
+    const {tools,project} = fixture(), before = structuredClone(project), args = {command:'node --version',cwd:''};
+    tools.workspace_run.prepareArguments(args);
+    await expect(tools.workspace_run.execute('root',args)).rejects.toMatchObject({code:'WORKSPACE_UNAVAILABLE'});
+    for (const cwd of ['.','/','/workspace','../outside','src/../outside']) expect(()=>tools.workspace_run.prepareArguments({...args,cwd})).toThrow('AGENT_ARGUMENTS_INVALID');
+    expect(project).toEqual(before);
+  });
   it('does not grant source permission from a pairing-shaped object without explicit fictional disclosure',()=> {
     expect(()=>authorizeSourceWorkspace({available:true})).toThrow('WORKSPACE_DISCLOSURE_REQUIRED');
     expect(()=>authorizeSourceWorkspace({available:true},{fictionalSource:false})).toThrow('WORKSPACE_DISCLOSURE_REQUIRED');
