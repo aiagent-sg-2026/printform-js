@@ -173,6 +173,16 @@ PCAR 历史截止、CCAR 重复来源记录、同发票拆分 Payment/Receipt、
 
 见[事务覆盖、范围和遗留事项](ERP_PRINT_SUPPORT.zh-CN.md#14-后续事务覆盖扩展2026-10-15)及[持久记录](acceptance/STUDIO_V3_TRANSACTION_EXPANSION_20261015.json)。没有把固定样本扩展为全部格式、法定凭证、银行/库存执行或完整 AI 生产认证。
 
+## 后续选项三：生产资格推进与误通过修复
+
+实际 API 研究发现：旧登记器可将每任务三条相同 `attempt=1` 记录计为 180 成功，独立 validator 已报重复却仍返回 qualified；删除全部执行身份也能误通过。现在 qualification 内部强制验证登记、唯一 task/attempt 计数、Pass/Fail 必需执行身份/摘要/时长；后续 rerun 的 critical 不能被前三次成功掩盖，未知 family 也不能改继承计数器。保留合法 unavailable、未执行/Blocked 等状态，不伪造元数据。
+
+真实零网络 API smoke 确认上述拒绝及真实 CSV **0/60、0/180、未 qualified**；三文件 48 项针对测试、完整 Node24 **230 文件 / 2,473 项**及站点生成通过。首次完整构建正确阻断因共享 parser 模块改变而陈旧的知识评审；只在实际依赖/权限/指南影响复核后更新 disposition，原 baseline 不变。见[guard 证据](acceptance/STUDIO_V3_QUALIFICATION_GUARD_20261015.json)。
+
+已研究公开服务入口、KB 治理技能、配置/dispatch 源码、现有资格工件及厂商官方政策；具体 Demo 的 DPA/训练/保留/地区/分包与生产 tenant、固定 upstream snapshot/dispatch 证明仍未获得。前端只选 demo alias，不能把 alias 改名或套用厂商通用 DPA 凑成生产资格。缺源码 runner/制品链仍是 G6/G7 的产品缺口，不是合同批准可以代替。
+
+[详细前置条件、官方来源与恢复验证步骤](STUDIO_V3_CODING_AGENT_ACCEPTANCE.md#生产资格前置调查2026-10-15未关闭-g8g9)及[登记契约](STUDIO_V3_TASK_REGISTER.md)已同步。修复防止误报资格，不宣称完整 G8/G9、任意源码代理或真实敏感资料准入已完成。
+
 ## 尚未获得的生产资格
 
 | 门禁 | 边界 |

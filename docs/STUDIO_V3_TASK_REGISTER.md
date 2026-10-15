@@ -39,12 +39,16 @@ Essential slots, each owned by exactly one task and required to pass 3/3: `ESS-Q
 - Attempts may reference frozen tasks only; `(task_id, profile, attempt)` is unique.
 - `outcome` is `Pass`, `Fail`, `Not run`, `Blocked` or `Invalid environment`.
 - A `Pass` needs an oracle result and a `sha256:` evidence digest, and cannot carry a critical violation.
+- Actual `Pass`/`Fail` executions also require nonblank `source_commit`, `runner_image`, `provider_route`, `model_version`, `browser_os`; `sha256:` app/knowledge/budget digests; and a non-negative integer `duration_ms`. These are recorded identities, not proof that the referenced execution or evidence exists. An unknown upstream may use `model_version=unavailable` for route-level qualification only.
+- `Not run`, `Blocked` and `Invalid environment` may leave execution metadata empty; do not invent execution identities to satisfy a validator. `usage=unavailable` remains valid for every outcome.
 - `Invalid environment` needs a documented external cause in `note`.
 - `usage` is a token count or `unavailable`, never blank or zero by default.
-- Only attempts 1 to 3 count. A later whole-attempt rerun stays recorded (`extraAttempts`) but cannot replace a failed attempt.
+- Only unique attempts 1 to 3 per task count. A later whole-attempt rerun stays recorded (`extraAttempts`) but cannot replace a failed attempt; a critical violation in any attempt of the profile, including a later rerun, blocks qualification.
 
 ## Qualification (per profile)
 
-`qualification(register, profile)` reports `qualified: true` only when all of these hold: 60 frozen tasks with 6 per family; holdout at least 20%; exactly 180 counted attempts; at least 162 passes; at least 16/18 per family; every essential slot 3/3; zero critical violations. Otherwise it lists each unmet reason. The empty register reports `frozen tasks 0/60` and `attempts 0/180`.
+`qualification(register, profile, options?)` calls `validateRegister` itself; any register error appears in `reasons` with `invalid register:` and blocks qualification. Optional `capabilityIds` is forwarded to the validator. It reports `qualified: true` only when the valid register also has 60 frozen tasks with 6 per family; holdout at least 20%; exactly 180 unique counted attempts; at least 162 passes; at least 16/18 per family; every essential slot 3/3; zero critical violations across the profile. The empty register reports `frozen tasks 0/60` and `attempts 0/180`.
 
 Not covered yet: binomial confidence intervals, paired built-in-advantage comparison, blinded-reviewer agreement for reference reconstruction, and cost reporting. They belong to later CA-09 work.
+
+2026-10-15: direct qualification consumers now reject the formerly accepted duplicate-row and missing-execution-evidence cases. [Observed guard smoke](acceptance/STUDIO_V3_QUALIFICATION_GUARD_20261015.json) uses zero network/model calls; the actual CSV remains 0/60 frozen tasks and 0/180 attempts, unqualified. Metadata validation is not evidence-byte, gateway-contract or upstream-identity verification.

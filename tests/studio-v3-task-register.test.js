@@ -1,5 +1,5 @@
 import {describe,it,expect} from 'vitest';
-import {FAMILIES,ESSENTIAL,TASK_COLUMNS,ATTEMPT_COLUMNS,readRegister,validateRegister,qualification,parseCsv} from '../scripts/studio-v3-task-register.mjs';
+import {FAMILIES,ESSENTIAL,TASK_COLUMNS,ATTEMPT_COLUMNS,validateRegister,qualification,parseCsv} from '../scripts/studio-v3-task-register.mjs';
 
 const digest = n => `sha256:${String(n).padStart(64,'0')}`;
 const ESSENTIAL_FAMILY = {'ESS-QA':'qa','ESS-BLANK':'authoring','ESS-SOURCE-EDIT':'source-implement','ESS-TEST-REPAIR':'source-repair','ESS-BUILD':'source-artifact','ESS-ARTIFACT-IMPORT':'source-artifact'};
@@ -26,22 +26,91 @@ const failAttempts = (register,predicate,count) => {
 const capabilityIds = new Set(['printform.style.global']);
 
 describe('Studio v3 CA-09 task register', () => {
-  it('ships an empty register with the exact columns that validates but is not qualified', () => {
-    const register = readRegister();
-    expect(register.tasks.rows).toEqual([]);
-    expect(register.attempts.rows).toEqual([]);
-    expect(validateRegister(register)).toEqual([]);
-    const result = qualification(register,'any');
-    expect(result.qualified).toBe(false);
-    expect(result.reasons).toContain('frozen tasks 0/60');
-    expect(result.reasons).toContain('attempts 0/180');
-  });
   it('qualifies a complete synthetic profile that meets every G8 threshold', () => {
     const register = synthetic();
     expect(validateRegister(register,{capabilityIds})).toEqual([]);
     const result = qualification(register,'p1');
     expect(result).toMatchObject({qualified:true,pass:180,required:180,critical:0,holdout:20});
     expect(result.essential.every(e => e.pass === 3)).toBe(true);
+  });
+  it('does not count repeated task/profile/attempt rows as three executions', () => {
+    const register = synthetic();
+    for (const attempt of register.attempts.rows) attempt.attempt = '1';
+    const result = qualification(register,'p1');
+    expect(result).toMatchObject({qualified:false,pass:60});
+    expect(result.reasons.some(reason => reason.includes('duplicate attempt'))).toBe(true);
+    expect(result.families.qa).toEqual({tasks:6,attempts:6,pass:6});
+    expect(result.essential.every(slot => slot.pass === 1)).toBe(true);
+  });
+  it.each([
+    ['header drift',register => { register.attempts.header.pop(); }],
+    ['duplicate task',register => { register.tasks.rows.push({...register.tasks.rows[0]}); }],
+    ['unfrozen task',register => { register.tasks.rows[0].status = 'draft'; }],
+    ['unknown family',register => { register.tasks.rows[0].family = 'unknown'; }],
+    ['model-owned oracle',register => { register.tasks.rows[0].oracle_owner = 'model'; }],
+    ['invalid evidence',register => { register.attempts.rows[0].evidence_digest = ''; }],
+    ['invalid outcome',register => { register.attempts.rows[0].outcome = 'claimed-success'; }],
+    ['invalid attempt index',register => { register.attempts.rows[0].attempt = '0'; }]
+  ])('fails closed on %s without a separate validation call',(_name,mutate) => {
+    const register = synthetic(); mutate(register);
+    const result = qualification(register,'p1');
+    expect(result.qualified).toBe(false);
+    expect(result.reasons.some(reason => reason.startsWith('invalid register:'))).toBe(true);
+  });
+  it('passes the optional capability ledger through to qualification validation', () => {
+    expect(qualification(synthetic(),'p1',{capabilityIds}).qualified).toBe(true);
+    const result = qualification(synthetic(),'p1',{capabilityIds:new Set()});
+    expect(result.qualified).toBe(false);
+    expect(result.reasons.some(reason => reason.includes('unknown capability'))).toBe(true);
+  });
+  it.each(['source_commit','app_digest','knowledge_digest','runner_image','provider_route','model_version','browser_os','budgets_digest','duration_ms'])(
+    'cannot qualify an executed attempt missing %s',key => {
+      const register = synthetic(); register.attempts.rows[0][key] = '';
+      expect(validateRegister(register).some(error => error.includes(key))).toBe(true);
+      const result = qualification(register,'p1');
+      expect(result.qualified).toBe(false);
+      expect(result.reasons.some(reason => reason.includes(key))).toBe(true);
+    });
+  it.each([
+    ['source_commit','  '],['app_digest','not-a-digest'],['knowledge_digest','unavailable'],
+    ['budgets_digest','sha256:123'],['duration_ms','-1'],['duration_ms','1.5']
+  ])('rejects malformed execution metadata %s=%s',(key,value) => {
+    const register = synthetic(); register.attempts.rows[0][key] = value;
+    expect(qualification(register,'p1').qualified).toBe(false);
+  });
+  it('also requires execution identity for actual failures', () => {
+    const register = synthetic(), attempt = register.attempts.rows[0];
+    Object.assign(attempt,{outcome:'Fail',source_commit:'',app_digest:'',duration_ms:''});
+    const errors = validateRegister(register);
+    for (const key of ['source_commit','app_digest','duration_ms']) expect(errors.some(error => error.includes(key))).toBe(true);
+  });
+  it('allows truthful unavailable usage and upstream identity in a route-level profile', () => {
+    const register = synthetic();
+    for (const attempt of register.attempts.rows) Object.assign(attempt,{usage:'unavailable',model_version:'unavailable'});
+    expect(validateRegister(register)).toEqual([]);
+    expect(qualification(register,'p1').qualified).toBe(true);
+  });
+  it.each(['Not run','Blocked','Invalid environment'])('preserves an unexecuted %s row without invented execution metadata',outcome => {
+    const register = synthetic(), attempt = register.attempts.rows[0];
+    for (const key of ['source_commit','app_digest','knowledge_digest','runner_image','provider_route','model_version','browser_os','budgets_digest','duration_ms','oracle_result','evidence_digest']) attempt[key] = '';
+    Object.assign(attempt,{outcome,usage:'unavailable',note:outcome === 'Invalid environment' ? 'External runner unavailable before dispatch' : ''});
+    expect(validateRegister(register)).toEqual([]);
+    const result = qualification(register,'p1');
+    expect(result).toMatchObject({qualified:false,pass:179});
+    expect(result.reasons.some(reason => reason.startsWith('invalid register:'))).toBe(false);
+  });
+  it('counts a critical violation in a later rerun even when the first 180 passed', () => {
+    const register = synthetic();
+    register.attempts.rows.push({...register.attempts.rows[0],attempt:'4',outcome:'Fail',critical_violation:'yes'});
+    const result = qualification(register,'p1');
+    expect(result).toMatchObject({qualified:false,pass:180,extraAttempts:1,critical:1});
+    expect(result.reasons).toContain('critical violations 1');
+  });
+  it('rejects prototype-named families without changing inherited counters', () => {
+    const register = synthetic(); register.tasks.rows[0].family = '__proto__';
+    expect(qualification(register,'p1').qualified).toBe(false);
+    expect(Object.hasOwn(Object.prototype,'tasks')).toBe(false);
+    expect(Object.hasOwn(Object.prototype,'attempts')).toBe(false);
   });
   it('accepts exactly 162/180 overall and 16/18 per family', () => {
     const register = synthetic();
