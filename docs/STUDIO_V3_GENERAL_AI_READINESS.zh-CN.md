@@ -9,6 +9,7 @@
 - 用户表达需求；AI 在私有草稿上工作；真实预览通过检查后展示候选；只有用户 Apply 才提交，Undo 可恢复。打印或导出不能偷偷提交未应用草稿。
 - 保留既有模型、服务、权限和预算。聊天界面改进不是增加数据披露、执行权限或延长超时的理由。
 - **当前仍是 Production Pilot，不是已获完整生产资格的 coding agent。** 不能因此把真实客户、付款、员工或其他机密数据发给 Demo 网关。
+- 最新正式版本已通过下方冻结的完整无代码路径实测；这只覆盖明确列出的虚构需求，不改写上述生产权限边界。
 
 ## 无代码试用路径
 
@@ -132,6 +133,27 @@ PR #69 的 `main@37d276885cbe046b0b9e77774d795711ebc2cf78` 已由 [CI 3867833477
 已实际通过 **7 文件 / 104 测试**。无模拟 provider 的实际 API/draft/binding smoke：隐藏标题保持隐藏；非法字体得到 256-byte 的精确 `operations[16].patch.fontSize` 数值范围提示且无私密 marker、未改草稿；显式修复后真实绑定 DOM 含 EQUIPMENT HANDOVER 的 20pt 标题和十个填写字段，source data/schema 哈希均相等、原项目不变。这不是新版本的真实模型或浏览器视觉验收。
 
 集成后完整 Node24 `build:site` 已实际通过 **229 文件 / 2,437 测试**与站点生成；71 个交付文件最大 300 行、141 个本地 Markdown 目标均有效。既有警告保留；干净提交门禁和新部署的真实六条需求仍单独验收。
+
+## 最新部署后的六项真实工作流：全部通过
+
+PR #70 的 `main@4f324caae9a014beef14f30cf6e85475df5b3f91` 已由 [CI 38681168826](https://github.com/yapweijun1996/printform-js/actions/runs/38681168826) 实际通过 **229 文件 / 2,437 测试**并完成部署，发布 shell 身份为 `4f324caae9a0`。干净 `a8863ea` 提交的 13 tools / 13 operations / 2 skills / 78 conformance examples 与全部 28 项原 baseline 评审通过。以下是该实际部署，不是工作树或 fixture：
+
+| 冻结需求 | 实际结果 |
+|---|---|
+| LIVE-READ | Pass；真实 finish_answer，无候选，完整保存项目哈希及 r0 不变 |
+| LIVE-CREATE | Pass；实际纸张有 EQUIPMENT HANDOVER、八个指定栏位和可打印签署线，无发票价格/合计；Preview 后人工 Apply，r0 → r1；Undo/Redo、独立 HTML 和 PDF 均执行，标题/字段及页内文本边界通过 |
+| LIVE-FOLLOWUP | Pass；实际 title 20pt、所有字段 label/value 12pt、logo 0；签署区截图已观察，人工 Apply，源数据不变 |
+| LIVE-BIND | Pass；实际绑定 `/employee/name`、`/employee/department`，显示自有虚构值 Fictional Alex Example / Training；人工 Apply，原数据/schema 不变 |
+| LIVE-REFERENCE | Pass；实际图像推理识别标题、字段及仅在像素中的 CYAN-47；真实 finish_answer、无候选，受保护快照哈希不变 |
+| LIVE-STOP | Pass；真实 POST 开始后 Stop，完整保存哈希与 r5 不变；后续带两项绑定的独立 HTML 仍 ready / validation errors 0 |
+
+实际共 **24 个完成的 Responses HTTP 200**，可核对 usage 为 **366,478 tokens**；被取消请求没有 usage，该值不是完整运行成本。响应模型只报告 `demo-auto`，不据此冒称固定底层模型。本轮无 page/harness errors、无 429、无参数错误，未改需求/模型/预算/几何条件；schema 修复提示的证据仍来自前述独立 API smoke 和消费者/安全回归，不能声称本轮模型发生过错误自修复。
+
+最终已绑定的 file-URI HTML 另经原生 Chromium 实际生成单页 PDF：两项自供虚构值、标题及全部字段在 HTML/PDF 中都存在，PDF 文本页内边界通过，page errors / gateway requests 均为 0。创建、连续修改、绑定、Stop 四组真实保存文件的数据与 schema 哈希逐对相等；实际截图已观察。系统打印预览警告保留，不冒充实体打印机认证。
+
+[冻结需求与脱敏实际记录](acceptance/STUDIO_V3_GENERAL_AI_LIVE_20261015.json) 随源码归档，包含精确版本、实际工具序列、哈希及明确限制；原始本机 JSON、HTML/PDF 与截图保留。前述失败记录仍成立，不改写、不计成成功；六项 smoke 不进入或代替正式 G8 的 60×3 语料。
+
+最终文档/脱敏归档检查实际覆盖 **72 文件 / 142 个有效本地 Markdown 目标**，最大 300 行；站点生成与原 baseline 的全部代理契约评审通过。本次归档不修改运行时代码，不把文档发布的新版本冒充重新执行过模型的版本。
 
 ## 尚未获得的生产资格
 
