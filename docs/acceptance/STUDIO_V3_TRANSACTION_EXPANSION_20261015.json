@@ -1,0 +1,130 @@
+{
+  "date": "2026-10-15",
+  "scope": "General Studio fictional business print coverage, not production ERP connectivity, posting, bank or statutory certification",
+  "publishedStudioTestedSource": "f059ee547f9dfd6f63105b9a4225885b8335ab56",
+  "fixtureModule": "tests/fixtures/erp-business-acceptance.js",
+  "fixtureSha256": "ef998f9a93d398f9f7cb692d89844e9a134ce1d9282737d27561ce98684f8c87",
+  "actualPublishedBrowserCases": [
+    {
+      "name": "repeated-ccar",
+      "outcome": "pass",
+      "sourceDataSha256": "3530858e666131a8462d039226a9a20c1f2fd74f1cd74e3f75dab9b82492d4a4",
+      "htmlPages": 2,
+      "pdfPages": 2,
+      "independentOracle": "Actual Open/Save/Reopen/Export, source data/design conservation, exact required financial facts, file-URI HTML ready and parsed PDF document identity",
+      "visualScreenshotObserved": true
+    },
+    {
+      "name": "supplier-purchase-order",
+      "outcome": "pass",
+      "sourceDataSha256": "da68542c2ca8004bf6e346f1d93ca145c33543071ea6f1e4cee8946efbb7b590",
+      "htmlPages": 2,
+      "pdfPages": 2,
+      "independentOracle": "Actual Open/Save/Reopen/Export, source data/design conservation, exact required financial facts, file-URI HTML ready and parsed PDF document identity",
+      "visualScreenshotObserved": true
+    },
+    {
+      "name": "supplier-purchase-invoice",
+      "outcome": "pass",
+      "sourceDataSha256": "e8725b44281af8e9d84ad6d46ba676ed89ef76fe2458bce296109f33984e5c4d",
+      "htmlPages": 2,
+      "pdfPages": 2,
+      "independentOracle": "Actual Open/Save/Reopen/Export, source data/design conservation, exact required financial facts, file-URI HTML ready and parsed PDF document identity",
+      "visualScreenshotObserved": true
+    },
+    {
+      "name": "split-payment",
+      "outcome": "pass",
+      "sourceDataSha256": "283d161cf4614831fdc2fb081925cbff18e8f32cce306ecb25697e94be2385a5",
+      "htmlPages": 1,
+      "pdfPages": 1,
+      "independentOracle": "Actual Open/Save/Reopen/Export, source data/design conservation, exact required financial facts, file-URI HTML ready and parsed PDF document identity",
+      "visualScreenshotObserved": true
+    },
+    {
+      "name": "split-receipt",
+      "outcome": "pass",
+      "sourceDataSha256": "f53f73513120bce606643f2da6b54a63cf58de50133a0fb407040007ddf88128",
+      "htmlPages": 1,
+      "pdfPages": 1,
+      "independentOracle": "Actual Open/Save/Reopen/Export, source data/design conservation, exact required financial facts, file-URI HTML ready and parsed PDF document identity",
+      "visualScreenshotObserved": true
+    },
+    {
+      "name": "historical-pcar",
+      "outcome": "pass",
+      "sourceDataSha256": "4c246bc8d29ec763e51fc7051033048983a7c98592aea0a191f724eb7e103e9e",
+      "htmlPages": 2,
+      "pdfPages": 2,
+      "independentOracle": "Actual Open/Save/Reopen/Export, source data/design conservation, exact required financial facts, file-URI HTML ready and parsed PDF document identity",
+      "visualScreenshotObserved": true
+    },
+    {
+      "name": "negative-sales-invoice",
+      "outcome": "pass",
+      "sourceDataSha256": "2c7ebcafc9c18b247f6b25c716bc9ef3e4d8b31a6db4cdac7665b8b76f5a8603",
+      "htmlPages": 1,
+      "pdfPages": 1,
+      "independentOracle": "Actual Open/Save/Reopen/Export, source data/design conservation, exact required financial facts, file-URI HTML ready and parsed PDF document identity",
+      "visualScreenshotObserved": true
+    }
+  ],
+  "preservedFailures": [
+    {
+      "name": "historical-pcar",
+      "reason": "Harness incorrectly expected three gross decimals; supplied work-done projection preserves four, independently of header currency precision."
+    },
+    {
+      "name": "negative-sales-invoice",
+      "reason": "PDF text extraction inserts a line-wrap space in the long document number. Corrected identity comparison removes whitespace only, preserving every non-whitespace character."
+    }
+  ],
+  "recovery": "Only the two faulty harness observations rerun, no runtime/model/budget changes; five original passes retained. Original failure JSON and screenshots retained.",
+  "newUnitBoundaryCases": 5,
+  "threeEngineLifecycle": {
+    "scope": "Working tree after f059ee5 including the separately delivered qualification guard; not claimed as clean release-source execution",
+    "browsers": [
+      "chromium",
+      "firefox",
+      "webkit"
+    ],
+    "retries": 0,
+    "stats": {
+      "startTime": "2026-10-15T14:27:00.633Z",
+      "duration": 112209.902,
+      "expected": 42,
+      "skipped": 0,
+      "unexpected": 0,
+      "flaky": 0
+    },
+    "newCommercialCases": 18,
+    "commercialKinds": [
+      "SalesInvoice",
+      "PurchaseOrder",
+      "PurchaseInvoice"
+    ],
+    "commercialPaper": [
+      "A4",
+      "LETTER"
+    ],
+    "additionalExistingClaimSettlementCases": 24,
+    "checks": [
+      "complete source row/value conservation and order across fragments",
+      "actual text Range remains within paper bounds",
+      "saved data/design unchanged; Open/Save/Reopen/offline Export",
+      "physical print-media sheet sizes",
+      "existing canonical/raw PCAR, CCAR and mixed/adjusted/advance Payment/Receipt"
+    ],
+    "report": "/tmp/printform-next-transaction-e2e-20261015/summary.json"
+  },
+  "network": {
+    "modelRequests": 0,
+    "pageErrors": []
+  },
+  "limitations": [
+    "No live ERP connection, authorization/posting, bank execution, statutory or physical printer certification",
+    "Some CCAR and default purchase fixtures have a mostly empty final footer page; paper utilization remains a layout improvement, not data loss",
+    "New commercial profile does not qualify A5/Legal/landscape or all fonts/formats",
+    "Seven PDFs parsed here; other browser-generated PDFs are artifacts, not separately parsed qualification"
+  ]
+}
