@@ -36,6 +36,7 @@ test('OBS-05 frozen fictional rubric detects native defects; actual completion c
     await ready(page);
     if(index===0){await page.locator('[data-mode=validate]').click();await page.getByRole('button',{name:'Run all synthetic samples',exact:true}).click();await ready(page);}
     if(!await page.locator('#ai-prompt').isVisible())await page.locator('[data-ai-toggle]').click();
+    if(!await page.locator('.ai-sharing').evaluate(node=>node.open))await page.locator('.ai-sharing>summary').click();
     await page.locator('#ai-observation-text').check();await page.locator('#ai-observation-pixels').check();
     await page.locator('#ai-prompt').fill('Compare this fictional static form using the current observation.');await page.locator('[data-ai-send]').click();
     await expect.poll(()=>page.evaluate(()=>window.__comparisonWire.length),{timeout:60000}).toBe((index+1)*5);

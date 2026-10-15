@@ -42,12 +42,11 @@ test('Validate and real AI wire enforce explicit, single-run text authorization 
   await validate.click(); await expect(validate).toBeVisible({timeout:120000}); await ready(page);
   await page.locator('[data-ai-toggle]').click();
   const consent=page.locator('#ai-observation-text'); await expect(consent).not.toBeChecked();
-  await expect(page.locator('[data-ai-send-reason]')).toContainText('Bound values blocked');
   await send(page,'Describe the form context.'); await answer(page,'Default text disclosure rejected.');
   let wire=await page.evaluate(()=>window.__semanticWire);
   expect(output(wire[1],'call_1').output).toContain('OBSERVATION_DISCLOSURE_REQUIRED');
   expect(JSON.stringify(wire)).not.toMatch(/AUTHORIZED_BROWSER_LABEL|AUTHORIZED_BROWSER_STATIC|UNKNOWN_BROWSER_VALUE|SENSITIVE_BROWSER_SECRET|PIXEL_BROWSER_CANARY/);
-  await consent.check(); await expect(page.locator('[data-ai-send-reason]')).toContainText('authorized for one run');
+  await page.locator('.ai-sharing>summary').click();await consent.check();
   await send(page,'Describe the authorized context.'); await answer(page,'Authorized semantic context observed.');
   wire=await page.evaluate(()=>window.__semanticWire);
   const observed=JSON.parse(output(wire[4],'call_4').output);

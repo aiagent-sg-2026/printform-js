@@ -10,8 +10,8 @@ for (const viewport of [{width:1280,height:720},{width:1024,height:768},{width:3
     await expect(page.locator('#ai-panel')).toBeHidden();
     await page.locator('.paper-toolbar [data-ai-add]').click();
     await page.setViewportSize(viewport);
-    const tags=page.locator('[data-ai-element-tags]'),permissions=page.locator('.ai-observation-disclosure');
-    await expect(tags).toBeVisible();await expect(permissions).toBeVisible();
+    const tags=page.locator('[data-ai-element-tags]'),permissions=page.locator('.ai-observation-disclosure'),scroll=page.locator('.ai-conversation-scroll');
+    await expect(tags).toBeVisible();await page.locator('.ai-sharing>summary').click();await expect(permissions).toBeVisible();
     await expect(page.locator('#ai-scope')).toHaveValue('selected');
     await expect(page.locator('#ai-observation-text')).not.toBeChecked();
     await expect(page.locator('#ai-observation-pixels')).not.toBeChecked();
@@ -22,7 +22,7 @@ for (const viewport of [{width:1280,height:720},{width:1024,height:768},{width:3
     expect(before['.ai-observation-disclosure'].height).toBeGreaterThanOrEqual(48);
     const frames=[];
     for(const fraction of [0,.5,1]) {
-      await permissions.evaluate((node,fraction)=>node.scrollTop=(node.scrollHeight-node.clientHeight)*fraction,fraction);
+      await scroll.evaluate((node,fraction)=>node.scrollTop=(node.scrollHeight-node.clientHeight)*fraction,fraction);
       frames.push(await measure());
       await expect(page.locator('#ai-prompt')).toBeInViewport({ratio:1});await expect(page.locator('[data-ai-send]')).toBeInViewport({ratio:1});
       await expect(page.locator('[data-ai=close]')).toBeInViewport({ratio:1});

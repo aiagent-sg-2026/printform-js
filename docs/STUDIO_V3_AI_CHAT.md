@@ -1,13 +1,13 @@
 # Studio v3 framework-native Pi authoring
 
-The sidepanel keeps a bounded conversation and composer. Send is the deliberate
-action accepting the adjacent recipient/context notice. No consent checkbox
-or background send is used. Enter sends; Shift+Enter and IME Enter do not.
-There is no request preview control; what is sent is the bounded context described in
-the studio v3 doc. The recipient notice is the line "Sent to the Demo gateway · use fictional data only"
-under the message box, which stays on screen for the whole conversation, plus the text in
-the Settings menu. If the current context differs from the one prepared when the user
-started typing, Send refreshes it and stops before inference.
+The general-purpose form assistant keeps a bounded conversation and anchored composer.
+Send deliberately shares the described layout/binding metadata with the existing Demo gateway;
+it does not authorize preview-text or pixel disclosure. Those optional disclosures require
+separate, unchecked, one-run controls; neither expands the host's bound-value/asset policy.
+Enter sends; Shift+Enter and IME Enter do not.
+Nothing is sent by a starter, attachment picker, opening the panel or expanding a disclosure.
+The recipient/fictional-data notice remains visible. If the prepared context changes while
+the user is typing, Send refreshes it and stops before inference.
 
 Edit scope is derived, not chosen: elements added with Add to chat limit the edit to
 those references; with none, the whole form is editable. A proposal that touches
@@ -15,32 +15,25 @@ anything outside the references is rejected (`UNSAFE_SCOPE`).
 
 ## Panel layout
 
-- **Empty conversation.** An illustration, "What would you like to improve?", four starter
-  chips (they fill the message box and send nothing), an Attach reference card, the numbered
-  Ask AI, Preview, Apply flow. The illustration gives way on wide
-  windows up to 940px high and on any window up to 760px high; the view starts at its top.
-- **Scope card**, above the conversation: "Scope: Whole form" (amber) or "n selected
-  element(s)" (blue), with "Changes will be previewed before applying." and how to limit a
-  change. The control mirrors the derived scope; it does not set it. Choosing Whole form
-  removes every reference. "Selected elements" is disabled when there are none, and the
-  control is locked while a request or Apply runs. On windows up to 760px high only the first
-  line is kept.
-- **Composer.** A plus button (attach a reference), a one-line message box that grows with
-  its text (capped by CSS) and a paper-plane Send. Files can be dropped on the composer or
-  anywhere in the conversation. The composer is a column in which only the References area
-  and the element tags shrink and scroll inside themselves; the message box, Send, its reason
-  and the status line keep their size, so they stay on screen on a phone or a short window.
-- **Image support.** Attaching an image (or a visual PDF) checks the model's image support at once;
-  it sends no reference file, only the model list request. The result and its "Check image support"
-  retry button sit in a row pinned to the bottom of the scrolling References area, so the button is
-  never hidden when the references are tall. Changing the references clears the result, and the next
-  image attached is checked again.
-- **The line under the message box.** One element, two contents. Normally it shows the
-  recipient notice. When Send is disabled for image support that is not confirmed, or while
-  references are still being read, the reason replaces it (amber) and goes back to the
-  notice when the cause is gone. It is tied to Send with `aria-describedby`. Other disabled
-  states (a running request, Apply, restore) are visible elsewhere and keep the notice.
-- **Header.** Settings (the "…" menu) and Close. There is no Back button.
+- **Empty conversation.** Four general-form starters fill the input without sending.
+  The review starter asks for advice and receives a read-only grant; the others request edits.
+  The visible sequence is Ask → Preview → Apply → Undo if needed.
+- **Scope.** Neutral Whole form or explicitly referenced elements. Choosing Whole form removes
+  references; selected scope cannot be chosen without references. Scope is locked while busy.
+- **One scrolling body.** Conversation, selected-element comments, compact references and
+  optional sharing controls use `.ai-conversation-scroll`. The message box, Send/Stop and
+  reason/recipient line remain anchored, including at narrow and short viewports.
+- **Messages.** User and assistant roles are distinct. Change details are initially collapsed;
+  Preview/Apply/Undo stay outside the details. Reading earlier messages does not force a jump
+  to the bottom on every render.
+- **Attachments.** One visible attach control opens the hidden native file picker. Files may
+  also be dropped. Names and removal remain compact; excerpts and thumbnails expand on demand.
+  PDF reading controls appear only for PDF context. Actual image-support checks remain required.
+- **Sharing.** Expanding the sharing disclosure exposes the same explicit one-run label/static
+  text/path and pixel checkboxes. Expansion itself is not consent; neither checkbox is
+  preselected, and neither grants arbitrary dataset-value or denied-asset access.
+- **Header.** Settings and Close. Capability diagnostics live in Settings, not the everyday
+  attachment area. A disabled Send explains an actual blocker through `aria-describedby`.
 
 ## Working in steps
 
@@ -92,10 +85,9 @@ current form.
 ## Authoring and questions
 
 A request that reads like a question is read-only: any proposal returned for it is rejected
-(`UNSAFE_PROPOSAL`). Wording that names fonts and sizes counts as a question unless it also
-contains a change verb (change, set, make, increase, reduce, adjust, improve, enhance, tighten,
-enlarge, shrink). The starting actions in the empty state must stay edit requests, and a test
-checks each of them against this rule.
+(`UNSAFE_PROPOSAL`). Advice requests such as “How should I…”, “Should I…” and “Please explain…”
+remain questions; an explicit “Can you improve…” request remains an edit. Starter wording is
+not a test contract: the host enforces the request's effect grant, not a button label.
 
 In a step run the host builds a frozen effect grant before the first model call. A question gets the read-only grant:
 the model is shown only the read, notes, `finish_answer` and `report_blocked` tools, so it cannot change a draft or
@@ -103,6 +95,11 @@ propose a change, and an answer needs a prior read of a guide, the form context 
 gets the design grant (private draft plus a proposal for Preview and Apply). The question check can only narrow the
 grant; it never widens it, and no argument, model text or reference text can change it. Data and coding grants exist
 by name only and fail as unavailable until their tools are added.
+
+General forms reuse the supported section slots. The agent can create nonfinancial static
+write-in fields, relabel sections, set the heading and hide irrelevant invoice tables/totals.
+It cannot invent source paths or business values. Declared generic bindings can be used;
+the supplied dataset and existing protected financial bindings remain unchanged.
 
 Apply is idempotent. The host mints one intent key per proposal (never from the model) and the Apply button carries it.
 A second click, a queued repeat or a late repeat for a key already seen waits for the original outcome and does nothing
@@ -160,6 +157,11 @@ current passing layout/data checks and draft Apply/Discard/Stay protection,
 then rechecks identity at CommandBus queue execution. It creates one history
 entry. Card Undo is bound to that exact bus/revision/epoch. Printing/exporting
 are disabled while an unapplied candidate is visible, including restore failures.
+
+Stop and final-response boundaries recheck abort and document identity even when a transport
+ignores abort. Stopping during discovery prevents inference. A failed or read-only run that
+inspected a private candidate restores the committed preview before publishing its answer;
+failed restoration keeps the unapplied/print-export block instead of claiming recovery.
 
 ## Disclosure and storage
 
@@ -223,23 +225,26 @@ was accepted and the model answered. So function tools are enabled for the proje
 
 ## Status of the tool loop
 
-Verified against the real gateway: function tools, one call with its argument, and the replay with encrypted reasoning
-(the probe above). Verified only against a scripted gateway: everything else, namely long runs (request size, session
-rotation every 15 requests, token expiry), the full `apply_operations` flow, reference images with tools, streamed progress
-and the session request and concurrency caps.
+The real gateway has now also completed a general-form advice question and an equipment
+handover draft: respectively five and six actual Responses calls, using `demo-auto`, on the
+2026-10-15 pre-change baseline. The draft contained the requested nonfinancial write-in fields,
+hid items/totals, and remained unapplied at revision zero. This is dated route-level evidence,
+not qualification of a fixed upstream model, the changed code, long sessions or all tasks.
 
-The first v3 capability registry and bundled guide are implemented. Nine tools and thirteen authoring operation schemas
-are declared in `agent-registry.js` / `agent-operation-schemas.js`; tools use those contracts directly. `get_capabilities`
-returns the release identity, supported operations, skill index and actual step limits. `read_skill` loads the bounded
-`form-authoring` guide from trusted bundled product text. The step prompt contains orchestration rules rather than a copy
-of the single-step operation manual. These resources use local browser tools, not Pi's filesystem/shell skill loader.
+The current generated package declares thirteen tools, thirteen authoring operation schemas
+and two skills. `get_capabilities` returns its immutable release identity and schemas;
+`read_skill` reads trusted bundled guides. Tools operate on browser-local semantic form state,
+not Pi's terminal filesystem/shell loader.
 
 Builds generate capabilities, knowledge index, guide, agent manifest and capability changes. The bundle embeds the same
 release/package identity. Before its first model request, a built step run checks the immutable release manifest against
 that identity and the page asset prefix; unavailable/mixed resources stop the run. The complete package joins the
 hash-verified offline shell. Unbundled tests use an explicitly unverified development identity.
 
-Synthetic Pi and browser tests cover discovery, guide reading, editing, inspection, Apply/Undo and a mixed-release block.
-The real model's independent guide uptake and full task competence are not yet qualified. Creating a new form, asset
-import, source execution, dataset mutation and preview-image observation remain outside this first slice. The gateway
-probe's `read_skill` stand-in is separate from the new product tool. See [Registry maintenance](STUDIO_V3_AGENT_REGISTRY.md).
+Synthetic Pi and browser checks cover discovery, guide reading, editing, inspection, Apply/Undo,
+stale/aborted responses and mixed-release rejection. General write-in form authoring is supported
+within the typed operations; arbitrary source execution, dataset mutation and full coding-agent
+qualification are not. Preview observation requires its explicit disclosure grants.
+See [current production-readiness evidence](STUDIO_V3_GENERAL_AI_READINESS.zh-CN.md) and
+[Registry maintenance](STUDIO_V3_AGENT_REGISTRY.md); neither UI polish nor a live draft proves
+G6–G9 or approval to send confidential production data through the Demo route.

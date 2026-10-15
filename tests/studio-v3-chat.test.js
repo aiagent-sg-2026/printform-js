@@ -1,6 +1,6 @@
 import { describe,it,expect } from 'vitest';
 import { newProject } from '../studio-v3/model.js';
-import { parseChatReply,typographyAnswer,chatRequest } from '../studio-v3/ai-chat-protocol.js';
+import { parseChatReply,typographyAnswer,chatRequest,readOnlyRequest } from '../studio-v3/ai-chat-protocol.js';
 import { Conversation,cleanMessages } from '../studio-v3/ai-conversation.js';
 import { runLayoutHarness } from '../studio-v3/ai-harness.js';
 const project = newProject(), color = {target:'style',property:'color',value:'#163a65'};
@@ -15,6 +15,22 @@ describe('closed browser chat protocol',()=> {
   });
   it.each([{kind:'answer',message:'x',edits:[color]},{kind:'answer',message:''},{kind:'answer',message:'x',code:'eval(1)'},{kind:'proposal',summary:'x',edits:[color],message:'x'},{kind:'tool',message:'x'}])('rejects mixed/unsafe envelope %j',value=>expect(()=>parseChatReply(reply(value),project)).toThrow());
   it('cannot convert a read-only font question into an edit',()=>expect(()=>parseChatReply(reply({kind:'proposal',summary:'x',edits:[color]}),project,{request:'Current font size how much?'})).toThrow());
+  it.each(['How should I bind an attendance field?','How many pages does this form have?','Should I add a signature field?','May I change the paper size?','Tell me how to add a field.','Please explain the binding options.','如何绑定签到人姓名？','应该如何调整表格？','请问怎么添加签名栏？'])('keeps advice question read-only: %s',request=> {
+    expect(readOnlyRequest(request)).toBe(true);
+    expect(()=>parseChatReply(reply({kind:'proposal',summary:'Unrequested edit',edits:[color]}),project,{request})).toThrow('UNSAFE_PROPOSAL');
+  });
+  it.each(['Create a visitor registration form.','Please add a signature field.','Can you create an attendance form?','Could you please bind this field?'])('retains deliberate authoring request: %s',request=> {
+    expect(readOnlyRequest(request)).toBe(false);
+  });
+  it.each(['reply','inspection'])('rejects context changed during %s before delivering a result',async phase=> {
+    let stale = false, calls = 0;
+    await expect(runLayoutHarness({project,alias:'demo-fast',request:'demo',signal:new AbortController().signal,
+      assertContext:()=> { if (stale) throw Object.assign(new Error('STALE_PROPOSAL'),{code:'STALE_PROPOSAL'}); },
+      transport:{plan:async()=> { calls++; if (phase === 'reply') stale = true; return {text:reply(phase === 'reply' ? {kind:'answer',message:'Old context answer'} : {kind:'proposal',summary:'Navy',edits:[color]})}; }},
+      inspectCandidate:async()=> { stale = true; return {report:{status:'ready'}}; }
+    })).rejects.toMatchObject({code:'STALE_PROPOSAL'});
+    expect(calls).toBe(1);
+  });
   it('enforces selected scope locally, even if a model ignores it',()=> {
     expect(()=>parseChatReply(reply({kind:'proposal',summary:'x',edits:[color]}),project,{scope:{mode:'selected',id:'items-description'}})).toThrow('UNSAFE_SCOPE');
     const width = {target:'items-description',property:'width',value:35};

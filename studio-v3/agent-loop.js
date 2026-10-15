@@ -25,11 +25,13 @@ export const AGENT_PROMPT = promptFor(createGrant('design'));
 // the existing Preview / Apply / Undo takes it unchanged; rejects with a coded error otherwise.
 export async function runAgentLoop({models,model,project,request,scope = {mode:'whole'},references = [],context,inspect,signal,media = [],memory = createAgentMemory(),failure = () => null,onStep = () => {},limits = DEMO_CONFIG.agent,profile = 'design',systemPrompt,finalizeAnswer,verifyRelease = verifyAgentRelease,baseRevision = 0,assertCurrent = () => {},runId,observationAuthorization,readObservationHost,capturePixels}) {
   signal.throwIfAborted();
+  assertCurrent();
   assertImageParts(media);
   const images = media.map(part=> { const [,mimeType,data] = /^data:(image\/[a-z]+);base64,(.+)$/.exec(part.image_url); return {type:'image',data,mimeType}; });
   const halt = new AbortController();
   const draft = createDraft(project,{scope,request,references}), outcome = {}, deadline = AbortSignal.timeout(limits.maxRunMs), stop = AbortSignal.any([signal,deadline,halt.signal]);
   const identity = await verifyRelease({signal:stop});
+  stop.throwIfAborted(); assertCurrent();
   // The grant comes from the host (profile is chosen by the caller from host state), never from the model.
   const grant = createGrant(profile,{scope});
   const tools = createAgentTools({draft,context,inspect,signal:stop,outcome,limits,identity,stopRun:()=>halt.abort(),memory,onStep,grant,finalizeAnswer,baseRevision,assertCurrent,runId,observationAuthorization,readObservationHost,capturePixels});
@@ -46,6 +48,7 @@ export async function runAgentLoop({models,model,project,request,scope = {mode:'
     signal.throwIfAborted();
     if (deadline.aborted) throw fail('AGENT_TIMEOUT');
     if (failure()) throw failure();
+    assertCurrent();
     if (outcome.answer) return {kind:'answer',...outcome.answer,turns:outcome.turns,iterations:outcome.turns,steps:0};
     if (outcome.proposal) return {...outcome.proposal,turns:outcome.turns,iterations:outcome.turns,steps:draft.count};
     if (outcome.blocked) throw Object.assign(fail(outcome.blocked.code),outcome.blocked.reason ? {reason:outcome.blocked.reason} : {});

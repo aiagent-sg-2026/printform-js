@@ -1,5 +1,9 @@
 # Studio v3 bounded AI layout slice — review evidence
 
+Current-cycle evidence (2026-10-15): [general-purpose browser AI readiness](STUDIO_V3_GENERAL_AI_READINESS.zh-CN.md).
+The records below are historical: their old provider denial, aliases, capabilities and test
+counts must not be presented as the current release's state or as full production approval.
+
 Base: `fd32f9085930df86744ecd8819e4c89db405efc5` (main). Branch:
 `feat/studio-v3-ai-editor`. Local isolated clone:
 `/Users/yapweijun/Documents/Codex/2026-10-01/task-4/printform-v3-ai`.

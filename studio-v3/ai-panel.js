@@ -63,7 +63,9 @@ export class AIPanel {
     bar.dataset.scope = count ? 'selected' : 'whole';
     selected.disabled = !count; selected.textContent = count ? `${count} selected element${count > 1 ? 's' : ''}` : 'Selected elements'; choice.value = count ? 'selected' : 'whole';
     const how = count ? 'Choose Whole form to edit any part.' : innerWidth <= 900 ? 'To limit them, close this panel, tap an element, then press Add to chat.' : 'To limit them, select an element and press Add to chat.';
-    this.node('.ai-scope-help').textContent = `Changes will be previewed before applying. ${how}`;
+    this.node('.ai-scope-help').textContent = count ? 'Only referenced elements can change.' : 'Any part can change. Preview before Apply.';
+    choice.title = how; choice.setAttribute('aria-description',how);
+    if (!count && innerWidth <= 900) this.node('.ai-scope-help').textContent += ' To limit edits, close AI, select an element, then Add to chat.';
   }
   documentKey() { return this.getBus()?.project.manifest.documentId; }
   payload() {
@@ -161,22 +163,27 @@ export class AIPanel {
     if (request.length > 40000) { this.message('The shared context is too large. Clear conversation or shorten the request.'); return; }
     const bus = this.getBus(), revision = bus.revision, project = structuredClone(bus.project), baseDesign = JSON.stringify(project.manifest.studioV3), baseData = JSON.stringify(project.sampleData), epoch = this.epoch, selection = this.getSelection(), scope = JSON.stringify(this.scope()), references = JSON.stringify(payload.references), attachmentVersion = this.referenceFiles?.version, media = this.referenceFiles?.projection().media || [];
     const assertContext = ()=> {
+      signal.throwIfAborted();
+      if (id !== this.generation) throw fail('STALE_PROPOSAL');
       assertProposalCurrent(this.getBus(),{bus,revision,baseDesign});
       if (attachmentVersion !== this.referenceFiles?.version || baseData !== JSON.stringify(bus.project.sampleData) || epoch !== this.epoch || selection !== this.getSelection() || scope !== JSON.stringify(this.scope()) || references !== JSON.stringify(this.elementTags?.payload() || [])) throw fail('STALE_PROPOSAL');
       validateElementReferences(bus.project,payload.references,bus.revision);
     };
     const {id,signal} = this.begin(); this.conversation.expire(); this.proposal = null; this.checked = false;
+    let inspected = false;
     this.pendingMessage = payload.request; this.conversation.add('user',[payload.request,...payload.references.filter(r=>r.comment).map(r=>`${r.id}: ${r.comment}`)].join('\n'),'answer',{documentKey:this.documentKey()}); this.node('#ai-prompt').value = ''; this.share(); this.update();
     try {
       const runId = crypto.randomUUID(), readObservationHost = ()=>this.observationAccess.state(runId);
       const observationAuthorization = await this.observationAccess.consume(runId); assertContext(); signal.throwIfAborted();
       if (this.viewing) { await this.restore(); this.viewing = false; }
+      assertContext();
       const aliases = await this.transport.discover(signal);
+      assertContext();
       if (!this.setModels(aliases)) { if (this.modelChosen) throw fail('DEMO_MODEL_UNAVAILABLE'); alias = this.node('#ai-model').value; }
       if (media.length && !this.transport.supportsImages?.(alias)) throw fail('DEMO_IMAGE_CAPABILITY_UNVERIFIED');
       assertContext();
       const inspectCandidate = async proposal=> {
-        assertContext(); this.viewing = true; this.update(); this.sync();
+        assertContext(); inspected = true; this.viewing = true; this.update(); this.sync();
         const report = await this.renderPreview(proposal.candidate); assertContext(); signal.throwIfAborted();
         return {report,quality:inspectProject(proposal.candidate,report)};
       };
@@ -198,12 +205,12 @@ export class AIPanel {
       }
       result ||= await runLayoutHarness({transport:this.transport,alias,request,project,signal,chat:payload,assertContext,media,inspectCandidate,onPhase});
       if (id !== this.generation) return;
-      assertProposalCurrent(this.getBus(),{bus,revision,baseDesign});
-      if (epoch !== this.epoch || selection !== this.getSelection() || scope !== JSON.stringify(this.scope())) throw fail('STALE_PROPOSAL');
+      assertContext();
+      if (result.kind === 'answer' && this.viewing) { await this.restoreUnapplied(); if (id !== this.generation) return; assertContext(); }
       const card = this.conversation.add('assistant',result.kind === 'answer' ? result.message : result.summary,result.kind === 'answer' ? 'answer' : 'ready',{documentKey:this.documentKey(),observationProtected:observationAuthorization.text || observationAuthorization.values,...(result.diff ? {diff:result.diff} : {})});
       // The host mints one intent key per proposal; Apply is idempotent under it (see intent-ledger.js).
       if (result.kind === 'proposal') this.proposal = {...result,bus,revision,baseDesign,epoch,selection,scope,cardId:card.id,intentKey:newIntentKey()};
-      if (result.kind === 'answer' && this.viewing) { await this.restore(); this.viewing = false; }
+      if (result.kind === 'answer' && this.viewing) return;
       // Wide screens preview the unapplied candidate right away; narrow screens keep the Preview button (it hides the full-screen panel).
       const auto = result.kind === 'proposal' && innerWidth > 900, next = auto && result.inspection?.ready ? 'Review the paper preview, then Apply.' : 'Preview before Apply.';
       const details = `${alias} · ${result.kind === 'answer' ? '' : `r${revision} · ${result.mode === 'steps' ? `${result.turns} steps` : `${result.iterations} inspection round(s)`} · `}Tokens: ${result.usage?.total ?? 'unavailable'}`;
@@ -211,6 +218,7 @@ export class AIPanel {
       if (auto) await this.preview(true).catch(error=>this.error(error));
     } catch (error) {
       if (id === this.generation) { const message = errorMessage(this.timedOut === id ? fail(this.timeoutCode) : error); this.conversation.add('assistant',message,error.name === 'AbortError' && this.timedOut !== id ? 'cancelled' : 'error',{request:payload.request,documentKey:this.documentKey()}); this.message(''); }
+      if (id === this.generation && inspected && this.viewing && !this.proposal) await this.restoreUnapplied();
     } finally { if (id === this.generation) { this.transport.clearSession(); this.finish(); this.share(); this.sync(); } }
   }
   present() { this.update(); }
@@ -245,11 +253,12 @@ export class AIPanel {
     finally { this.applying = false; this.busy = false; this.proposal = null; this.checked = false; this.viewing = !canonical; this.update(); this.share(); this.sync(); }
   }
   canUndo(card) { return card.appliedBus === this.getBus() && card.appliedRevision === this.getBus()?.revision && card.appliedEpoch === this.epoch && this.getBus()?.history.canUndo; }
-  async undoCard(id) { const card = this.conversation.messages.find(m=>m.id === id); if (!card || !this.canUndo(card)) throw fail('STALE_PROPOSAL'); await this.undo(()=> { if (!this.canUndo(card)) throw fail('STALE_PROPOSAL'); }); card.status = 'expired'; this.message('Undid this layout edit. ERP data remains supplied by your dataset.'); this.update(); }
+  async undoCard(id) { const card = this.conversation.messages.find(m=>m.id === id); if (!card || !this.canUndo(card)) throw fail('STALE_PROPOSAL'); await this.undo(()=> { if (!this.canUndo(card)) throw fail('STALE_PROPOSAL'); }); card.status = 'expired'; this.message('Undid this layout edit. Your source data is unchanged.'); this.update(); }
   retry(id) { if (this.busy || this.applying) return; const card = this.conversation.messages.find(m=>m.id === id); this.node('#ai-prompt').value = card?.request || [...this.conversation.messages].reverse().find(m=>m.role === 'user')?.text || ''; this.share(); this.node('#ai-prompt').focus(); }
   async clear() {
     if (this.applying || this.restoring || ((this.busy || this.proposal || this.node('#ai-prompt').value) && !confirm('Clear this conversation, input, element comments and unapplied AI suggestion? The form and datasets stay unchanged.'))) return;
     const viewing = this.viewing; this.invalidate('Conversation cleared.'); this.observationAccess.reset(); this.conversation.messages = []; this.node('#ai-prompt').value = ''; this.elementTags?.clear(false); this.referenceFiles?.clear(); if (viewing) await this.restoreUnapplied(); this.share(); this.update();
+    this.node('.ai-conversation-scroll').scrollTop = 0;
   }
   snapshot() { return {open:Boolean(this.open),prompt:this.node('#ai-prompt').value || this.pendingMessage || '',alias:this.node('#ai-model').value,messages:this.conversation.snapshot(),references:this.elementTags?.snapshot() || []}; }
   restoreSnapshot(saved) {
@@ -276,6 +285,6 @@ export class AIPanel {
   showSendReason() {
     const files = this.referenceFiles, node = this.node('[data-ai-send-reason]');
     const reason = files?.reading ? 'Reading references… Send unlocks when they are ready.' : files?.imageBlocked() ? 'Send is off: image support is not confirmed for this model. Use Check image support, or remove the image.' : '';
-    node.textContent = reason || `${RECIPIENT_NOTICE}. ${this.observationAccess?.notice() || ''}`; node.dataset.kind = reason ? 'reason' : 'notice';
+    node.textContent = reason || `${RECIPIENT_NOTICE}. ${this.observationAccess?.notice({compact:true}) || ''}`; node.dataset.kind = reason ? 'reason' : 'notice';
   }
 }

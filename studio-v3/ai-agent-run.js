@@ -21,6 +21,6 @@ export async function runPanelAgent({transport,alias,payload,media,project,signa
       context:(current,info)=>chatRequest(current,payload,{mode:'steps',...info}),inspect:inspectCandidate,capturePixels,signal,onStep,profile,baseRevision,assertCurrent:assertRun,runId,observationAuthorization,readObservationHost,
       // Measured print sizes come from the committed preview, never from the model's words.
       finalizeAnswer:message=>measuredFontQuestion(payload.request,payload.conversation) ? typographyAnswer(payload.typography,payload.scope) : message});
-    return {...result,mode:'steps',usage:provider.usage()};
+    return {...result,alias,mode:'steps',usage:provider.usage()};
   } finally { revokeObservationAuthorization(observationAuthorization); }
 }

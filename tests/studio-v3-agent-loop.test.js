@@ -44,6 +44,44 @@ describe('the agent loop',()=> {
     expect(project).toEqual(before); expect(designOf(result.candidate).footer.some(field=>field.id === 'note-two')).toBe(true);
   });
 
+  it('uses the same harness to build a general equipment handover candidate from a cleared draft',async()=> {
+    const fields = [['employee','Employee'],['department','Department'],['handover-date','Date'],['equipment','Equipment'],['asset-tag','Asset tag'],['condition','Condition'],['handed-from','From'],['handed-to','To']];
+    const operations = [
+      {type:'set_heading',value:'EQUIPMENT HANDOVER'},
+      {type:'set_section',target:'header',patch:{enabled:true,label:'Equipment handover'}},
+      {type:'set_section',target:'customer',patch:{enabled:true,label:'Handover details',layout:{columns:2,gap:16}}},
+      {type:'set_section',target:'footer',patch:{enabled:true,label:'Signatures'}},
+      ...fields.map(([id,label])=>({type:'add_field',section:'customer',field:{id,label,kind:'static',text:'________________________',format:''}})),
+      {type:'add_field',section:'footer',field:{id:'recipient-signature',label:'Recipient signature',kind:'static',text:'________________________',format:''}}
+    ];
+    const project = newProject(), original = structuredClone(project);
+    const design = designOf(project), clearStructure = [
+      ...['header','customer','items','totals','footer'].flatMap(section=>(section === 'items' ? design.columns : design[section]).map(field=>({type:'remove_field',target:`${section}-${field.id}`}))),
+      {type:'set_section',target:'items',patch:{enabled:false}},{type:'set_section',target:'totals',patch:{enabled:false}}
+    ];
+    const {promise,steps} = run([call('get_capabilities',{}),call('read_skill',{id:'form-authoring'}),
+      call('apply_operations',{summary:'Remove unused invoice structure',operations:clearStructure}),
+      call('apply_operations',{summary:'Create handover fields',operations}),call('inspect_draft',{}),call('finish',{summary:'Equipment handover ready for review'})],
+      {project,options:{request:'Create a blank equipment handover with employee, department, date, equipment, asset tag, condition, from, to and signature lines.'}});
+    const result = await promise;
+    expect(result.kind).toBe('proposal'); expect(result.inspection.ready).toBe(true);
+    expect(result.design.customer.map(field=>field.id)).toEqual(fields.map(([id])=>id));
+    expect(result.design.footer.map(field=>field.id)).toEqual(['recipient-signature']);
+    expect(result.design.columns).toEqual([]); expect(result.design.totals).toEqual([]);
+    expect(result.design.blocks.items.enabled).toBe(false); expect(result.design.blocks.totals.enabled).toBe(false);
+    expect(result.candidate.sampleData).toEqual(original.sampleData); expect(project).toEqual(original);
+    expect(result.candidate.manifest.documentId).toBe(original.manifest.documentId);
+    expect(steps.every(step=>step.ok)).toBe(true);
+  });
+
+  it('rejects a terminal result if host context changes after the finishing tool',async()=> {
+    let stale = false;
+    const {promise,project} = run([call('apply_operations',{summary:'Add a note',operations:[note]}),call('inspect_draft',{}),call('finish',{summary:'Done'})],
+      {onStep:step=> { if (step.name === 'finish') stale = true; },options:{assertCurrent:()=> { if (stale) throw Object.assign(new Error('STALE_PROPOSAL'),{code:'STALE_PROPOSAL'}); }}});
+    const original = structuredClone(project);
+    expect((await reason(promise)).code).toBe('STALE_PROPOSAL'); expect(project).toEqual(original);
+  });
+
   it('stops when the turn budget is used up',async()=> {
     const {promise} = run(Array.from({length:10},()=>call('get_context',{})),{limits:{maxTurns:3,maxRepeatedFailures:5,maxRunMs:60000}});
     expect((await reason(promise)).code).toBe('AGENT_BUDGET');

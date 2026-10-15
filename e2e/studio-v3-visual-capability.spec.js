@@ -26,7 +26,7 @@ async function provider(page,{reply=label,hold=false,revoke=false}={}) {
 async function prepare(page,fixture=syntheticPng()) {
  await clickPaper(page,paper(page).locator('[data-v3-id=label-customer-ship]').first());
  await page.locator('[data-ai-toggle]').click();await limitToSelection(page);
- await page.getByText('References · PDF / image',{exact:true}).click();
+ await page.locator('[data-ai=attach]').click();
  if(fixture.mimeType==='application/pdf')await page.getByLabel('PDF reading for new attachments',{exact:true}).selectOption('visual');
  await page.getByLabel('Add reference PDF or image',{exact:true}).setInputFiles(fixture);
  await expect(page.locator('.ai-reference-card')).toHaveCount(1,{timeout:30000});await expect(page.locator('.ai-reference-files')).toContainText('Ready locally');

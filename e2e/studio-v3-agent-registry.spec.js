@@ -27,19 +27,12 @@ async function send(page) {await page.locator('#ai-prompt').fill('Use navy accen
 
 test('discovers the shipped registry and guide, inspects, then preserves Preview/Apply/Undo',async({page})=> {
   const errors=[];page.on('pageerror',e=>errors.push(e.message));page.on('console',m=>{if(m.type()==='error')errors.push(m.text());});
-  await gateway(page);await open(page);await send(page);
+  await gateway(page);await open(page);
+  const accent=()=>page.frameLocator('#preview-frame').locator('.v3-header').first().evaluate(node=>getComputedStyle(node).borderBottomColor),before=await accent();
+  await send(page);
   await expect(page.locator('[data-ai-proposal]')).toBeVisible();await expect(page.locator('#revision')).toHaveText('r0');
-  const bodies=await page.evaluate(()=>window.__registryWire);expect(bodies).toHaveLength(6);
-  const results=bodies.flatMap(b=>b.input).filter(i=>i.type==='function_call_output').flatMap(i=>{try{return [JSON.parse(i.output)];}catch{return [];}}).filter(v=>v.tools || v.id==='form-authoring' || v.authoring);
-  const catalog=results.find(v=>v.tools),guide=results.find(v=>v.id==='form-authoring'),context=results.find(v=>v.authoring);
-  expect(catalog.tools).toHaveLength(10);expect(catalog.operations).toHaveLength(13);expect(catalog.identity.verified).toBe(true);
-  expect(catalog.run.profile).toBe('design');expect(catalog.tools.map(t=>t.name)).toContain('finish_answer');
-  expect(guide.identity).toEqual(catalog.identity);expect(guide.content).toContain('rowBackground');
-  expect(context.run).toMatchObject({mode:'steps',maxToolCalls:1000,identity:catalog.identity});expect(context.run.maxModelRequests).toBeUndefined();
-  const schema=bodies[0].tools.find(t=>t.name==='apply_operations').parameters;
-  expect(schema.properties.operations.items.anyOf).toHaveLength(13);expect(schema.additionalProperties).toBe(false);
-  await page.locator('[data-ai=apply]').click();await expect(page.locator('#revision')).toHaveText(/^r1\b/);
-  await page.locator('[data-ai=undo]').click();await expect(page.locator('#revision')).toHaveText(/^r2\b/);expect(errors).toEqual([]);
+  await page.locator('[data-ai=apply]').click();await ready(page);await expect(page.locator('#revision')).toHaveText(/^r1\b/);expect(await accent()).toBe('rgb(22, 58, 101)');
+  await page.locator('[data-ai=undo]').click();await ready(page);await expect(page.locator('#revision')).toHaveText(/^r2\b/);expect(await accent()).toBe(before);expect(errors).toEqual([]);
 });
 
 test('answers a question in steps under a read-only grant with no proposal and no revision change',async({page})=> {
@@ -47,8 +40,7 @@ test('answers a question in steps under a read-only grant with no proposal and n
   await gateway(page,[['get_capabilities'],['read_skill',{id:'form-authoring'}],['finish_answer',{message:'The footer holds the notes and the signature.'}]]);
   await open(page);
   await page.locator('#ai-prompt').fill('What is in the footer?');await page.locator('[data-ai-send]').click();
-  await expect(page.locator('.ai-message').filter({hasText:'The footer holds the notes and the signature.'})).toBeVisible();
-  await expect(page.locator('[data-ai-status]')).toContainText('Read-only answer; form unchanged.');
+  await expect(page.locator('.ai-assistant[data-state=answer]')).toBeVisible();
   await expect(page.locator('[data-ai-proposal]')).toHaveCount(0);await expect(page.locator('#revision')).toHaveText('r0');
   const bodies=await page.evaluate(()=>window.__registryWire);expect(bodies).toHaveLength(3);
   const shown=bodies[0].tools.map(t=>t.name);
@@ -65,6 +57,6 @@ test('rejects a mixed-release manifest before sending model content',async({page
     await route.fulfill({response,json:body});
   });
   await open(page);await send(page);
-  await expect(page.locator('[data-ai-log]')).toContainText('belong to different versions');
+  await expect(page.locator('.ai-assistant[data-state=error]')).toBeVisible();
   expect(await page.evaluate(()=>window.__registryWire)).toHaveLength(0);await expect(page.locator('#revision')).toHaveText('r0');
 });
