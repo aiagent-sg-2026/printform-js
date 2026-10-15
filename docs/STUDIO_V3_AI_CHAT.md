@@ -37,6 +37,15 @@ anything outside the references is rejected (`UNSAFE_SCOPE`).
 
 ## Working in steps
 
+Registered-tool turns use `tool_choice: required`: the workflow must finish through validated
+`finish`, `finish_answer` or `report_blocked`, not an ordinary-text stop that bypasses handoff.
+Unsupported-provider behavior still fails or follows the existing explicitly separate fallback;
+fallback output is not evidence that a Pi tool-loop task passed.
+
+`set_logo {value:null}` means no logo, including no starter brand mark. The human Remove logo
+control uses the same explicit absence. Template, header grid and component projection agree;
+the authoring context reports visibility separately from an absent embedded asset ID.
+
 An edit request can run as a tool loop instead of one reply. The model works on a private draft copy of the
 form and calls registry-defined local tools: `get_capabilities` (release, tools, schemas and knowledge index),
 `read_skill` (bundled product guide), `get_context` (structure, bindings, authoring targets), `apply_operations` (the same

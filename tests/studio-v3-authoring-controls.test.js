@@ -1,8 +1,9 @@
 import { expect, it } from 'vitest';
-import { newProject, designOf } from '../studio-v3/model.js';
+import { newProject, designOf, compileProject } from '../studio-v3/model.js';
 import { formDesign, designOperations, importRasterAsset } from '../studio-v3/controller.js';
 import { rightView, leftView } from '../studio-v3/workspace-views.js';
 import { pageDimensions } from '../studio-v3/design-authoring.js';
+import { readProject, saveProject } from '../studio-v3/file-io.js';
 const PNG = 'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII=';
 function form(values) {
   const result = document.createElement('form');
@@ -65,6 +66,15 @@ it('explicit image upload embeds validated raster bytes locally and retains only
   expect(project.manifest.studioV3.assets).toBeUndefined(); expect(()=>designOperations(project,design)).not.toThrow();
   await expect(importRasterAsset(project,new File(['<svg/>'],'bad.svg',{type:'image/svg+xml'}),'header-logo')).rejects.toThrow('PNG');
   await expect(importRasterAsset(project,file,'items-description')).rejects.toThrow('non-table');
+});
+it('manual logo removal remains absent after compilation and save/reopen without changing data',()=> {
+  const project=newProject();
+  const design=formDesign(project,'header',form({removeLogo:true}),'logo');
+  const reopened=readProject(saveProject(compileProject(project,design)));
+  const template=document.createElement('template');template.innerHTML=reopened.templateHtml;
+  expect(template.content.querySelector('[data-v3-id=header-logo]')).toBeNull();
+  expect(reopened.sampleData).toEqual(project.sampleData);
+  expect(view(reopened,'header').querySelector('[name=removeLogo]').checked).toBe(true);
 });
 it('image-to-text binding transitions remove image-only fields instead of keeping a hidden asset interpretation',async()=> {
   const project = newProject(), file = new File([Uint8Array.from(atob(PNG),c=>c.charCodeAt(0))],'test.png',{type:'image/png'});

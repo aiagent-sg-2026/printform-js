@@ -47,7 +47,7 @@ function tableNode(d) {
 export function compileTemplate(d) {
   validateDesign(d);
   const enabled = id => d.blocks[id].enabled, page = pageSettings(d), size = contentDimensions(d);
-  const header = `<header class="${sectionClass(d,'header','pheader')}"${sectionAttributes(d,'header')}${usesFlowSections(d) && sectionOrder(d)[0] !== 'header' ? ' data-pf-table-id="v3-header"' : ''}>${d.logo ? imageNode(d,d.logo,'header-logo','logo') : '<div class="brand-mark" data-v3-id="header-logo">A</div>'}<div class="company-fields">${fields(d,'header')}</div><h1 data-v3-id="header-title"${styleAttr(d.titleStyle)}>${escape(d.title)}</h1></header>`;
+  const header = `<header class="${sectionClass(d,'header','pheader')}"${sectionAttributes(d,'header')}${usesFlowSections(d) && sectionOrder(d)[0] !== 'header' ? ' data-pf-table-id="v3-header"' : ''}>${d.logo === null ? '' : d.logo ? imageNode(d,d.logo,'header-logo','logo') : '<div class="brand-mark" data-v3-id="header-logo">A</div>'}<div class="company-fields">${fields(d,'header')}</div><h1 data-v3-id="header-title"${styleAttr(d.titleStyle)}>${escape(d.title)}</h1></header>`;
   const customer = `<section class="${sectionClass(d,'customer','pdocinfo')}"${sectionAttributes(d,'customer')} data-pf-table-id="v3-customer">${fields(d,'customer')}</section>`;
   const totals = `<footer class="${sectionClass(d,'totals','pfooter')}"${sectionAttributes(d,'totals')} data-pf-table-id="v3-totals"><div class="summary">${fields(d,'totals')}</div></footer>`;
   const footer = `<footer class="${sectionClass(d,'footer','pfooter002')}"${sectionAttributes(d,'footer')} data-pf-table-id="v3-footer">${fields(d,'footer')}</footer>`;
@@ -67,7 +67,7 @@ export function documentTheme(d) {
 #pf-mount .printform, #pf-mount .printform_page { width:${size.width}px; background:white; }
 #pf-mount .printform_page { margin-bottom:24px; box-shadow:0 4px 18px #0002; }
 ${pageMargins ? `#pf-mount .physical_page_wrapper {width:${physical.width}px!important;padding:${m.top}px ${m.right}px ${m.bottom}px ${m.left}px;background:white;margin-bottom:24px;} #pf-mount .physical_page_wrapper .printform_page {margin:0;box-shadow:none;}` : ''}
-#pf-mount .v3-header { padding:32px 36px 20px; display:grid; grid-template-columns:${d.logo ? d.logo.width : 52}px 1fr auto; gap:14px; border-bottom:3px solid ${color}; }
+#pf-mount .v3-header { padding:32px 36px 20px; display:grid; grid-template-columns:${d.logo === null ? '1fr auto' : `${d.logo?.width ?? 52}px 1fr auto`}; gap:14px; border-bottom:3px solid ${color}; }
 #pf-mount .brand-mark { color:${color}; font-size:40px; font-weight:900; line-height:1; }
 #pf-mount h1 { font-size:18pt; margin:0; text-align:right; letter-spacing:.025em; }
 #pf-mount .company-fields { display:grid; grid-template-columns:1fr 1fr; gap:8px 18px; }

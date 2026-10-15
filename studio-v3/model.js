@@ -66,8 +66,10 @@ export function compileProject(project, design) {
     if (id === 'header') {
       add('header-title','Document title','DocumentMeta','title',null,'header');
       spec.components.at(-1).style = structuredClone(design.titleStyle || {});
-      add('header-logo','Header logo','DocumentMeta','asset',null,'header');
-      if (design.logo) Object.assign(spec.components.at(-1),structuredClone(design.logo));
+      if (design.logo !== null) {
+        add('header-logo','Header logo','DocumentMeta','asset',null,'header');
+        if (design.logo) Object.assign(spec.components.at(-1),structuredClone(design.logo));
+      }
     }
     if (id === 'items') add('items-header','Table header','DataTable','table-header',null,'items');
     spec.components.find(c => c.id === id).keepTogether = Boolean(design.blocks[id].keepTogether);

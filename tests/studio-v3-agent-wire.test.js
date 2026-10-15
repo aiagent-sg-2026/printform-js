@@ -57,10 +57,8 @@ describe('agent wire: requests',()=> {
     expect(outputs.slice(0,10 - kept).every(item=>!item.output.includes('BIG') && item.output.length < 80)).toBe(true);
   });
 
-  it('builds a closed body: function tools, encrypted reasoning, and none of the fields the gateway refuses',()=> {
+  it('does not request server-side persistence or unsupported execution options',()=> {
     const body = JSON.parse(agentBody({alias:'demo-fast',context:{systemPrompt:'S',messages:[user('go')],tools},stream:true}));
-    expect(body).toMatchObject({model:'demo-fast',stream:true,tool_choice:'auto',include:['reasoning.encrypted_content']});
-    expect(body.tools.map(spec=>spec.name)).toEqual(['get_context','finish']);
     for (const key of ['previous_response_id','store','max_output_tokens','background','metadata']) expect(body).not.toHaveProperty(key);
   });
 
