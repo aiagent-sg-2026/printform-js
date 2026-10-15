@@ -25,6 +25,7 @@ export const AI_MESSAGES = {
   DEMO_REQUEST_FAILED:'Demo request failed. Check gateway availability. Nothing changed.',
   LOGO_ASSET_UNAVAILABLE:'The suggestion references an unavailable logo asset. Nothing changed.',
   TABLE_SECTION_GRID_UNSUPPORTED:'The suggestion used a section grid for the items table. Nothing changed.',
+  FIELD_WIDTH_UNSUPPORTED:'The suggestion used a field width where a section grid is required. Nothing changed.',
   AUTHORING_OPERATION_LIMIT:'The suggestion exceeds 24 operations. Ask for a compact structural redesign. Nothing changed.',
   GLOBAL_FONT_PROPERTY_UNSUPPORTED:'The suggestion used an unsupported global font property. Nothing changed.',
   MALFORMED_PROPOSAL:'The model did not return a complete supported answer or proposal. Nothing changed.',

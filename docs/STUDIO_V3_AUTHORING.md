@@ -60,6 +60,9 @@ Optional properties:
 - Table `width`: 1–100 percent; all column widths together must be at most 100 percent
 - Image `assetId`, `width`, `height`, `fit`: existing asset reference, width 8–400px,
   height 8–200px, fit `"contain"` or `"cover"`
+- Non-items static/bound fields omit `width`; `blocks[section].layout.columns`
+  allocates their grid. AI add/set operations reject an explicit unsupported width
+  with `FIELD_WIDTH_UNSUPPORTED`; they do not silently remove that requested property.
 
 Bound fields require a nonempty pointer. Static text and image fields must not
 have a binding. Images cannot have text or numeric formatting and are supported
@@ -129,7 +132,8 @@ current project or design; its legacy single-argument fallback remains A4.
 PNG/JPEG/GIF/WebP base64 data URL with a raster signature. Each image is limited
 to 1 MiB. Total portable image content, including repeated template references,
 is limited to a 4 MiB budget. `alt` is at most 200 characters. `logo` accepts only
-`{ assetId, width, height, fit }`; omit or set null to keep the default brand mark.
+`{ assetId, width, height, fit }`. An absent `logo` retains the legacy default brand
+mark; explicit `logo: null` removes both embedded logos and that default mark.
 
 No automatic remote image lookup, URL fetch, upload, SVG, raw HTML, arbitrary CSS,
 JavaScript, `eval`, or formula execution is permitted. Unknown design, field,

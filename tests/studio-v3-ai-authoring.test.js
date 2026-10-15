@@ -43,6 +43,21 @@ describe('framework-native AI authoring',()=> {
     await bus.navigateHistory('undo',1);
     expect(designOf(bus.project)).toEqual(d); expect(bus.project.sampleData).toEqual(original.sampleData);
   });
+  it.each(['header','customer','totals','footer'].flatMap(section=>['static','bound'].map(kind=>({section,kind}))))('rejects unsupported $section $kind width without losing the field or source facts',({section,kind})=> {
+    const project = newProject('invoice',true), original = structuredClone(project);
+    const field = {id:'contact',label:'Contact',kind,...(kind === 'bound' ? {pointer:'/company/name'} : {text:'________________'})};
+    expect(()=>parseChatReply(plan([{type:'add_field',section,field:{...field,width:100}}]),project)).toThrow('FIELD_WIDTH_UNSUPPORTED');
+    expect(project).toEqual(original);
+    const result = parseChatReply(plan([
+      {type:'set_section',target:section,patch:{enabled:true,layout:{columns:2,gap:12}}},
+      {type:'add_field',section,field}
+    ]),project), candidate = structuredClone(result.candidate);
+    expect(result.design[section][0]).toMatchObject(field);
+    expect(result.design.blocks[section].layout).toEqual({columns:2,gap:12});
+    expect(result.candidate.sampleData).toEqual(original.sampleData);
+    expect(()=>parseChatReply(plan([{type:'set_field',target:`${section}-contact`,patch:{width:100}}]),result.candidate)).toThrow('FIELD_WIDTH_UNSUPPORTED');
+    expect(result.candidate).toEqual(candidate);
+  });
   it('binds generic handover fields only to existing declared source paths, never invented invoice replacements',()=> {
     const project = newProject('invoice',true);
     project.sampleData.employeeName = 'Fictional employee'; project.sampleData.equipmentName = 'Fictional laptop'; project.sampleData.handoverDate = '2026-10-15';

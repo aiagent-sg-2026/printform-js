@@ -54,6 +54,11 @@ write-in/signature line uses a named static field with a printed label and visib
 An empty string is not a usable line, and a ready numeric inspection is not proof that
 the requested content was authored. Completed signatures/business values are never invented.
 
+Non-items static/bound fields omit `width`; the section grid allocates their space.
+Only item columns use percentage widths and image fields use pixel dimensions.
+`FIELD_WIDTH_UNSUPPORTED` preserves the private draft and tells the agent to remove
+that unsupported property, not abandon `add_field` or silently discard input.
+
 An edit request can run as a tool loop instead of one reply. The model works on a private draft copy of the
 form and calls registry-defined local tools: `get_capabilities` (release, tools, schemas and knowledge index),
 `read_skill` (bundled product guide), `get_context` (structure, bindings, authoring targets), `apply_operations` (the same

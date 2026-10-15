@@ -9,6 +9,7 @@ export const TOOL_ERRORS = Object.freeze({
   UNSAFE_PROPOSAL:entry(null,'rejected',true,'Keep the operation within the documented targets, bounds and binding rules.'),
   GLOBAL_FONT_PROPERTY_UNSUPPORTED:entry(null,'invalid-input',true,'Use font for the global size; fontSize belongs to element and field typography.'),
   TABLE_SECTION_GRID_UNSUPPORTED:entry(null,'rejected',true,'The items section uses column widths, never a section grid.'),
+  FIELD_WIDTH_UNSUPPORTED:entry(null,'rejected',true,'Omit width on non-items static/bound fields and use section layout.columns. Only items columns use percentage width; image fields use pixel dimensions.'),
   LOGO_ASSET_UNAVAILABLE:entry('CAPABILITY_UNAVAILABLE','rejected',true,'Use an asset listed in context, or value:null; assets cannot be imported by the agent.'),
   UNSAFE_SCOPE:entry('SCOPE_DENIED','rejected',true,'Edit only the selected targets, or report_blocked if the request needs more.'),
   COLUMN_WIDTH_LIMIT:entry(null,'rejected',true,'Keep item column widths between 1 and 100 and their total at or below 100.'),

@@ -97,9 +97,27 @@ PR #67 的 `main@256bd7bb63d1885833830b27aa7739fe5fe0d5e2` 已由 [CI 3867067394
 
 该修复已实际通过五个针对文件 / **63 测试**。未模拟浏览器导入自有虚构源值 canaries，启用空白 section 后只有中立标题和页码，没有旧源值；实际添加 Contact name / Recipient signature 填写线，Undo/Redo、保存重开和独立 HTML 均完成，导出 ready / errors 0，数据与 schema 不变，page errors 0、gateway requests 0。初次脚本漏切回 Properties、重开时未等待新的真实 rendered token；更正观察同步，不重试模型、不修改产品期限，失败记录保留。
 
-新的 live 脚本保留原六条需求，等待真实 Send 可用后才检查图片授权/发送，记录公开能力布尔值，遇 429 停止推理，并明确登记前提不成立的任务。真实图片辨识与本次修改后的创建/修改/绑定仍待正式部署后证明；以上局部 Pass 不授权生产数据，也不代替 G8。
+新的 live 脚本保留原六条需求，等待真实 Send 可用后才检查图片授权/发送，记录公开能力布尔值，遇 429 停止推理，并明确登记前提不成立的任务。下一节记录其正式部署实际结果；局部 Pass 不授权生产数据，也不代替 G8。
 
-真正 Blank 修复后的完整 Node24 `build:site` 也已实际通过 **228 文件 / 2,413 测试**与站点生成；62 个交付文件最大 300 行，141 个本地 Markdown 目标检查无错误，live 脚本语法检查通过。该结果属于当前完整工作树；仍需干净提交门禁与正式部署模型复验，不拿前一版本的局部模型 Pass 代替。
+真正 Blank 修复后的完整 Node24 `build:site` 已实际通过 **228 文件 / 2,413 测试**与站点生成；62 个交付文件最大 300 行，141 个本地 Markdown 目标检查无错误。干净提交 `ca141c3` 的 13 tools / 13 operations / 2 skills / 76 conformance examples 与全部 28 项评审门禁也通过，保留原 `a99c932` baseline；PR #68 合入后由下述主线 CI 完成部署。
+
+## 实际图片成功与字段尺寸契约修复
+
+PR #68 的 `main@fa7b0261c9c943db5208f6713c64d00411e081ee` 已由 [CI 38675385870](https://github.com/yapweijun1996/printform-js/actions/runs/38675385870) 完成构建和 Pages 部署。真实注册 Origin、原 demo-auto、冻结六条需求、明确 30 秒任务间隔；没有模拟模型、伪造 Origin、放宽预算或自动重试：
+
+| 路径 | 实际结果 |
+|---|---|
+| LIVE-READ | Pass；实际 finish_answer，完整保存项目与 revision 不变，无候选 |
+| LIVE-CREATE | Fail；三次 apply_operations 后 report_blocked，未应用；不能把空白纸或通用错误称为成功 |
+| LIVE-FOLLOWUP / LIVE-BIND | Blocked；创建前提未成立，登记但没有推理，不算通过 |
+| LIVE-REFERENCE | Pass；实际图片推理识别 FIELD SERVICE LOG、Work ticket / Technician 以及只存在于像素的 CYAN-47，通过 finish_answer，无候选；不是仅能力 discovery 或 fixture echo |
+| LIVE-STOP | Pass；实际请求开始后 Stop，保存快照哈希与 revision 不变，独立 HTML 导出 ready / errors 0 |
+
+保留失败记录后，另一条只用于诊断的实际创建请求采集了明确的工具参数/错误：模型给非 items 的 static 字段加入 `width:100`，文件契约只允许 table-column/image width，却把错误折成不可定位的 `UNSAFE_PROPOSAL`。模型因此错误报告“没有字段 authoring targets”。以原始操作在实际模块复现：原参数拒绝；只在诊断输入中去除不支持的 static width 后，十个字段完整编译、source data 不变，原项目也不变。
+
+产品修复明确 schema 描述、共享作者契约及两条模型指南中的尺寸所有权；add/set 非图片文档字段返回精确可修复 `FIELD_WIDTH_UNSUPPORTED`，单步修复白名单、脱敏诊断和公开错误表同步。**不放宽文件验证，不静默删除模型属性，不改变合法图片/表格宽度或数据权限**。五个针对文件 / **64 测试通过**；实际 API smoke 再次以原参数得到新错误，合法 section-grid 填写线编译出十字段且数据守恒。修复后的真实模型创建/连续修改/绑定仍须由新的部署逐项证明。
+
+该尺寸契约修复的完整 Node24 `build:site` 已实际通过 **228 文件 / 2,421 测试**与站点生成；67 个交付文件最大 300 行，141 个本地 Markdown 目标均有效。既有 JSDOM / 模块类型 / 浏览器外部化警告保留；此处仍是工作树证明，不冒充干净提交或新部署模型验收。
 
 ## 尚未获得的生产资格
 

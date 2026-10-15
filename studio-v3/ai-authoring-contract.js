@@ -5,6 +5,7 @@ export const AUTHORING_CONTRACT = {
   globalStyleKeys: GLOBAL_STYLE_KEYS,
   typography: { globalProperty:'font', elementProperty:'fontSize' },
   sectionGridTargets: ['header','customer','totals','footer'],
+  fieldWidth: 'Omit width on non-items static/bound fields; section layout.columns controls their grid. Only items columns use percentage width (1..100); image fields use pixel width (8..400).',
   logo: 'Use an existing asset ID, or value:null to remove both an embedded logo and the default brand mark. With no assets, omit set_logo or use value:null; never use assetId:null.',
   planning: 'Use compact section grids, field ordering and global typography for full redesign. Combine properties for the same target in one patch. Omit unchanged operations. Stay within 24 operations; do not restyle every field.'
 };
