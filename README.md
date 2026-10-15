@@ -23,7 +23,7 @@ Studio v2 is a Production Pilot for ERP engineers. It builds inspectable, self-c
 
 | I want to... | Read this |
 |--------------|-----------|
-| **Design a general print form without coding** | Open [Studio v3](studio-v3/) — design, declared bindings and validation; bounded AI assistant ([scope](docs/STUDIO_V3.md), [production-readiness evidence](docs/STUDIO_V3_GENERAL_AI_READINESS.zh-CN.md)); ERPNext is optional, not the product boundary |
+| **Design a general print form without coding** | [Studio v3](studio-v3/): [general business forms](docs/GENERAL_BUSINESS_FORMS.zh-CN.md), browser AI and optional [isolated Node/JSON source profile](docs/STUDIO_V3_CODING_RUNNER.zh-CN.md); [Pilot evidence/limits](docs/STUDIO_V3_GENERAL_AI_READINESS.zh-CN.md). ERPNext is optional; full production qualification remains open |
 | **Build a Pilot single-HTML form** | Open [studio-v2/index.html](studio-v2/index.html) — protocol-based, offline, WebMCP-ready |
 | **Understand v2 status and roadmap** | [Studio v2 documentation index](docs/STUDIO_V2_INDEX.zh-CN.md) (authoritative Chinese) |
 | **Review architecture and task status** | [GOAL.md](GOAL.md) · [DESIGN.md](DESIGN.md) · [SPEC.md](SPEC.md) · [EPIC.md](EPIC.md) · [ROADMAP.md](ROADMAP.md) · [TASK.md](TASK.md) · [PROGRESS.md](PROGRESS.md) · [GOAL_PROMPT.md](GOAL_PROMPT.md) |

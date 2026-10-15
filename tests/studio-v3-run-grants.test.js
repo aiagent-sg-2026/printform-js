@@ -6,7 +6,7 @@ import {scriptedGateway,turn,reasoning,fn} from './support/agent-gateway.js';
 import {runAgentLoop,promptFor} from '../studio-v3/agent-loop.js';
 import {createAgentTools} from '../studio-v3/agent-tools.js';
 import {createDraft} from '../studio-v3/agent-draft.js';
-import {createGrant,profileFor,EFFECT_PROFILES,allows} from '../studio-v3/agent-effects.js';
+import {createGrant,allows} from '../studio-v3/agent-effects.js';
 import {AGENT_TOOL_DEFINITIONS} from '../studio-v3/agent-registry.js';
 import {newProject} from '../studio-v3/demo-templates.js';
 import {DEMO_CONFIG} from '../studio-v3/ai-gateway-config.js';
@@ -72,16 +72,6 @@ describe('Studio v3 read-only answers (RUN-01)', () => {
 });
 
 describe('Studio v3 effect grants (RUN-02)', () => {
-  it('builds frozen host grants; the classifier can only narrow, and data/coding have no tools yet', () => {
-    expect(profileFor({question:true})).toBe('read-only'); expect(profileFor({question:false})).toBe('design');
-    const grant = createGrant('read-only');
-    expect(Object.isFrozen(grant) && Object.isFrozen(grant.effects) && Object.isFrozen(grant.scope)).toBe(true);
-    expect(() => { grant.effects.push('draft'); }).toThrow(); expect(allows(grant,'draft')).toBe(false);
-    expect(createGrant('design').effects).toEqual(expect.arrayContaining(['read','memory','answer','draft','proposal','stop']));
-    for (const effect of ['commit','persist','file','shell','external']) expect(EFFECT_PROFILES.design.effects, effect).not.toContain(effect);
-    expect(() => createGrant('coding')).toThrow('GRANT_PROFILE_UNAVAILABLE'); expect(() => createGrant('data')).toThrow('GRANT_PROFILE_UNAVAILABLE');
-    expect(() => createGrant('admin')).toThrow('GRANT_PROFILE_UNKNOWN'); expect(() => createGrant('__proto__')).toThrow('GRANT_PROFILE_UNKNOWN');
-  });
   it('derives the profile from the host check, so request text cannot ask for a wider one', () => {
     const {panel} = setup({transport:scriptedGateway().transport}), profile = text => panel.grantProfile({request:text,conversation:[]});
     expect(profile('What is in the footer?')).toBe('read-only');

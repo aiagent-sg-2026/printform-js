@@ -7,6 +7,7 @@ import { AGENT_SKILLS } from '../studio-v3/agent-knowledge.js';
 import { checkAgentConformance } from './studio-v3-agent-conformance.mjs';
 import { fileHash, importClosure, dependencyIndex, entryFileHashes, explainChanges } from './studio-v3-agent-impact.mjs';
 import { readReleaseState, assertReleaseReview } from './studio-v3-agent-review.mjs';
+import { runnerSourceHash } from '../coding-runner/identity.mjs';
 
 const canonical = value => Array.isArray(value) ? value.map(canonical) : value && typeof value === 'object' ? Object.fromEntries(Object.keys(value).sort().map(key=>[key,canonical(value[key])])) : value;
 const json = value => JSON.stringify(canonical(value));
@@ -45,10 +46,10 @@ export function generateAgentPackage({root=process.cwd(),output,revision=process
   const skills=AGENT_SKILLS.map(skill=>({id:skill.id,description:skill.description,resource:`resources/${skill.id}.md`,hash:hash(skill.content),
     sourceHashes:Object.fromEntries(skillEntry(skill).sources.map(name=>[name,fileHash(root,name)])),evaluations:skill.evaluations}));
   const knowledge={version:1,skills}, contractHash=hash(json({catalog,entries})), knowledgeHash=hash(json(knowledge));
-  const runtime=importClosure(root,RUNTIME_ROOTS).files;
-  const packageHash=hash(json({release:revision,contractHash,knowledgeHash,runtimeHashes:Object.fromEntries(runtime.map(name=>[name,fileHash(root,name)]))}));
+  const runtime=importClosure(root,RUNTIME_ROOTS).files, sourceRunnerHash=runnerSourceHash(path.join(root,'coding-runner'));
+  const packageHash=hash(json({release:revision,contractHash,knowledgeHash,sourceRunnerHash,runtimeHashes:Object.fromEntries(runtime.map(name=>[name,fileHash(root,name)]))}));
   entries.push(...skills.map(skill=>({id:`printform.knowledge.${skill.id}`,status:'active',hash:hash(json({...skill,fileHashes:entryFileHashes(index,`printform.knowledge.${skill.id}`)}))})));
-  const identity={release:revision,contractHash,knowledgeHash,packageHash};
+  const identity={release:revision,contractHash,knowledgeHash,packageHash,sourceRunnerHash};
   const documents={'capabilities.json':json({...catalog,version:1,contractHash,entries})+'\n','knowledge-index.json':json(knowledge)+'\n',
     ...Object.fromEntries(AGENT_SKILLS.map(skill=>[`resources/${skill.id}.md`,skill.content]))};
   const tombstones=AGENT_TOMBSTONES.map(({id,name,replacementId,removedIn,advice})=>({id,name,replacementId,removedIn,advice}));

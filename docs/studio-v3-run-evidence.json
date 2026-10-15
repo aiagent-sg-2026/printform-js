@@ -32,11 +32,11 @@
   {
    "id": "RUN-02",
    "status": "covered",
-   "note": "Grants are host-built and frozen; the question check can only narrow; data and coding are unavailable until they have tools.",
+   "note": "Host-built grants independently deny forged authority; questions only narrow; data remains unavailable and source requires an actual paired one-run fictional-source lease.",
    "evidence": [
     {
-     "file": "tests/studio-v3-run-grants.test.js",
-     "test": "builds frozen host grants"
+     "file": "tests/studio-v3-source-authority.test.js",
+     "test": "does not turn a profile name, forged host-shaped grant or source arguments into a workspace"
     },
     {
      "file": "tests/studio-v3-run-grants.test.js",

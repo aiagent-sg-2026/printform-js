@@ -5,7 +5,7 @@ forms rather than one ERP product. Start a blank form or reuse a transaction exa
 ERPNext is an optional adapter, not a prerequisite. The v2 editor and its release gates
 remain at `/studio-v2/`. See [current AI readiness and no-code usage](STUDIO_V3_GENERAL_AI_READINESS.zh-CN.md).
 
-Complete built-in coding-agent target: [architecture and delivery](STUDIO_V3_CODING_AGENT_PLAN.md), [proposed contracts](STUDIO_V3_CODING_AGENT_CONTRACTS.md), [acceptance gates](STUDIO_V3_CODING_AGENT_ACCEPTANCE.md) and [task ledger](../TASK.md). Source execution and broader workflow coverage remain planned.
+Complete coding-agent target: [architecture](STUDIO_V3_CODING_AGENT_PLAN.md), [contracts](STUDIO_V3_CODING_AGENT_CONTRACTS.md), [acceptance](STUDIO_V3_CODING_AGENT_ACCEPTANCE.md). The optional [real local Node/JSON source profile](STUDIO_V3_CODING_RUNNER.zh-CN.md) is now implemented in the same Pi Harness; broader parity and full G6/G8/G9 qualification remain open. [General business forms](GENERAL_BUSINESS_FORMS.zh-CN.md) include statements, stock movements and payroll snapshots without ERPNext.
 
 ## What ships
 

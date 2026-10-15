@@ -2,7 +2,7 @@
 
 Status: reconciled draft, 2026-10-09. The authoritative data is [STUDIO_V3_FEATURE_LEDGER.csv](STUDIO_V3_FEATURE_LEDGER.csv); this page is the readable view and rationale. Every row is `review=proposed`: dispositions are evidence-based proposals for owner confirmation. These original dispositions remain proposed; later bounded implementation evidence is recorded below.
 
-Method: enumerate real UI entry points (`studio-v3/index.html`, `app.js` `action()`, `database-controller.js`), compare with the 66-row [historical inventory](STUDIO_V3_AGENT_COVERAGE_INVENTORY.csv) (a pre-registry baseline kept unchanged) and the [registry](../studio-v3/agent-registry.js) (now thirteen tools, thirteen operations). Counts workflows, not private helpers. All evidence paths of the 66 historical rows were checked to exist.
+Method: enumerate real Studio UI entry points and published tool contracts, compare with the66-row [historical inventory](STUDIO_V3_AGENT_COVERAGE_INVENTORY.csv) (kept unchanged) and the [registry](../studio-v3/agent-registry.js) (now22 tools and13 typed design operations). Counts workflows, not private helpers. Source controls are operator/human-mediated; source tools require a separate per-run grant.
 
 Dispositions: `agent-callable` (eligible; may still lack a service/adapter), `human-mediated` (agent prepares or explains; the human completes), `intentionally-unavailable` (host mechanism or view preference; reason recorded).
 
@@ -10,13 +10,13 @@ Dispositions: `agent-callable` (eligible; may still lack a service/adapter), `hu
 
 | Measure | Rows |
 | --- | --- |
-| Ledger rows | 79 |
-| agent-callable | 48 |
-| human-mediated | 22 |
+| Ledger rows | 84 |
+| agent-callable | 51 |
+| human-mediated | 24 |
 | intentionally-unavailable | 9 |
 | Eligible gaps (missing or limited agent paths) | 26 |
 
-Origins: 66 rows from the historical inventory, 13 added by this reconciliation. `baseline_access` keeps the historical Tool/Limited/Unexposed/Host label; `eligible_gap=yes` marks agent-callable rows whose baseline was Unexposed or Limited.
+Origins:66 historical rows,13 reconciliation rows and5 bounded source-workspace rows. Historical access labels/dispositions remain unchanged. Source pairing and disclosure are human-mediated; file/process/artifact tools are callable only in the explicit local Node/JSON profile, not in ordinary design/read-only runs.
 
 ## Added by reconciliation (13)
 
@@ -38,7 +38,7 @@ The agent reads this ledger at runtime through the generated `studio-v3/agent-wo
 
 ## Eligible gaps by domain
 
-Data 10, Project 5, Observation 4, Authoring 4, References 3. Highest-value first: create blank/starter/preset, locale and currency, rename; dataset list/read/schema/edit/load (draft versus save kept separate); scenario-matrix validation and issue locate; richer context and reference re-reading. Planned owners are `planned:CA-04` (service), `planned:CA-02` (knowledge/contract) and `planned:CA-09` (evaluation) until each capability gets its real owner. Source-workspace tools belong to CA-07 and are not Studio ledger rows.
+Data10, Project5, Observation4, Authoring4, References3 remain the26 eligible gaps. CA-07 adds separately scoped source file/process/artifact workflows below; it does not close the18 parallel CA-04 Studio workflows, hosted execution, arbitrary dependencies or G8/G9 qualification.
 
 ## UI entry mapping
 
@@ -57,7 +57,7 @@ The ten G8 families and their rules are owned by the [task register](STUDIO_V3_T
 | `data` | Data | deterministic |
 | `references` | References | visual-blinded |
 | `files` | Lifecycle, Release | deterministic |
-| `source-repair`, `source-implement`, `source-artifact` | CA-07/CA-08 workspace (no Studio ledger rows yet) | runner-receipt |
+| `source-repair`, `source-implement`, `source-artifact` | `printform.source.files`, `.execute`, `.artifact` under the explicit local profile | real runner receipts plus independent task oracles |
 
 ## Open items
 
@@ -84,3 +84,10 @@ CA-05 local merge checkpoint (2026-10-13): [isolated verification](acceptance/ST
 CA-04 style checkpoint (2026-10-13): [current evidence](acceptance/STUDIO_V3_CA04_STYLE_PARITY.md) records the existing heading/page-number typography slice and row fill on the current artifact, including the remaining Firefox verification gap. The current CSV service/UI/evaluation owners are linked to 65 style unit cases, 21 direct three-engine parity cases plus 45 existing browser regressions and 12 composer layout cases, actual outgoing numeric receipts, mutation rejection/recovery and full unit/agent/site gates. The register is 4 shared / 16 parallel / 12 agent-only; inventory counts, exposure dispositions and disclosure authority are unchanged. Firefox stability qualification remains incomplete; CA-04/COV-03 remains Partial.
 
 CA-04 Firefox recheck (2026-10-13): [current evidence](acceptance/STUDIO_V3_CA04_FIREFOX_RECHECK.md) remains Partial. Original full Firefox suites pass 25/26, 24/26 and 23/26 without retries or assertion/timeout/trace changes. The same-version task-owned browser cache recovers a missing shared executable; protocol capture records preview execution-context loss but leaves its cause unproven. All 145 dependency hashes and the tested artifact identity remain unchanged. No code, disclosure authority or parity disposition changes; clean Firefox qualification and COV-03 remain open.
+
+## Bounded source profile (2026-10-16)
+
+The five `printform.source.*` rows separate human pairing/disclosure from model capabilities. The same Pi Harness receives source tools only after a host-built one-run fictional-source grant; pairing, code, tokens, profile and source/image identities cannot be supplied by model arguments. Source never replaces current business data. JSON artifacts retain the existing operation parser, selected scope, financial bindings, exact-candidate inspection and human Preview/Apply.
+
+Current scope is local Docker/Node24/UTF8 and structured operation JSON, not arbitrary repositories/HTML or hosted multi-tenant execution. Default build conformance exercises missing-session rejection; real Docker and true-browser Origin checks are separate evidence. No formal G6/G8/G9 closure follows merely from tool discovery, a process exit or model-writable tests.
+

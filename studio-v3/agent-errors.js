@@ -1,8 +1,10 @@
+import { SOURCE_ERROR_CONTRACTS } from './source-workspace-errors.js';
 // Error contract for the agent: every code a tool or run can raise, mapped to the contract error families
 // (docs/STUDIO_V3_CODING_AGENT_CONTRACTS.md). Existing codes are kept; this table only classifies them.
 const entry = (family,category,recoverable,retryAdvice) => Object.freeze({family,category,recoverable,retryAdvice});
 
 export const TOOL_ERRORS = Object.freeze({
+  ...SOURCE_ERROR_CONTRACTS,
   AGENT_ARGUMENTS_INVALID:entry(null,'invalid-input',true,'Send arguments that match the tool parameters exactly, without type coercion.'),
   MALFORMED_PROPOSAL:entry(null,'invalid-input',true,'Send a well-formed operation list with a short summary.'),
   AUTHORING_OPERATION_LIMIT:entry('QUOTA_EXCEEDED','invalid-input',true,'Split the change into smaller steps within the operation limit.'),

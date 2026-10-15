@@ -3,6 +3,8 @@ import { MAX_AUTHORING_OPERATIONS } from './ai-authoring-contract.js';
 import { DEMO_CONFIG } from './ai-gateway-config.js';
 import { OBSERVATION_CONTEXT_BYTES } from './observation-context.js';
 import { REFERENCE_LIMITS } from './reference-limits.js';
+import { sourceToolContracts } from './agent-source-contracts.js';
+import { SOURCE_ERROR_CONTRACTS } from './source-workspace-errors.js';
 
 // Executable contracts for the registered tools and operations. Examples are run through the real handlers by
 // scripts/studio-v3-agent-conformance.mjs; a broken example or an undeclared result/error fails the build.
@@ -27,6 +29,7 @@ const pixelEvidence = closed({id:Type.String(),mediaType:Type.Literal('image/png
   width:Type.Integer({minimum:1,maximum:REFERENCE_LIMITS.maxPreviewEdge}),height:Type.Integer({minimum:1,maximum:REFERENCE_LIMITS.maxPreviewEdge}),scale:Type.Number({exclusiveMinimum:0,maximum:1}),pageIndex:Type.Integer({minimum:0}),crop:PIXEL_CROP_SCHEMA,renderer:Type.Literal('dom-raster/v1')});
 
 export const TOOL_CONTRACTS = Object.freeze({
+  ...sourceToolContracts(AUTHORING_ERRORS),
   // 1.1.0 added the removed (tombstone) list and the ledger workflow summary; 1.2.0 adds run.profile (the effect grant).
   get_capabilities:{contractVersion:'1.2.0',outputSchema:closed({version:Type.Literal(1),identity,tools:list,operations:list,knowledge:list,run:open({mode:Type.String()}),
     commit:Type.String(),unsupported:Type.Array(Type.String()),errors:open({}),removed:list,
@@ -57,7 +60,7 @@ export const TOOL_CONTRACTS = Object.freeze({
     invalid:[{args:{scenarios:['999']},error:ARGS},{args:{scenarios:[]},error:ARGS},{args:{scenarios:['0','0']},error:ARGS}]},
   undo_step:{outputSchema:text,errors:[ARGS,'GRANT_DENIED'],examples:[{args:{},setup:prepared.slice(0,1)},{args:{}}],invalid:[{args:{all:true},error:ARGS},{args:{},grant:'read-only',error:'GRANT_DENIED'}]},
   take_notes:{outputSchema:text,errors:[ARGS],limits:{maxNoteChars:DEMO_CONFIG.agent.maxNoteChars},examples:[{args:{notes:'Header uses navy.'}}],invalid:[{args:{notes:''},error:ARGS}]},
-  finish:{outputSchema:text,errors:[ARGS,'GRANT_DENIED','NO_CHANGES','UNSAFE_PROPOSAL','TABLE_BACKGROUND_INTENT','AGENT_INSPECTION_REQUIRED','AGENT_INSPECTION_BLOCKED'],
+  finish:{outputSchema:text,errors:[...new Set([ARGS,'GRANT_DENIED','NO_CHANGES','UNSAFE_PROPOSAL','TABLE_BACKGROUND_INTENT','AGENT_INSPECTION_REQUIRED','AGENT_INSPECTION_BLOCKED',...Object.keys(SOURCE_ERROR_CONTRACTS)])],
     examples:[{args:{summary:'Navy accents'},setup:prepared}],invalid:[{args:{summary:'Navy'},setup:prepared.slice(0,1),error:'AGENT_INSPECTION_REQUIRED'},
       {args:{summary:'Nothing'},error:'NO_CHANGES'},{args:{summary:'Blocked'},setup:prepared,inspection:'blocked',error:'AGENT_INSPECTION_BLOCKED'},
       {args:{summary:'Reverted'},setup:[...prepared,['apply_operations',{summary:'Red accents',operations:[{type:'set_style',patch:{color:'#a82938'}}]}],['undo_step',{}]],error:'AGENT_INSPECTION_REQUIRED'},

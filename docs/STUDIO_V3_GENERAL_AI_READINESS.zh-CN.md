@@ -1,11 +1,11 @@
 # 通用 PrintForm AI：能力与生产发布证据
 
-日期：2026-10-15。定位是浏览器优先、面向不会编程的用户的通用表单助手；ERPNext 只是可选数据适配器，不是产品边界。
+日期：2026-10-16。定位是浏览器优先、面向不会编程的用户的通用表单助手；ERPNext只是可选适配器，不是产品边界。末页与通用业务样张已分别合入；源码profile及验证范围见本文新增记录。
 
 ## 决策
 
-- 采用现有真正的 Pi `AgentHarness` / `MemorySessionRepo` 与本地 typed tools，不伪装成终端脚本或任意代码执行环境。
-- 借鉴 Oh My PI 的发现能力、读指南、检查上下文、局部修改、实际验证、继续修复和停止机制；不把 shell、文件系统或外部执行权限搬进用户浏览器。
+- 采用现有真正的Pi `AgentHarness` / `MemorySessionRepo` 与typed tools；普通设计仍在浏览器私有草稿执行。
+- 可选的真实源码文件/进程由本地配对Docker companion执行，不在浏览器假造shell；需要独立、默认关闭的一次运行虚构源码授权，并保留现有模型/预算、金融/作用域及人工Apply门禁。
 - 用户表达需求；AI 在私有草稿上工作；真实预览通过检查后展示候选；只有用户 Apply 才提交，Undo 可恢复。打印或导出不能偷偷提交未应用草稿。
 - 保留既有模型、服务、权限和预算。聊天界面改进不是增加数据披露、执行权限或延长超时的理由。
 - **当前仍是 Production Pilot，不是已获完整生产资格的 coding agent。** 不能因此把真实客户、付款、员工或其他机密数据发给 Demo 网关。
@@ -207,3 +207,16 @@ PCAR 历史截止、CCAR 重复来源记录、同发票拆分 Payment/Receipt、
 - [OpenAI Function calling](https://developers.openai.com/api/docs/guides/function-calling/#tool-choice)：`auto` 可返回零个工具调用，`required` 要求一个或多个；这是结束协议修复的依据，不代替对实际 Demo 路由兼容性的验证。
 
 参见[聊天契约](STUDIO_V3_AI_CHAT.md)、[界面事项](STUDIO_V3_AI_PANEL_UX.md)、[历史证据](STUDIO_V3_AI_EVIDENCE.md)。历史失败和旧版本证据不覆盖，也不冒充当前构建结果。
+
+## 2026-10-16：有界源码通路，不冒充全面生产资格
+
+末页任务已合入PR75/main3f658de，CI38785140156构建/部署成功；独立231文件/2486项及三引擎42/42通过。通用对账单/库存移动/工资样张独立232文件/2521项、三引擎9/9及3份实际PDF通过，PR76合入main988d350；来源事实不重算，不依赖ERPNext。详细契约见[通用业务样张](GENERAL_BUSINESS_FORMS.zh-CN.md)。
+
+源码profile使用同一Pi Harness，新增9工具，注册表合计22工具/13操作/3指南。配对不等于授权；只上传公开虚构starter，不上传当前dataset/schema/project；人类Preview/Apply仍是唯一提交入口。[管理员与非编程用户路径](STUDIO_V3_CODING_RUNNER.zh-CN.md)。
+
+实际backend27项（含9项真实Docker及本地Origin浏览器）通过。真正公开Origin原生fetch连接**未发布模块**及真实companion，完成exit1→修复exit0→build0→source-bound artifact→原typed draft/binding；数据/schema不变。BOM无关patch保持4bytes；50000NUL输出300864bytes被客户端接受；256KiB有效UTF8按5窗口完整读取。两工作区close及principal revoke确认。不是部署后新UI或真实模型资格证明。
+
+修复实际Docker日志配置启动失败、实验性targetAddressSpace传输失败、BOM原文丢失及JSON转义预算误判；发布依赖扫描改为语法感知模块lexer，忽略生成源码字符串但仍拒绝不可追踪动态import。所有原失败保留，不移动原a99c932发布基线。
+
+G8仍**0/60任务、0/180正式尝试**。G6/G9、DPA、真实数据许可、跨平台/负载/外部业务权限、独立业务/视觉oracle及原生打印机仍未获完整资格。可测试明确支持的虚构profile，不能据此宣称“所有ERP格式”或完整Production Ready。
+

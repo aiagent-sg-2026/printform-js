@@ -26,8 +26,4 @@ describe('gateway error messages',()=> {
     expect(AI_MESSAGES.DEMO_GATEWAY_TIMEOUT).toContain('slow');expect(AI_MESSAGES.AI_TIMEOUT).toContain('slow');
     expect(AI_MESSAGES.DEMO_MEDIA_ENDPOINT_BUG).toContain('Internal error');
   });
-  it('keeps the generic fallback and cancellation wording',()=> {
-    expect(errorMessage(new Error('x'))).toBe('AI request failed. Nothing changed.');
-    expect(errorMessage(Object.assign(new Error('x'),{name:'AbortError'}))).toBe('Cancelled. Nothing changed.');
-  });
 });

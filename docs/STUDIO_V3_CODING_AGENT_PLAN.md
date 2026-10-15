@@ -15,7 +15,7 @@ Full capability means the declared supported profile passes both gates and real-
 
 The built-in advantage should come from exact product state, authoritative knowledge and direct services. It is a measured target, not a consequence of embedding Pi.
 
-## Current result and remaining gaps
+## Historical inspected result (2026-10-09; not the current release)
 
 | Area | Current implementation | Required extension |
 | --- | --- | --- |
@@ -64,7 +64,7 @@ Keep one Pi orchestration loop. Reuse the current registry, provider, draft prot
 | Knowledge generator | Factual contract docs, guide dependencies, impact reports and immutable package identity |
 | Qualification runner | Frozen inputs/budgets, independent oracles, complete attempts and immutable evidence |
 
-The browser retains normal static Studio operation when the runner is unavailable. A coding request then reports `CODING_WORKSPACE_UNAVAILABLE`; it cannot silently claim full coding capability. Browser workers/iframes help responsiveness and rendering but are not an OS shell isolation boundary.
+The browser retains normal static Studio operation when the companion is unavailable. The current bounded profile reports `WORKSPACE_UNAVAILABLE`; it cannot silently use the host shell or claim full coding capability. Browser workers/iframes are not an OS isolation boundary. Current implementation and evidence: [local Node/JSON profile](STUDIO_V3_CODING_RUNNER.zh-CN.md); full G6/G8/G9 qualification remains open.
 
 ## Coding environment decision
 
@@ -168,3 +168,8 @@ Roll out behind separate unified-runtime, visual-tools and coding-runner flags. 
 The exact acceptance cases, thresholds, evidence format and completion labels are owned by [acceptance standard](STUDIO_V3_CODING_AGENT_ACCEPTANCE.md). Physical printer, Safari.app, remote runner and undisclosed provider routes require their own qualification before being advertised.
 
 Documentation verification, 2026-10-09: eight documentation files pass local-link, whitespace, unique case/task mapping and <=300-line checks; the relocated historical task record and active v2 ledger were compared with the original and preserved. Two independent read-only reviews checked scope, gate dependencies, runner contracts and qualification consistency; identified gaps were corrected and rechecked. The acceptance standard defines 57 named deterministic cases plus the 180-attempt/profile real-task gate. No runtime or real-model execution is claimed for this documentation amendment. External KB retrieval was rejected by automatic approval because destination scope was unverified; local source and pinned public upstream references supplied the design evidence.
+
+## Bounded implementation checkpoint (2026-10-16)
+
+The historical matrix above is preserved. The same Pi Harness now has22 registered tools/13 typed operations/3 guides, with9 optional source tools gated by a host-built one-run fictional-source grant. A sealed local Docker/Node24 workspace performs actual file edits, tests, repair, build and JSON artifact handoff through the existing private draft and human Apply. Actual backend27 cases and true-public-Origin unpublished-client byte/artifact smoke pass; deployed UI/model qualification is separate. See the [operator guide](STUDIO_V3_CODING_RUNNER.zh-CN.md). This is not arbitrary repositories/dependencies, hosted multi-tenancy, source-data permission or full production acceptance; the formal register remains0/60 and0/180.
+

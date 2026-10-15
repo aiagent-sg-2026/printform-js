@@ -202,3 +202,8 @@ Current documentation verification should check links, source references, task/g
 完整 Node24 工作树随后 **230 文件 / 2,473 测试通过**并生成站点。首次完整构建因共享 `parseCsv` 模块变化而正确阻断陈旧的 product-workflows 依赖 disposition；确认工作流生成器仅调用未改变的 parser、未扩大工具/权限/工作流资格后，更新真实依赖审查及证据，保留原 `a99c932` baseline。没有用新摘要掩盖代码失败，也没有把合成 guard fixtures 当作真实模型尝试。
 
 [持久 guard/API 与缺失生产前提证据](acceptance/STUDIO_V3_QUALIFICATION_GUARD_20261015.json)绑定实际模块 SHA256；真实 CSV 仍为空。范围是修复“不能误报已合格”，不是声称服务合同、固定模型、G6/G7、完整 G8/G9 或 Production release approved 已完成。
+
+## Bounded source checkpoint (2026-10-16)
+
+The same Pi Harness now has a separately authorized local Docker/Node24 source/JSON profile. Actual backend27 cases include9 real Docker/browser protocol paths; true-public-Origin unpublished-client smoke exercises failed tests→repair→build→source-bound artifact→existing typed private draft, BOM fidelity, serialized-output limits and owned close/revoke. [Exact scope and operator procedure](STUDIO_V3_CODING_RUNNER.zh-CN.md). This is mechanical/profile evidence, not independent full task qualification: G8 remains0/60 and0/180; no G6/G9/DPA or whole-product parity closure is earned from tool registration, model-writable tests or these totals.
+

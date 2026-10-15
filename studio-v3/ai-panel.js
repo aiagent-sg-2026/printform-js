@@ -1,21 +1,21 @@
 import { AIReferenceFiles } from './ai-reference-files.js';
-import { runPanelAgent } from './ai-agent-run.js';
+import { sendPanelMessage } from './ai-panel-run.js';
 import { agentEnabled,setAgentEnabled } from './agent-preference.js';
 import { stepLabel } from './agent-step-labels.js';
 import { createDemoTransport } from './ai-demo-transport.js';
 import { assertProposalCurrent, fail } from './ai-edits.js';
 import { chatRequest,readOnlyRequest } from './ai-chat-protocol.js';
 import { profileFor } from './agent-effects.js';
-import { createIntentLedger, newIntentKey } from './intent-ledger.js';
+import { createIntentLedger } from './intent-ledger.js';
 import { Conversation, cleanMessages } from './ai-conversation.js';
 import { renderConversation, setupPanelLayout } from './ai-chat-view.js';
 import { errorMessage } from './ai-messages.js';
 import { inspectProject } from './validation.js';
-import { runLayoutHarness } from './ai-harness.js';
-import { AIElementTags, validateElementReferences } from './ai-element-tags.js';
+import { AIElementTags } from './ai-element-tags.js';
 import { DEMO_CONFIG, isDemoAlias } from './ai-gateway-config.js';
 import { fillModels, showAlias } from './ai-model-select.js';
 import { AIObservationAuthorization } from './ai-observation-authorization.js';
+import { AISourceWorkspace } from './ai-source-workspace.js';
 // Shown under the message box whenever Send works; it is the recipient notice Send accepts.
 const RECIPIENT_NOTICE = 'Sent to the Demo gateway · use fictional data only';
 
@@ -48,6 +48,7 @@ export class AIPanel {
     document.querySelector('[data-ai-toggle]').addEventListener('click',()=>this.open ? this.close() : this.show());
     this.node('[data-ai-origin]').textContent = `${location.origin} · project github-pages`;
     this.observationAccess = new AIObservationAuthorization(this);
+    this.sourceWorkspace = new AISourceWorkspace(this);
     this.referenceFiles = new AIReferenceFiles(this); setupPanelLayout(this); this.update();
   }
   node(selector) { return this.root.querySelector(selector); }
@@ -83,13 +84,14 @@ export class AIPanel {
   }
   show() { this.open = true; this.root.hidden = false; document.body.classList.add('ai-open'); this.contextChanged(); this.share(); this.update(); this.node('#ai-prompt').focus(); this.sync(); }
   suspend() { this.node('.ai-settings').open = false; this.open = false; this.root.hidden = true; document.body.classList.remove('ai-open'); this.update(); this.sync(); }
-  close() { if (this.applying) return; if (this.busy) void this.stop(); this.suspend(); document.querySelector('[data-ai-toggle]').focus(); }
+  close() { if (this.applying) return; if (this.busy) void this.stop(); this.sourceWorkspace?.resetConsent(); this.suspend(); document.querySelector('[data-ai-toggle]').focus(); }
   contextChanged(force=false) {
     const bus = this.getBus(), selected = this.getSelection();
     this.elementTags?.contextChanged(); this.referenceFiles?.contextChanged();
     this.showScopeHint();
     if (force || bus !== this.contextBus || selected !== this.contextSelection) {
       this.contextBus = bus; this.contextSelection = selected; ++this.epoch;
+      this.sourceWorkspace?.resetConsent();
       const viewing = this.viewing; this.invalidate('Form changed, or selection/scope changed. Send again.');
       if (viewing && !this.applying) void this.restoreUnapplied();
     }
@@ -98,9 +100,10 @@ export class AIPanel {
     assertProposalCurrent(this.getBus(),proposal || {});
     if (this.proposal !== proposal || this.generation !== generation || proposal.epoch !== this.epoch || proposal.selection !== this.getSelection() || proposal.scope !== JSON.stringify(this.scope())) throw fail('STALE_PROPOSAL');
   }
-  cancel(message='Cancelled. Nothing changed.') {
+  cancel(message='Cancelled. Live form unchanged.') {
     if (this.applying) return;
     this.observationAccess?.end();
+    void this.sourceWorkspace?.cancelActive();
     ++this.generation; this.controller?.abort(); this.transport.clear(); this.controller = null;
     clearTimeout(this.timer); this.busy = false;
     const logged = Boolean(this.pendingMessage);
@@ -108,7 +111,7 @@ export class AIPanel {
     this.message(logged ? '' : message); this.update();
   }
   async stop() {
-    const viewing = this.viewing; this.cancel(); if (viewing) await this.restoreUnapplied();
+    const viewing = this.viewing; this.cancel(); const restored = viewing ? this.restoreUnapplied() : undefined; await Promise.all([this.sourceWorkspace?.cancelActive(),restored]);
   }
   async restoreUnapplied() {
     const bus = this.getBus(), generation = this.generation, token = {}; this.restoration = token; this.viewing = true; this.restoring = true; this.update(); this.sync();
@@ -153,74 +156,7 @@ export class AIPanel {
   // The effect grant comes from host state. The question check can only narrow it to read-only, never widen it.
   grantProfile(payload) { return profileFor({question:readOnlyRequest(payload.request,payload.conversation)}); }
   stepDone(step,id) { if (id === this.generation) { this.agentSteps.push({text:stepLabel(step),ok:step.ok,code:step.code}); this.update(); } }
-  async send() {
-    if (this.busy || this.applying || this.restoring) return;
-    let payload, request;
-    try { this.referenceFiles?.assertReady(); payload = this.payload(); request = this.request(); } catch (error) { this.error(error); this.message(error.message); return; }
-    if (!payload.request) { this.message('Write a request or a comment on a referenced element before Send.'); return; }
-    let alias = this.node('#ai-model').value;
-    if (request !== this.sharedRequest) { this.share(); this.message('Layout context updated. Send again to use the current layout.'); return; }
-    if (request.length > 40000) { this.message('The shared context is too large. Clear conversation or shorten the request.'); return; }
-    const bus = this.getBus(), revision = bus.revision, project = structuredClone(bus.project), baseDesign = JSON.stringify(project.manifest.studioV3), baseData = JSON.stringify(project.sampleData), epoch = this.epoch, selection = this.getSelection(), scope = JSON.stringify(this.scope()), references = JSON.stringify(payload.references), attachmentVersion = this.referenceFiles?.version, media = this.referenceFiles?.projection().media || [];
-    const assertContext = ()=> {
-      signal.throwIfAborted();
-      if (id !== this.generation) throw fail('STALE_PROPOSAL');
-      assertProposalCurrent(this.getBus(),{bus,revision,baseDesign});
-      if (attachmentVersion !== this.referenceFiles?.version || baseData !== JSON.stringify(bus.project.sampleData) || epoch !== this.epoch || selection !== this.getSelection() || scope !== JSON.stringify(this.scope()) || references !== JSON.stringify(this.elementTags?.payload() || [])) throw fail('STALE_PROPOSAL');
-      validateElementReferences(bus.project,payload.references,bus.revision);
-    };
-    const {id,signal} = this.begin(); this.conversation.expire(); this.proposal = null; this.checked = false;
-    let inspected = false;
-    this.pendingMessage = payload.request; this.conversation.add('user',[payload.request,...payload.references.filter(r=>r.comment).map(r=>`${r.id}: ${r.comment}`)].join('\n'),'answer',{documentKey:this.documentKey()}); this.node('#ai-prompt').value = ''; this.share(); this.update();
-    try {
-      const runId = crypto.randomUUID(), readObservationHost = ()=>this.observationAccess.state(runId);
-      const observationAuthorization = await this.observationAccess.consume(runId); assertContext(); signal.throwIfAborted();
-      if (this.viewing) { await this.restore(); this.viewing = false; }
-      assertContext();
-      const aliases = await this.transport.discover(signal);
-      assertContext();
-      if (!this.setModels(aliases)) { if (this.modelChosen) throw fail('DEMO_MODEL_UNAVAILABLE'); alias = this.node('#ai-model').value; }
-      if (media.length && !this.transport.supportsImages?.(alias)) throw fail('DEMO_IMAGE_CAPABILITY_UNVERIFIED');
-      assertContext();
-      const inspectCandidate = async proposal=> {
-        assertContext(); inspected = true; this.viewing = true; this.update(); this.sync();
-        const report = await this.renderPreview(proposal.candidate); assertContext(); signal.throwIfAborted();
-        return {report,quality:inspectProject(proposal.candidate,report)};
-      };
-      const onPhase = (text,options)=> { if (id === this.generation) this.message(`${alias} · ${text}`,options); };
-      let result;
-      if (this.useSteps(payload,media,alias)) {
-        this.setRunTimeout(id,DEMO_CONFIG.agent.maxRunMs,'AGENT_TIMEOUT');
-        this.agentSteps = [];
-        try { result = await runPanelAgent({transport:this.transport,alias,payload,media,project,signal,assertContext,inspectCandidate,capturePixels:async(...args)=> { assertContext(); const image=await this.capturePixels?.(...args); assertContext(); return image; },onPhase,onStep:step=>this.stepDone(step,id),profile:this.grantProfile(payload),baseRevision:revision,runId,observationAuthorization,readObservationHost}); }
-        catch (error) {
-          // The gateway refusing tools is remembered. A model that ignored the tools on its first turn is only skipped
-          // this once. A run that already took steps and then ended without a result is reported, not restarted.
-          const refused = error.code === 'DEMO_TOOLS_UNAVAILABLE', ignored = error.code === 'AI_RUN_FAILED' && !this.agentSteps.length;
-          if (!refused && !ignored) throw error;
-          if (refused) this.agentUnavailable = true;
-          this.setRunTimeout(id,DEMO_CONFIG.sendTimeoutMs);
-          this.agentSteps = []; onPhase(refused ? 'Step-by-step runs are not available here; using the single-step flow' : 'The model did not use the step tools; using the single-step flow');
-        }
-      }
-      result ||= await runLayoutHarness({transport:this.transport,alias,request,project,signal,chat:payload,assertContext,media,inspectCandidate,onPhase});
-      if (id !== this.generation) return;
-      assertContext();
-      if (result.kind === 'answer' && this.viewing) { await this.restoreUnapplied(); if (id !== this.generation) return; assertContext(); }
-      const card = this.conversation.add('assistant',result.kind === 'answer' ? result.message : result.summary,result.kind === 'answer' ? 'answer' : 'ready',{documentKey:this.documentKey(),observationProtected:observationAuthorization.text || observationAuthorization.values,...(result.diff ? {diff:result.diff} : {})});
-      // The host mints one intent key per proposal; Apply is idempotent under it (see intent-ledger.js).
-      if (result.kind === 'proposal') this.proposal = {...result,bus,revision,baseDesign,epoch,selection,scope,cardId:card.id,intentKey:newIntentKey()};
-      if (result.kind === 'answer' && this.viewing) return;
-      // Wide screens preview the unapplied candidate right away; narrow screens keep the Preview button (it hides the full-screen panel).
-      const auto = result.kind === 'proposal' && innerWidth > 900, next = auto && result.inspection?.ready ? 'Review the paper preview, then Apply.' : 'Preview before Apply.';
-      const details = `${alias} · ${result.kind === 'answer' ? '' : `r${revision} · ${result.mode === 'steps' ? `${result.turns} steps` : `${result.iterations} inspection round(s)`} · `}Tokens: ${result.usage?.total ?? 'unavailable'}`;
-      this.message(`${result.kind === 'answer' ? 'Read-only answer; form unchanged.' : `${result.inspection?.ready ? 'Local checks passed.' : 'Local checks blocked.'} ${next}`} (${details})`);
-      if (auto) await this.preview(true).catch(error=>this.error(error));
-    } catch (error) {
-      if (id === this.generation) { const message = errorMessage(this.timedOut === id ? fail(this.timeoutCode) : error); this.conversation.add('assistant',message,error.name === 'AbortError' && this.timedOut !== id ? 'cancelled' : 'error',{request:payload.request,documentKey:this.documentKey()}); this.message(''); }
-      if (id === this.generation && inspected && this.viewing && !this.proposal) await this.restoreUnapplied();
-    } finally { if (id === this.generation) { this.transport.clearSession(); this.finish(); this.share(); this.sync(); } }
-  }
+  async send() { return sendPanelMessage.call(this); }
   present() { this.update(); }
   async preview(quiet = false) {
     const proposal = this.proposal; this.assertCurrent(proposal); this.viewing = true; this.checked = false; this.update(); this.sync();
@@ -257,12 +193,13 @@ export class AIPanel {
   retry(id) { if (this.busy || this.applying) return; const card = this.conversation.messages.find(m=>m.id === id); this.node('#ai-prompt').value = card?.request || [...this.conversation.messages].reverse().find(m=>m.role === 'user')?.text || ''; this.share(); this.node('#ai-prompt').focus(); }
   async clear() {
     if (this.applying || this.restoring || ((this.busy || this.proposal || this.node('#ai-prompt').value) && !confirm('Clear this conversation, input, element comments and unapplied AI suggestion? The form and datasets stay unchanged.'))) return;
-    const viewing = this.viewing; this.invalidate('Conversation cleared.'); this.observationAccess.reset(); this.conversation.messages = []; this.node('#ai-prompt').value = ''; this.elementTags?.clear(false); this.referenceFiles?.clear(); if (viewing) await this.restoreUnapplied(); this.share(); this.update();
+    const viewing = this.viewing; this.invalidate('Conversation cleared.'); this.observationAccess.reset(); this.sourceWorkspace?.resetConsent(); this.conversation.messages = []; this.node('#ai-prompt').value = ''; this.elementTags?.clear(false); this.referenceFiles?.clear(); if (viewing) await this.restoreUnapplied(); this.share(); this.update();
     this.node('.ai-conversation-scroll').scrollTop = 0;
   }
   snapshot() { return {open:Boolean(this.open),prompt:this.node('#ai-prompt').value || this.pendingMessage || '',alias:this.node('#ai-model').value,messages:this.conversation.snapshot(),references:this.elementTags?.snapshot() || []}; }
   restoreSnapshot(saved) {
     this.observationAccess.reset();
+    this.sourceWorkspace?.resetConsent();
     this.conversation.restore(saved.messages || [],this.documentKey()); this.node('#ai-prompt').value = saved.prompt; this.restoreAlias(saved.alias);
     this.elementTags?.restoreSnapshot(saved.references || []);
     if (saved.parsed) this.conversation.add('assistant',saved.parsed.summary,'expired',{diff:saved.parsed.diff,documentKey:this.documentKey()});
@@ -276,6 +213,7 @@ export class AIPanel {
     this.elementTags?.setBusy(Boolean(this.busy || this.applying || this.restoring)); this.referenceFiles?.setBusy(Boolean(this.busy || this.applying || this.restoring));
     for (const node of this.root.querySelectorAll('#ai-prompt,#ai-model,#ai-scope,#ai-agent,[data-ai=models],[data-ai-send],[data-prompt]')) node.disabled = Boolean(this.busy || this.applying || this.restoring || this.referenceFiles?.reading);
     this.referenceFiles?.capabilityChanged(); if (this.referenceFiles?.imageBlocked()) this.node('[data-ai-send]').disabled=true;
+    this.sourceWorkspace?.update();
     this.node('[data-ai=cancel]').hidden = !this.busy || Boolean(this.applying); this.node('[data-ai-send]').hidden = Boolean(this.busy);
     for (const node of this.root.querySelectorAll('[data-ai=close],[data-ai=clear]')) node.disabled = Boolean(this.applying);
     this.showSendReason(); renderConversation(this);
@@ -284,7 +222,8 @@ export class AIPanel {
   // (files still being read, image support not confirmed). The reason replaces the notice while it applies.
   showSendReason() {
     const files = this.referenceFiles, node = this.node('[data-ai-send-reason]');
-    const reason = files?.reading ? 'Reading references… Send unlocks when they are ready.' : files?.imageBlocked() ? 'Send is off: image support is not confirmed for this model. Use Check image support, or remove the image.' : '';
-    node.textContent = reason || `${RECIPIENT_NOTICE}. ${this.observationAccess?.notice({compact:true}) || ''}`; node.dataset.kind = reason ? 'reason' : 'notice';
+    const source = this.sourceWorkspace;
+    const reason = source?.closing || source?.cleanupFailed ? source.notice() : files?.reading ? 'Reading references… Send unlocks when they are ready.' : files?.imageBlocked() ? 'Send is off: image support is not confirmed for this model. Use Check image support, or remove the image.' : '';
+    node.textContent = reason || `${RECIPIENT_NOTICE}. ${this.observationAccess?.notice({compact:true}) || ''} ${source?.notice() || ''}`; node.dataset.kind = reason ? 'reason' : 'notice';
   }
 }

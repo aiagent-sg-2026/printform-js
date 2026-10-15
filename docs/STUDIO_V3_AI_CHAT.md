@@ -270,10 +270,10 @@ in-flight cancellation were exercised. Standalone HTML/PDF content and source/sc
 conservation passed, including the final bound form. This is six fictional-data smoke
 cases, not fixed-model or full production qualification; earlier failures remain recorded.
 
-The current generated package declares thirteen tools, thirteen authoring operation schemas
-and two skills. `get_capabilities` returns its immutable release identity and schemas;
-`read_skill` reads trusted bundled guides. Tools operate on browser-local semantic form state,
-not Pi's terminal filesystem/shell loader.
+The generated package now declares22 tools,13 authoring schemas and3 skills.
+The original13 tools retain their effects. Nine optional source tools use the SAME Pi Harness,
+an explicitly paired local Docker companion and one-run fictional-source grant, not a browser
+shell or Pi terminal loader. [Profile and actual evidence](STUDIO_V3_CODING_RUNNER.zh-CN.md).
 
 Builds generate capabilities, knowledge index, guide, agent manifest and capability changes. The bundle embeds the same
 release/package identity. Before its first model request, a built step run checks the immutable release manifest against
@@ -282,8 +282,8 @@ hash-verified offline shell. Unbundled tests use an explicitly unverified develo
 
 Synthetic Pi and browser checks cover discovery, guide reading, editing, inspection, Apply/Undo,
 stale/aborted responses and mixed-release rejection. General write-in form authoring is supported
-within the typed operations; arbitrary source execution, dataset mutation and full coding-agent
-qualification are not. Preview observation requires its explicit disclosure grants.
+within typed operations; arbitrary repositories/dependencies, dataset mutation and full coding-agent
+qualification are not. The optional Node/JSON source profile retains human Apply and disclosure gates.
 See [current production-readiness evidence](STUDIO_V3_GENERAL_AI_READINESS.zh-CN.md) and
 [Registry maintenance](STUDIO_V3_AGENT_REGISTRY.md); neither UI polish nor a live draft proves
 G6–G9 or approval to send confidential production data through the Demo route.

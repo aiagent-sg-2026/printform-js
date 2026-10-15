@@ -15,6 +15,14 @@ who don't need the diary.
 
 ## [Unreleased]
 
+### Paired real source execution in the existing Pi Harness — 2026-10-16
+
+- Add optional host-authorized fictional source files, real Docker Node24 command/test/repair/build, exact diff and source-bound JSON artifact tools; keep one orchestration loop and the original model/route/budgets.
+- Separate human pairing from one-run source consent; deny grant-shaped forgeries, foreign owners/origins/revisions, stale artifacts and unsafe/unknown effects. Keep typed scope/financial/inspection and human Preview/Apply/Undo.
+- Preserve UTF8 BOM source bytes across whole-tree patches; account for JSON output escaping without increasing raw-output/model limits. Clean up actual descendant processes before snapshots and await owned revocation.
+- Fix actual local Docker log admission and browser transport failures. Replace regex dependency scanning with the pinned existing module lexer, retaining computed-import rejection.
+- Record actual Docker/browser and unpublished true-Origin source-to-draft evidence without claiming full G6/G8/G9, arbitrary dependencies, hosted isolation or permission to use confidential production records.
+
 ### General supplied-facts business forms — 2026-10-16
 
 - Add independent AccountStatement, StockMovement and PayrollSlip starters to the existing New picker; reuse FormSpec, JSON Pointer binding, preview and portable Save/Open/Export.

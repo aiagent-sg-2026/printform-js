@@ -19,6 +19,7 @@ export async function verifyAgentRelease({expected=AGENT_BUILD_IDENTITY,base=glo
     throw fail('AGENT_KNOWLEDGE_UNAVAILABLE');
   }
   if (manifest.version!==1 || ['release','contractHash','knowledgeHash','packageHash'].some(key=>manifest[key]!==expected[key])) throw fail('AGENT_RELEASE_MISMATCH');
+  if (expected.sourceRunnerHash !== undefined && (!/^[a-f0-9]{64}$/.test(expected.sourceRunnerHash) || manifest.sourceRunnerHash !== expected.sourceRunnerHash)) throw fail('AGENT_RELEASE_MISMATCH');
   signal?.throwIfAborted();
   return Object.freeze({...expected,verified:true});
 }
