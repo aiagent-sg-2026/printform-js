@@ -29,6 +29,7 @@ who don't need the diary.
 - Make human New Blank genuinely empty in all layout collections with a neutral heading and no starter mark, without erasing supplied data/schema or changing populated transaction starters. Guide existing static fields toward visible write-in/signature lines instead of empty text; retain actual goal failures and capability-admission evidence.
 - Correct the actual model's rejected general-form fields: document that non-items static/bound fields omit `width` and use section grids; return recoverable `FIELD_WIDTH_UNSUPPORTED` through both agent and single-step repair without relaxing validation or dropping input. Preserve table/image widths and supplied data; correct the authoring guide's obsolete null-logo semantics.
 - Expose canonical title/page-number/table output inclusion and clarify that storing a heading never implicitly enables its section. Give rejected tool arguments bounded schema-only repair locations/constraints without received values, unknown key names, SDK exception text, coercion, effect escalation or additional retries.
+- Archive the frozen six-case published-origin model profile passing on main4f324ca, including human Apply/Undo, real JSON binding, pixel-only recognition, in-flight Stop and final bound HTML/PDF source conservation. Retain earlier failures and fictional-only Demo/production qualification limits; do not promote smoke evidence into blanket Production Ready.
 
 ### Fixed ERPNext Payment Entry and physical-paper boundaries
 

@@ -1,0 +1,219 @@
+{
+  "version": 1,
+  "qualification": "Bounded fictional-data browser smoke only; Production Pilot, not G8 or full production/coding-agent qualification",
+  "testedRelease": "4f324caae9a014beef14f30cf6e85475df5b3f91",
+  "ci": "https://github.com/yapweijun1996/printform-js/actions/runs/38681168826",
+  "started": "2026-10-15T04:28:43.698Z",
+  "ended": "2026-10-15T04:32:05.379Z",
+  "frozenProfile": "browser-first general print-form assistant; fictional-only Demo route, not confidential-data or source-shell certification",
+  "runnerSha256": "1c25679520ba78074ab6ba2b4594da192f3b55b6dd142b418df5bcdc6940d047",
+  "conditions": {
+    "registeredPublishedOrigin": true,
+    "providerFixtures": false,
+    "selectedAlias": "demo-auto",
+    "upstreamModelVersion": "unavailable",
+    "interCaseCadenceMs": 30000,
+    "budgetsAndGeometryUnchanged": true,
+    "noModelRetriesOrQuotaEvasion": true,
+    "optionalSingleRunFictionalTextAndPixelConsent": true,
+    "humanApplyRequired": true
+  },
+  "transport": {
+    "completedResponses": 24,
+    "completedResponseStatusCodes": [
+      200
+    ],
+    "accountedCompletedResponseTokens": 366478,
+    "cancelledRequestUsage": "unavailable; accounted tokens are not a complete run cost",
+    "pageErrors": [],
+    "harnessError": null,
+    "toolErrorsInThisProfile": [],
+    "schemaRepairHintsInThisProfile": 0
+  },
+  "cases": [
+    {
+      "id": "LIVE-READ",
+      "request": "How should I lay out an equipment handover form? Please explain without changing the form.",
+      "outcome": "pass",
+      "actualToolTrace": [
+        "get_capabilities",
+        "read_skill",
+        "get_context",
+        "inspect_draft",
+        "finish_answer"
+      ],
+      "proof": {
+        "revision": "r0",
+        "projectHashBefore": "0e4c802636c84f4a004e0b8a0afe306e5a7faf4b51544ed0d1677a0b67849cd3",
+        "projectHashAfter": "0e4c802636c84f4a004e0b8a0afe306e5a7faf4b51544ed0d1677a0b67849cd3"
+      }
+    },
+    {
+      "id": "LIVE-CREATE",
+      "request": "Create a blank EQUIPMENT HANDOVER write-in form with Employee name, Department, Handover date, Equipment description, Asset tag, Condition, Handed over by, Received by and signature lines; hide invoice prices/totals; do not invent bindings or change supplied data.",
+      "outcome": "pass",
+      "actualToolTrace": [
+        "get_capabilities",
+        "read_skill",
+        "get_context",
+        "apply_operations",
+        "inspect_draft",
+        "finish"
+      ],
+      "proof": {
+        "revisionBefore": "r0",
+        "revisionApplied": 1,
+        "pages": 1,
+        "baselineDesignHash": "fb49ac64cc3be735360d59290f121e4770b85b8e11fa997d8368be498f7bc93a",
+        "undoDesignHash": "fb49ac64cc3be735360d59290f121e4770b85b8e11fa997d8368be498f7bc93a",
+        "htmlStatus": "ready",
+        "htmlValidationErrors": [],
+        "htmlBoundsViolations": [],
+        "pdfPages": 1,
+        "pdfTextBoundsVerified": true
+      }
+    },
+    {
+      "id": "LIVE-FOLLOWUP",
+      "request": "Keep this handover form and its fields. Remove the remaining logo; make all field labels and write-in text 12pt, the title 20pt, and leave clear signature space. Do not change source data.",
+      "outcome": "pass",
+      "actualToolTrace": [
+        "get_capabilities",
+        "read_skill",
+        "get_context",
+        "apply_operations",
+        "inspect_draft",
+        "finish"
+      ],
+      "proof": {
+        "pages": 1,
+        "visibleLogoCount": 0,
+        "actualVisibleTypographyPt": [
+          20,
+          12
+        ],
+        "previewScreenshotObserved": true
+      }
+    },
+    {
+      "id": "LIVE-BIND",
+      "request": "Bind the existing Employee name and Department fields to the supplied /employee/name and /employee/department paths. Do not create data or guess any other path.",
+      "outcome": "pass",
+      "actualToolTrace": [
+        "get_capabilities",
+        "read_skill",
+        "get_context",
+        "apply_operations",
+        "inspect_draft",
+        "finish"
+      ],
+      "proof": {
+        "bindings": [
+          {
+            "target": "customer-employee-name",
+            "kind": "bound",
+            "pointer": "/employee/name"
+          },
+          {
+            "target": "customer-department",
+            "kind": "bound",
+            "pointer": "/employee/department"
+          }
+        ],
+        "renderedFictionalValues": [
+          "Fictional Alex Example",
+          "Training"
+        ],
+        "pages": 1
+      }
+    },
+    {
+      "id": "LIVE-REFERENCE",
+      "request": "Please describe the attached fictional form image without changing this form. Identify its title, two field labels and the QA reference printed in the image. State any uncertainty.",
+      "outcome": "pass",
+      "actualToolTrace": [
+        "get_capabilities",
+        "read_skill",
+        "get_context",
+        "inspect_draft",
+        "finish_answer"
+      ],
+      "proof": {
+        "pixelFixtureSha256": "349b5818c17d18c56fd69be1e088c782fa22cff2bcd5de79a518a9aede5407ca",
+        "answer": "AI assistant\nThe form appears to be titled “FIELD SERVICE LOG”. Two visible field labels are “Work ticket” and “Technician” (others also shown include “Arrival time” and “Completion”). The QA reference printed near the bottom is “CYAN-47” (“Fictional QA ref: CYAN-47”). Uncertainty: low; the text is clearly readable from the provided image.\n\nObservation receipt: observation-80a4fa8b-9e58-45d0-aca1-5e3601bd35c9",
+        "protectedHashBefore": "901139c0d2348b2b273c33b3413f3e326cf5f3040a6b74262c8d484822a10e1c",
+        "protectedHashAfter": "901139c0d2348b2b273c33b3413f3e326cf5f3040a6b74262c8d484822a10e1c"
+      }
+    },
+    {
+      "id": "LIVE-STOP",
+      "request": "Improve this form spacing while preserving all source data.",
+      "outcome": "pass",
+      "actualToolTrace": [],
+      "proof": {
+        "afterActualRequestStarted": true,
+        "revision": 5,
+        "beforeHash": "66780f52e6faf946dd7082df4b0135870f19a683ee6a96fa49037138f6be7148",
+        "afterHash": "66780f52e6faf946dd7082df4b0135870f19a683ee6a96fa49037138f6be7148",
+        "offlineStatus": "ready",
+        "offlineValidationErrors": []
+      }
+    }
+  ],
+  "sourceConservation": [
+    {
+      "before": "create-before",
+      "after": "created-applied",
+      "dataHashBefore": "b4215677d573940411c01e9cd6799b50108e0b0e13268edf1106a8140433848e",
+      "dataHashAfter": "b4215677d573940411c01e9cd6799b50108e0b0e13268edf1106a8140433848e",
+      "schemaHashBefore": "ac79d5f21b24bc32782380d222adfb19224f8c68945623ee78496c56c56d870e",
+      "schemaHashAfter": "ac79d5f21b24bc32782380d222adfb19224f8c68945623ee78496c56c56d870e"
+    },
+    {
+      "before": "followup-before",
+      "after": "followup-applied",
+      "dataHashBefore": "b4215677d573940411c01e9cd6799b50108e0b0e13268edf1106a8140433848e",
+      "dataHashAfter": "b4215677d573940411c01e9cd6799b50108e0b0e13268edf1106a8140433848e",
+      "schemaHashBefore": "ac79d5f21b24bc32782380d222adfb19224f8c68945623ee78496c56c56d870e",
+      "schemaHashAfter": "ac79d5f21b24bc32782380d222adfb19224f8c68945623ee78496c56c56d870e"
+    },
+    {
+      "before": "binding-before",
+      "after": "binding-applied",
+      "dataHashBefore": "b888dfef5fbc121bb404a4123b46d3d53678c609244402a21e24952a048f33b1",
+      "dataHashAfter": "b888dfef5fbc121bb404a4123b46d3d53678c609244402a21e24952a048f33b1",
+      "schemaHashBefore": "92b1966525aa2f223338872b9a4d8c3fe55c2f01306837512acc57b8bbd83658",
+      "schemaHashAfter": "92b1966525aa2f223338872b9a4d8c3fe55c2f01306837512acc57b8bbd83658"
+    },
+    {
+      "before": "stop-before",
+      "after": "stop-after",
+      "dataHashBefore": "b888dfef5fbc121bb404a4123b46d3d53678c609244402a21e24952a048f33b1",
+      "dataHashAfter": "b888dfef5fbc121bb404a4123b46d3d53678c609244402a21e24952a048f33b1",
+      "schemaHashBefore": "92b1966525aa2f223338872b9a4d8c3fe55c2f01306837512acc57b8bbd83658",
+      "schemaHashAfter": "92b1966525aa2f223338872b9a4d8c3fe55c2f01306837512acc57b8bbd83658"
+    }
+  ],
+  "finalBoundOfflineExport": {
+    "outcome": "pass",
+    "status": "ready",
+    "bindings": 2,
+    "validationErrors": [],
+    "pageErrors": [],
+    "gatewayRequests": [],
+    "pdfPage": {
+      "width": 594.95996,
+      "height": 841.91998
+    },
+    "pdfContainsSuppliedFictionalValues": true,
+    "pdfTextBoundsVerified": true
+  },
+  "localRawEvidence": "/tmp/printform-general-ai-live-title-arguments-20261015/",
+  "limits": [
+    "Only self-owned fictional forms/data/references were used. No confidential-data approval.",
+    "demo-auto is a route alias, not a qualified fixed upstream model/version.",
+    "This is six smoke cases, not the formal60tasks/180attempts G8 profile.",
+    "No arbitrary source sandbox/G6, production tenant/SLO/G9, real printer or accessibility certification.",
+    "This successful profile had no argument failures; repair-boundary evidence is the separate actual API smoke and consumer/security regressions."
+  ]
+}

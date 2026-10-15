@@ -263,6 +263,13 @@ handover draft: respectively five and six actual Responses calls, using `demo-au
 hid items/totals, and remained unapplied at revision zero. This is dated route-level evidence,
 not qualification of a fixed upstream model, the changed code, long sessions or all tasks.
 
+On deployed `main@4f324caae9a014beef14f30cf6e85475df5b3f91`, the unchanged frozen
+READ/CREATE/FOLLOWUP/BIND/REFERENCE/STOP profile all passed through actual Pi tools:
+human Apply, Undo/Redo, real supplied-JSON bindings, pixel-only QA recognition and
+in-flight cancellation were exercised. Standalone HTML/PDF content and source/schema
+conservation passed, including the final bound form. This is six fictional-data smoke
+cases, not fixed-model or full production qualification; earlier failures remain recorded.
+
 The current generated package declares thirteen tools, thirteen authoring operation schemas
 and two skills. `get_capabilities` returns its immutable release identity and schemas;
 `read_skill` reads trusted bundled guides. Tools operate on browser-local semantic form state,
