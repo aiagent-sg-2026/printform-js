@@ -15,7 +15,7 @@ export async function runPanelAgent({transport,alias,payload,media,project,signa
   const memory = createAgentMemory();
   const assertRun = ()=> {
     assertContext?.();
-    if (workspace && !isSourceAuthorization(workspace)) throw sourceFailure('WORKSPACE_AUTH_EXPIRED');
+    if (workspace && !isSourceAuthorization(workspace)) throw sourceFailure(workspace.denialCode || 'WORKSPACE_AUTH_EXPIRED');
     if (observationAuthorization) assertObservationAuthorization(observationAuthorization,{...readObservationHost(),runId});
   };
   const provider = createGatewayModel({transport,alias,signal,assertContext:assertRun,memory,onTurn:({totals})=>{ spent = totals.total; },onPhase:(text,options)=>onPhase(spent ? `${text} · ${spent.toLocaleString('en-US')} tokens` : text,options)});
