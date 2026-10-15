@@ -40,6 +40,15 @@ describe("atomic content in Unicode ranges", () => {
     expect(chunks.flatMap(node => Array.from(node.querySelectorAll("[data-pf-monetary]"), money => money.textContent))).toEqual(["(645,650.00)"]);
     expect(chunks.filter(node => node.textContent.includes("645"))).toHaveLength(1);
   });
+  it.each(['class="signature-block"', 'class="pfsign"', 'data-pf-component-type="signature"'])("keeps complete signature label/value blocks as one Range unit: %s", attributes => {
+    const root = document.createElement("div");
+    root.innerHTML = `Before <section ${attributes}><small>Authorised by</small><strong>Fictional Reviewer</strong><span>2026-10-16</span></section> After`;
+    const signature = root.querySelector("section").outerHTML;
+    const points = contentBoundaries(root);
+    const chunks = points.slice(1).map((_point, index) => cloneContentRange(root, points, index, index + 1));
+    expect(chunks.map(node => node.textContent).join("")).toBe(root.textContent);
+    expect(chunks.flatMap(node => Array.from(node.querySelectorAll("section"), section => section.outerHTML))).toEqual([signature]);
+  });
   it("keeps a consumed cell at its terminal Range boundary under a finite word budget", () => {
     const root = document.createElement("div");
     root.textContent = "ID-001";

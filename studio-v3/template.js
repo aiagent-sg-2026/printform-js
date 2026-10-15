@@ -3,6 +3,7 @@ import { validateDesign } from './design-validation.js';
 import { tableBodyCss } from './table-style.js';
 import { a4PresetTheme } from './a4-theme.js';
 import { sectionOrder, usesFlowSections, fieldKind, styleCss, assetOf, pageSettings, pageDimensions, contentDimensions } from './design-authoring.js';
+import { financialField } from './agent-binding-invariants.js';
 export const escape = value => String(value ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const attr = (name, value) => ` ${name}="${escape(value)}"`;
 const styleAttr = style => styleCss(style) ? attr('style',styleCss(style)) : '';
@@ -15,14 +16,15 @@ function valueNode(d, block, f) {
   const id = `${block}-${f.id}`;
   if (fieldKind(f) === 'image') return imageNode(d,f,id);
   const binding = fieldKind(f) === 'bound' ? attr('data-pf-text', f.pointer) : '';
-  return `<span${component(id)} data-v3-role="value"${binding}${f.format ? attr('data-pf-format', f.format) : ''}${styleAttr(f.valueStyle)}>${escape(f.text || '')}</span>`;
+  const monetary = fieldKind(f) === 'bound' && !f.format && financialField(f) ? ' data-pf-monetary="currency"' : '';
+  return `<span${component(id)} data-v3-role="value"${binding}${f.format ? attr('data-pf-format', f.format) : ''}${monetary}${styleAttr(f.valueStyle)}>${escape(f.text || '')}</span>`;
 }
 function labelNode(block, f) {
   if (f.showLabel === false) return '';
   return `<span class="label"${attr('data-v3-id',`label-${block}-${f.id}`)} data-v3-role="label"${f.showLabel === true ? ' data-v3-label-visible="true"' : ''}${styleAttr(f.labelStyle)}>${escape(f.label)}</span>`;
 }
 function fields(d, block) {
-  return d[block].map(f => `<div class="field" data-v3-field="${escape(block+'-'+f.id)}">${labelNode(block,f)}${valueNode(d,block,f)}</div>`).join('');
+  return d[block].map(f => `<div class="field" data-v3-field="${escape(block+'-'+f.id)}"${block === 'footer' && ['signature','approval'].includes(f.id) ? ' data-pf-component-type="signature"' : ''}>${labelNode(block,f)}${valueNode(d,block,f)}</div>`).join('');
 }
 function sectionAttributes(d, id) {
   const b = d.blocks[id];
@@ -49,7 +51,9 @@ export function compileTemplate(d) {
   const enabled = id => d.blocks[id].enabled, page = pageSettings(d), size = contentDimensions(d);
   const header = `<header class="${sectionClass(d,'header','pheader')}"${sectionAttributes(d,'header')}${usesFlowSections(d) && sectionOrder(d)[0] !== 'header' ? ' data-pf-table-id="v3-header"' : ''}>${d.logo === null ? '' : d.logo ? imageNode(d,d.logo,'header-logo','logo') : '<div class="brand-mark" data-v3-id="header-logo">A</div>'}<div class="company-fields">${fields(d,'header')}</div><h1 data-v3-id="header-title"${styleAttr(d.titleStyle)}>${escape(d.title)}</h1></header>`;
   const customer = `<section class="${sectionClass(d,'customer','pdocinfo')}"${sectionAttributes(d,'customer')} data-pf-table-id="v3-customer">${fields(d,'customer')}</section>`;
-  const totals = `<footer class="${sectionClass(d,'totals','pfooter')}"${sectionAttributes(d,'totals')} data-pf-table-id="v3-totals"><div class="summary">${fields(d,'totals')}</div></footer>`;
+  const order = sectionOrder(d).filter(enabled);
+  const keepWithFooter = order[order.indexOf('totals') + 1] === 'footer' && !d.blocks.footer.breakBefore;
+  const totals = `<footer class="${sectionClass(d,'totals','pfooter')}"${sectionAttributes(d,'totals')}${keepWithFooter ? ' data-pf-keep-with-next="true"' : ''} data-pf-table-id="v3-totals"><div class="summary">${fields(d,'totals')}</div></footer>`;
   const footer = `<footer class="${sectionClass(d,'footer','pfooter002')}"${sectionAttributes(d,'footer')} data-pf-table-id="v3-footer">${fields(d,'footer')}</footer>`;
   const nodes = {header,customer,items:tableNode(d),totals,footer};
   const manualSize = Object.values(page.margins).some(Boolean) ? `${attr('data-papersize-width',size.width)}${attr('data-papersize-height',size.height)}` : '';
@@ -93,6 +97,7 @@ ${d.striped ? '#pf-mount .prowitem_processed[data-pf-row-index]:nth-child(even) 
 #pf-mount .summary .field:last-child { font-weight:700; border-top:2px solid ${color}; background:#eef3fa; }
 #pf-mount .v3-notes { padding:20px 36px; }
 #pf-mount .v3-notes .field { margin-bottom:8px; }
+#pf-mount [data-pf-component-type="signature"] { break-inside:avoid; }
 #pf-mount .v3-page-number { margin:0 36px; padding:10px 0 16px; border-top:1px solid #bac8da; text-align:right; color:#566477; font-size:var(--pf-font-minus-1); }
 #pf-mount .v3-custom-layout .field { grid-column:auto;grid-row:auto; }
 ${a4PresetTheme(d)}

@@ -2,6 +2,7 @@
 
 import { attachRowHeaderPolicyMethods } from "./row-header-policy.js";
 import { fitsWithinHeight } from "./pagination-fit.js";
+import { DomHelpers } from "../dom.js";
 
 export function attachPaginationFinalizeMethods(FormatterClass) {
   if (!FormatterClass.prototype.maxRepeatingRowHeaderHeight) attachRowHeaderPolicyMethods(FormatterClass);
@@ -115,13 +116,19 @@ export function attachPaginationFinalizeMethods(FormatterClass) {
         (renderState.isPaddtPage && !(this.paddtConfig && this.paddtConfig.insertPaddtDummyRowItems))
       )
     );
-    const allowance = footerState.totalFinal - footerState.repeating;
-    const heightWithFinalFooters = baseHeight + allowance;
-    if (fitsWithinHeight(heightWithFinalFooters, lastPageLimit)) {
-      const container = this.getCurrentPageContainer(outputContainer);
+    const container = this.getCurrentPageContainer(outputContainer);
+    const previousEnd = container.lastChild;
+    const logicalCount = this.logicalPageNumberClones.length;
+    const physicalCount = this.physicalPageNumberClones.length;
+    // Source heights and the arithmetic row fast path are reservations, not a
+    // verdict. Decide using final footer clones at the actual output width.
+    this.appendFinalFooters(container, sections, logFn);
+    this.updatePageNumberTotals();
+    const heightWithFinalFooters = DomHelpers.measureHeightRaw(container);
+    if (fitsWithinHeight(heightWithFinalFooters, this.config.papersizeHeight)) {
       this.applyRemainderSpacing(
         container,
-        lastPageLimit,
+        this.config.papersizeHeight,
         heightWithFinalFooters,
         footerState,
         spacerTemplate,
@@ -131,9 +138,11 @@ export function attachPaginationFinalizeMethods(FormatterClass) {
           useCurrentHeight: true
         }
       );
-      this.appendFinalFooters(container, sections, logFn);
       return;
     }
+    while (container.lastChild !== previousEnd) container.lastChild.remove();
+    this.logicalPageNumberClones.length = logicalCount;
+    this.physicalPageNumberClones.length = physicalCount;
 
     this.prepareNextPage(
       outputContainer,
@@ -149,13 +158,14 @@ export function attachPaginationFinalizeMethods(FormatterClass) {
       "default"
     );
 
-    const finalPageStartHeight = allowance;
-    const container = this.getCurrentPageContainer(outputContainer);
+    const nextContainer = this.getCurrentPageContainer(outputContainer);
+    this.appendFinalFooters(nextContainer, sections, logFn);
+    this.updatePageNumberTotals();
     const nextRepeatingHeight = this.computeRepeatingHeightForPage(sections, heights, true, "default");
     this.applyRemainderSpacing(
-      container,
-      defaultHeightPerPage,
-      finalPageStartHeight,
+      nextContainer,
+      this.config.papersizeHeight,
+      DomHelpers.measureHeightRaw(nextContainer),
       footerState,
       spacerTemplate,
       {
@@ -163,6 +173,5 @@ export function attachPaginationFinalizeMethods(FormatterClass) {
         useCurrentHeight: true
       }
     );
-    this.appendFinalFooters(container, sections, logFn);
   };
 }

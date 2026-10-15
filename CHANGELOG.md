@@ -15,6 +15,13 @@ who don't need the diary.
 
 ## [Unreleased]
 
+### Final-page footer and signature flow — 2026-10-16
+
+- Measure final footers with actual output width and page totals before creating another page; failed trials roll back DOM and page-number registrations.
+- Keep requested summary/signature chains together without turning splittable notes into a single atomic row. Nested signatures use the continuation page's real space.
+- Retain an unconsumed once-only table header in both continuation probes and actual movement; prevent an avoidable header-only page without repeating or dropping business rows.
+- Preserve supplied text, row order, monetary strings, signatures and original input on rejected oversized content. Record actual fractional-page and nested-signature browser regressions, not physical-printer certification.
+
 ### General browser-first AI form assistant — 2026-10-15
 
 - Archive a new real-model, fictional visitor check-in form: actual title/eight write-in fields, explicit Preview/Apply, unchanged saved data/schema, and independently reopened standalone HTML/single-page PDF. Preserve harness failures, unavailable usage and unrun visitor Undo/Redo; this is not formal production qualification.

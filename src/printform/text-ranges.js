@@ -17,10 +17,16 @@ export function hasGeneratedContent(node) {
     return content && !["none", "normal", '""', "''"].includes(content);
   });
 }
+export function isKeepTogetherContent(node, includeDescendants = false) {
+  if (node.nodeType !== 1) return false;
+  const selector = '[data-pf-keep-together="true"],[data-pf-component-type="signature"],.signature-block,.pfsign';
+  return node.matches(selector) || Boolean(includeDescendants && node.querySelector(selector));
+}
+
 
 export function isAtomicContent(node) {
   if (node.nodeType !== 1) return false;
-  if (ATOMIC_TAGS.has(node.localName.toUpperCase()) || node.dataset.pfKeepTogether === "true" ||
+  if (ATOMIC_TAGS.has(node.localName.toUpperCase()) || isKeepTogetherContent(node) ||
     node.dataset.pfFormat === "currency" || node.dataset.pfMonetary === "currency") return true;
   const view = node.ownerDocument.defaultView;
   const style = view?.getComputedStyle(node);

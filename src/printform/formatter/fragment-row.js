@@ -1,5 +1,5 @@
 import { DomHelpers } from "../dom.js";
-import { cloneContentRange, contentBoundaries, hasGeneratedContent } from "../text-ranges.js";
+import { cloneContentRange, contentBoundaries, hasGeneratedContent, isKeepTogetherContent } from "../text-ranges.js";
 import { wordCeilingEnd } from "../text.js";
 import { measuredCellLayout } from "./fragment-table.js";
 
@@ -37,8 +37,9 @@ function fits(row, height, width) {
 // grid rectangle intersects several logical rows or physical continuations.
 export function fragmentMeasuredRow(row, { height, width, sourceId, maxWords = Infinity }) {
   const readabilitySplit = Number.isFinite(maxWords) && (row.textContent.match(/\S+/g) || []).length > maxWords;
-  if (DomHelpers.measureHeightRaw(row) <= height + 0.01 && !readabilitySplit) return [row];
-  if (!(height > 0) || row.dataset.pfKeepTogether === "true") fail(row, "atomic row or no body budget");
+  const keepTogether = isKeepTogetherContent(row);
+  if (DomHelpers.measureHeightRaw(row) <= height + 0.01 && (!readabilitySplit || keepTogether)) return [row];
+  if (!(height > 0) || keepTogether) fail(row, "atomic row or no body budget");
   const layout = measuredCellLayout(row, width, fail);
   if ([row, ...layout.rows, ...layout.cells.map(cell => cell.source)].some(hasGeneratedContent)) {
     fail(row, "generated row/cell chrome cannot be duplicated across continuations");

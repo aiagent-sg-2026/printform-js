@@ -45,6 +45,43 @@
 
 现有 `studio-v2/core/row-integrity.js` 已按完整、连续且一致的 source fragment 集合折叠业务身份；多行表格仍使用同一根业务对象，故无需新增消费者计数规则。永久 e2e 同时消费 `analyzeRowIntegrity` 与真实 `inspectRenderedDocument` 的业务行/物理片段指标。
 
+## 末页与签名区（2026-10-16）
+
+根因分为两条，不把单据名称或业务行数当分页规则：
+
+- `renderRows` 的快速路径累计源行的上取整高度；旧 `finalizeDocument` 再加源 footer reservation，未经真实输出试放便决定另起末页。真实 Chromium 最小输入中，header `25.25px`、三个独立 `20.25px` 业务块、最终 footer `60.25px` 共 `146.25px`，在 `148px` 纸高仍输出两页。它不是实际放不下，而是预测值被当成最终测量。
+- Studio 的流式 totals、notes/signoff 是不同 PTAC 对象；原来各自贪心放置，前者没有为相邻尾部预留，后者便可能独占下一页。`.signature-block` / `.pfsign` / signature component 先前只被诊断器视为 keep-together，DOM Range 的原子判断并未采用同一语义。
+
+现在最终 footer 先克隆到真实输出页，填写当前已知页码总数，再以该页实际高度决定保留或回滚换页；被回滚的试放克隆不留在页码注册表。严格纸高异常不放宽。装饰 filler 仍在最终总页数更新后插入。
+
+通用流行可用 `data-pf-keep-with-next="true"` 表示相邻尾部链。引擎同时实测当前页和真实宽度的 continuation 布局（包括活动表头、重复 chrome 与 footer）；只有下一页能完整容纳时才提前换页。显式 `tb_page_break_before` 优先；整链确实大于一页时退回既有逐行分页，不删除内容或缩字。Studio 仅在启用 totals 后直接接 footer、且 footer 没有显式换页时输出该语义，不改变设计顺序或业务字段。
+
+签名 component / `.signature-block` / `.pfsign` 现在也是 Range 原子。Studio 原有 signature / approval 字段输出 signature component，保留 label/value 一起；长 notes 本身仍可拆分。原子行的 continuation 预算不再预扣只出现一次的 document header/docinfo，不因首张专属信息而误报放不下；活动表头和重复 chrome 仍保留预算。确实超过整页预算仍失败并回滚源 DOM 与监听器。
+
+Studio 对 `bound`、无显示 formatter、且被既有 `financialField` 识别的来源原文数值补上已有 `data-pf-monetary="currency"`。该标记仅接入原子 Range 与货币 token 几何门禁，不执行 Intl、数值解析、货币转换或计算；因此包含 UOM 的原文数量也保持原字符串。真实浏览器规格直接编译/绑定负额原文与带单位原文，实际裁切时必须被既有消费者拒绝、恢复样式后重新通过，而不是只断言 attribute 存在。
+
+修改前的实际最小浏览器证据（非重复运行已知业务观察）：
+
+- `/tmp/printform-footer-root-cause-20261016/before.json`
+- `/tmp/printform-footer-root-cause-20261016/fractional-final-footer-before.png`
+- `/tmp/printform-footer-root-cause-20261016/flow-summary-signature-before.png`
+
+确定性消费者边界回归在 `tests/footer-flow.test.js`，原子 Range 与编译/绑定/保存重开回归在原有 segmentation/authoring 测试。真实浏览器规格 `e2e/footer-flow.spec.js` 覆盖分数像素的可容纳/恰好/超界、尾部共页、重复 footer、显式 break、超大尾链、长 notes 与完整签名、续页预算和失败回滚；金额/身份与源序列逐项比较，Chromium 另消费真实 PDF 页数、文本坐标及各业务金额出现一次。
+
+本节新增规格尚未由实现子任务执行；集成时由父代理统一构建并实际运行，不以测试存在冒充通过：
+
+```sh
+npm run test -- --run tests/footer-flow.test.js tests/text-segmentation.test.js tests/measured-pagination.test.js tests/pagination-dummy.test.js tests/page-chrome-lifecycle.test.js tests/studio-v3-authoring.test.js --maxWorkers=1 --no-file-parallelism
+npm run build:site
+npx playwright test e2e/footer-flow.spec.js e2e/complex-pagination.spec.js e2e/erp-business-scenarios.spec.js --workers=1 --project=chromium --project=firefox --project=webkit
+```
+
+浏览器规格成功/失败附件由 Playwright 输出目录保存；`final-footer.png`、`summary-signature.png`、`fragmented-notes-atomic-signature.png` 与 `summary-signature.pdf` 是实际执行后才会生成的附件，不预称修复后截图已存在。
+
+实际独立集成（2026-10-16）：完整构建231文件/2486项通过；末页规格三引擎42/42、0重试，包含Chromium实际PDF。首次配置错误与静态行计数oracle失败均保留，修正后完整矩阵通过。[具体范围、修复及失败记录](acceptance/STUDIO_V3_FINAL_PAGE_FLOW_20261016.md)；不外推为硬件或G8认证。
+
+
+
 ## 永久验证入口
 
 串行集成使用以下命令；测试文件的存在不等于通过，实际结果分开记录：

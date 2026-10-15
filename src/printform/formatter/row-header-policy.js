@@ -7,6 +7,12 @@ function hasTableMap(sections) {
   return Object.keys(sections?.rowHeadersById || {}).length > 0;
 }
 
+export function shouldCarryOneTimeTableHeader(formatter, container, sections, tableId) {
+  if (formatter.isRowHeaderRepeated(sections, tableId)) return false;
+  return !Array.from(container.querySelectorAll(".prowitem_processed, .ptac-rowitem_processed, .paddt-rowitem_processed"))
+    .some((row) => formatter.getRowTableId(row) === tableId);
+}
+
 export function attachRowHeaderPolicyMethods(FormatterClass) {
   FormatterClass.prototype.getSectionRowHeader = function getSectionRowHeader(sections, tableId = "default") {
     const rowHeadersById = sections?.rowHeadersById || {};
