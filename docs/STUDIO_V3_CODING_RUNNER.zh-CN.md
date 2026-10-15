@@ -60,7 +60,10 @@ npm run studio:coding-runner -- --origin https://studio.example.com
 
 真实模型、已部署新UI和跨平台负载资格必须单独记录；上述证据不给G8任务计分。正式register仍0/60、0/180，G6/G9、DPA及外部业务权限不因此关闭。
 
-公开main af5b8253部署后的两次真实 `demo-auto` 源码任务**Fail**：实际列出/读取/写入后，模型连续使用非法或不存在cwd，未完成artifact/proposal，live r0不变且工作区关闭。诊断发现已在服务端准入前拒绝的 `DIRECTORY_NOT_FOUND` 未映射成可恢复路径错误，客户端误标未知效果并最终显示配对过期。修复该分类、在工具schema明确“root省略cwd”、保留未知状态的真实错误。未增加模型预算、未接受绝对路径或“.”，先前失败不删除。正式G8不计分。
+公开main af5b8253部署后的两次真实 `demo-auto` 源码任务**Fail**：实际列出/读取/写入后，模型连续使用非法或不存在cwd，未完成artifact/proposal，live r0不变且工作区关闭。诊断发现已在服务端准入前拒绝的 `DIRECTORY_NOT_FOUND` 未映射成可恢复路径错误，客户端误标未知效果并最终显示配对过期。修复该分类、保留未知状态的真实错误。未增加预算或接受绝对路径/“.”，先前失败保留。
+
+
+后续b8c0701真实响应实际为 `response.incomplete` / `max_output_tokens`、没有工具输出；不可冒充成功。诊断性原生fetch副本缓冲（无假响应、不改Origin/route）捕获服务返回的strict schema：provider将optional cwd变成必填，而该版排除了根目录表示。补上**cwd:""**这一原后端已支持的canonical root，并同步指南/参数回归；不声称已证明上游停止的唯一原因，不调整模型预算或轮换模型。修复后完整源码模型任务及正式资格必须独立证明。
 
 
 ## 官方研究
