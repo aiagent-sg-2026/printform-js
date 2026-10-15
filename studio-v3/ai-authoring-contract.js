@@ -5,7 +5,7 @@ export const AUTHORING_CONTRACT = {
   globalStyleKeys: GLOBAL_STYLE_KEYS,
   typography: { globalProperty:'font', elementProperty:'fontSize' },
   sectionGridTargets: ['header','customer','totals','footer'],
-  logo: 'Use an existing asset ID. With no assets, omit set_logo or use value:null; never use assetId:null.',
+  logo: 'Use an existing asset ID, or value:null to remove both an embedded logo and the default brand mark. With no assets, omit set_logo or use value:null; never use assetId:null.',
   planning: 'Use compact section grids, field ordering and global typography for full redesign. Combine properties for the same target in one patch. Omit unchanged operations. Stay within 24 operations; do not restyle every field.'
 };
 export const contractError = (code, metrics) => Object.assign(new Error(code), {code, ...(metrics ? {metrics} : {})});

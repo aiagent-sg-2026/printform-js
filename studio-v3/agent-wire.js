@@ -94,7 +94,7 @@ export function inputItems({systemPrompt,messages:all},memory = createAgentMemor
 export function agentBody({alias,context,memory,stream}) {
   const requestInput = inputItems(context,memory);
   assertImageParts(requestInput.flatMap(item=>item.content?.filter(part=>part.type==='input_image') || []));
-  const body = JSON.stringify({model:alias,stream,input:requestInput,tools:toolSpecs(context.tools || []),tool_choice:'auto',include:['reasoning.encrypted_content']});
+  const body = JSON.stringify({model:alias,stream,input:requestInput,tools:toolSpecs(context.tools || []),tool_choice:context.tools?.length ? 'required' : 'auto',include:['reasoning.encrypted_content']});
   if (new TextEncoder().encode(body).length > DEMO_CONFIG.maxBodyBytes) throw fail('AGENT_CONTEXT_LIMIT');
   return body;
 }

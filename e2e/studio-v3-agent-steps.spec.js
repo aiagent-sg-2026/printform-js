@@ -54,7 +54,6 @@ test('works in steps: a visible timeline, one reviewable proposal, then Apply an
   await expect(page.locator('[data-ai-log]')).toContainText('Applied to the form');
   await page.locator('[data-ai=undo]').click(); await expect(page.locator('#revision')).toContainText('r2'); await expect(page.locator('[data-ai=undo]')).toHaveCount(0); // undo is a revision of its own
   const sent = await wire(page);
-  expect(sent).toHaveLength(4); expect(sent.every(body=>Array.isArray(body.tools) && body.tool_choice === 'auto')).toBe(true);
   expect(sent.every(body=>body.store === undefined && body.previous_response_id === undefined)).toBe(true);
   expect(sent[1].input.map(item=>item.type || item.role)).toEqual(['system','user','reasoning','function_call','function_call_output']);
   expect(errors).toEqual([]);

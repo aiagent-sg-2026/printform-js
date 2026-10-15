@@ -110,7 +110,7 @@ export function formDesign(project, selected, form, kind) {
       if (order.indexOf(id) !== position) { d.sectionOrder = order.filter(block=>block !== id); d.sectionOrder.splice(position,0,id); }
     }
   } else if (kind === 'logo') {
-    if (checked('removeLogo')) delete d.logo;
+    if (checked('removeLogo')) d.logo = null;
     else d.logo = {assetId:text('assetId'),width:Number(values.get('imageWidth')),height:Number(values.get('imageHeight')),fit:text('imageFit')};
   }
   return d;

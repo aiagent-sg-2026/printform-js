@@ -100,7 +100,7 @@ export function applyAuthoring(design,operations,project,explicitPointers=[]) {
       for (const [key,value] of Object.entries(op.patch)) { record('document',`page.${key}`,design.page?.[key],value); design.page = {...design.page,[key]:structuredClone(value)}; }
     } else if (op.type === 'set_logo') {
       object(op,['type','value']); if (op.value !== null) object(op.value,['assetId','width','height','fit']);
-      record('header-logo','logo',design.logo,op.value); if (op.value === null) delete design.logo; else design.logo = structuredClone(op.value);
+      record('header-logo','logo',design.logo,op.value); design.logo = structuredClone(op.value);
     } else if (op.type === 'set_collection') {
       object(op,['type','value']); record('items','collection',design.collection,op.value); design.collection = op.value;
     } else if (op.type === 'set_heading') {
@@ -155,7 +155,7 @@ export function shareAuthoring(project,context={}) {
   return {
     contract:AUTHORING_CONTRACT,
     sections:BLOCKS.map(id=>({id,enabled:d.blocks[id].enabled,layout:d.blocks[id].layout || {},breakBefore:Boolean(d.blocks[id].breakBefore),keepTogether:Boolean(d.blocks[id].keepTogether),fields:fieldList(d,id).map(f=>({id:`${id}-${f.id}`,kind:f.kind || (f.pointer ? 'bound' : 'static'),format:f.format,width:f.width,labelStyle:f.labelStyle || {},valueStyle:f.valueStyle || {},showLabel:f.showLabel !== false}))})),
-    elements:[{id:'header-title',style:d.titleStyle || {}},{id:'page-number',style:d.pageNumberStyle || {}},{id:'header-logo',assetId:d.logo?.assetId || null},{id:'items',style:d.tableStyle || {},styleOperation:'set_table_style'}],sectionOrder:d.sectionOrder || BLOCKS,page:d.page || {paper:'A4',orientation:'portrait'},
+    elements:[{id:'header-title',style:d.titleStyle || {}},{id:'page-number',style:d.pageNumberStyle || {}},{id:'header-logo',assetId:d.logo?.assetId || null,visible:d.blocks.header.enabled && d.logo !== null},{id:'items',style:d.tableStyle || {},styleOperation:'set_table_style'}],sectionOrder:d.sectionOrder || BLOCKS,page:d.page || {paper:'A4',orientation:'portrait'},
     assets:(d.assets || []).map(({id})=>({id})),bindings:availableBindings(project,explicitBindingPointers(context.request,context.references))
   };
 }

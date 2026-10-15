@@ -24,6 +24,8 @@ who don't need the diary.
 - Keep optional text/pixel permissions unchecked, per-run and separate from Send. Move capability diagnostics to Settings without changing the selected Demo route, budgets or provider.
 - Document actual live baseline evidence and the remaining privacy/model/source-sandbox/qualification gates; do not claim full production readiness from UI polish or a successful draft. [Readiness record](docs/STUDIO_V3_GENERAL_AI_READINESS.zh-CN.md).
 - Correct the publication omission of the compact authorization component and its lifecycle regressions; the release gate blocked the incomplete commit. Retain the reviewed baseline, remove wording/forwarding-only assertions, and verify the committed package rather than bypass the stale-review check.
+- Fix an actual published-origin read-only run ending as unvalidated plain text: registered-tool turns now require function use while retaining evidence/freshness checks and explicit terminal handoffs.
+- Make explicit null remove both an embedded logo and the starter mark, across human/AI edits, saved/reopened projects, component projection and print layout; preserve source data and reject repeated no-op removals.
 
 ### Fixed ERPNext Payment Entry and physical-paper boundaries
 

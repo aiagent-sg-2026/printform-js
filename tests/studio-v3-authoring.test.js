@@ -6,6 +6,7 @@ import { bindTemplate } from '../studio-v2/core/binding.js';
 import { validateTrustedContent } from '../studio-v2/core/content-security.js';
 import { validateFormSpec } from '../studio-v2/core/form-spec.js';
 import { pageDimensions, contentDimensions, usesFlowSections } from '../studio-v3/design-authoring.js';
+import { parseProposal } from '../studio-v3/ai-edits.js';
 const PNG = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII=';
 const dom = project => { const t = document.createElement('template'); t.innerHTML = project.templateHtml; return t.content; };
 const field = (id,text) => ({id,label:'Static label',kind:'static',pointer:'',format:'',text});
@@ -61,6 +62,23 @@ describe('Studio v3 framework-native authoring contract',()=> {
     expect(c.spec.assets[0]).toMatchObject({id:'brand',mime:'image/png',embedded:true});
     expect(JSON.stringify(c.spec)).not.toContain(PNG);
     expect(readProject(saveProject(c)).manifest.studioV3.assets).toEqual(d.assets);
+  });
+  it.each(['placeholder','embedded'])('removes the %s logo without a replacement brand mark, including after save/reopen',kind=> {
+    const project=newProject(), design=designOf(project);
+    if(kind==='embedded'){
+      design.assets=[{id:'brand',src:PNG,alt:'Company mark'}];
+      design.logo={assetId:'brand',width:52,height:52,fit:'contain'};
+    }
+    const source=compileProject(project,design), before=structuredClone(source);
+    expect(dom(source).querySelector('[data-v3-id=header-logo]')).not.toBeNull();
+    const removal=JSON.stringify({summary:'Remove logo',operations:[{type:'set_logo',value:null}]});
+    const candidate=parseProposal(removal,source).candidate;
+    const reopened=readProject(saveProject(candidate));
+    expect(dom(reopened).querySelector('[data-v3-id=header-logo]')).toBeNull();
+    expect(reopened.spec.components.some(component=>component.id==='header-logo')).toBe(false);
+    expect(reopened.sampleData).toEqual(source.sampleData);
+    expect(source).toEqual(before);
+    expect(()=>parseProposal(removal,reopened)).toThrow('NO_CHANGES');
   });
   it('projects body section ordering, layout, breaks and keep-together through native flow rows',()=> {
     const p=newProject(),d=designOf(p);
