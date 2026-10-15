@@ -5,7 +5,9 @@ Send deliberately shares the described layout/binding metadata with the existing
 it does not authorize preview-text or pixel disclosure. Those optional disclosures require
 separate, unchecked, one-run controls; neither expands the host's bound-value/asset policy.
 Enter sends; Shift+Enter and IME Enter do not.
-Nothing is sent by a starter, attachment picker, opening the panel or expanding a disclosure.
+Starters, opening the picker/panel and expanding a disclosure send no form or reference content.
+Attaching an image can acquire a Demo session and discover public model capabilities;
+that check sends no reference image or document content. The file stays local until Send.
 The recipient/fictional-data notice remains visible. If the prepared context changes while
 the user is typing, Send refreshes it and stops before inference.
 
@@ -45,6 +47,12 @@ fallback output is not evidence that a Pi tool-loop task passed.
 `set_logo {value:null}` means no logo, including no starter brand mark. The human Remove logo
 control uses the same explicit absence. Template, header grid and component projection agree;
 the authoring context reports visibility separately from an absent embedded asset ID.
+
+Human New Blank initializes empty field collections, disabled sections, a neutral heading
+and no starter logo; it does not erase the active supplied dataset/schema. A requested
+write-in/signature line uses a named static field with a printed label and visible line text.
+An empty string is not a usable line, and a ready numeric inspection is not proof that
+the requested content was authored. Completed signatures/business values are never invented.
 
 An edit request can run as a tool loop instead of one reply. The model works on a private draft copy of the
 form and calls registry-defined local tools: `get_capabilities` (release, tools, schemas and knowledge index),

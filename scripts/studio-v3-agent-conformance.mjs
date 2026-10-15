@@ -15,14 +15,14 @@ import { staticProject, unitImage } from '../tests/support/pixel-observation.js'
 // The print validators parse HTML templates with DOMParser. Node has none, so borrow jsdom's, as the site build does.
 globalThis.DOMParser ??= new JSDOM('').window.DOMParser;
 const FIXTURES = Object.freeze({
-  blank:() => newProject(),
+  invoice:() => newProject('invoice'),
   static:staticProject,
   // Invoice rows carry financial bindings that keep their collection; a delivery note has none.
   'second-collection':() => { const project = newProject('delivery'); project.sampleData.lines = structuredClone(project.sampleData.items); return project; }
 });
 const INSPECTIONS = {ready:{report:{status:'ready'}},blocked:{report:{status:'blocked',issues:[{code:'OVERFLOW'}]}},stale:{report:{status:'ready'}}};
 
-async function harness({request = 'Change the form',fixture = 'blank',inspection = 'ready',grant = 'design',authorization} = {}) {
+async function harness({request = 'Change the form',fixture = 'invoice',inspection = 'ready',grant = 'design',authorization} = {}) {
   if (!FIXTURES[fixture] || !INSPECTIONS[inspection]) throw new Error(`Unknown conformance fixture: ${fixture}/${inspection}.`);
   const project = FIXTURES[fixture](), draft = createDraft(project,{request});
   const context = (current,info) => chatRequest(current,{request,scope:{mode:'whole'},typography:[],conversation:[]},{mode:'steps',...info});

@@ -81,6 +81,26 @@ logo 修复后：五个针对文件 / **61 测试通过**。未模拟的实际�
 
 修复后的三引擎代理步骤回归另行 **12/12 通过**，显式零重试：真实界面执行分步、Apply/Undo、工具不支持的既有单步路径、偏好恢复和图片初始回合/笔记保留。该组使用模型 fixture，是运行边界回归，不冒充真实服务推理，也不与前面的 204 个场景相加当成新的去重数量。
 
+## 真正 Blank 的根因修复
+
+PR #67 的 `main@256bd7bb63d1885833830b27aa7739fe5fe0d5e2` 已由 [CI 38670673947](https://github.com/yapweijun1996/printform-js/actions/runs/38670673947) 实际通过 228 文件 / 2,413 测试并完成部署。该版本的正式 Origin 冻结复验：
+
+| 路径 | 实际结果，不扩大结论 |
+|---|---|
+| LIVE-READ | Pass；实际经过 get_capabilities → read_skill → get_context → inspect_draft → finish_answer，wire 为 required，完整保存文件哈希和 r0 不变；不是单步回退 |
+| LIVE-CREATE | Fail；候选仍显示 ACME/旧单号/客户等未被要求的发票内容，所需签署字段未形成可用空白线；几何 ready、2 页不能冒充需求完成 |
+| LIVE-FOLLOWUP / LIVE-BIND | 创建未应用，依赖前提不成立，未执行；原记录只启动四条，不能称六条已跑完 |
+| LIVE-REFERENCE | 尚无推理；脚本把不存在的 pending 聊天消息当作 discovery 完成信号，仍在 Connecting 时过早检查能力。后续独立实际 UI 发现确认 demo-auto 的 responses / multimodal 均为 true，Send 可用；demo-groq 的 multimodal 明确 false，仍被拒绝。没有修改能力解析器或换模型 |
+| LIVE-STOP | Pass；实际 POST 开始后取消，完整保存快照哈希与 revision 不变，随后独立 file-URI 导出 ready / errors 0 |
+
+根因不是“通用表单必须依赖 ERPNext”，而是 Blank 只隐藏了带发票字段的 section。现在人类 New → Blank 的五组布局字段均为空，标题中立、默认 logo 关闭；重新启用 section 也不会复活旧单据内容。**保留 supplied dataset/schema，不以偷偷清空数据掩盖问题**；发票/采购/送货等 populated starters 不变。作者指南明确用现有 static 字段、可见 label 和实际打印的空白线；不新增工具/field kind，也不编造已签名或完成的业务值。
+
+该修复已实际通过五个针对文件 / **63 测试**。未模拟浏览器导入自有虚构源值 canaries，启用空白 section 后只有中立标题和页码，没有旧源值；实际添加 Contact name / Recipient signature 填写线，Undo/Redo、保存重开和独立 HTML 均完成，导出 ready / errors 0，数据与 schema 不变，page errors 0、gateway requests 0。初次脚本漏切回 Properties、重开时未等待新的真实 rendered token；更正观察同步，不重试模型、不修改产品期限，失败记录保留。
+
+新的 live 脚本保留原六条需求，等待真实 Send 可用后才检查图片授权/发送，记录公开能力布尔值，遇 429 停止推理，并明确登记前提不成立的任务。真实图片辨识与本次修改后的创建/修改/绑定仍待正式部署后证明；以上局部 Pass 不授权生产数据，也不代替 G8。
+
+真正 Blank 修复后的完整 Node24 `build:site` 也已实际通过 **228 文件 / 2,413 测试**与站点生成；62 个交付文件最大 300 行，141 个本地 Markdown 目标检查无错误，live 脚本语法检查通过。该结果属于当前完整工作树；仍需干净提交门禁与正式部署模型复验，不拿前一版本的局部模型 Pass 代替。
+
 ## 尚未获得的生产资格
 
 | 门禁 | 边界 |

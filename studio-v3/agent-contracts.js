@@ -72,7 +72,7 @@ export const TOOL_CONTRACTS = Object.freeze({
   report_blocked:{outputSchema:text,errors:[ARGS],examples:[{args:{reason:'Asset import is not a tool in this release.'}}],invalid:[{args:{reason:''},error:ARGS}]}
 });
 
-// One accepted and one rejected example per operation, applied to a fresh blank project unless a fixture is named.
+// One accepted and one rejected example per operation, applied to a populated invoice unless a fixture is named.
 export const OPERATION_CONTRACTS = Object.freeze({
   set_element_style:{examples:[{operation:{type:'set_element_style',target:'header-title',patch:{bold:true}}},{operation:{type:'set_element_style',target:'page-number',patch:{fontSize:9,bold:false}}}],
     invalid:[{operation:{type:'set_element_style',target:'header-title',patch:{fontSize:2}},error:ARGS},{operation:{type:'set_element_style',target:'page-number',patch:{}},error:'NO_CHANGES'}]},

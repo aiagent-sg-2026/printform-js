@@ -21,6 +21,9 @@ invoice content; generic write-in forms can hide irrelevant financial sections.
   show/hide sections, add/remove/reorder fields and columns, edit labels,
   column widths, print typography, color and table style. Properties and Data
   binding are separate tabs; binding explicitly chooses Bound value or Static text.
+- **Truly blank layout:** Blank starts with no fields/columns in any section, a neutral
+  heading and no starter logo; enabling sections does not restore invoice bindings.
+  The supplied dataset/schema is retained. Requested write-in lines use visible static text.
 - **Data:** set an absolute collection pointer (`/items`), row-relative field
   pointers (`./description`) or document pointers (`/customer/name`); apply
   sample JSON, locale and currency; switch isolated synthetic samples. The wide

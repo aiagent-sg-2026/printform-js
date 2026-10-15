@@ -22,7 +22,6 @@ describe('framework-native AI authoring',()=> {
   it('authors a general equipment handover write-in form from Blank without changing its supplied data',async()=> {
     const project = newProject('invoice',true), original = structuredClone(project), d = designOf(project);
     const operations = [
-      ...['header','customer','footer'].flatMap(section=>d[section].map(field=>({type:'remove_field',target:`${section}-${field.id}`}))),
       {type:'set_heading',value:'Equipment handover'},
       {type:'set_section',target:'header',patch:{enabled:true,label:'Equipment handover'}},
       {type:'set_section',target:'customer',patch:{enabled:true,label:'Handover details',layout:{columns:2,gap:16}}},

@@ -8,23 +8,24 @@ import { BLOCKS, sectionOrder, pageSettings, fieldKind, labelSelection } from '.
 import { validateDesign } from './design-validation.js';
 const field = (id, label, pointer, format = '') => ({ id, label, pointer, format });
 export function defaultDesign(type = 'invoice', blank = false) {
-  const title = { invoice: 'INVOICE', purchase: 'PURCHASE ORDER', delivery: 'DELIVERY NOTE' }[type] || 'PRINT FORM';
+  const title = blank ? 'PRINT FORM' : { invoice: 'INVOICE', purchase: 'PURCHASE ORDER', delivery: 'DELIVERY NOTE' }[type] || 'PRINT FORM';
   return {
     version: 1, title, type, color: '#1763dc', font: 9, padding: 7, striped: true, borders: true,
     repeatHeader: true, repeatTable: true, pageNumbers: true, breakBefore: false,
+    ...(blank ? { logo: null } : {}),
     blocks: Object.fromEntries(BLOCKS.map(id => [id, { enabled: !blank, label: { header: 'Header', customer: 'Customer', items: 'Items table', totals: 'Totals', footer: 'Footer' }[id] }])),
-    header: [field('company', 'Company', '/company/name'), field('registration','Registration','/company/registration'), field('address', 'Company address', '/company/address'), field('number', 'Document no.', '/document/number'), field('date', 'Date', '/document/date'), field('due',type === 'invoice' ? 'Due date' : 'Delivery date','/document/dueDate'), field('reference','Reference','/document/reference')],
-    customer: [field('bill', type === 'purchase' ? 'Supplier' : 'Bill to', '/customer/name'), field('bill-address', 'Address', '/customer/address'), field('ship', 'Ship to', '/shipTo/name'), field('ship-address', 'Delivery address', '/shipTo/address')],
+    header: blank ? [] : [field('company', 'Company', '/company/name'), field('registration','Registration','/company/registration'), field('address', 'Company address', '/company/address'), field('number', 'Document no.', '/document/number'), field('date', 'Date', '/document/date'), field('due',type === 'invoice' ? 'Due date' : 'Delivery date','/document/dueDate'), field('reference','Reference','/document/reference')],
+    customer: blank ? [] : [field('bill', type === 'purchase' ? 'Supplier' : 'Bill to', '/customer/name'), field('bill-address', 'Address', '/customer/address'), field('ship', 'Ship to', '/shipTo/name'), field('ship-address', 'Delivery address', '/shipTo/address')],
     collection: '/items',
-    columns: [
+    columns: blank ? [] : [
       { ...field('no', '#', './no'), width: 6 }, { ...field('sku', 'Item code', './sku'), width: 15 },
       { ...field('description', 'Description', './description'), width: 37 },
       { ...field('quantity', 'Qty', './quantity', 'number'), width: 10 },
       { ...field('rate', 'Unit price', './rate', 'currency'), width: 15 },
       { ...field('amount', 'Amount', './amount', 'currency'), width: 17 }
     ].filter(c => type !== 'delivery' || !['rate', 'amount'].includes(c.id)),
-    totals: type === 'delivery' ? [field('packages', 'Packages', '/summary/packages')] : [field('subtotal', 'Subtotal', '/summary/subtotal', 'currency'), field('tax', 'Tax', '/summary/tax', 'currency'), field('total', 'Total due', '/summary/total', 'currency')],
-    footer: [field('notes', 'Notes & terms', '/notes'), field('signature', type === 'delivery' ? 'Received by' : 'Prepared by', '/preparedBy'), ...(type === 'purchase' ? [field('approval','Approved by','/approvedBy')] : [])]
+    totals: blank ? [] : type === 'delivery' ? [field('packages', 'Packages', '/summary/packages')] : [field('subtotal', 'Subtotal', '/summary/subtotal', 'currency'), field('tax', 'Tax', '/summary/tax', 'currency'), field('total', 'Total due', '/summary/total', 'currency')],
+    footer: blank ? [] : [field('notes', 'Notes & terms', '/notes'), field('signature', type === 'delivery' ? 'Received by' : 'Prepared by', '/preparedBy'), ...(type === 'purchase' ? [field('approval','Approved by','/approvedBy')] : [])]
   };
 }
 

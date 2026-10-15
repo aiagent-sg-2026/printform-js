@@ -2,7 +2,7 @@ import { describe, it, expect } from 'vitest';
 import { newProject, sampleData, compileProject, designOf } from '../studio-v3/model.js';
 import { validateProject } from '../studio-v2/core/acceptance.js';
 import { bindTemplate } from '../studio-v2/core/binding.js';
-import { createBus, editProject, replaceData, designOperations } from '../studio-v3/controller.js';
+import { createBus, editProject, replaceData, designOperations, alterFields, formDesign } from '../studio-v3/controller.js';
 import { inspectProject, bindingValidation, validatePaperReport } from '../studio-v3/validation.js';
 import { readProject, saveProject, validateDesign } from '../studio-v3/file-io.js';
 
@@ -32,18 +32,56 @@ describe('Studio v3 ERP authoring', () => {
     expect(bound.fragment.querySelectorAll('.prowitem')).toHaveLength(rows);
     expect([...bound.fragment.querySelectorAll('.prowitem')].map(n => Number(n.dataset.pfRowIndex))).toEqual(Array.from({length:rows},(_,i) => i));
   });
-  it('blank -> structure -> edit -> undo/redo -> save/reopen preserves bindings and fields', async () => {
-    const bus = createBus(newProject('invoice',true));
-    const d = designOf(bus.project); d.blocks.header.enabled = true; d.title = 'Custom invoice';
-    await editProject(bus,designOperations(bus.project,d),'header');
-    expect(bus.project.templateHtml).toContain('Custom invoice');
+  it('reveals Blank sections without source values, then saves authored write-in fields through undo/redo', async () => {
+    const project = newProject('invoice',true);
+    const canaries = ['UNREQUESTED_COMPANY_CANARY','UNREQUESTED_DOCUMENT_CANARY','UNREQUESTED_CUSTOMER_CANARY'];
+    [project.sampleData.company.name,project.sampleData.document.number,project.sampleData.customer.name] = canaries;
+    const source = structuredClone(project.sampleData), schema = structuredClone(project.schema);
+    const bus = createBus(project);
+    const render = project => {
+      const template = document.createElement('template'); template.innerHTML = project.templateHtml;
+      return bindTemplate(template,project.sampleData,project.manifest).fragment;
+    };
+    const assertNoSourceFields = project => {
+      const fragment = render(project);
+      for (const canary of canaries) expect(fragment.textContent).not.toContain(canary);
+      expect(fragment.querySelector('[data-pf-text]')).toBeNull();
+      expect(project.spec.components.filter(c=>c.role === 'field').some(c=>c.binding)).toBe(false);
+    };
+    assertNoSourceFields(bus.project);
+    const revealed = designOf(bus.project);
+    for (const block of Object.values(revealed.blocks)) block.enabled = true;
+    await editProject(bus,designOperations(bus.project,revealed),'Reveal sections');
+    assertNoSourceFields(bus.project);
+    expect(render(bus.project).querySelector('h1').textContent).not.toContain('INVOICE');
+    const authored = [];
+    let beforeLastWrite;
+    for (const [section,label] of [['customer','Employee name'],['footer','Recipient signature']]) {
+      const added = alterFields(bus.project,section,'add-field');
+      await editProject(bus,designOperations(bus.project,added.design),'Add write-in field');
+      const form = document.createElement('form');
+      for (const [name,value] of Object.entries({bindingMode:'static',pointer:'',text:'________________________'})) {
+        const input = document.createElement('input'); input.name = name; input.value = value; form.append(input);
+      }
+      const design = formDesign(bus.project,added.selected,form,'binding');
+      const field = design[section].find(f=>`${section}-${f.id}` === added.selected); field.label = label;
+      beforeLastWrite = structuredClone(bus.project.manifest.studioV3);
+      await editProject(bus,designOperations(bus.project,design),'Write-in line');
+      authored.push(added.selected);
+    }
     await bus.navigateHistory('undo',bus.revision);
-    expect(designOf(bus.project).blocks.header.enabled).toBe(false);
+    expect(bus.project.manifest.studioV3).toEqual(beforeLastWrite);
     await bus.navigateHistory('redo',bus.revision);
-    const opened = readProject(saveProject(bus.project));
-    expect(designOf(opened)).toEqual(designOf(bus.project));
-    expect(opened.sampleData).toEqual(bus.project.sampleData);
-    expect(opened.spec.components.some(c => c.id === 'header-company')).toBe(true);
+    const opened = readProject(saveProject(bus.project)), fragment = render(opened);
+    for (const id of authored) {
+      expect(fragment.querySelector(`[data-v3-id="${id}"]`).textContent).toBe('________________________');
+      expect(opened.spec.components.find(c=>c.id === id).binding).toBeNull();
+    }
+    expect(fragment.textContent).toContain('Employee name');
+    expect(fragment.textContent).toContain('Recipient signature');
+    for (const canary of canaries) expect(fragment.textContent).not.toContain(canary);
+    expect(opened.sampleData).toEqual(source);
+    expect(opened.schema).toEqual(schema);
   });
   it('binds an alternate collection and reports missing fields and bad numeric types', () => {
     let p = newProject(); const d = designOf(p); d.collection = '/lines';
