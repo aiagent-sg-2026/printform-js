@@ -23,6 +23,7 @@ who don't need the diary.
 - Restore committed previews before publishing read-only answers or handling failed inspected runs; failed restoration retains the unapplied print/export block.
 - Keep optional text/pixel permissions unchecked, per-run and separate from Send. Move capability diagnostics to Settings without changing the selected Demo route, budgets or provider.
 - Document actual live baseline evidence and the remaining privacy/model/source-sandbox/qualification gates; do not claim full production readiness from UI polish or a successful draft. [Readiness record](docs/STUDIO_V3_GENERAL_AI_READINESS.zh-CN.md).
+- Correct the publication omission of the compact authorization component and its lifecycle regressions; the release gate blocked the incomplete commit. Retain the reviewed baseline, remove wording/forwarding-only assertions, and verify the committed package rather than bypass the stale-review check.
 
 ### Fixed ERPNext Payment Entry and physical-paper boundaries
 

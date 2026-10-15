@@ -33,9 +33,13 @@ export class AIObservationAuthorization {
     }
     this.active = grant; return grant;
   }
-  notice() {
+  notice({compact = false} = {}) {
     this.refresh();
     const state = this.state();
+    if (compact) {
+      const text = this.panel.busy ? this.active?.text : this.input?.checked, pixels = this.panel.busy ? this.active?.pixels : this.pixels?.checked;
+      return `Text/bindings ${text ? 'authorized' : 'off'} · ${allowsObservationValues(state.dataPolicy,state.project?.manifest?.documentId) ? 'Synthetic values allowed' : 'Bound values blocked'} · Pixel consent ${pixels ? 'on' : 'off'}; assets blocked.`;
+    }
     return `${(this.panel.busy ? this.active?.text : this.input?.checked) ? 'Current labels, static text and assigned binding paths authorized for one run.' : 'Form text and assigned binding paths are not authorized.'} ${allowsObservationValues(state.dataPolicy,state.project?.manifest?.documentId) ? 'Synthetic bound values allowed by host policy.' : 'Bound values blocked.'} ${(this.panel.busy ? this.active?.pixels : this.pixels?.checked) ? 'Fictional page pixels authorized for one run; denied values and all embedded assets remain blocked.' : 'Page and embedded asset pixels blocked.'}`;
   }
 }

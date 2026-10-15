@@ -5,8 +5,6 @@ import {newProject} from '../../studio-v3/model.js';
 import {createBus} from '../../studio-v3/controller.js';
 // Shared by the chat panel tests: the real index.html shell plus a ready AIPanel.
 export const html=fs.readFileSync('studio-v3/index.html','utf8');
-// The scope bar reads "Scope: <current choice>"; the choice lives in a select, so its text is not the bar's own text.
-export const scopeText=panel=>`Scope: ${panel.node('#ai-scope').selectedOptions[0].textContent}`;
 export function setup({facts=()=>[],commit,plan,transport,restore=async()=>{},reply={kind:'proposal',summary:'Navy',edits:[{target:'style',property:'color',value:'#163a65'}]}}={}) {
   let bus=createBus(newProject()),calls=0,selected='items';
   const panel=new AIPanel({bus:()=>bus,selection:()=>selected,facts,guard:work=>work(),preview:async()=>({status:'ready',validation:{errors:[],warnings:[]}}),restore,commit,sync:()=>{},transport:transport || {clear:()=>{},clearSession:()=>{},discover:async()=>['demo-fast'],plan:async(...args)=> {calls++;return plan ? plan(...args) : {text:JSON.stringify(reply)};}}});
