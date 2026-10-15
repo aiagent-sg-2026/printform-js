@@ -42,7 +42,7 @@
 
 以上运行基线为 `main@6926ca806c46818e7b6d554f5d82eda5ded8cc72`。模型别名不是底层模型版本或成本证明。本地保留的是去敏证据与截图，不含会话 token/请求头。
 
-当前代码的完整 Node24 `build:site`：**228 个文件 / 2,416 个测试通过**；站点构建与代理发布检查通过（13 tools、13 operations、2 skills、76 contract examples，保留原发布 baseline，28 项变化均完成审查）。这是确定性行为/构建证据，不是实际模型任务资格。
+首次完整工作树的 Node24 `build:site`：**228 个文件 / 2,416 个测试通过**；站点构建与代理发布检查通过（13 tools、13 operations、2 skills、76 contract examples，保留原发布 baseline，28 项变化均完成审查）。后续删除六项文案/实现耦合测试，不将旧数量冒充最终提交的重新执行结果；最终提交以其 CI 记录为准。确定性测试不是实际模型任务资格。
 
 ## 本轮界面与回归验证
 
@@ -56,6 +56,8 @@
 一次本地执行中 npm 的移动 `node@24` 别名解析到不可取得的 `24.22.0`，剩余六个规格未启动，不能算产品失败或 Pass。改用已安装的 **Node24.21.0 / Playwright1.62.0** 直接执行，这六组 60 个场景全部通过；原始失败和后续结果分开保留。受管浏览器另有 `PREVIEW_NOT_STARTED` / 截图 20s 工具限制；未提高产品期限，以上视觉/运行证据来自未模拟的原生浏览器。
 
 Blank 清空的是呈现布局，不是底层 Demo fixture：其初始数据仍是发票示例。布局 AI 不偷偷清空或重写数据；若需真实业务绑定，必须使用已声明的数据/schema。当前 typed authoring 的 section / field / paper 边界仍然存在，不承诺任意格式或源代码。
+
+交付纠正：PR #65 合入 `777f3384e1e422089735fdeb95f53ada0a4553b6` 后，[CI 38664790898](https://github.com/yapweijun1996/printform-js/actions/runs/38664790898) 因交付清单漏掉 `ai-observation-authorization.js` 和配套 `studio-v3-chat-panel.test.js`、导致审查摘要与提交内容不符而阻止发布。上面的本地构建、204 场景和原生 UI 证据属于含这些文件的完整工作树，不能算该不完整提交的已部署证明。更正提交补齐两文件，保留只读/停止新回归，删除原有文案/转发断言及无调用的 `scopeText` helper；不移动审查 baseline，不拿 CI 的不同摘要覆盖正确的工作树审查。发布前必须从干净提交树通过同一门禁。
 
 ## 尚未获得的生产资格
 
