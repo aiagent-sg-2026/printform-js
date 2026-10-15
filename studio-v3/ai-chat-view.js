@@ -7,23 +7,33 @@ const readable = value => {
 };
 const node = (tag,className,text) => { const n = document.createElement(tag); n.className = className; if (text !== undefined) n.textContent = text; return n; };
 export function renderConversation(panel) {
-  const log = panel.node('[data-ai-log]'), atEnd = log.scrollHeight-log.scrollTop-log.clientHeight < 60;
+  const log = panel.node('[data-ai-log]'), scroll = panel.node('.ai-conversation-scroll') || log;
+  const position = scroll.scrollTop, atEnd = scroll.scrollHeight-position-scroll.clientHeight < 60;
+  const sharing = panel.node('.ai-sharing'), granted = ['#ai-observation-text','#ai-observation-pixels'].filter(selector=>panel.node(selector)?.checked).length;
+  if (sharing) sharing.querySelector('summary').textContent = granted ? `Sharing permissions · ${granted} selected for one run` : 'Sharing permissions · fictional data only';
   log.replaceChildren();
   if (!panel.conversation.messages.length) {
     log.append(renderWelcome());
   }
   for (const message of panel.conversation.messages) {
     const article = node('article',`ai-message ai-${message.role}`); article.dataset.messageId = message.id;
+    article.dataset.state = message.status || 'answer';
+    const outcome = message.status === 'error' ? ' · request failed' : message.status === 'cancelled' ? ' · stopped' : '';
+    article.append(node('div','ai-message-label',message.role === 'user' ? 'You' : `AI assistant${outcome}`));
     article.append(node('div','ai-message-text',message.text));
     if (message.diff) {
       const active = panel.proposal?.cardId === message.id;
       const card = node('section','ai-change-card'); card.setAttribute('aria-label','AI layout changes');
       if (active) card.dataset.aiProposal = '';
+      card.append(node('h3','','Review changes'));
       const table = node('table','ai-diff'), head = document.createElement('thead'), row = document.createElement('tr');
-      for (const label of ['Setting','Before','After']) row.append(node('th','',label)); head.append(row);
+      for (const label of ['Setting','Before','After']) { const cell = node('th','',label); cell.scope = 'col'; row.append(cell); } head.append(row);
       const body = document.createElement('tbody');
       for (const diff of message.diff) { const r = document.createElement('tr'); for (const value of [`${diff.target} · ${diff.property}`,diff.before,diff.after]) r.append(node('td','',readable(value))); body.append(r); }
-      table.append(head,body); card.append(table);
+      table.append(head,body);
+      const details = node('details','ai-change-details');
+      details.append(node('summary','',`View ${message.diff.length} change${message.diff.length === 1 ? '' : 's'}`),table);
+      card.append(details);
       const previewed = active && panel.viewing && panel.checked;
       const state = node('p','ai-card-state',message.status === 'ready' ? (previewed ? 'Previewed on paper · review it, then Apply' : 'Not applied · preview first') : message.status === 'applied' ? (message.appliedBus !== panel.getBus() ? 'Applied to a previous form · history only' : panel.canUndo(message) ? 'Applied to the form' : 'Applied earlier · history only') : 'Expired · send a new request'); card.append(state);
       if (active) {
@@ -46,6 +56,7 @@ export function renderConversation(panel) {
   // The wait is shown where the answer will appear. The status line stays the announced source, so this copy is hidden from readers.
   if (panel.pendingMessage) {
     const wait = node('article','ai-message ai-assistant ai-pending'); wait.setAttribute('aria-hidden','true');
+    wait.append(node('div','ai-message-label','AI assistant'));
     wait.append(node('div','ai-message-text ai-pending-text',panel.node('[data-ai-status]').textContent || 'Working…'));
     // A run in steps shows its latest steps; a rejected one carries its code in the tooltip only.
     if (panel.agentSteps?.length) {
@@ -55,9 +66,8 @@ export function renderConversation(panel) {
     }
     log.append(wait);
   }
-  // The empty state reads from its top; a running conversation follows its newest message.
-  if (!panel.conversation.messages.length) log.scrollTop = 0;
-  else if (atEnd) log.scrollTop = log.scrollHeight;
+  // Respect a reader's position in history; only a reader already at the end follows new work.
+  scroll.scrollTop = panel.conversation.messages.length && atEnd ? scroll.scrollHeight : position;
 }
 export function setupPanelLayout(panel) {
   const key = 'printform-studio-v3:ai-width', separator = panel.node('[data-ai-resize]');
@@ -84,6 +94,10 @@ export function setupPanelLayout(panel) {
   });
   panel.root.addEventListener('keydown',event=> {
     if (event.target.id === 'ai-prompt' && event.key === 'Enter' && !event.shiftKey && !event.isComposing) { event.preventDefault(); void panel.send(); }
+  });
+  const settings = panel.node('.ai-settings');
+  panel.root.addEventListener('click',event=> {
+    if (settings.open && !settings.contains(event.target)) settings.open = false;
   });
   document.addEventListener('keydown',event=> {
     if (!panel.open || document.querySelector('dialog[open]')) return;

@@ -81,7 +81,7 @@ test('the work-in-steps setting turns it off and is remembered',async({page})=> 
 
 test('works in steps on a reference image: it is sent on the first turns only, and the notes carry on',async({page})=> {
   await gateway(page,'images'); await open(page);
-  await page.getByText('References · PDF / image',{exact:true}).click();
+  await page.locator('[data-ai=attach]').click();
   await page.getByLabel('Add reference PDF or image',{exact:true}).setInputFiles(syntheticPng());
   await expect(page.locator('.ai-reference-card')).toHaveCount(1,{timeout:30000});
   await expect(page.locator('.ai-reference-files')).toContainText('Images available');

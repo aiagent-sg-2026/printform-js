@@ -1,22 +1,20 @@
 import { icon } from './icons.js';
 // Starting actions shown in the empty conversation: each fills the message box, nothing is sent.
 export const STARTERS = [
-  ['type','Improve typography','Improve the typography of this form: font sizes, hierarchy and readability.'],
-  ['spacing','Tighten spacing','Reduce cell padding to 5 px.'],
-  ['align','Improve alignment','Improve alignment: left-align text and right-align numbers.'],
-  ['drop','Add red accents','Use red accents #a82938.']
+  ['form','Organize this form','Organize this form into a clear reading order. Keep existing data bindings and make section headings easy to scan.'],
+  ['type','Make it easier to read','Improve the typography and spacing of this form so it is easy to read when printed. Keep existing content and data bindings.'],
+  ['plus','Add a notes area','Add a clearly labelled static notes area at the end of this form without changing existing data bindings.'],
+  ['eye','Review the layout','What would improve the readability and print layout of this form? Explain your recommendations without changing anything.']
 ];
 const node = (tag,className,text) => { const n = document.createElement(tag); n.className = className; if (text !== undefined) n.textContent = text; return n; };
 // The empty state: what to ask, how to start, and the Ask AI -> Preview -> Apply flow.
 export function renderWelcome() {
-  const intro = node('section','ai-welcome'), hero = node('div','ai-hero'), chips = node('div','ai-chips'), attach = node('button','ai-attach'), flow = node('ol','ai-flow');
-  hero.setAttribute('aria-hidden','true'); hero.insertAdjacentHTML('beforeend',icon('form') + icon('sparkles'));
+  const intro = node('section','ai-welcome'), chips = node('div','ai-chips'), flow = node('ol','ai-flow');
   for (const [name,label,prompt] of STARTERS) {
     const chip = node('button',''); chip.type = 'button'; chip.dataset.ai = 'prompt'; chip.dataset.prompt = prompt;
     chip.insertAdjacentHTML('beforeend',icon(name)); chip.append(node('span','',label)); chips.append(chip);
   }
-  attach.type = 'button'; attach.dataset.ai = 'attach'; attach.insertAdjacentHTML('beforeend',icon('clip')); attach.append(node('strong','','Attach reference'),node('small','','PDF, PNG or JPG'));
-  for (const step of ['Ask AI','Preview','Apply']) flow.append(node('li','',step));
-  intro.append(hero,node('h3','','What would you like to improve?'),node('p','','Describe a change or attach a reference. AI will preview changes before you apply them.'),chips,attach,flow);
+  for (const step of ['Ask','Preview','Apply','Undo if needed']) flow.append(node('li','',step));
+  intro.append(node('h3','','Your form, made clearer.'),node('p','','Describe what you need in everyday language. Review any proposed changes before you apply them.'),chips,flow);
   return intro;
 }

@@ -16,6 +16,7 @@ describe('the panel working in steps',()=> {
     expect(gateway.agentCalls()).toBe(4); expect(gateway.singleCalls()).toBe(0); expect(stepped).toHaveBeenCalledTimes(4);
     expect(panel.proposal).not.toBeNull(); expect(lastCard(panel).status).toBe('ready'); expect(lastCard(panel).diff.length).toBeGreaterThan(0);
     expect(panel.getBus().revision).toBe(0);
+    expect(panel.proposal.alias).toBe('demo-fast');
     expect(panel.node('[data-ai-status]').textContent).toContain('4 steps'); expect(panel.node('[data-ai-status]').textContent).toContain('Local checks passed');
   });
 
@@ -39,6 +40,47 @@ describe('the panel working in steps',()=> {
     expect(panel.proposal).toBeNull(); expect(lastCard(panel).status).toBe('error'); expect(gateway.singleCalls()).toBe(0);
   });
 
+  it('restores committed paper when the provider fails after inspecting a private draft',async()=> {
+    const restore = vi.fn(async()=>{}), gateway = scriptedGateway({agent:[...successfulRun().slice(0,3),json({error:{code:'upstream_error'}},502)]}), {panel} = setup({transport:gateway.transport,restore});
+    const committed = JSON.stringify(panel.getBus().project);
+    await panel.send();
+    expect(lastCard(panel).status).toBe('error'); expect(panel.proposal).toBeNull();
+    expect(restore).toHaveBeenCalledTimes(1); expect(panel.viewing).toBe(false);
+    expect(document.querySelector('#ai-preview-banner').hidden).toBe(true);
+    expect(JSON.stringify(panel.getBus().project)).toBe(committed); expect(panel.getBus().revision).toBe(0);
+    expect(gateway.singleCalls()).toBe(0);
+  });
+
+  it('keeps print protection and the error when restoration after a failed run fails',async()=> {
+    const restore = vi.fn(async()=> { throw new Error('restore failed'); }), gateway = scriptedGateway({agent:[...successfulRun().slice(0,3),json({error:{code:'upstream_error'}},502)]}), {panel} = setup({transport:gateway.transport,restore});
+    await panel.send();
+    expect(lastCard(panel).status).toBe('error'); expect(panel.proposal).toBeNull();
+    expect(restore).toHaveBeenCalledTimes(1); expect(panel.viewing).toBe(true);
+    expect(document.querySelector('#ai-preview-banner').hidden).toBe(false);
+    expect(panel.node('[data-ai-status]').textContent).toContain('before printing'); expect(panel.getBus().revision).toBe(0);
+  });
+
+  it('keeps general how-to questions in the read-only tool lane',async()=> {
+    const gateway = scriptedGateway({agent:[turn([reasoning(1),fn(1,'get_context',{})]),turn([reasoning(2),fn(2,'finish_answer',{message:'Select the field, then choose an available binding.'})])]}), {panel} = setup({transport:gateway.transport});
+    ask(panel,'How should I bind an attendance field?'); await panel.send();
+    expect(lastCard(panel).status).toBe('answer'); expect(panel.proposal).toBeNull(); expect(panel.getBus().revision).toBe(0);
+    for (const body of gateway.bodies.filter(body=>body.tools)) {
+      expect(body.tools.map(tool=>tool.name)).toContain('finish_answer');
+      expect(body.tools.map(tool=>tool.name)).not.toContain('apply_operations');
+      expect(body.tools.map(tool=>tool.name)).not.toContain('finish');
+    }
+  });
+
+  it('does not publish an inspected answer into a replaced document while restoration is pending',async()=> {
+    let release,started;
+    const held = new Promise(resolve=>release=resolve), ready = new Promise(resolve=>started=resolve);
+    const gateway = scriptedGateway({agent:[turn([reasoning(1),fn(1,'inspect_draft',{})]),turn([reasoning(2),fn(2,'finish_answer',{message:'Answer from previous document'})])]}), {panel,changeBus} = setup({transport:gateway.transport,restore:async()=> { started(); await held; }});
+    ask(panel,'Is the layout ready to print?');
+    const old = panel.getBus(), before = structuredClone(old.project), sending = panel.send();
+    await ready; const current = changeBus(); release(); await sending;
+    expect(panel.conversation.messages.some(card=>card.text==='Answer from previous document')).toBe(false);
+    expect(old.project).toEqual(before); expect(old.revision).toBe(0); expect(current.revision).toBe(0); expect(panel.proposal).toBeNull();
+  });
   it('runs a question in steps under a read-only grant, and keeps the single-step flow when steps are off or unavailable',async()=> {
     const question = scriptedGateway({agent:[turn([reasoning(1),fn(1,'get_context',{})]),turn([reasoning(2),fn(2,'finish_answer',{message:'The footer holds the notes.'})])]}), asked = setup({transport:question.transport});
     ask(asked.panel,'What is in the footer?'); await asked.panel.send();

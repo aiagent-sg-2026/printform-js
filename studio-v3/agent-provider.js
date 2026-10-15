@@ -18,15 +18,18 @@ export function createGatewayModel({transport,alias,signal,assertContext = () =>
     const output = {role:'assistant',content:[],api:model.api,provider:model.provider,model:alias,stopReason:'stop',timestamp:Date.now(),usage:{...ZERO,totalTokens:0,cost:{...ZERO,total:0}}};
     void (async () => {
       try {
+        const activeSignal = options.signal || signal;
+        activeSignal?.throwIfAborted();
         assertContext();
         if (totals.total === null) throw fail('AGENT_USAGE_UNAVAILABLE');
         if (totals.total >= maxTokens) throw fail('AGENT_TOKEN_BUDGET');
         onPhase('Waiting for the AI service');
-        const turn = await transport.agentTurn(alias,context,options.signal || signal,{memory,assertCurrent:assertContext,onProgress:progress=>onPhase(progressText(progress),{progress:true})});
+        const turn = await transport.agentTurn(alias,context,activeSignal,{memory,assertCurrent:assertContext,onProgress:progress=>onPhase(progressText(progress),{progress:true})});
         const usage = agentUsage(turn.usage);
         addAgentUsage(totals,usage);
         onTurn({turn:++turns,totals:{...totals}});
         if (totals.total === null) throw fail('AGENT_USAGE_UNAVAILABLE');
+        activeSignal?.throwIfAborted();
         assertContext();
         output.content = assistantContent(turn.output);
         output.stopReason = output.content.some(block=>block.type === 'toolCall') ? 'toolUse' : 'stop';

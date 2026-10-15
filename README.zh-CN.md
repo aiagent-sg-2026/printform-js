@@ -22,7 +22,7 @@
 
 ### 🎨 PrintForm Studio —— 可视化调试工具
 
-[Studio v3](studio-v3/) 提供独立的设计、数据绑定、验证三工作区，适用于发票、采购单和送货单。状态为 Pilot；[功能与限制](docs/STUDIO_V3.md)。v2 保留。
+[Studio v3](studio-v3/) 是面向通用打印表单的设计、数据绑定、验证工作室；无代码用户可用受限 AI 助手生成和连续修改表单，ERPNext 只是可选适配器。状态仍为 Production Pilot；[功能与限制](docs/STUDIO_V3.md) · [AI 生产就绪证据与未通过门禁](docs/STUDIO_V3_GENERAL_AI_READINESS.zh-CN.md)。v2 保留。
 
 Studio v2 当前是面向 ERP 工程师的 **Production Pilot**，不是无代码自由画布。请打开 [studio-v2/index.html](studio-v2/index.html)：它以单一 `.html` 为事实来源，提供声明式 JSON Pointer 数据绑定、内嵌 runtime、质量门、WebMCP 渐进增强和离线 PWA。工程师下载后仍可阅读和手改 HTML。
 

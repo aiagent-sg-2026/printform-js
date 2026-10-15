@@ -52,6 +52,7 @@ test('Validate/AI panel captures fictional page and crop, denies missing/stale c
   await send(page,'Inspect the fictional page.');await answer(page,'Default pixel consent denied.');
   let wire=await page.evaluate(()=>window.__pixelWire);expect(output(wire[2],'call_2').output).toContain('OBSERVATION_PIXELS_REQUIRED');
   expect(wire.slice(0,3).some(body=>JSON.stringify(body).includes('data:image/png;base64,'))).toBe(false);
+  await page.locator('.ai-sharing>summary').click();
   await text.check();await pixels.check();await send(page,'Inspect the fictional page and crop.');await answer(page,'Page and crop received.');
   wire=await page.evaluate(()=>window.__pixelWire);const full=visual(wire[5],'call_5'),crop=visual(wire[7],'call_7');
   expect(crop.observed.sourceObservationId).toBe(full.observed.observation.id);

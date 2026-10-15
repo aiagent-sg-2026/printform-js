@@ -2,11 +2,8 @@ import {describe,it,expect} from 'vitest';
 import fs from 'node:fs';
 import {readEventStream} from '../studio-v3/ai-response-reader.js';
 import {responsesResult} from '../studio-v3/ai-responses-wire.js';
-import {parseChatReply} from '../studio-v3/ai-chat-protocol.js';
-import {newDemoProject} from '../studio-v3/demo-templates.js';
-import {STARTERS} from '../studio-v3/ai-welcome.js';
 
-// The event order, field names and proposal text come from a real Demo gateway answer to the typography starter
+// The event order, field names and proposal text come from a real Demo gateway answer to a typography request
 // (fictional demo data only). Response ids and the encrypted reasoning blob are replaced by placeholders.
 const text = JSON.parse(fs.readFileSync('tests/fixtures/real-gateway-typography-proposal.json','utf8'));
 const frame = (type,body) => `event: ${type}\ndata: ${JSON.stringify({type,...body})}\n\n`;
@@ -29,10 +26,5 @@ describe('a real gateway answer to the typography starter',()=> {
     const result = responsesResult(completed);
     expect(result.text).toBe(text); expect(chars).toBe(text.length);
     expect(result.usage).toEqual({prompt_tokens:6417,completion_tokens:702,total_tokens:7119});
-  });
-  it('is accepted as a proposal for the request the starter sends',()=> {
-    const [,,prompt] = STARTERS.find(([,label])=>label === 'Improve typography');
-    const reply = parseChatReply(text,newDemoProject('SalesInvoice'),{scope:{mode:'whole'},request:prompt});
-    expect(reply.kind).toBe('proposal'); expect(reply.diff.length).toBeGreaterThan(0);
   });
 });

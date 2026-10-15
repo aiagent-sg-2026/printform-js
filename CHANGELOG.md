@@ -15,6 +15,15 @@ who don't need the diary.
 
 ## [Unreleased]
 
+### General browser-first AI form assistant — 2026-10-15
+
+- Rework the conversation into one scrolling context area with anchored input, compact references, neutral scope, explicit message roles and expandable change details; keep Apply/Undo independently reachable.
+- Preserve actual Pi Harness/local typed tools and explicit Preview → Apply → Undo. General write-in forms can reuse sections and declared generic bindings without inventing source data or financial facts.
+- Narrow advice questions to read-only grants; retain aliases through step results and reject aborted/stale final responses even when a transport ignores abort.
+- Restore committed previews before publishing read-only answers or handling failed inspected runs; failed restoration retains the unapplied print/export block.
+- Keep optional text/pixel permissions unchecked, per-run and separate from Send. Move capability diagnostics to Settings without changing the selected Demo route, budgets or provider.
+- Document actual live baseline evidence and the remaining privacy/model/source-sandbox/qualification gates; do not claim full production readiness from UI polish or a successful draft. [Readiness record](docs/STUDIO_V3_GENERAL_AI_READINESS.zh-CN.md).
+
 ### Fixed ERPNext Payment Entry and physical-paper boundaries
 
 - Add a read-only ERPNext15.0.0 Receive/Customer and Pay/Supplier snapshot adapter with exact authorized money/precision, native account/reference identity and portable Studio projects.

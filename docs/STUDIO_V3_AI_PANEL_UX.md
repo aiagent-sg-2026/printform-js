@@ -1,6 +1,6 @@
 # Studio v3 AI panel: usability backlog
 
-Status: **proposal, not accepted work.** Written 2026-10-08 from one owner screenshot (panel about 400 px wide, a step run in progress, one image attached) cross-checked against the source. Nothing here changes behavior. Wording and layout changes alter the product's look, so each slice needs the owner's go-ahead before implementation (see [Decisions](#decisions-owner-2026-10-08)).
+Status: **2026-10-15 implementation authorized by the user**, following the earlier 2026-10-08 screenshot/source review. The new cycle implements the general-form conversation, compact references, Settings diagnostics, neutral scope and anchored composer. This does not silently close every older backlog item or constitute production/visual approval; current evidence and remaining gates are in [General AI readiness](STUDIO_V3_GENERAL_AI_READINESS.zh-CN.md).
 
 Evidence tags: **[code]** the string or behavior was found in the source; **[shot]** seen only in the screenshot, not reproduced in a browser run.
 
@@ -38,10 +38,10 @@ Priority: **P1** the user cannot tell what is happening; **P2** layout and scrol
 
 ## Constraints for any slice
 
-- Existing tests assert the current wording and must be updated in the same change, never skipped: `studio-v3-agent-labels.test.js` (UX-01, UX-02), `studio-v3-chat-panel.test.js`, `studio-v3-ai-response-reader.test.js` and `studio-v3-stream.spec.js` (UX-03), `studio-v3-boss-demo.spec.js` (UX-11), `studio-v3-ai-references-layout.spec.js` (UX-07, UX-13), `studio-v3-agent-steps.spec.js`.
+- Existing behavior/wire/geometry checks migrate with the interface. Tests that pin wording, source structure or obsolete defaults are deleted, not re-pinned to new copy. Preserve substantive scope, disclosure, Stop, restore and Apply/Undo checks.
 - Authority, scope and privacy behavior must not change: Preview → Apply → Undo, derived scope, reference sharing rules and the data-value-free context stay as documented in [STUDIO_V3_AI_CHAT.md](STUDIO_V3_AI_CHAT.md).
 - Layout items (UX-05 to UX-07) need real-browser evidence at 400 x 800 and one wide viewport in all three engines; a unit test cannot establish them. Firefox needs extra care because it intermittently cannot reach the re-navigated preview frame in Playwright (read page thumbnails instead; see PR #32 and #33).
-- Each file stays at most 300 lines; `ai-panel.js` is already 255.
+- Each changed non-generated file stays at most 300 lines; split by responsibility if necessary.
 
 ## Suggested slices
 
@@ -56,3 +56,13 @@ Priority: **P1** the user cannot tell what is happening; **P2** layout and scrol
 - **Terminology (UX-15, UX-01): move all technical words to business language.** The exact replacement for each word ("Demo gateway", "provider", "draft", "OCR", "note") is still to be confirmed by the owner before S2; S1 does not touch the run-progress wording.
 - **Capability diagnostic (UX-11): move it to the Settings menu**, out of the references area.
 - **Order: S1 first** (references area), then S2.
+
+## Current-cycle decisions, 2026-10-15
+
+- User authorized a professional Claude/ChatGPT-style general-form chat experience for non-coders. No separate approval request is needed for these reversible implementation changes.
+- One conversation/context scroll owner, anchored composer, compact attachments and expandable change details replace the screenshot-era nested layout. General-form starters include an explicitly read-only review action.
+- The one-use sharing controls remain unchecked and explicit inside a disclosure. Opening it does not authorize sending values or pixels.
+- Keep the material Demo/fictional-data boundary visible: plain language cannot conceal the service recipient or imply confidential-data approval.
+- UX-01/02/03 and real screen-reader/contrast audit are not declared closed by this layout work. Historical owner decisions and findings above remain dated records.
+- Pi/Oh My PI workflow reuse does not add terminal privileges or qualify the full G6–G9 coding-agent milestones.
+

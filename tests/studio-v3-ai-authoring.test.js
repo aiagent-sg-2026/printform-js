@@ -19,6 +19,43 @@ describe('framework-native AI authoring',()=> {
     const bus=createBus(p);await editProject(bus,designOperations(bus.project,result.design),'AI authoring');expect(bus.revision).toBe(1);
     await bus.navigateHistory('undo',1);expect(designOf(bus.project)).toEqual(designOf(p));
   });
+  it('authors a general equipment handover write-in form from Blank without changing its supplied data',async()=> {
+    const project = newProject('invoice',true), original = structuredClone(project), d = designOf(project);
+    const operations = [
+      ...['header','customer','footer'].flatMap(section=>d[section].map(field=>({type:'remove_field',target:`${section}-${field.id}`}))),
+      {type:'set_heading',value:'Equipment handover'},
+      {type:'set_section',target:'header',patch:{enabled:true,label:'Equipment handover'}},
+      {type:'set_section',target:'customer',patch:{enabled:true,label:'Handover details',layout:{columns:2,gap:16}}},
+      {type:'set_section',target:'footer',patch:{enabled:true,label:'Acknowledgment'}},
+      ...[['employee','Employee'],['equipment','Equipment'],['handover-date','Date']].map(([id,label])=>({type:'add_field',section:'customer',field:{id,label,kind:'static',text:'________________________',format:''}})),
+      {type:'add_field',section:'footer',field:{id:'recipient-signature',label:'Recipient signature',kind:'static',text:'________________________',format:''}}
+    ];
+    const result = parseChatReply(plan(operations),project,{request:'Create an equipment handover form with blank employee, equipment, date and signature lines.'});
+    expect(result.design.title).toBe('Equipment handover');
+    expect(result.design.customer.map(field=>field.id)).toEqual(['employee','equipment','handover-date']);
+    expect(result.design.footer.map(field=>field.id)).toEqual(['recipient-signature']);
+    expect(result.design.blocks.items.enabled).toBe(false); expect(result.design.blocks.totals.enabled).toBe(false);
+    expect(result.design.customer.every(field=>field.kind==='static' && !field.pointer)).toBe(true);
+    expect(result.candidate.sampleData).toEqual(original.sampleData); expect(project).toEqual(original);
+    expect(result.candidate.templateHtml).toContain('Recipient signature');
+    const bus = createBus(project);
+    await editProject(bus,designOperations(bus.project,result.design),'Equipment handover design');
+    expect(bus.revision).toBe(1); expect(bus.project.sampleData).toEqual(original.sampleData);
+    await bus.navigateHistory('undo',1);
+    expect(designOf(bus.project)).toEqual(d); expect(bus.project.sampleData).toEqual(original.sampleData);
+  });
+  it('binds generic handover fields only to existing declared source paths, never invented invoice replacements',()=> {
+    const project = newProject('invoice',true);
+    project.sampleData.employeeName = 'Fictional employee'; project.sampleData.equipmentName = 'Fictional laptop'; project.sampleData.handoverDate = '2026-10-15';
+    project.schema = {type:'object',additionalProperties:true,properties:Object.fromEntries(['employeeName','equipmentName','handoverDate'].map(key=>[key,{type:'string'}]))};
+    const operations = ['employeeName','equipmentName','handoverDate'].map(id=>({type:'add_field',section:'customer',field:{id:id.replace(/[A-Z]/g,c=>`-${c.toLowerCase()}`),label:id,kind:'bound',pointer:`/${id}`,format:''}}));
+    const original = structuredClone(project), result = parseChatReply(plan(operations),project,{request:'Add employee, equipment and handover date fields using the supplied source.'});
+    expect(result.design.customer.slice(-3).map(field=>field.pointer)).toEqual(['/employeeName','/equipmentName','/handoverDate']);
+    expect(result.candidate.sampleData).toEqual(original.sampleData); expect(project).toEqual(original);
+    const blank = newProject('invoice',true), untouched = structuredClone(blank);
+    expect(()=>parseChatReply(plan(operations),blank,{request:'Create an equipment handover form.'})).toThrow('UNSAFE_PROPOSAL');
+    expect(blank).toEqual(untouched);
+  });
   it('supports structural field/column authoring, static text and exact stable-ID ordering',()=> {
     const p=newProject(), result=parseChatReply(plan([
       {type:'add_field',section:'footer',field:{id:'note-two',label:'Extra note',kind:'static',text:'Authored note'}},

@@ -19,7 +19,7 @@ async function gateway(page,multimodal) {
 }
 async function attachImage(page) {
   await page.setViewportSize({width:391,height:786}); await page.goto('/studio-v3/'); await ready(page);
-  await page.locator('[data-ai-toggle]').click(); await page.getByText('References · PDF / image',{exact:true}).click();
+  await page.locator('[data-ai-toggle]').click(); await page.locator('[data-ai=attach]').click();
   await page.getByLabel('Add reference PDF or image',{exact:true}).setInputFiles(syntheticPng());
   await expect(page.locator('.ai-reference-card')).toHaveCount(1,{timeout:30000});
 }
@@ -31,9 +31,10 @@ test('an attached image has its support checked at once, and Send is ready when 
   expect(await page.evaluate(()=>window.__models)).toBe(1);
 });
 
-test('when support is not reported, the retry button stays in view inside the scrolling references, next to the reason',async({page})=> {
+test('when support is not reported, expanding references exposes the retry without moving the composer',async({page})=> {
   await gateway(page,false); await attachImage(page);
   const button = page.getByRole('button',{name:'Check image support'});
   await expect(page.locator('[data-ai-send-reason]')).toHaveAttribute('data-kind','reason'); await expect(page.locator('[data-ai-send]')).toBeDisabled();
+  await page.locator('.ai-reference-files>summary').click();
   await expect(button).toBeVisible(); await expect(button).toBeInViewport({ratio:1});
 });

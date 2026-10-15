@@ -115,7 +115,7 @@ test('coherent accessible SVG controls and keyboard/mobile AI sidepanel',async({
   await page.keyboard.press('Escape'); await expect(page.locator('[data-ai-toggle]')).toBeFocused();
   await page.setViewportSize({width:390,height:844}); await page.locator('[data-ai-toggle]').click();
   const box = await page.locator('#ai-panel').boundingBox(); expect(box.x).toBeGreaterThanOrEqual(0); expect(box.x+box.width).toBeLessThanOrEqual(390);
-  await page.locator('#ai-panel .ai-settings summary').focus(); await page.keyboard.press('Shift+Tab'); await expect(page.locator('[data-ai-send]')).toBeFocused();
+  await page.locator('#ai-panel .ai-settings > summary').focus(); await page.keyboard.press('Shift+Tab'); await expect(page.locator('[data-ai-send]')).toBeFocused();
   await page.screenshot({path:info.outputPath('ai-mobile.png')});
   await page.keyboard.press('Escape'); await expect(page.locator('[data-ai-toggle]')).toBeFocused();
 });

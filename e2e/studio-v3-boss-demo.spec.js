@@ -17,8 +17,8 @@ async function mockProvider(page,{images=false}={}) {
 }
 // Attaching an image checks image support itself, so /session and /models may be called; no model request may be.
 const inference=calls=>calls.filter(call=>/\/(responses|chat\/completions)$/.test(call.path));
-async function openReferences(page){await page.locator('[data-ai-toggle]').click();await page.getByText('References · PDF / image',{exact:true}).click();}
-async function attach(page,fixture){await page.getByLabel('Add reference PDF or image',{exact:true}).setInputFiles(fixture);await expect(page.locator('.ai-reference-card')).toHaveCount(1,{timeout:30000});await expect(page.locator('.ai-reference-files')).toContainText('Ready locally');}
+async function openReferences(page){await page.locator('[data-ai-toggle]').click();await page.locator('[data-ai=attach]').click();}
+async function attach(page,fixture){await page.getByLabel('Add reference PDF or image',{exact:true}).setInputFiles(fixture);await expect(page.locator('.ai-reference-card')).toHaveCount(1,{timeout:30000});await expect(page.locator('.ai-reference-files')).toContainText('Ready locally');await page.locator('.ai-reference-files>summary').click();}
 test.beforeEach(async({page})=>{page.on('dialog',d=>d.accept());await page.goto('/studio-v3/');await ready(page);});
 test('catalogue, exact dataset kind, USD switch and editable save preserve v3 layout',async({page},info)=>{
  await page.locator('[data-action=new]').click();await page.getByText('Business demo templates',{exact:true}).click();await page.locator('[data-demo-template=SalesQuotation]').click();await ready(page);
@@ -44,7 +44,7 @@ test('all business templates render and long scenario paginates without missing 
 });
 test('real PDF parsing -> explicit text-only sharing -> mocked AI Preview Apply Undo -> export',async({page},info)=>{
  const calls=await mockProvider(page);await openReferences(page);await attach(page,syntheticPdf());
- await expect(page.locator('.ai-reference-card')).toContainText('2 page(s)');expect(calls).toHaveLength(0);
+ expect(calls).toHaveLength(0);
  await page.locator('#ai-prompt').fill('Use navy #163a65 based on the reference structure.');await page.locator('[data-ai-send]').click();await expect(page.locator('[data-ai-proposal]')).toBeVisible();
  const wire=calls.find(c=>isInference(c.path)).payload;expect(userText(wire)).toContain('DEMO-REF-001');expect(JSON.stringify(wire)).toContain('FICTIONAL REFERENCE');expect(JSON.stringify(wire)).toContain('extracted-text-and-positions');expect(JSON.stringify(wire)).not.toContain('base64');expect(JSON.stringify(wire)).not.toContain('ACME Industrial');
  await page.locator('[data-ai=preview]').click();await expect(page.locator('[data-ai=apply]')).toBeEnabled();await page.locator('[data-ai=apply]').click();await expect(page.locator('#revision')).toContainText('r1');
@@ -73,7 +73,7 @@ test('oversized page count and corrupt references fail locally; changing forms d
 test('drop an image into the conversation composer, then remove it without sending',async({page})=>{
  const calls=await mockProvider(page);await page.locator('[data-ai-toggle]').click();const fixture=syntheticPng();
  const transfer=await page.evaluateHandle(({bytes,name,mime})=>{const dt=new DataTransfer();dt.items.add(new File([Uint8Array.from(bytes)],name,{type:mime}));return dt;},{bytes:[...fixture.buffer],name:fixture.name,mime:fixture.mimeType});
- await page.locator('.ai-composer').dispatchEvent('drop',{dataTransfer:transfer});await expect(page.locator('.ai-reference-card')).toHaveCount(1);await page.locator('.ai-reference-card button').click();await expect(page.locator('.ai-reference-card')).toHaveCount(0);expect(inference(calls)).toHaveLength(0);await transfer.dispose();
+ await page.locator('.ai-composer').dispatchEvent('drop',{dataTransfer:transfer});await expect(page.locator('.ai-reference-card')).toHaveCount(1);await page.locator('.ai-reference-files>summary').click();await page.locator('.ai-reference-card button').click();await expect(page.locator('.ai-reference-card')).toHaveCount(0);expect(inference(calls)).toHaveLength(0);await transfer.dispose();
 });
 
 test('catalogue seed migration adds missing fixtures without overwriting a retained edited record',async({page})=>{

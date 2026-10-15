@@ -24,6 +24,7 @@ async function runStepHarness({transport,alias,request,project,signal,chat={},me
         const reply = await transport.plan(alias,request,options.signal || signal,media,{onProgress:progress=>onPhase(progressText(progress),{progress:true})});
         envelope = reply.text;
         signal.throwIfAborted();
+        assertContext();
         const parsed = parseChatReply(reply.text,project,chat);
         output.content = [{type:'toolCall',id:crypto.randomUUID(),name:parsed.kind === 'answer' ? 'answer_layout' : 'preview_layout',arguments:{envelope:reply.text}}];
         for (const [key,wire] of [['input','prompt_tokens'],['output','completion_tokens'],['totalTokens','total_tokens']]) {
@@ -45,13 +46,14 @@ async function runStepHarness({transport,alias,request,project,signal,chat={},me
   const sessionRepo = new MemorySessionRepo();
   const session = await sessionRepo.create({},context);
   const tools = ['preview_layout','answer_layout'].map(name=>({name,label:name === 'preview_layout' ? 'Preview layout' : 'Answer layout',description:'Validate a bounded result locally; never apply.',replay:'never',parameters:Type.Object({envelope:Type.String({maxLength:20000})}),execute:async (_id,args) => {
-    signal.throwIfAborted(); onPhase(name === 'preview_layout' ? 'Validating local proposal' : 'Reading current layout');
+    signal.throwIfAborted(); assertContext(); onPhase(name === 'preview_layout' ? 'Validating local proposal' : 'Reading current layout');
     try {
       proposal = parseChatReply(args.envelope,project,chat);
       if (proposal.kind === 'proposal' && inspectCandidate) {
         onPhase('Inspecting real print preview');
         inspection = safeRunDiagnostics(await inspectCandidate(proposal),proposal.candidate);
         signal.throwIfAborted();
+        assertContext();
       }
     }
     catch (error) { toolError = error; throw error; }
@@ -69,6 +71,7 @@ async function runStepHarness({transport,alias,request,project,signal,chat={},me
     try {
       const result = await lane.prompt(request,context);
       signal.throwIfAborted();
+      assertContext();
       if (transportError) { transportError.proposalEnvelope = envelope; throw transportError; }
       if (toolError) { toolError.proposalEnvelope = envelope; throw toolError; }
       if (!result.ok || !proposal) throw fail('AI_RUN_FAILED');

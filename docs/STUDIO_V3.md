@@ -1,7 +1,9 @@
-# Studio v3 — structured ERP print forms
+# Studio v3 — general-purpose print forms
 
-Studio v3 0.2.0 is a separate Pilot at `/studio-v3/`. The v2 editor and its
-existing release gates remain available at `/studio-v2/`.
+Studio v3 0.2.0 is a separate **Production Pilot** at `/studio-v3/`, for general print
+forms rather than one ERP product. Start a blank form or reuse a transaction example;
+ERPNext is an optional adapter, not a prerequisite. The v2 editor and its release gates
+remain at `/studio-v2/`. See [current AI readiness and no-code usage](STUDIO_V3_GENERAL_AI_READINESS.zh-CN.md).
 
 Complete built-in coding-agent target: [architecture and delivery](STUDIO_V3_CODING_AGENT_PLAN.md), [proposed contracts](STUDIO_V3_CODING_AGENT_CONTRACTS.md), [acceptance gates](STUDIO_V3_CODING_AGENT_ACCEPTANCE.md) and [task ledger](../TASK.md). Source execution and broader workflow coverage remain planned.
 
@@ -11,6 +13,9 @@ The blue/white three-column workspace follows the user-selected concept:
 Header / Customer / Items / Totals / Footer on the left, an actual A4 HTML
 document with selection and page thumbnails in the center, and component
 properties plus collapsible Quality on the right. Icons are inline SVG.
+The five named section slots are reusable layout containers, not a requirement to retain
+invoice content; generic write-in forms can hide irrelevant financial sections.
+
 
 - **Design:** start a blank form or invoice, purchase order, delivery note;
   show/hide sections, add/remove/reorder fields and columns, edit labels,
@@ -55,32 +60,37 @@ This slice does not claim completion of v2's full direct-BYOK migration.
 
 The owner-selected GPT Server Demo is the only v3 provider. Existing
 `github-pages` registration is reused: browser CORS supplies the exact Origin;
-`POST /demo/session` issues a short-lived memory-only token, `/demo/v1/models`
-supplies the model aliases (only `demo-` aliases of a safe shape, at most eight; `demo-auto`
-is the default and is listed first), and `/demo/v1/responses` returns `output_text` carrying a JSON envelope per bounded step.
-Text requests stream server-sent events, but only to show progress ("Waiting for the AI
-service", then received characters and seconds, silent for screen readers): the envelope is
-parsed once, from the `response.completed` event, by the same rules as a plain body. Image
-requests are not streamed until streamed images are verified, and a JSON answer to a stream
-request is read as a plain body. Reasoning is opaque (encrypted) and never shown. Failures
+`POST /demo/session` issues a short-lived memory-only token. `/demo/v1/models`
+supplies up to eight safe `demo-` aliases; `demo-auto` remains the default.
+`/demo/v1/responses` returns checked answer/proposal envelopes for single-step requests
+or client-executed registered function calls in step mode.
+Single-step text requests stream server-sent events for progress; the envelope is parsed
+from `response.completed`. Step-mode and image requests use their verified plain-response
+path; a JSON body returned to a streaming request is read as a plain body.
+Reasoning is opaque/encrypted and never shown. Failures
 are named from the HTTP status and the gateway's own code (network unreachable, origin not
 registered, rate limit, service disabled, no provider available, slow gateway) and each
 has its own message. Every gateway request has its own timeout (15 s for model discovery,
 60 s for a model request, including its session and the one 401 refresh). A single-step Send is
 bounded by their sum (225 s) and at most three model requests. Work-in-steps runs instead use
-a 60-minute deadline, 1000 tool-call cap and accounted-token budget. A timeout is a failure, never a retry. No native provider tools, arbitrary schema, files, background,
-web search, gateway key or private `/v1/*` request is sent. A first 401 refreshes
+a 60-minute deadline, 1000 tool-call cap and accounted-token budget. A timeout is a failure,
+not a retry. Only registered local function tools are admitted: no provider-hosted execution,
+arbitrary tool schemas, background actions, web search, gateway key or private `/v1/*`
+request is sent. Selected references share only their disclosed extracted text/images,
+not arbitrary file access. A first 401 refreshes
 once; authoring repair is capped and disclosed. No model fallback occurs: a default the
 user never changed adapts to the aliases the gateway offers, but a model the user chose
 that is no longer offered stops the Send, refreshes the list and waits for a new Send.
 
-The panel displays the selected alias and recipient notice; there is no initial-JSON preview control.
-Send deliberately accepts the adjacent notice; there is no consent checkbox.
-The owner-requested framework-native authoring surface is described in
-[Authoring contract](STUDIO_V3_AUTHORING.md) and [Pi chat](STUDIO_V3_AI_CHAT.md).
-The AI panel's open usability issues are tracked in [AI panel UX backlog](STUDIO_V3_AI_PANEL_UX.md).
-It includes stable element references/comments, label/value typography, structural
-fields/columns, bindings, section/page layout and embedded local raster assets.
+The panel keeps one scrolling conversation/context body and an anchored composer.
+Selected-model diagnostics live in Settings; the Demo/fictional-data notice remains visible.
+Send accepts its adjacent context notice, not extra value/asset authority. Optional current
+label/static-text/path and page-pixel sharing use separate unchecked one-run controls.
+Expansion itself grants nothing. Source-value/asset policy remains host-controlled.
+Change details expand on demand; Preview/Apply/Undo stay independently reachable.
+See [Authoring](STUDIO_V3_AUTHORING.md), [Pi chat](STUDIO_V3_AI_CHAT.md),
+[AI readiness evidence](STUDIO_V3_GENERAL_AI_READINESS.zh-CN.md) and
+[remaining UX/audit items](STUDIO_V3_AI_PANEL_UX.md).
 
 A single-step Send is bounded to three model requests and three real local
 preview inspections, with a code/geometry-only dynamic diagnostic boundary. Step-mode tools
