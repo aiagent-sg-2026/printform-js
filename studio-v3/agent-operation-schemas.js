@@ -30,6 +30,6 @@ export const OPERATION_SCHEMAS = Object.freeze({
   set_page:operation('set_page',{patch:object(optional({paper:choice(PAPERS),orientation:choice(ORIENTATIONS),margins:object(optional(Object.fromEntries(['top','right','bottom','left'].map(key=>[key,Type.Number({minimum:0,maximum:72})]))))}))}),
   set_logo:operation('set_logo',{value:Type.Union([Type.Null(),object({assetId:fieldProperties.assetId,width:Type.Number({minimum:8,maximum:400}),height:fieldProperties.height,fit:Type.Optional(fieldProperties.fit)})])}),
   set_collection:operation('set_collection',{value:Type.String({minLength:1,maxLength:240})}),
-  set_heading:operation('set_heading',{value:Type.String({maxLength:100})})
+  set_heading:operation('set_heading',{value:Type.String({maxLength:100,description:'Changes stored heading text only; does not enable header. A visible printed title also requires set_section target:"header" patch:{enabled:true}, only when scope permits. Preserve intentionally hidden headings.'})})
 });
 export const AUTHORING_TYPES = Object.freeze(Object.keys(OPERATION_SCHEMAS));

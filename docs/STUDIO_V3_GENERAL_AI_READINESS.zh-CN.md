@@ -119,6 +119,20 @@ PR #68 的 `main@fa7b0261c9c943db5208f6713c64d00411e081ee` 已由 [CI 3867538587
 
 该尺寸契约修复的完整 Node24 `build:site` 已实际通过 **228 文件 / 2,421 测试**与站点生成；67 个交付文件最大 300 行，141 个本地 Markdown 目标均有效。既有 JSDOM / 模块类型 / 浏览器外部化警告保留；此处仍是工作树证明，不冒充干净提交或新部署模型验收。
 
+## 标题可见性与不透明参数错误
+
+PR #69 的 `main@37d276885cbe046b0b9e77774d795711ebc2cf78` 已由 [CI 38678334777](https://github.com/yapweijun1996/printform-js/actions/runs/38678334777) 实际通过 **228 文件 / 2,421 测试**并部署，日志的真实 shell 版本也是 `37d276885cbe`。干净提交 `9036403` 的发布门禁为 13 tools / 13 operations / 2 skills / 78 conformance examples，全部 28 项基于原 baseline 评审通过。
+
+同一冻结六条需求再次实际运行：READ / REFERENCE / STOP 通过；CREATE 已产生十个填写/签署字段且无旧发票内容，但**实际纸张完全没有所要求的标题**，因此仍 Fail、未应用并丢弃。FOLLOWUP / BIND 继续按前提未成立登记为 Blocked，不算执行。模型先遇到 `AGENT_ARGUMENTS_INVALID`，最后以 numeric ready / finish 声称完成；这些不能代替用户目标。
+
+另一次仅用于调查的真实创建请求，十六个操作一次接受，其中明确包含 `set_heading` 和 header enabled，主项目不变；没有 Preview/Apply。这说明独立调查可能得到不同模型轨迹，**不能反写成原冻结流程通过**，也不能伪称已取得原始坏参数。保留全部轨迹与缺标题截图，继续按标题真实可见性、严格参数诊断和最终实际工作流验收修复，不隐式启用 section、不增加数据权限或放宽模型预算。
+
+本轮修复暴露 title / page-number / items 的非敏感编译输出包含状态，明确 `set_heading` 只改存储值、显示标题需在现有 scope 内显式启用 header；保留合法隐藏标题编辑。参数错误提示只来自已声明 schema 的位置、类型与约束，不读取/转发 SDK 含完整参数的异常文本，不回显值或未知属性名，验证器仍复用现有 SDK、原始类型/权限/重复失败限制不变。
+
+已实际通过 **7 文件 / 104 测试**。无模拟 provider 的实际 API/draft/binding smoke：隐藏标题保持隐藏；非法字体得到 256-byte 的精确 `operations[16].patch.fontSize` 数值范围提示且无私密 marker、未改草稿；显式修复后真实绑定 DOM 含 EQUIPMENT HANDOVER 的 20pt 标题和十个填写字段，source data/schema 哈希均相等、原项目不变。这不是新版本的真实模型或浏览器视觉验收。
+
+集成后完整 Node24 `build:site` 已实际通过 **229 文件 / 2,437 测试**与站点生成；71 个交付文件最大 300 行、141 个本地 Markdown 目标均有效。既有警告保留；干净提交门禁和新部署的真实六条需求仍单独验收。
+
 ## 尚未获得的生产资格
 
 | 门禁 | 边界 |

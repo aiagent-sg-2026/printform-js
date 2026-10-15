@@ -44,6 +44,14 @@ Renaming a label or reordering an array does not change its semantic ID.
 `selectionField` accepts both field and label targets and returns the underlying
 field. `labelSelection` strips only the reserved `label-` prefix.
 
+## Stored heading and output inclusion
+
+`set_heading` changes only the stored text; it does not enable `blocks.header`.
+A requested printed title on Blank needs explicit header enablement as well, within
+the current scope. A selected heading alone cannot authorize the whole header.
+Context reports title/page-number/items inclusion from their canonical flags; this
+does not establish text correctness, pixel fidelity or full request completion.
+
 ## Field properties
 
 Every field has `id` and `label`. `format` is optional and defaults to plain

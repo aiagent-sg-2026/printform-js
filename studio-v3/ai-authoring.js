@@ -160,7 +160,7 @@ export function shareAuthoring(project,context={}) {
   return {
     contract:AUTHORING_CONTRACT,
     sections:BLOCKS.map(id=>({id,enabled:d.blocks[id].enabled,layout:d.blocks[id].layout || {},breakBefore:Boolean(d.blocks[id].breakBefore),keepTogether:Boolean(d.blocks[id].keepTogether),fields:fieldList(d,id).map(f=>({id:`${id}-${f.id}`,kind:f.kind || (f.pointer ? 'bound' : 'static'),format:f.format,width:f.width,labelStyle:f.labelStyle || {},valueStyle:f.valueStyle || {},showLabel:f.showLabel !== false}))})),
-    elements:[{id:'header-title',style:d.titleStyle || {}},{id:'page-number',style:d.pageNumberStyle || {}},{id:'header-logo',assetId:d.logo?.assetId || null,visible:d.blocks.header.enabled && d.logo !== null},{id:'items',style:d.tableStyle || {},styleOperation:'set_table_style'}],sectionOrder:d.sectionOrder || BLOCKS,page:d.page || {paper:'A4',orientation:'portrait'},
+    elements:[{id:'header-title',visible:d.blocks.header.enabled,style:d.titleStyle || {}},{id:'page-number',visible:d.pageNumbers,style:d.pageNumberStyle || {}},{id:'header-logo',assetId:d.logo?.assetId || null,visible:d.blocks.header.enabled && d.logo !== null},{id:'items',visible:d.blocks.items.enabled,style:d.tableStyle || {},styleOperation:'set_table_style'}],sectionOrder:d.sectionOrder || BLOCKS,page:d.page || {paper:'A4',orientation:'portrait'},
     assets:(d.assets || []).map(({id})=>({id})),bindings:availableBindings(project,explicitBindingPointers(context.request,context.references))
   };
 }
