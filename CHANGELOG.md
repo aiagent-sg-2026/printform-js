@@ -15,6 +15,13 @@ who don't need the diary.
 
 ## [Unreleased]
 
+### General supplied-facts business forms — 2026-10-16
+
+- Add independent AccountStatement, StockMovement and PayrollSlip starters to the existing New picker; reuse FormSpec, JSON Pointer binding, preview and portable Save/Open/Export.
+- Preserve explicit debit/credit/balances, movement direction/UOM/locations, and earnings/deductions/employer-cost/net snapshots. Never reconcile, calculate tax/payroll, infer payment status or substitute invoice totals.
+- Keep exact supplied decimal strings, provenance and protected amount bindings. Reject invalid canonical data before mutation; normalize optional field IDs without altering camelCase source pointers.
+- Document the limited profile, unchanged legacy `/items` dataset editor and absence of ERPNext, bank, legal or physical-printer certification.
+
 ### Final-page footer and signature flow — 2026-10-16
 
 - Measure final footers with actual output width and page totals before creating another page; failed trials roll back DOM and page-number registrations.

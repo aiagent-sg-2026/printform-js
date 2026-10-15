@@ -1,0 +1,66 @@
+import { BUSINESS_DOCUMENT_PROFILE } from './business-document-adapter.js';
+
+export const BUSINESS_DEMO_TEMPLATES = Object.freeze([
+  { documentKind: 'AccountStatement', label: 'Account statement · 对账单', baseType: 'invoice', description: 'Explicit debit/credit meanings, source references and supplied opening/closing balances; no reconciliation.' },
+  { documentKind: 'StockMovement', label: 'Stock movement · 库存移动单', baseType: 'delivery', description: 'Explicit inflow/outflow/transfer, locations, supplied quantity precision and UOM; no stock posting.' },
+  { documentKind: 'PayrollSlip', label: 'Payroll slip · 工资明细', baseType: 'invoice', description: 'Fictional employee only; separate earnings, deductions, employer contributions and supplied net pay; no bank data.' }
+].map(entry => Object.freeze({ ...entry, status: 'ready', scenarioCount: 1 })));
+const provenance = (sourcePath, meaning) => ({ sourcePath, meaning });
+const money = (amount, sourcePath, meaning, minorUnitDigits = 3) => ({ amount, currency: 'SGD', minorUnitDigits, provenance: provenance(sourcePath, meaning) });
+const fact = (id, label, role, amount, meaning, minorUnitDigits) => ({ id, label, role, basis: meaning, amount: money(amount, `fictional-ledger/${id}`, meaning, minorUnitDigits) });
+const reference = (documentType, id, number) => ({ system: 'Fictional local source', documentType, id, number });
+const common = (kind, number) => ({ profile: BUSINESS_DOCUMENT_PROFILE,
+  source: reference(kind, `fictional:${kind}:source`, number), document: { kind, number, date: '2026-10-15', ...(kind === 'StockMovement' ? {} : { currency: 'SGD' }) },
+  company: { id: 'FICTIONAL-COMPANY-ONLY', name: 'Fictional Lantern Workshop', address: 'Fictional Demo Street · not a real business' }
+});
+function statement() {
+  return { ...common('AccountStatement', 'DEMO-STMT-2026-10'), statement: {
+    party: { id: 'FICTIONAL-PARTY-ONLY', name: 'Fictional Willow Customer', role: 'customer' },
+    account: { id: 'FICTIONAL-AR-LEDGER', name: 'Fictional customer ledger', basis: 'receivable', debitMeaning: 'Source ledger debit increases receivable', creditMeaning: 'Source ledger credit decreases receivable' },
+    period: { from: '2026-10-01', to: '2026-10-15' },
+    entries: [
+      { id: 'fictional-stmt-entry-invoice', date: '2026-10-03', dueDate: '2026-11-03', description: 'Source invoice charge · 来源发票记账',
+        reference: reference('SalesInvoice', 'FICTIONAL-INV-1', 'DEMO-INV-1'),
+        amounts: [fact('fictional-stmt-debit', 'Invoice debit', 'debit', '1,234.500', 'Source receivable debit, tax already included')] },
+      { id: 'fictional-stmt-entry-receipt', date: '2026-10-10', description: 'Source receipt posting, not a bank-clearance assertion',
+        reference: reference('ReceiptPosting', 'FICTIONAL-REC-1', 'DEMO-REC-1'),
+        amounts: [fact('fictional-stmt-credit', 'Receipt credit', 'credit', '300.000', 'Source receivable credit only')] }
+    ],
+    balances: [fact('fictional-stmt-opening', 'Opening ledger balance', 'openingBalance', '+100.000', 'Debit balance before period; supplied source ledger snapshot'),
+      fact('fictional-stmt-closing', 'Closing ledger balance', 'closingBalance', '1,034.500', 'Debit balance at period end; supplied, not recomputed')]
+  }, notes: 'Entirely fictional statement. No aging buckets, inferred payment status or bank clearance. Balances are independently supplied snapshots.' };
+}
+function stock() {
+  const quantity = (amount, uom, id) => ({ amount, uom, decimalPlaces: 3, provenance: provenance(`fictional-stock/${id}`, 'Supplied movement quantity; sign is not movement direction') });
+  return { ...common('StockMovement', 'DEMO-STOCK-2026-10'), stock: {
+    purpose: 'Fictional internal relocation and separate issue/receipt · 虚构调拨及领用/收料',
+    lines: [
+      { id: 'fictional-stock-transfer', item: { id: 'FICTIONAL-MATERIAL-A', code: 'DEMO-MAT-A', name: 'Fictional sheet material' }, description: 'Move supplied quantity between explicitly named bins', direction: 'transfer',
+        quantity: quantity('12.500', 'sheet', 'transfer'), from: { id: 'DEMO-WH-A', name: 'Fictional main store', bin: 'A-01' }, to: { id: 'DEMO-WH-B', name: 'Fictional workshop', bin: 'B-02' }, batch: 'FICTIONAL-LOT-1', reference: reference('TransferInstruction', 'FICTIONAL-TR-1', 'DEMO-TR-1') },
+      { id: 'fictional-stock-issue', item: { id: 'FICTIONAL-MATERIAL-B', code: 'DEMO-MAT-B' }, description: 'Independent consumption issue; not a sales delivery', direction: 'outflow',
+        quantity: quantity('2.250', 'kg', 'issue'), from: { id: 'DEMO-WH-B', bin: 'B-03' } },
+      { id: 'fictional-stock-receipt', item: { id: 'FICTIONAL-MATERIAL-C', code: 'DEMO-MAT-C' }, description: 'Independent supplied stock receipt; not a supplier invoice', direction: 'inflow',
+        quantity: quantity('7.000', 'Each', 'receipt'), to: { id: 'DEMO-WH-A', bin: 'A-04' } }
+    ]
+  }, notes: 'Entirely fictional stock snapshot. Different UOMs are not summed or converted. No inferred valuation, on-hand balance, tax or accounting impact.' };
+}
+function payroll() {
+  return { ...common('PayrollSlip', 'DEMO-PAYSLIP-2026-10'), payroll: {
+    employee: { id: 'FICTIONAL-EMPLOYEE-ONLY-001', name: 'Fictional Avery Lantern', department: 'Fictional Training Department', jobTitle: 'Fictional Workshop Demonstrator' },
+    period: { from: '2026-10-01', to: '2026-10-15' }, payDate: '2026-10-20',
+    components: [
+      fact('fictional-pay-basic', 'Basic earnings · 基本工资', 'earning', '2,000.000', 'Source supplied period earnings, not hours × rate'),
+      fact('fictional-pay-allowance', 'Training allowance', 'earning', '123.456', 'Independent source supplied allowance'),
+      fact('fictional-pay-deduction', 'Fictional deduction', 'deduction', '45.678', 'Source supplied demonstration deduction; no jurisdictional tax rule'),
+      fact('fictional-pay-employer', 'Employer-only contribution', 'employerContribution', '88.001', 'Employer cost, not an employee deduction and not net pay')
+    ],
+    summary: [fact('fictional-pay-gross', 'Supplied gross earnings', 'gross', '2,123.456', 'Period gross snapshot from fictional source'),
+      fact('fictional-pay-deductions', 'Supplied employee deductions', 'deductions', '45.678', 'Employee deductions snapshot from fictional source'),
+      fact('fictional-pay-net', 'Supplied net pay', 'netPay', '2,077.778', 'Net entitlement snapshot, not proof of payment')]
+  }, notes: 'All identities and amounts were invented for this fixture. No real employee records, bank identifiers or payroll provider. Not statutory payroll certification or payment execution.' };
+}
+export function businessDemoInput(kind) {
+  const factories = { AccountStatement: statement, StockMovement: stock, PayrollSlip: payroll };
+  if (!Object.hasOwn(factories, kind)) throw new Error(`Unknown supplied business demo: ${kind}`);
+  return factories[kind]();
+}
