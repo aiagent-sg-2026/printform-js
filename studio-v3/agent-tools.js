@@ -1,4 +1,5 @@
 import { validateToolArguments } from '@earendil-works/pi-ai';
+import { argumentRepairHint } from './agent-arguments.js';
 import { createAgentMemory } from './agent-memory.js';
 import { fail } from './ai-edits.js';
 import { AGENT_TOOL_DEFINITIONS } from './agent-registry.js';
@@ -32,13 +33,13 @@ export function createAgentTools({draft,context,inspect,signal,outcome,limits,id
       outcome.blocked = {code:'AGENT_BUDGET'}; onStep({name,ok:false,code:'AGENT_BUDGET'}); stopRun(); throw fail('AGENT_BUDGET');
     }
   };
-  const rejected = (name,args,error) => {
+  const rejected = (name,args,error,repairHint = '') => {
     if (signal.aborted) throw error;
     const code = error.code || 'TOOL_FAILED', signature = `${name}:${code}:${JSON.stringify(args)}`;
     run.repeats = signature === run.failure ? run.repeats + 1 : 1; run.failure = signature;
     onStep({name,ok:false,code});
     if (run.repeats >= limits.maxRepeatedFailures) { outcome.blocked = {code:'AGENT_STALLED'}; stopRun(); throw fail('AGENT_STALLED'); }
-    throw Object.assign(new Error(`${code}. Correct the step and try again, or call undo_step.`),{code});
+    throw Object.assign(new Error(`${code}. Correct the step and try again, or call undo_step.${repairHint}`),{code});
   };
   if (definitions.length !== Object.keys(handlers).length || definitions.some(({name})=>!handlers[name])) throw fail('AGENT_REGISTRY_INVALID');
   return definitions.map(definition=> {
@@ -53,7 +54,7 @@ export function createAgentTools({draft,context,inspect,signal,outcome,limits,id
           // Pi may coerce primitives or optional nulls; the product accepts only the raw declared types.
           if (JSON.stringify(validated) !== JSON.stringify(args)) throw new Error();
           prepared = true; return args;
-        } catch { return rejected(name,args,fail('AGENT_ARGUMENTS_INVALID')); }
+        } catch { return rejected(name,args,fail('AGENT_ARGUMENTS_INVALID'),argumentRepairHint(definition,args)); }
       },
       execute:async (_id,args) => {
         if (!prepared) begin(name); prepared = false;

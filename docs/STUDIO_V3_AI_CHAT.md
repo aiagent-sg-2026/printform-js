@@ -59,6 +59,16 @@ Only item columns use percentage widths and image fields use pixel dimensions.
 `FIELD_WIDTH_UNSUPPORTED` preserves the private draft and tells the agent to remove
 that unsupported property, not abandon `add_field` or silently discard input.
 
+Context `visible` flags for title/page number/items report canonical output inclusion,
+not pixel fidelity or goal completion. `set_heading` only changes the stored heading:
+a visible title on Blank also needs an explicit header-enable operation within scope.
+Optional authorized semantic inspection can check title/labels/lines before refreshing
+the final numeric inspection; disclosure is never forced or widened.
+
+`AGENT_ARGUMENTS_INVALID` can include bounded schema-only repair hints: known operation
+index/type, property paths and declared constraints. No received values, unknown key names
+or SDK exception text are forwarded. Raw-type rejection, grants and repeat limits remain.
+
 An edit request can run as a tool loop instead of one reply. The model works on a private draft copy of the
 form and calls registry-defined local tools: `get_capabilities` (release, tools, schemas and knowledge index),
 `read_skill` (bundled product guide), `get_context` (structure, bindings, authoring targets), `apply_operations` (the same

@@ -6,9 +6,16 @@ import {runLayoutHarness} from '../studio-v3/ai-harness.js';
 import {safeRunDiagnostics} from '../studio-v3/ai-inspection.js';
 import {Conversation,cleanMessages} from '../studio-v3/ai-conversation.js';
 import {createBus,editProject,designOperations} from '../studio-v3/controller.js';
+import {bindTemplate} from '../studio-v2/core/binding.js';
 const plan = operations=>JSON.stringify({kind:'proposal',summary:'Author the referenced form elements',operations});
 const label = {type:'set_field',target:'label-customer-ship',patch:{labelStyle:{fontSize:12,bold:true}}};
 const request = project=>chatRequest(project,{request:'Label 12pt bold',scope:{mode:'whole'},typography:[],conversation:[]});
+const printed = project => {
+  const template = document.createElement('template'); template.innerHTML = project.templateHtml;
+  const {fragment,report} = bindTemplate(template,project.sampleData,project.manifest);
+  expect(report.errors).toEqual([]);
+  return fragment;
+};
 describe('framework-native AI authoring',()=> {
   it('makes screenshot label-only edit with unchanged bound values, data, revision and value typography',async()=> {
     const p=newProject(), original=structuredClone(p), result=parseChatReply(plan([label]),p,{scope:{mode:'selected',id:'customer'}});
@@ -36,12 +43,62 @@ describe('framework-native AI authoring',()=> {
     expect(result.design.blocks.items.enabled).toBe(false); expect(result.design.blocks.totals.enabled).toBe(false);
     expect(result.design.customer.every(field=>field.kind==='static' && !field.pointer)).toBe(true);
     expect(result.candidate.sampleData).toEqual(original.sampleData); expect(project).toEqual(original);
-    expect(result.candidate.templateHtml).toContain('Recipient signature');
+    expect(result.candidate.schema).toEqual(original.schema);
+    const paper = printed(result.candidate);
+    expect(paper.querySelector('[data-v3-id="header-title"]').textContent).toBe('Equipment handover');
+    for (const [section,id,label] of [['customer','employee','Employee'],['customer','equipment','Equipment'],['customer','handover-date','Date'],['footer','recipient-signature','Recipient signature']]) {
+      expect(paper.querySelector(`[data-v3-id="label-${section}-${id}"]`).textContent).toBe(label);
+      expect(paper.querySelector(`[data-v3-id="${section}-${id}"]`).textContent).toBe('________________________');
+    }
     const bus = createBus(project);
     await editProject(bus,designOperations(bus.project,result.design),'Equipment handover design');
     expect(bus.revision).toBe(1); expect(bus.project.sampleData).toEqual(original.sampleData);
     await bus.navigateHistory('undo',1);
     expect(designOf(bus.project)).toEqual(d); expect(bus.project.sampleData).toEqual(original.sampleData);
+  });
+  it('keeps a stored Blank heading hidden until header is explicitly enabled without widening heading scope',()=> {
+    const project = newProject('invoice',true), original = structuredClone(project);
+    const heading = {type:'set_heading',value:'Equipment handover'};
+    const hidden = parseChatReply(plan([heading]),project,{scope:{mode:'selected',id:'header-title'}}).candidate;
+    expect(designOf(hidden).title).toBe('Equipment handover');
+    expect(designOf(hidden).blocks).toEqual(designOf(project).blocks);
+    expect(shareAuthoring(hidden).elements.find(e=>e.id==='header-title').visible).toBe(false);
+    expect(printed(hidden).querySelector('[data-v3-id="header-title"]')).toBeNull();
+    expect(hidden.spec.components.some(c=>c.id==='header-title')).toBe(false);
+    const enable = {type:'set_section',target:'header',patch:{enabled:true}};
+    expect(()=>parseChatReply(plan([enable,heading]),project,{scope:{mode:'selected',id:'header-title'}})).toThrow('UNSAFE_SCOPE');
+    const visible = parseChatReply(plan([enable,heading]),project).candidate;
+    expect(shareAuthoring(visible).elements.find(e=>e.id==='header-title').visible).toBe(true);
+    expect(printed(visible).querySelector('[data-v3-id="header-title"]').textContent).toBe('Equipment handover');
+    const hiddenAgain = parseChatReply(plan([{...enable,patch:{enabled:false}}]),visible).candidate;
+    expect(designOf(hiddenAgain).title).toBe('Equipment handover');
+    expect(shareAuthoring(hiddenAgain).elements.find(e=>e.id==='header-title').visible).toBe(false);
+    expect(printed(hiddenAgain).querySelector('[data-v3-id="header-title"]')).toBeNull();
+    for (const candidate of [hidden,visible,hiddenAgain]) {
+      expect(candidate.sampleData).toEqual(original.sampleData); expect(candidate.schema).toEqual(original.schema);
+    }
+    expect(project).toEqual(original);
+  });
+  it('reports printed table/page visibility independently of footer enablement without disclosing titles',()=> {
+    const project = newProject(), original = structuredClone(project);
+    for (const state of [{items:false,pageNumbers:true,footer:false},{items:true,pageNumbers:false,footer:true}]) {
+      const candidate = parseChatReply(plan([
+        {type:'set_heading',value:'PRIVATE_STORED_TITLE'},
+        ...Object.entries({items:state.items,footer:state.footer}).map(([target,enabled])=>({type:'set_section',target,patch:{enabled}})),
+        {type:'set_style',patch:{pageNumbers:state.pageNumbers}}
+      ]),project).candidate;
+      const wire = JSON.parse(chatRequest(candidate,{request:'Inspect layout',scope:{mode:'whole'},typography:[],conversation:[]}));
+      const paper = printed(candidate);
+      for (const [id,visible] of Object.entries({items:state.items,'page-number':state.pageNumbers})) {
+        expect(wire.authoring.elements.find(e=>e.id===id).visible).toBe(visible);
+        expect(Boolean(paper.querySelector(`[data-v3-id="${id}"]`))).toBe(visible);
+        expect(candidate.spec.components.some(c=>c.id===id)).toBe(visible);
+      }
+      expect(paper.querySelector('.printform').getAttribute('data-repeat-footer-pagenum')).toBe(state.pageNumbers ? 'y' : 'n');
+      expect(JSON.stringify(wire)).not.toContain('PRIVATE_STORED_TITLE');
+      expect(candidate.sampleData).toEqual(original.sampleData); expect(candidate.schema).toEqual(original.schema);
+    }
+    expect(project).toEqual(original);
   });
   it.each(['header','customer','totals','footer'].flatMap(section=>['static','bound'].map(kind=>({section,kind}))))('rejects unsupported $section $kind width without losing the field or source facts',({section,kind})=> {
     const project = newProject('invoice',true), original = structuredClone(project);
