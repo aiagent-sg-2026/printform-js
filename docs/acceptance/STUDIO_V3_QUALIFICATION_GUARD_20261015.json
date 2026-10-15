@@ -1,0 +1,88 @@
+{
+  "date": "2026-10-15",
+  "scope": "Qualification register integrity fix; not production service approval or live G8 attempts",
+  "runtimeModule": "scripts/studio-v3-task-register.mjs",
+  "runtimeModuleSha256": "11902ca01b6411dcecd8059e5e85e1702a850c5c977756463ac3fbcb4badad32",
+  "beforeFix": {
+    "reportedBy": "ProductionQualification agent actual API investigation",
+    "duplicateAttemptRows": {
+      "qualified": true,
+      "claimedPass": 180,
+      "independentValidatorDuplicateErrors": 120
+    },
+    "missingExecutionMetadata": {
+      "qualified": true,
+      "validatorErrors": 0
+    }
+  },
+  "afterFix": {
+    "outcome": "pass",
+    "scope": "Direct real API guard smoke using synthetic records; zero network/model calls; NOT G8 qualification",
+    "duplicates": {
+      "qualified": false,
+      "uniquePass": 60,
+      "validationErrors": 120
+    },
+    "missingExecutionEvidence": {
+      "qualified": false,
+      "validationErrors": 1440
+    },
+    "actualRegister": {
+      "tasks": 0,
+      "attempts": 0,
+      "validationErrors": [],
+      "qualified": false,
+      "reasons": [
+        "frozen tasks 0/60",
+        "family qa has 0/6 tasks",
+        "family qa passed 0/18",
+        "family authoring has 0/6 tasks",
+        "family authoring passed 0/18",
+        "family layout has 0/6 tasks",
+        "family layout passed 0/18",
+        "family bindings has 0/6 tasks",
+        "family bindings passed 0/18",
+        "family data has 0/6 tasks",
+        "family data passed 0/18",
+        "family references has 0/6 tasks",
+        "family references passed 0/18",
+        "family files has 0/6 tasks",
+        "family files passed 0/18",
+        "family source-repair has 0/6 tasks",
+        "family source-repair passed 0/18",
+        "family source-implement has 0/6 tasks",
+        "family source-implement passed 0/18",
+        "family source-artifact has 0/6 tasks",
+        "family source-artifact passed 0/18",
+        "holdout tasks 0",
+        "attempts 0/180",
+        "passed 0/180, needs 162",
+        "essential ESS-QA passed 0/3",
+        "essential ESS-BLANK passed 0/3",
+        "essential ESS-SOURCE-EDIT passed 0/3",
+        "essential ESS-TEST-REPAIR passed 0/3",
+        "essential ESS-BUILD passed 0/3",
+        "essential ESS-ARTIFACT-IMPORT passed 0/3"
+      ]
+    }
+  },
+  "verification": {
+    "targetedFiles": 3,
+    "targetedTestsPassed": 48,
+    "fullWorkingTreeBuild": {
+      "testFilesPassed": 230,
+      "testsPassed": 2473,
+      "siteGenerated": true,
+      "priorFailedGate": "Stale product-workflows dependency disposition; preserved as artifact://941. Original baseline retained and actual dependency reviewed before successful build."
+    },
+    "providerModelRequests": 0
+  },
+  "remainingProductionPrerequisites": [
+    "Specific Demo/production operator DPA, confidentiality, training, retention/deletion, region and subprocessors",
+    "Exact production tenant/service identity and approved Origin",
+    "Pinned upstream snapshot/route configuration and per-request dispatch proof, no unknown fallback",
+    "Actual source runner/artifact capabilities for G6/G7 and frozen G8 60-task/180-attempt execution",
+    "G9 deployment/authentication/isolation/retention/capacity/cost/audit/incident/rollback evidence"
+  ],
+  "limitations": "Required metadata and uniqueness validation do not verify that claimed evidence bytes, operator contracts or model identities are true. Unknown usage/upstream is permitted only as explicit unavailable and does not qualify confidential data."
+}

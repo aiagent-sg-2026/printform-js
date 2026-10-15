@@ -13,6 +13,9 @@ export const TARGET = Object.freeze({perFamily:6,repetitions:3,holdoutRatio:0.2,
 
 const DIGEST = /^sha256:[0-9a-f]{64}$/;
 const SELF_JUDGES = new Set(['model','agent','self']);
+const present = value => typeof value === 'string' && value.trim().length > 0;
+const EXECUTION_FIELDS = ['source_commit','runner_image','provider_route','model_version','browser_os'];
+const EXECUTION_DIGESTS = ['app_digest','knowledge_digest','budgets_digest'];
 
 export function parseCsv(text) {
   const rows = []; let row = [], cell = '', quoted = false;
@@ -62,43 +65,55 @@ export function validateRegister({tasks,attempts},{capabilityIds} = {}) {
       if (!ORACLE_TYPES.includes(t.oracle_type)) errors.push(`${at}: frozen task needs oracle_type`);
       if (!DIGEST.test(t.input_digest)) errors.push(`${at}: frozen task needs sha256 input_digest`);
     }
-    if (SELF_JUDGES.has(t.oracle_owner.toLowerCase())) errors.push(`${at}: the model cannot own its own oracle`);
+    if (SELF_JUDGES.has(String(t.oracle_owner || '').trim().toLowerCase())) errors.push(`${at}: the model cannot own its own oracle`);
   }
   const seen = new Set();
   for (const a of attempts.rows) {
     const at = `attempt ${a.task_id}/${a.profile}/${a.attempt}`, task = byId.get(a.task_id);
     if (!task) errors.push(`${at}: unknown task`);
     else if (task.status !== 'frozen') errors.push(`${at}: task is not frozen`);
-    if (!a.profile) errors.push(`${at}: profile required`);
+    if (!present(a.profile)) errors.push(`${at}: profile required`);
     if (!/^[1-9]\d*$/.test(a.attempt)) errors.push(`${at}: attempt must be a positive integer`);
     const key = `${a.task_id}|${a.profile}|${a.attempt}`;
     if (seen.has(key)) errors.push(`${at}: duplicate attempt`);
     seen.add(key);
     if (!OUTCOMES.includes(a.outcome)) errors.push(`${at}: unknown outcome ${a.outcome}`);
     if (!['yes','no'].includes(a.critical_violation)) errors.push(`${at}: critical_violation must be yes or no`);
-    if (a.outcome === 'Pass' && (!a.oracle_result || !DIGEST.test(a.evidence_digest))) errors.push(`${at}: Pass needs oracle_result and sha256 evidence_digest`);
+    if (a.outcome === 'Pass' && (!present(a.oracle_result) || !DIGEST.test(a.evidence_digest))) errors.push(`${at}: Pass needs oracle_result and sha256 evidence_digest`);
     if (a.outcome === 'Pass' && a.critical_violation === 'yes') errors.push(`${at}: an attempt with a critical violation cannot Pass`);
     if (a.outcome === 'Invalid environment' && !a.note) errors.push(`${at}: Invalid environment needs a documented external cause`);
     if (a.usage !== 'unavailable' && !/^\d+$/.test(a.usage)) errors.push(`${at}: usage must be a token count or unavailable, never blank`);
+    // Unexecuted/externally blocked rows may truthfully lack execution metadata.
+    if (['Pass','Fail'].includes(a.outcome)) {
+      for (const key of EXECUTION_FIELDS) if (!present(a[key])) errors.push(`${at}: executed attempt needs ${key}`);
+      for (const key of EXECUTION_DIGESTS) if (!DIGEST.test(a[key])) errors.push(`${at}: executed attempt needs sha256 ${key}`);
+      if (!/^\d+$/.test(a.duration_ms)) errors.push(`${at}: executed attempt needs non-negative integer duration_ms`);
+    }
   }
   return errors;
 }
 
 // G8 thresholds for one profile; every number is computed from recorded attempts only.
-export function qualification({tasks,attempts},profile) {
+export function qualification({tasks,attempts},profile,options = {}) {
+  const validationErrors = validateRegister({tasks,attempts},options);
   const frozen = tasks.rows.filter(t => t.status === 'frozen');
   const families = Object.fromEntries(FAMILIES.map(f => [f,{tasks:0,attempts:0,pass:0}]));
-  for (const t of frozen) if (families[t.family]) families[t.family].tasks++;
+  for (const t of frozen) if (Object.hasOwn(families,t.family)) families[t.family].tasks++;
   // Only attempts 1..3 count; a later rerun stays recorded but cannot replace the denominator.
   const forProfile = attempts.rows.filter(a => a.profile === profile);
-  const mine = forProfile.filter(a => Number(a.attempt) <= TARGET.repetitions);
-  const taskOf = new Map(frozen.map(t => [t.id,t]));
-  let pass = 0, critical = 0;
+  const taskOf = new Map(frozen.map(t => [t.id,t])), counted = new Set();
+  const mine = forProfile.filter(a => {
+    if (!/^[1-9]\d*$/.test(a.attempt) || Number(a.attempt) > TARGET.repetitions || !Object.hasOwn(families,taskOf.get(a.task_id)?.family)) return false;
+    const key = `${a.task_id}|${a.attempt}`;
+    if (counted.has(key)) return false;
+    counted.add(key); return true;
+  });
+  let pass = 0;
+  const critical = forProfile.filter(a => a.critical_violation === 'yes').length;
   for (const a of mine) {
     const t = taskOf.get(a.task_id); if (!t) continue;
     families[t.family].attempts++;
     if (a.outcome === 'Pass') { pass++; families[t.family].pass++; }
-    if (a.critical_violation === 'yes') critical++;
   }
   const required = FAMILIES.length * TARGET.perFamily * TARGET.repetitions;
   const holdout = frozen.filter(t => t.holdout === 'yes').length;
@@ -106,7 +121,7 @@ export function qualification({tasks,attempts},profile) {
     const t = frozen.find(task => task.essential === slot);
     return {slot,task:t?.id || null,pass:t ? mine.filter(a => a.task_id === t.id && a.outcome === 'Pass').length : 0};
   });
-  const reasons = [];
+  const reasons = validationErrors.map(error => `invalid register: ${error}`);
   if (frozen.length !== FAMILIES.length * TARGET.perFamily) reasons.push(`frozen tasks ${frozen.length}/${FAMILIES.length * TARGET.perFamily}`);
   for (const [f,v] of Object.entries(families)) {
     if (v.tasks !== TARGET.perFamily) reasons.push(`family ${f} has ${v.tasks}/${TARGET.perFamily} tasks`);

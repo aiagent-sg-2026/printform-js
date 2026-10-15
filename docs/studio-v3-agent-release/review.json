@@ -129,16 +129,19 @@
   },
   {
    "entries": {
-    "printform.knowledge.product-workflows": "219da4d43de74e00f92f3e80fc2fd544e736699d1c41a2f602059a8629234f43"
+    "printform.knowledge.product-workflows": "44f118d6f1da97502020b6f7db2d9c1e0b50bf6dc8685ee09e8df7544ec23435"
    },
    "disposition": "updated",
-   "justification": "Retains the shared validation-matrix ledger change and records bounded semantic structure/selection owners. The generated unavailable-workflow guide still leaves semantic rows Limited/eligible-gap; no G4 or CA-04 closure is asserted. CA-05 slice 3 adds fictional receipt-bound page/crop capture with separate host pixel consent, denied-value/asset guards, paired host follow-up image input and compaction/dispatch freshness checks; existing effect grants and CA-04 services are retained.",
+   "justification": "Retains the shared validation-matrix ledger change and records bounded semantic structure/selection owners. The generated unavailable-workflow guide still leaves semantic rows Limited/eligible-gap; no G4 or CA-04 closure is asserted. CA-05 slice 3 adds fictional receipt-bound page/crop capture with separate host pixel consent, denied-value/asset guards, paired host follow-up image input and compaction/dispatch freshness checks; existing effect grants and CA-04 services are retained. The task-register dependency now rejects invalid/duplicate execution records, requires executed-attempt provenance and counts later critical violations. The workflow generator imports only its unchanged parseCsv API; workflow statuses and all tool/effect grants remain unchanged. Three targeted files/48 tests and a zero-network actual API smoke pass; the real G8 register remains empty and unqualified. The first complete build correctly blocked this stale dependency review; preserve the original baseline and all earlier evidence.",
    "evidence": [
     "studio-v3/agent-knowledge.js",
     "docs/STUDIO_V3_FEATURE_LEDGER.csv",
     "studio-v3/agent-workflows.js",
     "tests/studio-v3-pixel-observation.test.js",
-    "tests/studio-v3-pixel-wire.test.js"
+    "tests/studio-v3-pixel-wire.test.js",
+    "scripts/studio-v3-task-register.mjs",
+    "tests/studio-v3-task-register.test.js",
+    "docs/STUDIO_V3_CODING_AGENT_ACCEPTANCE.md"
    ]
   },
   {
