@@ -180,5 +180,15 @@ try {
 - [纸张/驱动矩阵](ERP_DRIVER_PAPER_MATRIX.zh-CN.md)区分浏览器、真实PDF、OS队列与实物四层，列明Epson TM-T88VII、Zebra ZD421型号/介质/DPI边界。实际lpstat没有destination/default，未发送打印作业；不把headless PDF当成设备认证。
 - Internal Transfer、退款、payment-term schedules、withholding/tax与其它版本不在此raw profile；拒绝不代表ERP本身不支持。生产ERP授权、会计/银行及实际设备仍需独立证据。
 
+## 14. 后续事务覆盖扩展（2026-10-15）
+
+- 新增五项真实 API/绑定边界：PCAR 截止日包含当日且不选未来证书；CCAR 同标签/槽位不同来源记录不合并；Payment/Receipt 同发票拆分核销不合并、不补日期或推导状态；稀疏中间引用不能掩盖后续日期冲突。
+- 新增 SalesInvoice / PurchaseOrder / PurchaseInvoice 的长双语 A4、Letter 真实 Open → Save → Reopen → 离线 Export；三引擎 **18/18** 通过。按实际 source row index 聚合续片，完整描述、数量、单价、折扣、金额及顺序守恒；真实文本 Range 不越页，print-media sheet 尺寸正确。
+- 与既有 canonical/raw PCAR、CCAR、mixed/adjusted/advance 收付款合并运行，Chromium / Firefox / WebKit **42/42**，显式零重试、无 skip/flaky。原始报告及截图/PDF保留，不和历史总数相加冒充新增覆盖。
+- 正式 `main@f059ee5` 的原生 Chromium 另对七个虚构变体实际 Open/save/reopen/export，七份 PDF 共 11 页已解析、文档身份及要求的金融事实在实际输出中核对，source data/design 保持。首次五条通过、两条验收器误判保留；仅修复 gross 四位显示精度及 PDF 单号换行的观察规则后，两条独立通过。没有运行时改动、模型调用或虚构生产接口。
+- PCAR gross 的来源四位精度与 header 三位金额是独立事实；PDF 换行不是单号字符丢失。部分 CCAR/默认采购样张的最终 footer 单独占页，属于纸张利用率改进，不以裁剪、缩字或删除内容伪造完成。
+- [持久验收记录](acceptance/STUDIO_V3_TRANSACTION_EXPANSION_20261015.json)包含明确分母、来源哈希与失败。新增商业组合不认证 A5/Legal/横向或任意字体；ERP 授权、过账、银行执行、法定票据、实体打印及完整 AI 生产资格仍未证明。项目保持通用用途，不因这些适配器而绑定 ERPNext。
+
+
 
 

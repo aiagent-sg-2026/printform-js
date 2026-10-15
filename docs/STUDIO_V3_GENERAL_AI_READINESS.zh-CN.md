@@ -165,6 +165,14 @@ PR #70 的 `main@4f324caae9a014beef14f30cf6e85475df5b3f91` 已由 [CI 3868116882
 
 参见[冻结需求、真实输出与独立制品证据](acceptance/STUDIO_V3_VISITOR_TRIAL_20261015.json)。这只是新增通用虚构样本，不进入 G8，不授权真实敏感数据或保证全部版式。
 
+## 后续选项二：通用事务样本扩展
+
+PCAR 历史截止、CCAR 重复来源记录、同发票拆分 Payment/Receipt、负额 Sales Invoice、供应商 Purchase Order/Purchase Invoice 的七个虚构变体，在正式 `main@f059ee5` 实际经过 Open/save/reopen/export；源数据/设计守恒，七份独立 PDF 共 11 页已解析并核对文档身份，实际金融字段另由 DOM oracle 核对，截图已观察。首次五条通过、两条观察器失败保留：gross 应保留来源四位精度，PDF 单号允许换行空白；仅更正这两个观察规则并复验，不改运行时或重试模型。
+
+新增长双语商业单据的 A4/Letter 三引擎生命周期 18 条，与既有 claim/settlement 24 条合并，**42/42**、零重试、无 skip/flaky。按实际 source row index 检查续片内容/金额/顺序，真实 Range 不越纸面，保存/重开与离线打印成立。五项新增 API/绑定边界另通过。它们不是 42 次模型推理或生产 ERP 连接；部分默认样张仍有 footer 独立末页的纸张利用率改进空间。
+
+见[事务覆盖、范围和遗留事项](ERP_PRINT_SUPPORT.zh-CN.md#14-后续事务覆盖扩展2026-10-15)及[持久记录](acceptance/STUDIO_V3_TRANSACTION_EXPANSION_20261015.json)。没有把固定样本扩展为全部格式、法定凭证、银行/库存执行或完整 AI 生产认证。
+
 ## 尚未获得的生产资格
 
 | 门禁 | 边界 |
