@@ -31,6 +31,7 @@ class SourceWorkspaceRun {
     Object.freeze(this);
   }
   get active() { return !this.#closed && !this.#uncertain && this.#connection.available; }
+  get denialCode() { return this.#uncertain ? 'EFFECT_UNKNOWN' : this.#closed ? 'CANCELLED' : 'WORKSPACE_AUTH_EXPIRED'; }
   get imported() { return this.#imported; }
   #invalidate() { this.#uncertain = true; this.#artifacts.clear(); this.#imported = null; }
   async open({identity,project,baseRevision,runId},signal) {

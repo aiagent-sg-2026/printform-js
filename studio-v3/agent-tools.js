@@ -30,7 +30,7 @@ export function createAgentTools({draft,context,inspect,signal,outcome,limits,id
   run.pixels = createPixelEvidence(run,capturePixels); memory.latestVisual = ()=>run.pixels.current();
   const begin = name => {
     signal.throwIfAborted(); outcome.turns = ++run.calls;
-    if (workspace && !isSourceAuthorization(workspace)) { outcome.blocked = {code:'WORKSPACE_AUTH_EXPIRED'}; stopRun(); throw fail('WORKSPACE_AUTH_EXPIRED'); }
+    if (workspace && !isSourceAuthorization(workspace)) { const code = workspace.denialCode || 'WORKSPACE_AUTH_EXPIRED'; outcome.blocked = {code}; stopRun(); throw fail(code); }
     if (run.calls > limits.maxTurns) {
       outcome.blocked = {code:'AGENT_BUDGET'}; onStep({name,ok:false,code:'AGENT_BUDGET'}); stopRun(); throw fail('AGENT_BUDGET');
     }
@@ -62,7 +62,7 @@ export function createAgentTools({draft,context,inspect,signal,outcome,limits,id
         if (!prepared) begin(name); prepared = false;
         try {
           assertCurrent();
-          if (workspace && !isSourceAuthorization(workspace)) throw fail('WORKSPACE_AUTH_EXPIRED');
+          if (workspace && !isSourceAuthorization(workspace)) throw fail(workspace.denialCode || 'WORKSPACE_AUTH_EXPIRED');
           if (run.authorization) assertObservationAuthorization(run.authorization,{...readObservationHost(),runId});
           assertEffect(grant,definition);
           run.toolCallId = _id;
