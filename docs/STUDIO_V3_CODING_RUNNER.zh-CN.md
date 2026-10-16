@@ -71,6 +71,14 @@ npm run studio:coding-runner -- --origin https://studio.example.com
 
 修复保留 `cwd:""`、嵌套/隐藏相对目录和对"."、".."、绝对路径、空段、控制字符的拒绝；服务端路径/目录存在性校验与权限、配额、预算均不变。此对照定位了schema相关失效条件，不推断供应方内部异常或零费用，也不代替完整源码任务与生产资格。[原始有界对照证据](acceptance/STUDIO_V3_SOURCE_SCHEMA_20261016.json)；[官方strict模式契约](https://developers.openai.com/api/docs/guides/function-calling#strict-mode)。
 
+### 已部署真实模型至人工 Apply
+
+公开main `74073f0d09efbfa9531bdc330cead2216cf28c53`（PR80，CI38872515467构建/部署成功）实际完成：原 `demo-auto` 的11次请求、13次源码后端操作，且仅修改 `src/form.mjs` 的默认标题，原API、测试及构建源码保持不变。观察到 `node --test`、`node build.mjs` 提交、真实diff/制品获取、host验证导入及候选检查；未使用回复fixture或伪造Origin。
+
+人工Apply前保存仍r0且committed设计不变；实际点击Apply后r1，纸面标题为 `SOURCE READY CHECK`，data/schema原样保持。禁网络file-URI HTML及实际单页Chromium PDF确认同标题；Undo到r2恢复原设计，数据/schema仍相等；撤销配对及工作区关闭均确认，页面异常0。
+
+浏览器本次没有独立留存测试进程的exit receipt，因此不将模型“tests passed”口述当作独立oracle；成功构建与制品lineage由真实host导入校验。这是一个有界部署任务的完整成果/人工提交证明，不是任意源码、跨平台、真实数据或G6/G8/G9全部资格。[实际脱敏证据](acceptance/STUDIO_V3_SOURCE_LIVE_20261016.json)。此前失败全部保留；正式G8仍0/60、0/180。
+
 
 ## 官方研究
 

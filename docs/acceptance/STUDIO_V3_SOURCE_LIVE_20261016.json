@@ -1,0 +1,105 @@
+{
+  "date": "2026-10-16",
+  "release": "74073f0d09efbfa9531bdc330cead2216cf28c53",
+  "ciRun": 38872515467,
+  "modelAlias": "demo-auto",
+  "originalModelRouteBudget": true,
+  "realBrowserSandbox": true,
+  "fakeOriginOrResponses": false,
+  "modelRequests": 11,
+  "registeredTools": 22,
+  "observedBackendOperations": [
+    {
+      "operation": "list"
+    },
+    {
+      "operation": "list"
+    },
+    {
+      "operation": "list"
+    },
+    {
+      "operation": "read"
+    },
+    {
+      "operation": "read"
+    },
+    {
+      "operation": "read"
+    },
+    {
+      "operation": "write",
+      "path": "src/form.mjs",
+      "onlyDefaultHeadingChanged": true
+    },
+    {
+      "operation": "run",
+      "command": "node --test",
+      "cwd": ""
+    },
+    {
+      "operation": "run",
+      "command": "node build.mjs",
+      "cwd": ""
+    },
+    {
+      "operation": "diff"
+    },
+    {
+      "operation": "artifacts"
+    },
+    {
+      "operation": "artifacts"
+    },
+    {
+      "operation": "artifacts"
+    }
+  ],
+  "processEvidence": "Actual command submissions observed; model reported test success. Successful build/artifact lineage verified by the actual host import. Individual test exit receipts were not separately retained in this browser run.",
+  "candidateReady": true,
+  "preApply": {
+    "revision": 0,
+    "committedDesignUnchanged": true,
+    "undoDisabled": true
+  },
+  "humanApply": {
+    "revision": 1,
+    "title": "SOURCE READY CHECK",
+    "dataConserved": true,
+    "schemaConserved": true
+  },
+  "offline": {
+    "networkDenied": true,
+    "titleVisible": true,
+    "pdfPages": 1,
+    "pdfTitleConfirmed": true
+  },
+  "undo": {
+    "revision": 2,
+    "designRestored": true,
+    "dataConserved": true,
+    "schemaConserved": true
+  },
+  "cleanup": {
+    "revokeAcknowledged": true,
+    "ownedWorkspacesClosed": true
+  },
+  "pageErrors": [],
+  "dataSha256": "b4215677d573940411c01e9cd6799b50108e0b0e13268edf1106a8140433848e",
+  "schemaSha256": "ac79d5f21b24bc32782380d222adfb19224f8c68945623ee78496c56c56d870e",
+  "qualification": "One bounded real deployed source-model workflow passes through human Apply, offline PDF and Undo; not G6/G8/G9, production-data, cross-platform or global production qualification. Formal G8 remains 0/60 and 0/180.",
+  "runtime": {
+    "runnerSourceHash": "aca100e90b523de8e7880496b45885a327dd82636b9609d76fc1a0df43ae4ec7",
+    "imageDigest": "sha256:d9c6e8834e46676921654bb54b89c7df69839d612d025b41cb59a6e8d3101c19",
+    "baseImage": "public.ecr.aws/docker/library/node@sha256:d6aa754f16b3197301076f047b5def2f02ea1dbbc2ca920407d46d7ec7f87b20",
+    "profile": "local-docker-node24-source-json-v1",
+    "browser": "151.0.7922.34",
+    "os": "darwin arm64"
+  },
+  "appIdentity": {
+    "release": "74073f0d09efbfa9531bdc330cead2216cf28c53",
+    "contractHash": "cbfd5b1bb49159b5a450f2dbc4c81723ec31db863009a056a457b4799afa2fad",
+    "knowledgeHash": "c33bd689ac0749eeb7712f83757898bd6eacdf09def88f17dbc6943a1ba43b50",
+    "packageHash": "07de8f5593ccf8643f73d5c61c090755402f1397d96e179b95c6f349dc0231bc"
+  }
+}

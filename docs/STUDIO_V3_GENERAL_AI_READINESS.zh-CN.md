@@ -189,7 +189,7 @@ PCAR 历史截止、CCAR 重复来源记录、同发票拆分 Payment/Receipt、
 |---|---|
 | 真实业务数据处理 | 当前 route 是 Demo；未找到可验证的具体服务训练/保留/地区/分包处理约定，不能授权机密数据。KB 的公开 Demo 目标只证明短期浏览器 session 和服务端成本/滥用控制的设计意图 |
 | 底层模型身份 | `demo-auto` 未提供固定 upstream model/version；只能记录 route-level 行为，不能归因模型或承诺跨版本等价 |
-| 任意源代码代理 G6 | 当前是受限语义表单工具；没有可宣称合格的 source sandbox、真实项目 build/test/制品导入通路 |
+| 任意源代码代理 G6 | 现有配对Node24 sandbox已完成一个实际公开模型的源码→JSON制品→候选→人工Apply任务；任意仓库/依赖、托管多租户、跨平台与完整G6仍未qualified |
 | 全任务资格 G8 | [现有标准](STUDIO_V3_CODING_AGENT_ACCEPTANCE.md#gate-g8-real-model-task-qualification)是 60 tasks × 3 = 180 attempts / profile；实际 `tasks.csv` / `attempts.csv` 均只有表头，即正式冻结任务 0/60、登记尝试 0/180。独立 live smoke 不冒充该语料、保留集或逐类阈值 |
 | 运行发布 G9 | 未证明具体生产 tenant 身份、服务 SLO、容量/费用治理、审计及事故恢复；真实打印机和真实辅助技术验收也不能从浏览器测试推出 |
 
@@ -219,4 +219,6 @@ PCAR 历史截止、CCAR 重复来源记录、同发票拆分 Payment/Receipt、
 修复实际Docker日志配置启动失败、实验性targetAddressSpace传输失败、BOM原文丢失及JSON转义预算误判；发布依赖扫描改为语法感知模块lexer，忽略生成源码字符串但仍拒绝不可追踪动态import。所有原失败保留，不移动原a99c932发布基线。
 
 G8仍**0/60任务、0/180正式尝试**。G6/G9、DPA、真实数据许可、跨平台/负载/外部业务权限、独立业务/视觉oracle及原生打印机仍未获完整资格。可测试明确支持的虚构profile，不能据此宣称“所有ERP格式”或完整Production Ready。
+
+2026-10-16后续：相同 `demo-auto` / route /预算的真实对照将空incomplete定位到cwd lookahead schema；保留同等路径拒绝的正向模式恢复全部22工具。PR80/main74073f0部署后，11次模型请求、13次源码后端操作实际完成默认标题唯一修改、测试/构建命令提交、diff、制品导入、候选检查及人工Apply（r0→r1）；原data/schema不变。离线HTML与真实单页PDF含 `SOURCE READY CHECK`，Undo至r2恢复原设计且撤销工作区确认。测试exit receipt未独立留存，不把模型报告当独立oracle。此单任务不写入正式G8，也不覆盖旧失败或扩大真实数据许可。[独立完整证据](acceptance/STUDIO_V3_SOURCE_LIVE_20261016.json)。
 
