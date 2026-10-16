@@ -19,6 +19,9 @@
 | 测试伪造导航被403 | Node fetch不能冒充真实人类导航，安全门禁正确拒绝 | 永久Docker集成采用真正浏览器导航/自动Origin；负向恶意header仅作协议攻击用例，不冒充生产证据 |
 | Stop后恢复时序回归 | 等待源码清理让较新的选择恢复先启动，旧Stop反而等待新恢复 | committed恢复立即启动，与源码清理共同等待；原真实竞态测试通过，不增加超时 |
 | 重复面板宿主构造失败 | 重复ID使局部ID快速查询落到其他实例而返回null | 密码控件改为相对属性选择；原附件行为规格通过 |
+| 不存在cwd误判配对过期 | `DIRECTORY_NOT_FOUND`未映射为准入前路径拒绝 | 保留lease，允许模型修正路径；未知效果仍停止 |
+| strict cwd无根目录表示 | optional参数经provider变成必填，原schema排除空串 | canonical `cwd:""`显式可表达；不接受"."或绝对路径 |
+| cwd lookahead阻断真实模型 | 相同alias/预算下，仅加入该schema即空incomplete；并非已证明真实token耗尽 | 保留相同安全语义的正向分支恢复22工具；公开74073f0实际完成源码→候选→人工Apply→离线PDF→Undo，正式G8不计分 |
 
 ## 没有冒充产品缺陷的失败
 

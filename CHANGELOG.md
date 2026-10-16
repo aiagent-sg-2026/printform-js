@@ -19,6 +19,7 @@ who don't need the diary.
 
 - Replace cwd regex lookaround with positive alternatives that retain canonical root, relative/hidden-directory support and traversal/absolute-path rejection; sandbox path admission and all permissions remain unchanged.
 - Isolate the actual Demo failure with same-alias, same-budget native-browser controls: original cwd schema causes an empty incomplete response even with two tools; the positive pattern restores all 22 tools. This diagnoses a schema-dependent failure, not a full model-task or production qualification.
+- After deployment, verify the real 11-request source workflow through host-validated artifact import, unchanged r0 before human Apply, r1 after Apply, offline single-page PDF and r2 Undo; preserve data/schema and acknowledge workspace revocation. Record this bounded success separately from formal production qualification.
 
 ### Paired real source execution in the existing Pi Harness — 2026-10-16
 
