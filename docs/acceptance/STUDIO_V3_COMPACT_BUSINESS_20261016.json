@@ -1,0 +1,69 @@
+{
+  "date": "2026-10-16",
+  "source": "local combined business snapshot; not a deployed-release identity",
+  "browserSuite": {
+    "expected": 9,
+    "unexpected": 0,
+    "flaky": 0,
+    "skipped": 0,
+    "retries": 0,
+    "engines": [
+      "chromium",
+      "firefox",
+      "webkit"
+    ]
+  },
+  "chromiumSandbox": true,
+  "browserVersion": "151.0.7922.34",
+  "forms": [
+    {
+      "kind": "AccountStatement",
+      "pages": 1,
+      "amounts": [
+        "SGD 1,234.500",
+        "SGD 300.000",
+        "SGD +100.000",
+        "SGD -0007.2300"
+      ],
+      "rows": 4,
+      "htmlSha256": "51a9963acb595ab0094426bb25d43a9a9887d0505d1e87eefe480c8151114405",
+      "pdfSha256": "fd1b5275ed306ab3fb7342fd3614de86dc69a53ffc4105e416ef79928cbfc8e1"
+    },
+    {
+      "kind": "StockMovement",
+      "pages": 1,
+      "amounts": [
+        "-0.000 sheet",
+        "2.250 kg",
+        "7.000 Each"
+      ],
+      "rows": 3,
+      "htmlSha256": "7a52fad0332769b8f811db7da44aa2420e3ca72085b2d324ea3250d297b456c3",
+      "pdfSha256": "c44d067743a5eedb1b984932526a23ee29a1584b0aacad94187ab8418c23e3c3"
+    },
+    {
+      "kind": "PayrollSlip",
+      "pages": 1,
+      "amounts": [
+        "SGD 2,000.000",
+        "SGD 123.456",
+        "SGD 45.678",
+        "SGD 88.001",
+        "SGD 2,123.456",
+        "SGD 45.678",
+        "SGD +0.001"
+      ],
+      "rows": 7,
+      "htmlSha256": "7c3a27e686609cc3244708a29319e9d0ce393837782d8a948bdb343fbe75a2a6",
+      "pdfSha256": "806c7ef7688dd5bd01ddb18b6e7a65f7746cf7b248d56c017d5064adacae7ba5"
+    }
+  ],
+  "scope": "Existing New/Open/save/reopen/network-denied standalone HTML/exported-HTML reopen. Every original six-column value, source IDs, footer boundary and notes retained. DOM is exact; raw PDF financial/top source tokens ignore extraction whitespace only; prose uses NFKC compatibility.",
+  "layout": "A trusted supplied-facts-only A4 preset, four-column metadata, full-width footer, original9pt body/8.5pt trace; no engine/global commercial layout change.",
+  "failureHistory": [
+    "Initial compact order-register layout kept Payroll notes-only second page; native CSS prototype proved a scoped preset can fit all text before implementation.",
+    "PDF raw text split top source ID and used a compatibility CJK radical; exact DOM and raw financial checks retained, prose comparison uses NFKC.",
+    "Firefox importer test entered iframe before its new render; original failures preserved. Final suite waits actual new render, no retries or product timeout changes."
+  ],
+  "limits": "Not arbitrary long-data single-page, full statutory/ERP, physical-printer or production-AI qualification."
+}

@@ -11,5 +11,6 @@ export const A4_PRESETS = Object.freeze([
   ['EnterpriseProject','project-brief','Project brief','Project identity, programme dates and contract scope.'],
   ['ProgressClaim','progress-certificate','Progress statement','Period valuation, retention and cumulative claim summary.']
 ].map(([documentKind,id,label,description])=>Object.freeze({documentKind,id,label,description})));
-export const A4_PRESET_IDS = Object.freeze(A4_PRESETS.map(preset=>preset.id));
+// The shared supplied-facts layout has its own creators, not a commercial kind.
+export const A4_PRESET_IDS = Object.freeze([...A4_PRESETS.map(preset=>preset.id),'supplied-facts']);
 export const a4PresetForKind = kind => A4_PRESETS.find(preset=>preset.documentKind === kind) || null;

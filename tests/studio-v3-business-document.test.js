@@ -31,8 +31,14 @@ describe('supplied business documents consumed by the actual Studio lifecycle', 
     const reopened = readProject(saveProject(project));
     expect(reopened.sampleData).toEqual(project.sampleData);
     const paper = bind(reopened);
-    expect(printed(paper, 'items-amount')).toEqual(project.sampleData.printRows.map(row => row.amount));
-    expect(printed(paper, 'items-trace')).toEqual(project.sampleData.printRows.map(row => row.trace));
+    for (const key of ['no', 'section', 'description', 'amount', 'direction', 'trace']) {
+      expect(printed(paper, `items-${key}`)).toEqual(project.sampleData.printRows.map(row => String(row[key])));
+    }
+    expect(printed(paper, 'header-source-id')).toEqual([input.source.id]);
+    expect(printed(paper, 'header-company-id')).toEqual([input.company.id]);
+    expect(printed(paper, 'header-address')).toEqual([input.company.address]);
+    expect(printed(paper, 'footer-notes')).toEqual([input.notes]);
+    expect(printed(paper, 'footer-boundary')).toEqual([designOf(project).footer.find(field => field.id === 'boundary').text]);
     expect(paper.querySelector('[data-v3-id="totals-total"],[data-v3-id="totals-tax"],[data-v3-id="customer-bill"]')).toBeNull();
     const bus = createBus(reopened), design = designOf(reopened); design.title = `${kind} · edited`;
     await editProject(bus, designOperations(bus.project, design), 'Human supplied-fact layout edit');
@@ -67,7 +73,7 @@ describe('supplied business documents consumed by the actual Studio lifecycle', 
     expect(account.sampleData.statement).not.toHaveProperty('balances');
     expect(salary.sampleData.payroll).not.toHaveProperty('summary'); expect(salary.sampleData.payroll).not.toHaveProperty('payDate');
     expect(salary.sampleData.printRows.map(row => row.id)).toEqual(payroll.payroll.components.map(row => row.id));
-    expect(bind(salary).querySelector('[data-v3-id="customer-payDate"]')).toBeNull();
+    expect(bind(salary).querySelector('[data-v3-id="customer-pay-date"]')).toBeNull();
   });
   it('prints empty-period statements only when a source balance actually exists', () => {
     const input = businessDemoInput('AccountStatement'); input.statement.entries = [];
@@ -91,6 +97,24 @@ describe('supplied business documents consumed by the actual Studio lifecycle', 
     expect(data.payroll.summary.find(row => row.role === 'netPay').amount.displayAmount).toBe('SGD +0.001');
     expect(JSON.stringify(data)).not.toMatch(/"(?:iban|swift|accountNumber|bank)"/);
     expect(data.payroll.employee).toEqual(input.payroll.employee);
+  });
+  it.each(BUSINESS_DOCUMENT_KINDS)('%s retains optional supplied metadata and multiline notes after portable reopen', kind => {
+    const input = businessDemoInput(kind);
+    input.document.status = 'Source status only · 未核销';
+    input.company.address = 'Fictional office, floor 1\nFictional Demo Street · 非真实地址';
+    input.notes = 'Supplied first line.\nSupplied second line: no payment or posting assertion.';
+    if (input.statement) input.statement.party.address = 'Fictional customer office\nFictional receiving desk';
+    const project = readProject(saveProject(createBusinessDocumentProject(input))), paper = bind(project);
+    expect(printed(paper, 'header-status')).toEqual([input.document.status]);
+    expect(printed(paper, 'header-address')).toEqual([input.company.address]);
+    expect(printed(paper, 'footer-notes')).toEqual([input.notes]);
+    if (input.statement) expect(printed(paper, 'customer-address')).toEqual([input.statement.party.address]);
+    if (input.payroll) {
+      for (const [id, key] of [['department', 'department'], ['job-title', 'jobTitle']]) {
+        expect(printed(paper, `customer-${id}`)).toEqual([input.payroll.employee[key]]);
+      }
+      expect(printed(paper, 'customer-pay-date')).toEqual([input.payroll.payDate]);
+    }
   });
   it.each(['AccountStatement', 'PayrollSlip'])('%s rejects model rebinding/static substitution/reformatting/collection changes for its real amount column', kind => {
     const project = newDemoProject(kind);
