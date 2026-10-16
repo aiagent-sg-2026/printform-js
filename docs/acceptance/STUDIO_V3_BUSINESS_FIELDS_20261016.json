@@ -1,0 +1,81 @@
+{
+  "date": "2026-10-16",
+  "profile": "supplied-business-v1",
+  "kinds": [
+    "AccountStatement",
+    "StockMovement",
+    "PayrollSlip"
+  ],
+  "source": "Local exact supplier/creator/binding/save/reopen consumers and actual combined three-engine paper lifecycle; not production ERP access",
+  "fields": {
+    "stock": {
+      "tracking": [
+        "lot",
+        "serialNumbers",
+        "expiryDate",
+        "provenance.sourcePath",
+        "provenance.meaning"
+      ],
+      "serials": "1..500 nonempty strings when supplied; order retained; no quantity inferred",
+      "locations": [
+        "id",
+        "name",
+        "bin",
+        "provenance"
+      ],
+      "dates": "real YYYY-MM-DD; no expiry status inferred"
+    },
+    "payroll": {
+      "components": [
+        "earning",
+        "deduction",
+        "employerContribution"
+      ],
+      "hours": "independent exact decimal string, declared precision, uom=hour and provenance",
+      "hourlyRate": "independent same-document-currency money and provenance; never multiplied",
+      "summary": "supplied gross/deductions/netPay/employerContributions only; no hours/rate on summary"
+    },
+    "statement": {
+      "reference": "existing explicit reference retained",
+      "dueDate": "existing real source date; no aging/payment state inferred"
+    }
+  },
+  "validation": "Both normalizeBusinessDocument and createBusinessDocumentProject reject unknown keys, invalid types/dates, missing provenance, currency/precision mismatch and over-500 lists; legacy inputs remain supported.",
+  "sourceBasis": {
+    "before": {
+      "accepted": true,
+      "firstPrintedDescription": "0",
+      "sourceHourlyRate": "111.000",
+      "sourceDataUnchanged": true
+    },
+    "after": {
+      "accepted": false,
+      "code": "UNSAFE_PROPOSAL",
+      "message": "UNSAFE_PROPOSAL"
+    },
+    "fix": "Capture initial canonical /printRows section/description/direction/trace as fixed-source bindings, not numeric tokens; reject rebinding/static/format/collection substitution, retain allowed structural removal and original contract across re-addition; labels/style remain editable.",
+    "consumerProof": "43 industry cases plus7 existing binding-invariant cases passed after correcting the add_field section input and proving correct restoration."
+  },
+  "paper": {
+    "engines": 3,
+    "casesPassed": 9,
+    "retries": 0,
+    "artifacts": "STUDIO_V3_COMPACT_BUSINESS_20261016.json"
+  },
+  "verification": {
+    "node": "24",
+    "command": "npm run build:site",
+    "filesPassed": 240,
+    "testsPassed": 2601,
+    "optInTestsSkipped": 9,
+    "siteBuild": "passed",
+    "scope": "Actual complete combined source tree including industry contracts, fixed-source guard, valid original-binding restoration and registered form-authoring evaluations; no fake model response or additional production qualification."
+  },
+  "research": [
+    "https://ref.gs1.org/ai/10",
+    "https://ref.gs1.org/ai/17",
+    "https://ref.gs1.org/ai/21",
+    "https://www.gov.uk/payslips"
+  ],
+  "limits": "No GS1 parsing/encoding or certification, statutory payroll/ERP completeness, calculation/FX/UOM conversion, stock posting, payment or real-data/model permission."
+}

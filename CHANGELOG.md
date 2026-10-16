@@ -15,6 +15,13 @@ who don't need the diary.
 
 ## [Unreleased]
 
+### Explicit industry facts and composite-source protection — 2026-10-16
+
+- Extend the existing bounded supplied-business profile with optional stock lot/serial/expiry and location provenance; preserve serial order independently of quantity and require real source dates.
+- Preserve independently supplied payroll hours/hourlyRate with exact decimal strings, precision, provenance and document currency; never multiply or infer pay, net or summary facts.
+- Close an actual accepted static replacement of a composite description containing a rate. Protect original canonical row-fact bindings across retained fields and removal/re-addition without treating prose as a numeric token; keep labels/styles, legal structural removal and ordinary bindings.
+- Register 43 consumer cases in the existing form-authoring skill; document the strict canonical contract and read GS1/GOV.UK evidence without claiming GS1, statutory, ERP or production-AI certification.
+
 ### Compact supplied-facts paper — 2026-10-16
 
 - Add a trusted supplied-facts layout isolated from the commercial presets: four-column metadata, full-width notes, compact spacing and wider provenance while preserving all six columns, original facts, 9pt body and 8.5pt trace.
