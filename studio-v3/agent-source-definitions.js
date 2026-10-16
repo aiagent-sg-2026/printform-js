@@ -5,7 +5,10 @@ const digest = Type.String({pattern:'^[a-f0-9]{64}$'});
 const expectedDigest = Type.Union([digest,Type.Null()]);
 const change = object({path,expectedDigest,content:Type.Union([Type.String({maxLength:262144}),Type.Null()])});
 const spec = (name,description,parameters,effect,result) => Object.freeze({name,description,parameters,effect,result});
-const directory = Type.String({minLength:1,maxLength:240,pattern:/^(?!.*(?:^|\/)\.{1,2}(?:\/|$))[^/\\:\x00-\x1f\x7f]+(?:\/[^/\\:\x00-\x1f\x7f]+)*$/.source,description:'An existing relative subdirectory, never ".", "/" or "/workspace". For workspace root use the separate empty-string choice.'});
+// Positive alternatives exclude "." and ".." without lookaround, which this gateway's
+// source-tool schema cannot execute. The sandbox still validates every actual path.
+const segment = /(?:[^./\\:\x00-\x1f\x7f]|\.[^./\\:\x00-\x1f\x7f]|\.\.[^/\\:\x00-\x1f\x7f])[^/\\:\x00-\x1f\x7f]*/.source;
+const directory = Type.String({minLength:1,maxLength:240,pattern:`^${segment}(?:/${segment})*$`,description:'An existing relative subdirectory, never ".", "/" or "/workspace". For workspace root use the separate empty-string choice.'});
 
 export const SOURCE_TOOL_FEATURES = Object.freeze([
   spec('workspace_list','List the run-owned fictional source files and actual hashes. No host paths or other workspaces are accessible.',object({prefix:Type.Optional(Type.String({maxLength:240})),cursor:Type.Optional(Type.String({pattern:'^[0-9]+$'})),limit:Type.Optional(Type.Integer({minimum:1,maximum:128}))}),'workspace-read','source-file-list'),
