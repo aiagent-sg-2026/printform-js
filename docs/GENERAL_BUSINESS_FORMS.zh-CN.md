@@ -26,6 +26,14 @@ for (const {documentKind} of BUSINESS_DEMO_TEMPLATES)
 '
 ```
 
+## 紧凑 A4 纸面
+
+三个 supplied-facts creator 使用封闭的 `supplied-facts` 预设；原商业单据预设及分页引擎不变。四列元数据、通栏说明、局部紧凑留白与按业务分配的追踪列宽，保留全部六列、完整来源与边界说明。正文保持9pt，追踪文字8.5pt；不隐藏、裁切或缩放整页来假装单页。
+
+组合快照实际三引擎 **9/9、零重试**通过，新建、定制来源Open、Save/reopen、禁网络离线HTML、导出HTML重开与文字/几何守恒均执行；标准三份样张各1页，Chromium实际三份PDF均1页。长来源/备注或更多行允许正常分页，不保证任意输入都一页。
+
+失败记录保留：第一次局部布局仍令工资说明独占末页；先行局部CSS实测后才加入专用预设。PDF提取的行内换行和CJK兼容字形不算来源丢失：DOM核对原文，金额/来源token仅忽略提取换行，描述按NFKC字形等价检查。Firefox导入后先等本次真实render消息再进入iframe，不加重试或产品超时。[纸面验收证据](acceptance/STUDIO_V3_COMPACT_BUSINESS_20261016.json)。
+
 
 ## 通用根字段
 

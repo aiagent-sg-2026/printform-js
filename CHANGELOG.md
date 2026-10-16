@@ -15,6 +15,11 @@ who don't need the diary.
 
 ## [Unreleased]
 
+### Compact supplied-facts paper — 2026-10-16
+
+- Add a trusted supplied-facts layout isolated from the commercial presets: four-column metadata, full-width notes, compact spacing and wider provenance while preserving all six columns, original facts, 9pt body and 8.5pt trace.
+- Verify three-engine New/Open/Save/reopen/offline export and HTML reopen with one-page demo geometry and three real Chromium PDFs. Wait for each actual new render after import; retain strict raw financial tokens and Unicode-compatible PDF prose checks.
+
 ### Source-tool schema compatibility — 2026-10-16
 
 - Replace cwd regex lookaround with positive alternatives that retain canonical root, relative/hidden-directory support and traversal/absolute-path rejection; sandbox path admission and all permissions remain unchanged.

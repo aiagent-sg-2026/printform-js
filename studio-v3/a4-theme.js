@@ -23,6 +23,16 @@ const common = `
 #pf-mount .v3-page-number { margin:0 24px;padding:10px 0 12px; }
 `;
 const layouts = {
+  'supplied-facts': `
+#pf-mount .v3-header { grid-template-columns:1fr;border-top:3px solid var(--v3-accent);border-bottom:0;padding:12px;gap:12px; }
+#pf-mount .v3-header h1 { grid-row:1;text-align:left;letter-spacing:.06em; }
+#pf-mount .company-fields { grid-template-columns:repeat(4,minmax(0,1fr));padding:8px;background:var(--v3-soft); }
+#pf-mount .v3-customer { padding:12px; }
+#pf-mount .v3-grid { width:calc(100% - 24px);margin:0 12px; }
+#pf-mount .v3-grid th { padding-top:6px;padding-bottom:6px;background:var(--v3-accent);color:white; }
+#pf-mount .v3-notes { padding:12px; }
+#pf-mount .v3-page-number { margin:0 12px;padding:6px 0 8px; }
+`,
   'quotation-letter': `
 #pf-mount .v3-header { grid-template-columns:1fr;border-bottom:1px solid var(--v3-rule); }
 #pf-mount .v3-header h1 { grid-row:1;text-align:left;color:var(--v3-accent);letter-spacing:.09em; }

@@ -28,10 +28,14 @@ export function createBusinessDocumentProject(input) {
     }, additionalProperties: false } }
   }, additionalProperties: true };
   design.title = titles[kind]; design.logo = null;
-  design.page = { paper: 'A4', orientation: 'portrait', margins: { top: 22, right: 22, bottom: 22, left: 22 } };
-  design.layoutPreset = 'progress-certificate'; design.repeatHeader = false;
+  design.page = { paper: 'A4', orientation: 'portrait', margins: { top: 16, right: 12, bottom: 16, left: 12 } };
+  design.layoutPreset = 'supplied-facts'; design.repeatHeader = false;
   design.titleStyle = { fontSize: 16, bold: true };
-  for (const id of ['header', 'customer', 'footer']) design.blocks[id].layout = { columns: 2, gap: 12 };
+  // Scope compact spacing to supplied facts; keep commercial layouts and body type unchanged.
+  design.padding = 3;
+  design.blocks.header.layout = { columns: 4, gap: 6 };
+  design.blocks.customer.layout = { columns: 4, gap: 6 };
+  design.blocks.footer.layout = { columns: 1, gap: 6 };
   design.blocks.customer.label = 'Explicit business context';
   design.blocks.items.label = 'Supplied source facts (not recalculated)';
   design.header = [field('company', 'Company', '/company/name'), field('number', 'Document number', '/document/number'),
@@ -59,11 +63,11 @@ export function createBusinessDocumentProject(input) {
   }
   design.collection = '/printRows';
   design.columns = [
-    { ...field('no', '#', './no'), width: 4 }, { ...field('section', 'Business fact', './section'), width: 15 },
-    { ...field('description', 'Description / supplied basis', './description'), width: 26 },
-    { ...field('amount', kind === 'StockMovement' ? 'Supplied quantity / UOM' : 'Supplied amount', './amount'), width: 18, valueStyle: { align: 'right' } },
-    { ...field('direction', kind === 'StockMovement' ? 'Direction / locations' : 'Explicit role', './direction'), width: 15 },
-    { ...field('trace', 'Source identity / provenance', './trace'), width: 22 }
+    { ...field('no', '#', './no'), width: 3 }, { ...field('section', 'Business fact', './section'), width: 9 },
+    { ...field('description', 'Description / supplied basis', './description'), width: kind === 'StockMovement' ? 24 : kind === 'PayrollSlip' ? 23 : 29 },
+    { ...field('amount', kind === 'StockMovement' ? 'Supplied quantity / UOM' : 'Supplied amount', './amount'), width: 15, valueStyle: { align: 'right' } },
+    { ...field('direction', kind === 'StockMovement' ? 'Direction / locations' : 'Explicit role', './direction'), width: kind === 'StockMovement' ? 19 : kind === 'PayrollSlip' ? 12 : 9 },
+    { ...field('trace', 'Source identity / provenance', './trace'), width: kind === 'StockMovement' ? 30 : kind === 'PayrollSlip' ? 38 : 35, valueStyle: { fontSize: 8.5 } }
   ];
   // Summaries are source facts in the same pageable collection, not synthetic invoice totals.
   design.totals = []; design.blocks.totals.enabled = false;
