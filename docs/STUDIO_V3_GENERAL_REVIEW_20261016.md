@@ -22,6 +22,7 @@
 | 不存在cwd误判配对过期 | `DIRECTORY_NOT_FOUND`未映射为准入前路径拒绝 | 保留lease，允许模型修正路径；未知效果仍停止 |
 | strict cwd无根目录表示 | optional参数经provider变成必填，原schema排除空串 | canonical `cwd:""`显式可表达；不接受"."或绝对路径 |
 | cwd lookahead阻断真实模型 | 相同alias/预算下，仅加入该schema即空incomplete；并非已证明真实token耗尽 | 保留相同安全语义的正向分支恢复22工具；公开74073f0实际完成源码→候选→人工Apply→离线PDF→Undo，正式G8不计分 |
+| 复合来源描述可被模型替换 | 原金额保护不覆盖描述中的工时/费率；实际API接受static0，原费率111.000仍存但未打印 | 初始/printRows四种复合事实固定原绑定，不交给单值数值oracle；43行业消费者与原7绑定规格通过，合法样式/删除/原绑定恢复保留 |
 
 ## 没有冒充产品缺陷的失败
 
@@ -38,7 +39,7 @@
 | 所有ERP/法定格式 | 仅声明的交易适配器与supplied-business-v1有边界；任意raw ERP、混合币种对账、法定工资/税务需显式映射及独立审核 |
 | 无代码优先 | 普通设计无需companion；源码profile需要管理员本地Docker及真实浏览器配对，不是已认证托管多租户服务 |
 | 业务纸面密度 | 旧三份样张各2页的记录保留；新局部预设组合快照三引擎9/9、三份Chromium PDF各1页，来源全文及字号/几何检查通过。超长内容允许正常分页，不宣称任意输入全局最优 |
-| 业务事实 | 不补余额/净薪酬、不做账龄/FX/UOM/过账/支付；事实及口径由供应方提供，不是记账或审计引擎 |
+| 业务事实 | 新增显式lot/serial/expiry/仓位来源及独立工时/费率；不由序列号推数量，不乘工时费率，不补余额/净薪酬，不做账龄/FX/UOM/过账/支付。任意其他行业字段仍需明确契约 |
 | 平台与隔离 | 当前实际Darwin arm64/OrbStack/Chromium151；Docker/seccomp不是完美隔离，其他OS/浏览器/负载及宿主安全须独立资格 |
 | 模型可改测试 | 真实exit只证明进程结果，stdout或可写测试不能认证需求正确；仍需独立oracle和人工纸面审核 |
 | 硬件打印 | 浏览器几何和Chromium PDF不认证热敏、连续纸、驱动、真实打印机或全部字体组合 |
@@ -46,3 +47,5 @@
 ## 依据与契约
 
 [末页实际证据](acceptance/STUDIO_V3_FINAL_PAGE_FLOW_20261016.md) · [通用业务及OASIS/GOV.UK研究](GENERAL_BUSINESS_FORMS.zh-CN.md) · [源码操作及Docker/Chrome/Node/RFC研究](STUDIO_V3_CODING_RUNNER.zh-CN.md) · [生产证据](STUDIO_V3_GENERAL_AI_READINESS.zh-CN.md)。
+
+本轮完整组合 Node24 `build:site`：240文件/2601项通过，9项opt-in跳过；新增行业字段在真实三引擎9/9纸面生命周期中保留。源码真实模型的有界成功、单页样张和消费者测试分别证明不同边界，不能互相替代正式生产资格。

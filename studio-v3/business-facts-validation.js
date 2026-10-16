@@ -60,3 +60,22 @@ export function period(value, path) {
   if (result.to < result.from) fail('PERIOD', path, 'Period end precedes start.');
   return result;
 }
+
+export function stockLocation(value, path) {
+  object(value, path, ['id', 'name', 'bin', 'provenance']);
+  const result = { id: text(value.id, `${path}.id`) };
+  for (const key of ['name', 'bin']) if (has(value, key)) result[key] = text(value[key], `${path}.${key}`);
+  if (has(value, 'provenance')) result.provenance = provenance(value.provenance, `${path}.provenance`);
+  return result;
+}
+
+export function stockTracking(value, path) {
+  object(value, path, ['lot', 'serialNumbers', 'expiryDate', 'provenance']);
+  const result = {};
+  if (has(value, 'lot')) result.lot = text(value.lot, `${path}.lot`);
+  if (has(value, 'serialNumbers')) result.serialNumbers = rows(value.serialNumbers, `${path}.serialNumbers`, true).map((serial, i) => text(serial, `${path}.serialNumbers[${i}]`));
+  if (has(value, 'expiryDate')) result.expiryDate = date(value.expiryDate, `${path}.expiryDate`);
+  if (!Object.keys(result).length) fail('ROWS', path, 'Supply a lot, serial list or expiry date; no tracking facts are inferred.');
+  result.provenance = provenance(value.provenance, `${path}.provenance`);
+  return result;
+}

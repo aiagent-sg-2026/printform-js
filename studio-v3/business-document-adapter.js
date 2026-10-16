@@ -1,4 +1,4 @@
-import { fail, object, text, choice, date, metadata, reference, has, safe, provenance, rows, identitySet, money, quantity, period } from './business-facts-validation.js';
+import { fail, object, text, choice, date, metadata, reference, has, safe, rows, identitySet, money, quantity, period, stockLocation, stockTracking } from './business-facts-validation.js';
 
 export const BUSINESS_DOCUMENT_PROFILE = 'supplied-business-v1';
 export const BUSINESS_DOCUMENT_KINDS = Object.freeze(['AccountStatement', 'StockMovement', 'PayrollSlip']);
@@ -19,8 +19,8 @@ export function normalizeBusinessDocument(input) {
   const result = { profile: input.profile, source, document, company }, printRows = [], unique = identitySet();
   const add = (id, section, description, amount, direction, trace) => printRows.push({ id, no: printRows.length + 1, section, description, amount, direction, trace });
   const traceMoney = amount => `${amount.provenance.sourcePath}: ${amount.provenance.meaning}; precision=${amount.minorUnitDigits}`;
-  const fact = (entry, path, roles) => {
-    object(entry, path, ['id', 'label', 'role', 'basis', 'amount']);
+  const fact = (entry, path, roles, extra = []) => {
+    object(entry, path, ['id', 'label', 'role', 'basis', 'amount', ...extra]);
     return { id: unique(entry.id, `${path}.id`), label: text(entry.label, `${path}.label`), role: choice(entry.role, roles, `${path}.role`),
       basis: text(entry.basis, `${path}.basis`), amount: money(entry.amount, `${path}.amount`, document.currency) };
   };
@@ -61,20 +61,24 @@ export function normalizeBusinessDocument(input) {
     const value = object(input.stock, 'stock', ['purpose', 'lines']);
     result.stock = { purpose: text(value.purpose, 'stock.purpose'), lines: rows(value.lines, 'stock.lines', true).map((entry, i) => {
       const path = `stock.lines[${i}]`;
-      object(entry, path, ['id', 'item', 'description', 'direction', 'quantity', 'from', 'to', 'batch', 'reference']);
+      object(entry, path, ['id', 'item', 'description', 'direction', 'quantity', 'from', 'to', 'batch', 'reference', 'tracking']);
       const parsed = { id: unique(entry.id, `${path}.id`), item: metadata(entry.item, `${path}.item`, ['id', 'code', 'name'], ['id']),
         description: text(entry.description, `${path}.description`), direction: choice(entry.direction, ['inflow', 'outflow', 'transfer'], `${path}.direction`), quantity: quantity(entry.quantity, `${path}.quantity`) };
-      for (const key of ['from', 'to']) if (has(entry, key)) parsed[key] = metadata(entry[key], `${path}.${key}`, ['id', 'name', 'bin'], ['id']);
+      for (const key of ['from', 'to']) if (has(entry, key)) parsed[key] = stockLocation(entry[key], `${path}.${key}`);
       if (parsed.direction !== 'inflow' && !parsed.from) fail('LOCATION', `${path}.from`, 'Supply the source location explicitly.');
       if (parsed.direction !== 'outflow' && !parsed.to) fail('LOCATION', `${path}.to`, 'Supply the destination location explicitly.');
       if ((parsed.direction === 'inflow' && parsed.from) || (parsed.direction === 'outflow' && parsed.to)) fail('LOCATION', path, 'Use transfer when both source and destination locations are supplied.');
       if (parsed.direction === 'transfer' && parsed.from.id === parsed.to.id && parsed.from.bin === parsed.to.bin) fail('LOCATION', path, 'Transfer locations must differ.');
       if (has(entry, 'batch')) parsed.batch = text(entry.batch, `${path}.batch`);
       if (has(entry, 'reference')) parsed.reference = reference(entry.reference, `${path}.reference`);
+      if (has(entry, 'tracking')) parsed.tracking = stockTracking(entry.tracking, `${path}.tracking`);
+      const tracking = parsed.tracking;
+      const trackingText = tracking ? `${tracking.lot ? `\nLot: ${tracking.lot}` : ''}${tracking.serialNumbers ? `\nSerials: ${tracking.serialNumbers.join(', ')}` : ''}${tracking.expiryDate ? `\nExpiry: ${tracking.expiryDate}` : ''}` : '';
+      const locationTrace = ['from', 'to'].filter(key => parsed[key]?.provenance).map(key => `\n${key}: ${parsed[key].provenance.sourcePath}: ${parsed[key].provenance.meaning}`).join('');
       const location = key => parsed[key] ? `${parsed[key].id}${parsed[key].name ? ` (${parsed[key].name})` : ''}${parsed[key].bin ? ` / ${parsed[key].bin}` : ''}` : '';
-      add(parsed.id, parsed.item.code || parsed.item.id, `${parsed.description}${parsed.item.name ? `\n${parsed.item.name}` : ''}${parsed.batch ? `\nBatch: ${parsed.batch}` : ''}`,
+      add(parsed.id, parsed.item.code || parsed.item.id, `${parsed.description}${parsed.item.name ? `\n${parsed.item.name}` : ''}${parsed.batch ? `\nBatch: ${parsed.batch}` : ''}${trackingText}`,
         `${parsed.quantity.amount} ${parsed.quantity.uom}`, `${parsed.direction}\n${location('from')}${parsed.from && parsed.to ? ' → ' : ''}${location('to')}`,
-        `${parsed.id} · ${parsed.item.id}\n${parsed.quantity.provenance.sourcePath}: ${parsed.quantity.provenance.meaning}; precision=${parsed.quantity.decimalPlaces}${parsed.reference ? `\n${parsed.reference.system}/${parsed.reference.documentType}/${parsed.reference.id} (${parsed.reference.number})` : ''}`);
+        `${parsed.id} · ${parsed.item.id}\n${parsed.quantity.provenance.sourcePath}: ${parsed.quantity.provenance.meaning}; precision=${parsed.quantity.decimalPlaces}${parsed.reference ? `\n${parsed.reference.system}/${parsed.reference.documentType}/${parsed.reference.id} (${parsed.reference.number})` : ''}${tracking ? `\n${tracking.provenance.sourcePath}: ${tracking.provenance.meaning}` : ''}${locationTrace}`);
       return parsed;
     }) };
   }
@@ -83,8 +87,17 @@ export function normalizeBusinessDocument(input) {
     const employee = metadata(value.employee, 'payroll.employee', ['id', 'name', 'department', 'jobTitle'], ['id', 'name']);
     const range = period(value.period, 'payroll.period');
     result.payroll = { employee, period: range, components: rows(value.components, 'payroll.components', true).map((entry, i) => {
-      const parsed = fact(entry, `payroll.components[${i}]`, ['earning', 'deduction', 'employerContribution']);
-      add(parsed.id, parsed.role, `${parsed.label}\n${parsed.basis}`, parsed.amount.displayAmount, parsed.role, `${parsed.id}\n${traceMoney(parsed.amount)}`);
+      const path = `payroll.components[${i}]`, parsed = fact(entry, path, ['earning', 'deduction', 'employerContribution'], ['hours', 'hourlyRate']);
+      if (has(entry, 'hours')) {
+        parsed.hours = quantity(entry.hours, `${path}.hours`);
+        choice(parsed.hours.uom, ['hour'], `${path}.hours.uom`);
+      }
+      if (has(entry, 'hourlyRate')) parsed.hourlyRate = money(entry.hourlyRate, `${path}.hourlyRate`, document.currency);
+      const hourText = parsed.hours ? `\nHours: ${parsed.hours.amount} ${parsed.hours.uom}` : '';
+      const rateText = parsed.hourlyRate ? `\nHourly rate: ${parsed.hourlyRate.displayAmount} / hour` : '';
+      const hourTrace = parsed.hours ? `\n${parsed.hours.provenance.sourcePath}: ${parsed.hours.provenance.meaning}; precision=${parsed.hours.decimalPlaces}` : '';
+      add(parsed.id, parsed.role, `${parsed.label}\n${parsed.basis}${hourText}${rateText}`, parsed.amount.displayAmount, parsed.role,
+        `${parsed.id}\n${traceMoney(parsed.amount)}${hourTrace}${parsed.hourlyRate ? `\n${traceMoney(parsed.hourlyRate)}` : ''}`);
       return parsed;
     }) };
     if (has(value, 'payDate')) result.payroll.payDate = date(value.payDate, 'payroll.payDate');
