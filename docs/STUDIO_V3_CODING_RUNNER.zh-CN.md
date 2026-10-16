@@ -65,6 +65,12 @@ npm run studio:coding-runner -- --origin https://studio.example.com
 
 后续b8c0701真实响应实际为 `response.incomplete` / `max_output_tokens`、没有工具输出；不可冒充成功。诊断性原生fetch副本缓冲（无假响应、不改Origin/route）捕获服务返回的strict schema：provider将optional cwd变成必填，而该版排除了根目录表示。补上**cwd:""**这一原后端已支持的canonical root，并同步指南/参数回归；不声称已证明上游停止的唯一原因，不调整模型预算或轮换模型。修复后完整源码模型任务及正式资格必须独立证明。
 
+### 源码工具 schema 的真实对照
+
+后续在相同公开Origin、`demo-auto`、原路由/预算和 `tool_choice:required` 下，单工具及原13核心工具成功，原9源码工具加入后失败。进一步只保留 `get_capabilities` 与原 `workspace_run`，仍立即得到空 `response.incomplete/max_output_tokens`；只去掉cwd负向lookahead便成功。改为保留相同路径拒绝语义的正向分支后，完整22工具恢复真实function call。
+
+修复保留 `cwd:""`、嵌套/隐藏相对目录和对"."、".."、绝对路径、空段、控制字符的拒绝；服务端路径/目录存在性校验与权限、配额、预算均不变。此对照定位了schema相关失效条件，不推断供应方内部异常或零费用，也不代替完整源码任务与生产资格。[原始有界对照证据](acceptance/STUDIO_V3_SOURCE_SCHEMA_20261016.json)；[官方strict模式契约](https://developers.openai.com/api/docs/guides/function-calling#strict-mode)。
+
 
 ## 官方研究
 

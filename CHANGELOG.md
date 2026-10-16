@@ -15,6 +15,11 @@ who don't need the diary.
 
 ## [Unreleased]
 
+### Source-tool schema compatibility — 2026-10-16
+
+- Replace cwd regex lookaround with positive alternatives that retain canonical root, relative/hidden-directory support and traversal/absolute-path rejection; sandbox path admission and all permissions remain unchanged.
+- Isolate the actual Demo failure with same-alias, same-budget native-browser controls: original cwd schema causes an empty incomplete response even with two tools; the positive pattern restores all 22 tools. This diagnoses a schema-dependent failure, not a full model-task or production qualification.
+
 ### Paired real source execution in the existing Pi Harness — 2026-10-16
 
 - Add optional host-authorized fictional source files, real Docker Node24 command/test/repair/build, exact diff and source-bound JSON artifact tools; keep one orchestration loop and the original model/route/budgets.

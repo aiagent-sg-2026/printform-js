@@ -38,11 +38,17 @@ describe('source authority and structured artifact trust boundary',()=> {
     }
     expect(draft.project).toEqual(before); expect(project).toEqual(before); expect(outcome.proposal).toBeUndefined();
   });
-  it('keeps the workspace root expressible when a provider requires cwd, without granting execution',async()=> {
-    const {tools,project} = fixture(), before = structuredClone(project), args = {command:'node --version',cwd:''};
-    tools.workspace_run.prepareArguments(args);
-    await expect(tools.workspace_run.execute('root',args)).rejects.toMatchObject({code:'WORKSPACE_UNAVAILABLE'});
-    for (const cwd of ['.','/','/workspace','../outside','src/../outside']) expect(()=>tools.workspace_run.prepareArguments({...args,cwd})).toThrow('AGENT_ARGUMENTS_INVALID');
+  it('preserves canonical root and nested hidden directories without granting execution or accepting traversal',async()=> {
+    const {tools,project} = fixture(), before = structuredClone(project);
+    for (const cwd of ['', 'src', 'src/nested', '.config', 'src/.config', '..cache', '.../nested', '目录/子目录']) {
+      const args = {command:'node --version',cwd};
+      tools.workspace_run.prepareArguments(args);
+      await expect(tools.workspace_run.execute('root',args)).rejects.toMatchObject({code:'WORKSPACE_UNAVAILABLE'});
+      expect(args.cwd).toBe(cwd);
+    }
+    for (const cwd of ['.','..','/','/workspace','../outside','src/../outside','src/./outside','src//nested','src/','C:\\outside','src\u0000hidden']) {
+      expect(()=>tools.workspace_run.prepareArguments({command:'node --version',cwd})).toThrow('AGENT_ARGUMENTS_INVALID');
+    }
     expect(project).toEqual(before);
   });
   it('does not grant source permission from a pairing-shaped object without explicit fictional disclosure',()=> {

@@ -1,0 +1,270 @@
+{
+  "date": "2026-10-16",
+  "baseRelease": "8eadedc709ea4e7ef78cec3c70976c4fda1bd450",
+  "origin": "https://yapweijun1996.github.io",
+  "alias": "demo-auto",
+  "toolChoice": "required",
+  "modelRouteBudgetChanged": false,
+  "fakeResponses": false,
+  "originSpoofed": false,
+  "sourceExecutionInControls": false,
+  "qualification": "Schema-dependent failure isolated; controls are not full source task or production qualification.",
+  "usageAccounting": "Reported zero usage on incomplete responses is not independently verified zero consumption or zero cost.",
+  "cases": [
+    {
+      "kind": "same-alias-one-tool-control-not-task-qualification",
+      "http": 200,
+      "elapsedMs": 2796,
+      "eventTypes": [
+        "response.created",
+        "response.in_progress",
+        "response.output_item.added",
+        "response.function_call_arguments.delta",
+        "response.function_call_arguments.delta",
+        "response.function_call_arguments.delta",
+        "response.function_call_arguments.delta",
+        "response.function_call_arguments.delta",
+        "response.function_call_arguments.done",
+        "response.output_item.done",
+        "response.completed"
+      ],
+      "terminalType": "response.completed",
+      "status": "completed",
+      "incomplete": null,
+      "error": null,
+      "output": [
+        {
+          "type": "function_call",
+          "name": "readiness_probe",
+          "arguments": "{\"status\":\"ok\"}"
+        }
+      ],
+      "reportedUsage": {
+        "input_tokens": 68,
+        "input_tokens_details": {
+          "cache_write_tokens": 0,
+          "cached_tokens": 0
+        },
+        "output_tokens": 19,
+        "output_tokens_details": {
+          "reasoning_tokens": 0
+        },
+        "total_tokens": 87
+      },
+      "requestId": "demo_48cc438b-8b9a-44e2-a45a-cac5829e939e",
+      "declaredTools": 1,
+      "toolChoice": "required",
+      "stream": true,
+      "alias": "demo-auto",
+      "origin": "https://yapweijun1996.github.io"
+    },
+    {
+      "kind": "22-exact-tools-tiny-prompt-control-not-task-qualification",
+      "http": 200,
+      "elapsedMs": 1721,
+      "bytes": 62442,
+      "terminal": "response.incomplete",
+      "status": "incomplete",
+      "incomplete": {
+        "reason": "max_output_tokens"
+      },
+      "output": [],
+      "reportedUsage": {
+        "input_tokens": 0,
+        "input_tokens_details": {
+          "cache_write_tokens": 0,
+          "cached_tokens": 0
+        },
+        "output_tokens": 0,
+        "output_tokens_details": {
+          "reasoning_tokens": 0
+        },
+        "total_tokens": 0
+      },
+      "requestId": "demo_2042b28c-07bd-40f4-9d35-1c6c3708a6cb",
+      "alias": "demo-auto",
+      "tools": 22,
+      "toolChoice": "required",
+      "origin": "https://yapweijun1996.github.io"
+    },
+    {
+      "label": "original-core",
+      "http": 200,
+      "toolNames": [
+        "get_capabilities",
+        "read_skill",
+        "get_context",
+        "apply_operations",
+        "inspect_draft",
+        "observe_context",
+        "retrieve_page",
+        "validate_scenarios",
+        "undo_step",
+        "take_notes",
+        "finish",
+        "finish_answer",
+        "report_blocked"
+      ],
+      "terminal": "response.completed",
+      "incomplete": null,
+      "output": [
+        {
+          "type": "function_call",
+          "name": "get_capabilities",
+          "arguments": "{}"
+        }
+      ],
+      "reportedUsage": {
+        "input_tokens": 2209,
+        "input_tokens_details": {
+          "cache_write_tokens": 0,
+          "cached_tokens": 1408
+        },
+        "output_tokens": 15,
+        "output_tokens_details": {
+          "reasoning_tokens": 0
+        },
+        "total_tokens": 2224
+      },
+      "requestId": "demo_5cfa584c-dff9-49f9-afe9-efbaaf8d40e7"
+    },
+    {
+      "label": "original-source",
+      "http": 200,
+      "toolNames": [
+        "get_capabilities",
+        "workspace_list",
+        "workspace_read",
+        "workspace_search",
+        "workspace_write",
+        "workspace_patch",
+        "workspace_run",
+        "workspace_diff",
+        "workspace_artifacts",
+        "import_artifact"
+      ],
+      "terminal": "response.incomplete",
+      "incomplete": {
+        "reason": "max_output_tokens"
+      },
+      "output": [],
+      "reportedUsage": {
+        "input_tokens": 0,
+        "input_tokens_details": {
+          "cache_write_tokens": 0,
+          "cached_tokens": 0
+        },
+        "output_tokens": 0,
+        "output_tokens_details": {
+          "reasoning_tokens": 0
+        },
+        "total_tokens": 0
+      },
+      "requestId": "demo_0d7d04dc-6841-4d80-9418-b369cab8e4ff"
+    },
+    {
+      "label": "run-original",
+      "http": 200,
+      "terminal": "response.incomplete",
+      "incomplete": {
+        "reason": "max_output_tokens"
+      },
+      "output": [],
+      "reportedUsage": {
+        "input_tokens": 0,
+        "input_tokens_details": {
+          "cache_write_tokens": 0,
+          "cached_tokens": 0
+        },
+        "output_tokens": 0,
+        "output_tokens_details": {
+          "reasoning_tokens": 0
+        },
+        "total_tokens": 0
+      },
+      "requestId": "demo_dde8d28d-0c02-46c8-a158-6769e34d1bc0"
+    },
+    {
+      "label": "run-without-lookahead-pattern",
+      "http": 200,
+      "terminal": "response.completed",
+      "incomplete": null,
+      "output": [
+        {
+          "type": "function_call",
+          "name": "get_capabilities",
+          "arguments": "{}"
+        }
+      ],
+      "reportedUsage": {
+        "input_tokens": 260,
+        "input_tokens_details": {
+          "cache_write_tokens": 0,
+          "cached_tokens": 0
+        },
+        "output_tokens": 15,
+        "output_tokens_details": {
+          "reasoning_tokens": 0
+        },
+        "total_tokens": 275
+      },
+      "requestId": "demo_7c7a1ce7-1b75-422b-b8bd-3ae323c0afdb"
+    },
+    {
+      "label": "all22-tools-positive-path-pattern",
+      "http": 200,
+      "terminal": "response.completed",
+      "incomplete": null,
+      "output": [
+        {
+          "type": "reasoning"
+        },
+        {
+          "type": "function_call",
+          "name": "get_capabilities",
+          "arguments": "{}"
+        }
+      ],
+      "reportedUsage": {
+        "input_tokens": 3177,
+        "input_tokens_details": {
+          "cache_write_tokens": 0,
+          "cached_tokens": 1408
+        },
+        "output_tokens": 28,
+        "output_tokens_details": {
+          "reasoning_tokens": 11
+        },
+        "total_tokens": 3205
+      },
+      "requestId": "demo_2178dd0a-25ae-4bb5-b2ea-536d20aeb868",
+      "toolNames": [
+        "get_capabilities",
+        "read_skill",
+        "get_context",
+        "apply_operations",
+        "inspect_draft",
+        "observe_context",
+        "retrieve_page",
+        "validate_scenarios",
+        "undo_step",
+        "take_notes",
+        "finish",
+        "finish_answer",
+        "report_blocked",
+        "workspace_list",
+        "workspace_read",
+        "workspace_search",
+        "workspace_write",
+        "workspace_patch",
+        "workspace_run",
+        "workspace_diff",
+        "workspace_artifacts",
+        "import_artifact"
+      ],
+      "sameAlias": "demo-auto",
+      "toolChoice": "required",
+      "origin": "https://yapweijun1996.github.io"
+    }
+  ]
+}
