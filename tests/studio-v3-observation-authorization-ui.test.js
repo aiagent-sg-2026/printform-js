@@ -24,6 +24,7 @@ describe('OBS-01 host text authorization UI lifecycle',()=> {
   it.each(['direct completion','discovery failure'])('revokes a consumed host grant after %s and requires fresh approval',async path=> {
     const transport={clear:()=>{},clearSession:()=>{},discover:async()=>{if(path==='discovery failure')throw new Error('unavailable');return ['demo-fast'];},plan:async()=>({text:JSON.stringify({kind:'answer',message:'Ordinary answer.'})})};
     const panel=panelOf({transport}), access=panel.observationAccess, consume=access.consume.bind(access); let grant;
+    panel.node('#ai-prompt').value='What is the current paper size?'; panel.share();
     vi.spyOn(access,'consume').mockImplementation(async id=> { grant=await consume(id); expect(grant.text).toBe(true); assertObservationAuthorization(grant,access.state(id)); return grant; });
     armPanel(panel); await panel.send();
     expect(panel.busy).toBe(false); expect(access.active).toBeNull();

@@ -165,7 +165,7 @@ describe('nullable finish_answer evidence at the real tool boundary',()=> {
     const message = '{"toolsAvailable":true}', arguments_ = {message,...optional};
     const result = await invoke(state,'finish_answer',arguments_);
     expect(result.terminate).toBe(true);
-    expect(state.outcome.answer).toEqual({message,identity:undefined});
+    expect(state.outcome.answer).toEqual({message,taskOutcome:'answered',identity:undefined});
     expect(arguments_).toEqual({message,...optional});
     expect(state.outcome.proposal).toBeUndefined(); expect(state.outcome.blocked).toBeUndefined();
     expect(state.draft.count).toBe(0); expect(state.draft.project).toEqual(before); expect(state.project).toEqual(before);
@@ -176,7 +176,7 @@ describe('nullable finish_answer evidence at the real tool boundary',()=> {
     const inspected = await invoke(state,'inspect_draft'), receipt = JSON.parse(inspected.content[0].text).observation;
     const message = 'x'.repeat(4000);
     expect((await invoke(state,'finish_answer',{message,observationId:null})).terminate).toBe(true);
-    expect(state.outcome.answer).toEqual({message,identity:undefined,observation:receipt});
+    expect(state.outcome.answer).toEqual({message,taskOutcome:'answered',identity:undefined,observation:receipt});
     expect(state.draft.count).toBe(0); expect(state.outcome.proposal).toBeUndefined();
   });
 

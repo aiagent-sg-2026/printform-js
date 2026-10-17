@@ -5,6 +5,8 @@ import { BLOCKS } from './model.js';
 import { DEMO_CONFIG } from './ai-gateway-config.js';
 import { missesTableBackgroundIntent } from './table-background-intent.js';
 import { PAPERS } from './paper-settings.js';
+import { requestIntent } from './ai-request-intent.js';
+import { answerResult } from './ai-task-outcome.js';
 
 export const CHAT_PROMPT = `You are a Printform framework-native authoring agent. Inspect the supplied semantic structure, binding path/type catalog and measured print facts. Return ONE JSON object, no markdown. Questions use {"kind":"answer","message":"plain text, max 4000 characters"}, no edits. Never claim an edit applied. Global style edits use {"kind":"proposal","summary":"max 500 characters","edits":[{"target":"style","property":"color","value":"#163a65"}]}. Style supports color #rrggbb, font base 6..14pt, padding2..16px, boolean striped/borders/repeatHeader/repeatTable/pageNumbers/breakBefore; items-column width1..100, total<=100.
 The global color is the brand accent (logo and rules), NOT a table background. Table body/row background requests use set_table_style {target:"items",patch:{rowBackground:"#ffff00"}} for yellow. rowBackground accepts #rrggbb or null to restore template defaults. An explicit rowBackground fills every data row and cell and overrides striped appearance without changing the striped preference; header and text styles stay unchanged. Never substitute accent color, striped, borders or typography for a requested row fill. This operation is valid in Whole template or when the items table itself is selected/referenced; a selected column, table header or other section cannot recolor the whole table. Other background targets require a truthful unsupported answer.
@@ -30,11 +32,7 @@ export function measuredFontQuestion(request,conversation=[]) {
   return fontQuestion(request) || (/what|how|多少|多大|什么/i.test(request) && /header|heading|title|company|table|标题|表头|公司/i.test(request) && !CHANGES.test(request) && conversation.some(m=>m.role === 'user' && fontQuestion(m.content)));
 }
 export function readOnlyRequest(request,conversation=[]) {
-  // Explicit user restrictions win over words describing changes or negated edits.
-  if (/^\s*(?:read(?:[\s-]+)?only\b|只[读讀]|唯[读讀])/i.test(request)) return true;
-  const edit=`change|set|make|increase|reduce|adjust|add|remove|delete|move|reorder|resize|enable|disable|apply|amend|design|create|replace|align|bind|${IMPROVE}`;
-  if (new RegExp(`^\\s*(?:please\\s+)?(?:(?:can|could|would|will)\\s+you\\s+(?:please\\s+)?|do\\s+)(?:${edit})\\b`,'i').test(request)) return false;
-  return measuredFontQuestion(request,conversation) || /^\s*(?:please\s+)?(?:what\b|why\b|which\b|where\b|when\b|how\b|should\b|may\b|might\b|is\b|are\b|was\b|were\b|do\b|does\b|did\b|will\b|can\b|could\b|would\b|has\b|have\b|explain\b|describe\b|tell me (?:about|what|how|why|if|whether)\b|请问|为什么|多少|多大|怎么|如何|应该|能否|可否|请解释|解释一下|是否)/i.test(request);
+  return requestIntent(request,{measuredQuestion:measuredFontQuestion(request,conversation)}).kind !== 'draft';
 }
 export function typographyAnswer(facts,scope) {
   const selected = scope.mode === 'selected' ? facts.filter(f=>{ const ids=scope.ids || [scope.id]; return ids.some(id=>f.id===id || (!id.startsWith('label-') && (f.id.replace(/^label-/,'')===id || f.id.replace(/^label-/,'').startsWith(`${id}-`)))); }) : facts;
@@ -54,9 +52,9 @@ export function parseChatReply(text,project,{scope={mode:'whole'},request='',typ
   if (!value || typeof value !== 'object' || Array.isArray(value)) throw fail('MALFORMED_PROPOSAL');
   if (value.kind === 'answer') {
     if (Object.keys(value).some(k=>!['kind','message'].includes(k)) || typeof value.message !== 'string' || !value.message.trim() || value.message.length > 4000) throw fail('MALFORMED_PROPOSAL');
-    return {kind:'answer',message:measuredFontQuestion(request,conversation) ? typographyAnswer(typography,scope) : value.message};
+    return answerResult(measuredFontQuestion(request,conversation) ? typographyAnswer(typography,scope) : value.message,request);
   }
-  if (readOnlyRequest(request,conversation)) throw fail('UNSAFE_PROPOSAL');
+  if (request && readOnlyRequest(request,conversation)) throw fail('UNSAFE_PROPOSAL');
   if (value.kind !== undefined && value.kind !== 'proposal') throw fail('MALFORMED_PROPOSAL');
   const {kind,...envelope} = value;
   const proposal = parseProposal(JSON.stringify(envelope),project,explicitBindingPointers(request,references)); assertScope(proposal,scope);

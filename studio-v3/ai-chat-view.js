@@ -1,4 +1,5 @@
 import { renderWelcome } from './ai-welcome.js';
+import { taskOutcomeNotice } from './ai-task-outcome.js';
 // Style patches arrive as JSON text; show "fontSize 12 · bold" instead.
 const readable = value => {
   const text = String(value);
@@ -20,6 +21,8 @@ export function renderConversation(panel) {
     article.dataset.state = message.status || 'answer';
     const outcome = message.status === 'error' ? ' · request failed' : message.status === 'cancelled' ? ' · stopped' : '';
     article.append(node('div','ai-message-label',message.role === 'user' ? 'You' : `AI assistant${outcome}`));
+    const notice = taskOutcomeNotice(message.taskOutcome);
+    if (notice) { const state = node('p','ai-card-state',notice); state.setAttribute('role','status'); article.append(state); }
     article.append(node('div','ai-message-text',message.text));
     if (message.observation) {
       const citation = node('div','ai-observation-receipt',`Observation receipt: ${message.observation.id}`);

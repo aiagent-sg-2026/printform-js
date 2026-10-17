@@ -1,0 +1,59 @@
+{
+  "schema": "studio-ai-draft-outcome-feature-evidence-v1",
+  "baseline": "42e014b9388ea25ba0e4f38bf2c117fc1e39b9cd",
+  "candidate": "AI-only working snapshot, release meta local",
+  "initialUnit": {
+    "passed": 2901,
+    "failed": 25,
+    "optInSkipped": 9,
+    "reportSha256": "f338014e7e951abe2880b631aadbd6cd660ccf399727e752610aadd8cf671341"
+  },
+  "correctedUnit": {
+    "passed": 2970,
+    "failed": 0,
+    "optInSkipped": 9,
+    "reportSha256": "b21231811d29cb3b05d47d8a1396d053ef2d202ca53e7f9434e9319391083a10"
+  },
+  "agentConformance": {
+    "tools": 22,
+    "operations": 13,
+    "guides": 3,
+    "examples": 114,
+    "reviewedEntries": 38,
+    "frozenBaseline": "a99c932e45a95d4d5b5c811e7dbc0db3256ddf99"
+  },
+  "knowledge": {
+    "formAuthoringCharacters": 15954,
+    "unchangedMaximum": 16000
+  },
+  "nativeUi": {
+    "browser": "Chrome/155.0.8059.84",
+    "sandbox": true,
+    "desktop": [
+      1440,
+      1000
+    ],
+    "phone": [
+      375,
+      812
+    ],
+    "horizontalPhoneOverflow": 0,
+    "closeAiThenData": true,
+    "revision": "r0",
+    "pageErrors": 0,
+    "inferenceRequests": 0,
+    "promptNotSent": true
+  },
+  "contract": {
+    "explicitDraftAnswerOnly": "draft-not-produced",
+    "inspectedProposal": "draft-ready",
+    "automaticRetry": false,
+    "automaticApply": false,
+    "finalAnswerUnchanged": true
+  },
+  "previousPublicSemanticFailure": "e385c06082ad142b4f692ad55058596c686f6fbc retained; no candidate from fiveHTTP200",
+  "formalG8": false,
+  "newFormalAttempts": 0,
+  "productionQualified": false,
+  "publicSamePromptCandidateRun": "not run at this record; must preserve its observed outcome separately"
+}
