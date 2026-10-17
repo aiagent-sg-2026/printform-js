@@ -7,6 +7,7 @@ import { validPointer } from './design-authoring.js';
 import { tableStyleChange } from './table-style.js';
 import { elementStyleChange } from './element-style.js';
 import { projectDescriptor } from './dataset-schema.js';
+import { agentPageSettings } from './agent-page-settings.js';
 
 const unsafe = () => { throw Object.assign(new Error('UNSAFE_PROPOSAL'),{code:'UNSAFE_PROPOSAL'}); };
 const assertFieldWidth = (section,kind,width) => {
@@ -101,8 +102,15 @@ export function applyAuthoring(design,operations,project,explicitPointers=[]) {
       object(op,['type','order']); const next = reorder(BLOCKS,op.order,BLOCKS);
       record('document','sectionOrder',design.sectionOrder || BLOCKS,next); design.sectionOrder = next;
     } else if (op.type === 'set_page') {
-      object(op,['type','patch']); object(op.patch,['paper','orientation','margins']);
-      for (const [key,value] of Object.entries(op.patch)) { record('document',`page.${key}`,design.page?.[key],value); design.page = {...design.page,[key]:structuredClone(value)}; }
+      object(op,['type','patch']); object(op.patch,['paper','orientation','margins','customSizeMm','printerProfile']);
+      const next = {...design.page,...structuredClone(op.patch)};
+      if (op.patch.margins) next.margins = {...design.page?.margins,...op.patch.margins};
+      if (op.patch.paper !== undefined && op.patch.paper !== 'CUSTOM' && op.patch.customSizeMm === undefined) delete next.customSizeMm;
+      if (next.printerProfile === null) delete next.printerProfile;
+      for (const key of new Set([...Object.keys(design.page || {}),...Object.keys(next)])) {
+        if (!same(design.page?.[key],next[key])) record('document',`page.${key}`,design.page?.[key],next[key]);
+      }
+      design.page = next;
     } else if (op.type === 'set_logo') {
       object(op,['type','value']); if (op.value !== null) object(op.value,['assetId','width','height','fit']);
       record('header-logo','logo',design.logo,op.value); design.logo = structuredClone(op.value);
@@ -160,7 +168,7 @@ export function shareAuthoring(project,context={}) {
   return {
     contract:AUTHORING_CONTRACT,
     sections:BLOCKS.map(id=>({id,enabled:d.blocks[id].enabled,layout:d.blocks[id].layout || {},breakBefore:Boolean(d.blocks[id].breakBefore),keepTogether:Boolean(d.blocks[id].keepTogether),fields:fieldList(d,id).map(f=>({id:`${id}-${f.id}`,kind:f.kind || (f.pointer ? 'bound' : 'static'),format:f.format,width:f.width,labelStyle:f.labelStyle || {},valueStyle:f.valueStyle || {},showLabel:f.showLabel !== false}))})),
-    elements:[{id:'header-title',visible:d.blocks.header.enabled,style:d.titleStyle || {}},{id:'page-number',visible:d.pageNumbers,style:d.pageNumberStyle || {}},{id:'header-logo',assetId:d.logo?.assetId || null,visible:d.blocks.header.enabled && d.logo !== null},{id:'items',visible:d.blocks.items.enabled,style:d.tableStyle || {},styleOperation:'set_table_style'}],sectionOrder:d.sectionOrder || BLOCKS,page:d.page || {paper:'A4',orientation:'portrait'},
+    elements:[{id:'header-title',visible:d.blocks.header.enabled,style:d.titleStyle || {}},{id:'page-number',visible:d.pageNumbers,style:d.pageNumberStyle || {}},{id:'header-logo',assetId:d.logo?.assetId || null,visible:d.blocks.header.enabled && d.logo !== null},{id:'items',visible:d.blocks.items.enabled,style:d.tableStyle || {},styleOperation:'set_table_style'}],sectionOrder:d.sectionOrder || BLOCKS,page:agentPageSettings(d),
     assets:(d.assets || []).map(({id})=>({id})),bindings:availableBindings(project,explicitBindingPointers(context.request,context.references))
   };
 }

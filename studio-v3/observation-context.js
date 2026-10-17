@@ -1,5 +1,6 @@
 import { BLOCKS } from './model.js';
-import { fieldKind, pageSettings } from './design-authoring.js';
+import { fieldKind } from './design-authoring.js';
+import { agentPageSettings } from './agent-page-settings.js';
 import { elementMetadata } from './ai-element-tags.js';
 import { resolvePointer } from '../studio-v2/core/json.js';
 import { fail, shareLayout } from './ai-edits.js';
@@ -23,7 +24,7 @@ export function semanticObservation(project,diagnostics,authorization,selectedTa
   const result = {version:1,disclosure:{text:authorization.text,values:authorization.values,pixels:false},
     selectedTargets:[...new Set(selectedTargets)].filter(id=>elementMetadata(project,id)).map(id=>({id,kind:elementMetadata(project,id).kind})),
     scenario:{id:'active',rowCount:Array.isArray(rows) ? rows.length : 0},
-    layout:{page:pageSettings(d),style:shareLayout(project),sectionOrder:d.sectionOrder || BLOCKS,sections:BLOCKS.map(id=>({id,enabled:d.blocks[id].enabled,
+    layout:{page:agentPageSettings(d),style:shareLayout(project),sectionOrder:d.sectionOrder || BLOCKS,sections:BLOCKS.map(id=>({id,enabled:d.blocks[id].enabled,
       layout:d.blocks[id].layout || {},breakBefore:Boolean(d.blocks[id].breakBefore),keepTogether:Boolean(d.blocks[id].keepTogether),
       ...(authorization.text ? {label:scalar(d.blocks[id].label || '')} : {})}))},fields,diagnostics,
     ...(authorization.text ? {heading:scalar(d.title),collection:d.collection} : {})};

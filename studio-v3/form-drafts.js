@@ -1,3 +1,5 @@
+import { syncPaperForm } from './paper-controls.js';
+
 function valuesOf(form) {
   return Object.fromEntries([...form.elements].filter(n=>n.name || n.id).map(n=>[n.name || n.id,n.type === 'checkbox' ? n.checked : n.value]));
 }
@@ -6,6 +8,7 @@ function restoreValues(form,values) {
     const key = node.name || node.id; if (!Object.hasOwn(values,key)) continue;
     if (node.type === 'checkbox') node.checked = values[key]; else node.value = values[key];
   }
+  syncPaperForm(form);
 }
 export function restoreDraftRecords(records,formFor,context) {
   return records.map(record=> {

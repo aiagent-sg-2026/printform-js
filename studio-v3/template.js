@@ -3,6 +3,7 @@ import { validateDesign } from './design-validation.js';
 import { tableBodyCss } from './table-style.js';
 import { a4PresetTheme } from './a4-theme.js';
 import { sectionOrder, usesFlowSections, fieldKind, styleCss, assetOf, pageSettings, pageDimensions, contentDimensions } from './design-authoring.js';
+import { paperMillimeters } from './paper-settings.js';
 import { financialField } from './agent-binding-invariants.js';
 export const escape = value => String(value ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const attr = (name, value) => ` ${name}="${escape(value)}"`;
@@ -56,21 +57,20 @@ export function compileTemplate(d) {
   const totals = `<footer class="${sectionClass(d,'totals','pfooter')}"${sectionAttributes(d,'totals')}${keepWithFooter ? ' data-pf-keep-with-next="true"' : ''} data-pf-table-id="v3-totals"><div class="summary">${fields(d,'totals')}</div></footer>`;
   const footer = `<footer class="${sectionClass(d,'footer','pfooter002')}"${sectionAttributes(d,'footer')} data-pf-table-id="v3-footer">${fields(d,'footer')}</footer>`;
   const nodes = {header,customer,items:tableNode(d),totals,footer};
-  const manualSize = Object.values(page.margins).some(Boolean) ? `${attr('data-papersize-width',size.width)}${attr('data-papersize-height',size.height)}` : '';
+  const manualSize = page.paper === 'CUSTOM' || Object.values(page.margins).some(Boolean) ? `${attr('data-papersize-width',size.width)}${attr('data-papersize-height',size.height)}` : '';
   return `<section class="printform"${attr('data-paper-size',page.paper)}${attr('data-papersize',page.paper)}${attr('data-orientation',page.orientation)}${manualSize} data-repeat-header="${enabled('header') && d.repeatHeader ? 'y' : 'n'}" data-repeat-docinfo="n" data-repeat-rowheader="${d.repeatTable ? 'y' : 'n'}" data-repeat-ptac-rowheader="n" data-repeat-footer="n" data-repeat-footer002="n" data-repeat-footer-pagenum="${d.pageNumbers ? 'y' : 'n'}" data-insert-ptac-dummy-row-items="n" data-insert-dummy-row-item-while-format-table="n" data-insert-footer-spacer-while-format-table="y">${sectionOrder(d).filter(enabled).map(id=>nodes[id]).join('')}${d.pageNumbers ? `<footer class="pfooter_pagenum v3-page-number" data-v3-id="page-number"${styleAttr(d.pageNumberStyle)}>Page <span data-page-number></span> of <span data-page-total></span></footer>` : ''}</section>`;
 }
 export function documentTheme(d) {
   validateDesign(d);
   const color = d.color, font = d.font, padding = d.padding;
-  const page = pageSettings(d), physical = pageDimensions(d), size = contentDimensions(d), m = page.margins;
-  const pageMargins = Object.values(m).some(Boolean);
+  const page = pageSettings(d), physical = pageDimensions(d), size = contentDimensions(d), m = page.margins, mm = paperMillimeters(page);
   const grid = Object.entries(d.blocks).filter(([,b])=>b.layout).map(([id,b])=>`#pf-mount .v3-${{header:'header',customer:'customer',totals:'totals',footer:'notes'}[id]} ${id === 'header' ? '.company-fields' : id === 'totals' ? '.summary' : ''} {display:grid;grid-template-columns:repeat(${b.layout.columns || 1},minmax(0,1fr));gap:${b.layout.gap ?? 12}px;}`).join('\n');
   return `${setPrintTypographyBase(PRINT_TYPOGRAPHY_CSS, font)}
 * { box-sizing:border-box; } body { margin:0; background:#e5eaf1; }
 #pf-mount { color:#1c2638; font-family:Arial,'Hiragino Sans GB','PingFang SC','Microsoft YaHei',sans-serif; line-height:1.4; }
 #pf-mount .printform, #pf-mount .printform_page { width:${size.width}px; background:white; }
-#pf-mount .printform_page { margin-bottom:24px; box-shadow:0 4px 18px #0002; }
-${pageMargins ? `#pf-mount .physical_page_wrapper {width:${physical.width}px!important;padding:${m.top}px ${m.right}px ${m.bottom}px ${m.left}px;background:white;margin-bottom:24px;} #pf-mount .physical_page_wrapper .printform_page {margin:0;box-shadow:none;}` : ''}
+#pf-mount .physical_page_wrapper {width:${physical.width}px!important;padding:${m.top}px ${m.right}px ${m.bottom}px ${m.left}px;background:white;margin-bottom:24px;box-shadow:0 4px 18px #0002;}
+#pf-mount .physical_page_wrapper .printform_page {margin:0;box-shadow:none;}
 #pf-mount .v3-header { padding:32px 36px 20px; display:grid; grid-template-columns:${d.logo === null ? '1fr auto' : `${d.logo?.width ?? 52}px 1fr auto`}; gap:14px; border-bottom:3px solid ${color}; }
 #pf-mount .brand-mark { color:${color}; font-size:40px; font-weight:900; line-height:1; }
 #pf-mount h1 { font-size:18pt; margin:0; text-align:right; letter-spacing:.025em; }
@@ -106,6 +106,15 @@ ${grid}
 #pf-mount .summary .label { overflow-wrap:normal; }
 #pf-mount [data-pf-format=currency] { white-space:nowrap;overflow-wrap:normal;flex-shrink:0; }
 ${tableBodyCss(d)}
-@page { size:${page.paper === 'LETTER' ? 'letter' : page.paper === 'LEGAL' ? 'legal' : page.paper} ${page.orientation}; margin:0; }
+${size.width < 400 ? `
+#pf-mount .v3-header {padding:8px;grid-template-columns:1fr;gap:8px;}
+#pf-mount .v3-header h1 {text-align:left;overflow-wrap:anywhere;}
+#pf-mount .company-fields, #pf-mount .v3-customer {grid-template-columns:1fr;gap:6px;}
+#pf-mount .v3-customer, #pf-mount .v3-notes, #pf-mount .v3-totals {padding:8px;}
+#pf-mount .v3-customer:not(.v3-custom-layout) .field {grid-column:auto;grid-row:auto;}
+#pf-mount .v3-grid {width:calc(100% - 16px);margin:0 8px;}
+#pf-mount .v3-page-number {margin:0 8px;padding:6px 0;}
+` : ''}
+@page { size:${mm.width}mm ${mm.height}mm; margin:0; }
 @media print { body { background:white; } #pf-mount .printform_page, #pf-mount .physical_page_wrapper {margin:0;box-shadow:none;} }`;
 }

@@ -7,6 +7,7 @@ import { sectionOrder } from './design-authoring.js';
 import { tableStyleChange } from './table-style.js';
 import { elementStyleChange } from './element-style.js';
 import { assertProjectSchema, assertCollectionBinding, validateSourceSchema } from './dataset-schema.js';
+import { pageFromForm } from './paper-controls.js';
 
 export function createBus(project, database = null, source = 'builtin-demo') {
   const initial = structuredClone(project);
@@ -78,7 +79,7 @@ export function formDesign(project, selected, form, kind) {
     for (const key of ['font','padding']) d[key] = Number(values.get(key));
     for (const key of ['striped','borders','pageNumbers']) d[key] = checked(key);
     if (values.has('pageNumberStyle.fontSize')) d = elementStyleChange(d,'page-number',fieldStyle('pageNumberStyle')).design;
-    if (values.has('paper')) d.page = {paper:text('paper'),orientation:text('orientation'),margins:Object.fromEntries(['top','right','bottom','left'].map(side=>[side,Number(values.get(`margin-${side}`))]))};
+    if (values.has('paper')) d.page = pageFromForm(values);
   } else if (kind === 'field' && selection) {
     for (const key of ['label','format']) if (values.has(key)) selection.field[key] = text(key);
     if (selection.block === 'items' && values.has('width')) selection.field.width = Number(values.get('width'));

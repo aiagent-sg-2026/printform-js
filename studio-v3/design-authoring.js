@@ -1,10 +1,9 @@
-import { resolvePaperDimensions } from '../src/printform/helpers.js';
+export { PAPERS, ORIENTATIONS, pageSettings, pageDimensions } from './paper-settings.js';
+import { pageSettings, pageDimensions } from './paper-settings.js';
 
 export const BLOCKS = Object.freeze(['header', 'customer', 'items', 'totals', 'footer']);
 export const FIELD_STYLE_KEYS = Object.freeze(['fontSize', 'bold', 'color', 'align']);
 export const FIELD_KINDS = Object.freeze(['bound', 'static', 'image']);
-export const PAPERS = Object.freeze(['A4', 'A5', 'LETTER', 'LEGAL']);
-export const ORIENTATIONS = Object.freeze(['portrait', 'landscape']);
 export const ALIGNMENTS = Object.freeze(['left', 'center', 'right']);
 export const FORMATS = Object.freeze(['', 'currency', 'number', 'percent']);
 export const fieldKind = field => field.kind || (field.pointer ? 'bound' : 'static');
@@ -15,14 +14,6 @@ export function usesFlowSections(design) {
   // grouped final footers can exceed a short page after its repeated header.
   const customPage = page.paper !== 'A4' || page.orientation !== 'portrait' || Object.values(page.margins).some(Boolean);
   return Boolean(customPage || design.sectionOrder || BLOCKS.some(id => design.blocks[id].breakBefore));
-}
-export function pageSettings(design) {
-  return { paper: design.page?.paper || 'A4', orientation: design.page?.orientation || 'portrait',
-    margins: { top: 0, right: 0, bottom: 0, left: 0, ...design.page?.margins } };
-}
-export function pageDimensions(design) {
-  const page = pageSettings(design);
-  return resolvePaperDimensions({paperSize:page.paper,orientation:page.orientation,dpi:96});
 }
 export function contentDimensions(design) {
   const {width,height} = pageDimensions(design), {margins:m} = pageSettings(design);

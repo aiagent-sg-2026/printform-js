@@ -1,9 +1,11 @@
 import { persistZoom } from './zoom-preference.js';
 import { labelSelection } from './design-authoring.js';
 import { restoreStructureOpen, persistStructureOpen } from './structure-preference.js';
+import { installPaperControls } from './paper-controls.js';
 export class CanvasControls {
   constructor({resize,guard,upload=()=>{},report=()=>{},context=()=>null,mode=()=> 'design'}) {
     this.resize = resize; this.guard = guard; this.drawer = null; this.returnFocus = null; this.mode = mode; this.lastMode = null; this.structureOpen = restoreStructureOpen();
+    installPaperControls(report);
     this.backdrop = document.querySelector('#drawer-backdrop');
     document.addEventListener('click',event=> {
       const button = event.target.closest('[data-layout]'); if (!button) return;
