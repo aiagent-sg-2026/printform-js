@@ -243,3 +243,9 @@ G8仍**0/60任务、0/180正式尝试**。G6/G9、DPA、真实数据许可、跨
 纸张单任务PR90/main48e90d4已合并并完成CI39004472029构建/部署；独立2832项/9跳过、36项三引擎与11真实PDF。通用组合的全量2873项/9跳过及最终75/75真实三引擎通过；手机375px源选择框由40px修正为339px，无全局横向溢出。修复前分页24px问题、Firefox后台iframe定位挂起及测试助手命名失败均保留，未改字号、字面预期、容差、预算、重试或sandbox。[完整范围与证据](acceptance/STUDIO_V3_GENERAL_IMPORT_MEDIA_20261017.md)。
 
 完整180槽预检与六份既有签名重验不是180次推理；原冻结12个拒绝任务令理论上限144/180低于162，data0/18及bindings/refs/files各12/18也低于16。旧三Fail/修复版三Pass按原profile隔离，新发布不继承8c资格。固定upstream、DPA、G6/G9与完整同profile证据仍缺，**AI继续Production Pilot，不是全ERP格式或完整生产级coding agent**。[G8实际预检](STUDIO_V3_G8_PREFLIGHT.zh-CN.md)。
+
+### 同日公开e385真实AI补充：未通过，不调提示词补绿
+
+在实际公开Origin、Chrome155/sandbox、原demo-auto/working-in-steps与原预算下，导入虚构一般工单后，要求生成188.5×244.2mm纵向私有候选、先预览后人工Apply。实际5次HTTP200、UI92131tokens，模型只说明当前A4并要求额外确认，未交付候选，**该任务Fail**。静态审查确认该文本基础effect是design且具有改纸工具；“Read-only answer”标签只是返回kind，不代表宿主只读授权。未通过换提示词、模型、预算或完成规则伪装为通过。
+
+真实键盘Save生成独立5.1KB字节，与运行前项目完全相同：r1/A4、数据/schema/原文件回执/打印机声明未变；5个出站请求均未包含私有文件名、设备名或未选列canary。初始手机AI覆盖层与CDP下载上下文接管失败属保留的实测边界，不能据此报产品死锁。一次模型运行不计正式G8，也不替代缺失生产前提。[实际Fail与独立字节证明](acceptance/STUDIO_V3_GENERAL_AI_LIVE_20261017.json)。

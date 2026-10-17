@@ -43,3 +43,9 @@
 - [CSS Paged Media page-size](https://drafts.csswg.org/css-page-3/#page-size)：页面尺寸与方向，不代表驱动完成实体打印。
 - [Window.print](https://developer.mozilla.org/en-US/docs/Web/API/Window/print)：浏览器打印入口没有设备能力、DPI或切刀设置参数。
 - [导入说明](../STUDIO_V3_LOCAL_IMPORT.zh-CN.md) · [检查/交接单](../GENERAL_INSPECTION_HANDOVER.zh-CN.md) · [纸张说明](../STUDIO_V3_SPECIAL_MEDIA.zh-CN.md) · [机器摘要](STUDIO_V3_GENERAL_IMPORT_MEDIA_20261017.json) · [G8预检](../STUDIO_V3_G8_PREFLIGHT.zh-CN.md)。
+
+## 部署后真实AI检查：保留Fail
+
+PR91/main e385c06082ad142b4f692ad55058596c686f6fbc经CI39006761439构建/部署成功。真实公开Origin的默认demo-auto/working-in-steps、文本/像素披露均关闭，实际5次HTTP200返回当前A4说明及额外确认请求，没有交付188.5×244.2mm私有修改候选；任务Fail，不改原提示词、模型、预算或oracle重试补绿。
+
+真实信任键盘Save取得独立字节，完整项目与运行前完全相同：r1、A4、数据、schema、回执与打印机声明均不变，3个私有canary未进入5个出站请求。最初手机全屏AI覆盖层、后续CDP非默认下载context接管失败均保留；没有证据指向持续Save死锁。静态双审确认基础design授权可改纸，finish_answer可合法返回但不证明用户改纸任务完成。该运行不计G8；[脱敏真实结论](STUDIO_V3_GENERAL_AI_LIVE_20261017.json)，原始wire仅宿主0600私有保管。

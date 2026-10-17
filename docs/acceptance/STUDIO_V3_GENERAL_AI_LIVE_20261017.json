@@ -1,0 +1,40 @@
+{
+  "schema": "public-general-studio-non-g8-live-check-v1",
+  "release": "e385c06082ad142b4f692ad55058596c686f6fbc",
+  "origin": "https://yapweijun1996.github.io",
+  "browser": "Chrome/155.0.8059.84",
+  "sandbox": true,
+  "request": "把纸张设置为宽188.5毫米、高244.2毫米的自定义纸张，纵向。其他内容、字体、数据、绑定、页边距和现有打印机约束保持不变。先预览，等我确认后才应用。",
+  "expected": "Inspected private CUSTOM188.5x244.2 portrait proposal, no committed change until humanApply",
+  "actual": "Read-only explanation of A4 and request for additional confirmation, no candidate",
+  "taskOutcome": "Fail",
+  "modelRuns": 1,
+  "inferenceRequests": 5,
+  "httpStatuses": [
+    200,
+    200,
+    200,
+    200,
+    200
+  ],
+  "modelAlias": "demo-auto",
+  "workingInSteps": true,
+  "textDisclosure": false,
+  "pixelDisclosure": false,
+  "displayedTokens": 92131,
+  "privateFilenameProfileAndUnmappedValueAbsent": true,
+  "committedProjectUnchanged": true,
+  "revisionAfterCheck": 1,
+  "paperAfterCheck": "A4",
+  "independentActualSaveSha256": "6f59d0785a9ecacabac192ac329da225ff5da9281e858bf11fdc1d7b6bc94c66",
+  "wireSha256": "6b11758ced63c02f854ddbf7456a0593e86ed67d8fdb5ccfa143e9795d5e30e1",
+  "rawWireCustody": "host-private0600;not published or ingested",
+  "formalG8": false,
+  "newFormalAttempts": 0,
+  "productionQualified": false,
+  "preservedNonModelFailures": [
+    "Initial phone-sized AI takeover preventedData click;closed via realClose control and set explicit desktop viewport before any inference.",
+    "CDP reattachment required download behavior on actual nondefault context;normal trustedkeyboardSave produced real5.1KB bytes. No app bypass or source mutation."
+  ],
+  "promptAliasRouteBudgetCorpusOrOracleTuned": false
+}
