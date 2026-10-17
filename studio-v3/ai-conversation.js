@@ -3,6 +3,10 @@ import { isHexColor } from './table-style.js';
 export const HISTORY_LIMIT = 12;
 const roles = ['user','assistant'];
 const statuses = ['answer','ready','applied','expired','error','cancelled'];
+const receiptIdentity = observation => {
+  if (!observation || typeof observation.id !== 'string' || !/^observation-[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(observation.id)) throw fail('INVALID_CHAT_RECOVERY');
+  return {id:observation.id};
+};
 const authoringProperties = new Set(['id','lastPointer','label','kind','pointer','format','text','showLabel','labelStyle','valueStyle','width','assetId','height','fit','add_field','remove_field','field_order','enabled','layout','breakBefore','keepTogether','sectionOrder','page.paper','page.orientation','page.margins','logo','collection','title','typography']);
 function validAuthoringDiff(d) {
   if (d.property === 'tableStyle.rowBackground') return d.target === 'items' && [d.before,d.after].every(v=>v === '(unset)' || isHexColor(v));
@@ -16,6 +20,10 @@ export function cleanMessages(messages) {
     if (!message || !roles.includes(message.role) || typeof message.text !== 'string' || message.text.length > 4000 || !Number.isFinite(message.time) || message.time < 0 || message.time > 8640000000000000) throw fail('INVALID_CHAT_RECOVERY');
     const cleaned = {id:crypto.randomUUID(),role:message.role,text:message.text,time:message.time,status:statuses.includes(message.status) ? message.status : 'answer'};
     if (message.observationProtected === true) cleaned.observationProtected = true;
+    if (message.observation !== undefined) {
+      if (message.role !== 'assistant') throw fail('INVALID_CHAT_RECOVERY');
+      cleaned.observation = receiptIdentity(message.observation);
+    }
     cleaned.documentKey = typeof message.documentKey === 'string' && /^v3-[a-z0-9-]{1,100}$/i.test(message.documentKey) ? message.documentKey : null;
     if (message.diff) {
       if (message.role !== 'assistant' || !Array.isArray(message.diff) || message.diff.length > MAX_AUTHORING_DIFFS) throw fail('INVALID_CHAT_RECOVERY');
@@ -35,6 +43,7 @@ export class Conversation {
   constructor() { this.messages = []; }
   add(role,text,status='answer',extra={}) {
     const message = {id:crypto.randomUUID(),role,text:text.slice(0,4000),status,time:Date.now(),...extra};
+    if (extra.observation !== undefined) message.observation = receiptIdentity(extra.observation);
     this.messages.push(message); this.messages = this.messages.slice(-HISTORY_LIMIT); return message;
   }
   context(documentKey) {
@@ -42,7 +51,7 @@ export class Conversation {
     let remaining = 3000;
     return recent.reverse().map(m=> { const content = m.text.slice(0,Math.min(800,remaining)); remaining -= content.length; return {role:m.role,content}; }).filter(m=>m.content).reverse();
   }
-  snapshot() { return this.messages.map(({role,text,time,status,diff,documentKey,observationProtected})=>({role,text,time,status,documentKey,...(observationProtected ? {observationProtected:true} : {}),...(diff ? {diff} : {})})); }
+  snapshot() { return this.messages.map(({role,text,time,status,diff,documentKey,observationProtected,observation})=>({role,text,time,status,documentKey,...(observationProtected ? {observationProtected:true} : {}),...(observation ? {observation:receiptIdentity(observation)} : {}),...(diff ? {diff} : {})})); }
   restore(messages,documentKey) { this.messages = cleanMessages(messages); }
   expire() { for (const m of this.messages) if (m.diff && m.status === 'ready') m.status = 'expired'; }
 }

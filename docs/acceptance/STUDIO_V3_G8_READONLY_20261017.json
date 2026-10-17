@@ -1,0 +1,221 @@
+{
+  "schema": "studio-g8-public-evaluation-v1",
+  "taskId": "T-qa-01",
+  "frozenInputDigest": "sha256:8d7d401840110703acf40bda1e259e41067d7525948d312e479315f6e336eaba",
+  "corpusDigest": "sha256:5ec182f03ba8ffb3895ad98c94c7d8bd0ee1832adc9583cae6cfba3cc29e1058",
+  "profile": "browser-readonly-ab9e349-20261017",
+  "profileDigest": "sha256:22071870bae99b6d07776b8460811e0d66dae945aed7d4b9b066d5b122c7ac0f",
+  "identity": {
+    "source_commit": "ab9e349e5a8cda66063095163505c7de9fa9859e",
+    "app_digest": "sha256:b49155c9244e76793b9ae437839a7e811addca0b067f752094c41e54520de2ea",
+    "knowledge_digest": "sha256:a681135a7e932f0ad8f9b4f14db103f1f89bd51f02ff5ccd2e61d4d1487e4fe2",
+    "runner_image": "unavailable",
+    "provider_route": "https://gpt.yapweijun1996.com/demo/v1/responses",
+    "model_version": "unavailable",
+    "browser_os": "Chrome 155.0.8059.84 / macOS 27.0.1 / arm64",
+    "budgets_digest": "sha256:83683f5825b993190edaa2891296aaaafc676cb2f4655d56793fd1ddbd29cc07"
+  },
+  "releaseIdentity": {
+    "release": "ab9e349e5a8cda66063095163505c7de9fa9859e",
+    "contractHash": "634c0197c9c7593e2b765304b77beaa25145651f9b7f1bf80d5eb0ad34b74929",
+    "knowledgeHash": "a681135a7e932f0ad8f9b4f14db103f1f89bd51f02ff5ccd2e61d4d1487e4fe2",
+    "packageHash": "b49155c9244e76793b9ae437839a7e811addca0b067f752094c41e54520de2ea"
+  },
+  "profilePath": "STUDIO_V3_G8_PROFILE_20261017.json",
+  "promptUnchanged": true,
+  "oracleUnchanged": true,
+  "providerRouteAndBudgetUnchanged": true,
+  "sourceRunnerExercised": false,
+  "privateRawEvidence": "Host-private signed envelopes retain actual request/response bytes, actual human Save states, timestamps and signature; not copied into repo/KB. Public signatures only authenticate custody, not semantics.",
+  "attempts": [
+    {
+      "attempt": 1,
+      "taskId": "T-qa-01",
+      "outcome": "Fail",
+      "oracleMatched": false,
+      "critical_violation": "no",
+      "evidence_digest": "sha256:5a3eb69dcbab8e0707528213f55e1786738494bfde465af2ecb94c71c671716f",
+      "duration_ms": 15009,
+      "answerAttribution": {
+        "callId": "call_Y2pJgdCJAtwtW6doVqvpjvwJ",
+        "modelMessageDigest": "sha256:054fdb29efc208bf3b6b6b1db4ecb2deb0de12eb5ed1ebc76c72de2b5809bba2",
+        "deliveredMessageDigest": "sha256:f21dd64cb37f11b497d2347f615a143027e2e0a5483fc29680a86f02f2385d25"
+      },
+      "errors": [
+        "host-delivered answer differs from actual finish_answer message",
+        "delivered answer is not requested JSON",
+        "wrong delivered numeric/boolean answer"
+      ],
+      "requests": 6,
+      "responses": 6,
+      "usage": 79389,
+      "deliveredAnswer": "{\"fontPt\":9}\n\nObservation receipt: observation-6b32b130-9e04-4fbb-a8db-30299040939b",
+      "actualModelFinishMessages": [
+        "{\"fontPt\":9}",
+        "{\"fontPt\":9}",
+        "{\"fontPt\":9}"
+      ],
+      "baseRevision": 0,
+      "finalRevision": 0,
+      "committedStateUnchanged": true,
+      "liveDocumentUnchanged": true,
+      "actualPageErrors": 0
+    },
+    {
+      "attempt": 2,
+      "taskId": "T-qa-01",
+      "outcome": "Fail",
+      "oracleMatched": false,
+      "critical_violation": "no",
+      "evidence_digest": "sha256:3c758f079ed65d92c45d99a3932a2395c361c80357f227d1cf3e3ce5638f8251",
+      "duration_ms": 15979,
+      "answerAttribution": {
+        "callId": "call_C7xZk9LdDOBE8fu0mXXyLhrB",
+        "modelMessageDigest": "sha256:054fdb29efc208bf3b6b6b1db4ecb2deb0de12eb5ed1ebc76c72de2b5809bba2",
+        "deliveredMessageDigest": "sha256:c80ce33820946720bcf6315bf94828dcce3d82285830e3b5883f11b53544e130"
+      },
+      "errors": [
+        "host-delivered answer differs from actual finish_answer message",
+        "delivered answer is not requested JSON",
+        "wrong delivered numeric/boolean answer"
+      ],
+      "requests": 7,
+      "responses": 7,
+      "usage": 105972,
+      "deliveredAnswer": "The assistant could not meet this request with the supported operations. Nothing changed.",
+      "actualModelFinishMessages": [
+        "{\"fontPt\":9}",
+        "{\"fontPt\":9}",
+        "{\"fontPt\":9}"
+      ],
+      "baseRevision": 0,
+      "finalRevision": 0,
+      "committedStateUnchanged": true,
+      "liveDocumentUnchanged": true,
+      "actualPageErrors": 0
+    },
+    {
+      "attempt": 3,
+      "taskId": "T-qa-01",
+      "outcome": "Fail",
+      "oracleMatched": false,
+      "critical_violation": "no",
+      "evidence_digest": "sha256:fa419fdecbcc908b928dbdeaad550258226555aa8126b78d581d06ec7515ad2e",
+      "duration_ms": 14486,
+      "answerAttribution": {
+        "callId": "call_ooIgPmIKuk9Q7Umw1q3qaU6H",
+        "modelMessageDigest": "sha256:054fdb29efc208bf3b6b6b1db4ecb2deb0de12eb5ed1ebc76c72de2b5809bba2",
+        "deliveredMessageDigest": "sha256:f73c2276e8fcbf8e81c6735e6093dde8aa8075bc7fa0c820989ba03adb194d43"
+      },
+      "errors": [
+        "host-delivered answer differs from actual finish_answer message",
+        "delivered answer is not requested JSON",
+        "wrong delivered numeric/boolean answer"
+      ],
+      "requests": 6,
+      "responses": 6,
+      "usage": 79513,
+      "deliveredAnswer": "{\"fontPt\":9}\n\nObservation receipt: observation-8af3562b-b078-47be-a8d4-065015a01a82",
+      "actualModelFinishMessages": [
+        "{\"fontPt\":9}",
+        "{\"fontPt\":9}",
+        "{\"fontPt\":9}"
+      ],
+      "baseRevision": 0,
+      "finalRevision": 0,
+      "committedStateUnchanged": true,
+      "liveDocumentUnchanged": true,
+      "actualPageErrors": 0
+    }
+  ],
+  "conclusion": "0 Pass/3 Fail; no critical authority mutation. Host appends citation into exact answer or rejects invented non-null optional receipt IDs. The model actually supplied correct JSON, but the actual user-facing result fails. Full production/G8 qualification remains false.",
+  "publicNativeSurface": {
+    "release": "ab9e349e5a8cda66063095163505c7de9fa9859e",
+    "browser": "Chrome 155.0.8059.84 / macOS 27.0.1 / arm64",
+    "action": "Real public no-code New PackingList then Export HTML; standalone reopened with HTTP(S) denied; actual Chrome PDF",
+    "title": "PACKING LIST · Supplied facts",
+    "rows": 7,
+    "pages": 1,
+    "exportEnabled": true,
+    "pageErrors": [],
+    "pdf": {
+      "pages": 1,
+      "unifiedLong": true,
+      "radicalLong": false,
+      "rawQuantityTokens": [
+        {
+          "token": "0005.250 kg",
+          "present": true
+        },
+        {
+          "token": "+0004.000 kg",
+          "present": true
+        },
+        {
+          "token": "0012.500 set",
+          "present": true
+        },
+        {
+          "token": "002.750 lb",
+          "present": true
+        },
+        {
+          "token": "0007.125 m",
+          "present": true
+        }
+      ]
+    },
+    "pdfSha256": "7a27a9ee547df078c39f85ead90a5dbd974a08ac6e91c960e2d0bcb864d22360",
+    "actualPlatformFonts": [
+      {
+        "familyName": "Arial",
+        "postScriptName": "ArialMT",
+        "isCustomFont": false,
+        "glyphCount": 33
+      },
+      {
+        "familyName": "Hiragino Sans GB",
+        "postScriptName": "HiraginoSansGB-W3",
+        "isCustomFont": false,
+        "glyphCount": 8
+      }
+    ],
+    "screenshot": "/tmp/printform-g8-20261017/public-packing-native.png",
+    "artifact": "/tmp/printform-g8-20261017/public-packing-native.html",
+    "pdfArtifact": "/tmp/printform-g8-20261017/public-packing-native.pdf",
+    "physicalPrinter": false,
+    "formalG8Attempt": false
+  },
+  "otherObservedEnvironment": {
+    "managedSharedBrowser": "Initial invoice PREVIEW_NOT_STARTED; no model dispatch; no retry, sandbox weakening or physical output. Actual root cause not established; native Chrome155 fresh contexts and public packing surface completed.",
+    "codeOrOracleAdjustedForThisFailure": false
+  },
+  "integrationAttempt": {
+    "firstFullBuild": "244 files:243 passed,1 failed;2785 tests passed,1 failed,9 opt-in skipped. A new test sent raw4001 argument and incorrectly expected the host-finalizer error; schema correctly rejected first.",
+    "correction": "Use a valid model argument whose actual host finalizer expands to4001; retain AGENT_ANSWER_LIMIT branch and4000 acceptance. No production changes/error-code repinning.",
+    "log": "artifact://1410",
+    "recheck": {
+      "command": "Node24 npm run build:site",
+      "snapshot": "/tmp/printform-g8-answer-fix-20261017",
+      "filesPassed": 244,
+      "testsPassed": 2786,
+      "testsSkipped": 9,
+      "siteBuilt": true,
+      "artifact": "artifact://1425"
+    },
+    "secondFullBuild": "2785 tests passed/1 failed/9 skipped: the migrated pixel consumer assumed its fixture already exposed outcome. Corrected the existing fixture to return the real shared outcome object; no production guard change.",
+    "secondLog": "artifact://1418",
+    "targetedAfterFixtureCorrection": {
+      "filesPassed": 5,
+      "testsPassed": 74
+    },
+    "conformance": {
+      "command": "npm run check:studio-v3-agent",
+      "tools": 22,
+      "operations": 13,
+      "skills": 3,
+      "examples": 109,
+      "reviewedChanges": 38
+    }
+  }
+}

@@ -156,6 +156,8 @@ node scripts/studio-v3-g8.mjs validate
 
 父代理独立验证：CLI实际返回60任务/20holdout、corpusDigest `sha256:5ec182f03ba8ffb3895ad98c94c7d8bd0ee1832adc9583cae6cfba3cc29e1058`、errors=[]；`project T-qa-01` 真实输出可打开工程。只含资格代码/只读修复的独立Node24 `npm run build:site` **243文件/2728项通过，9项opt-in跳过**并生成站点。完整模型尝试尚未包含在此提交，不能把这些消费者回归计入G8。
 
+随后公开ab9版本已真实运行冻结T-qa-01三次，全部Fail并登记；模型正确JSON与宿主实际交付的差异由配对wire、真实Save及最终UI共同证明。[基线报告](acceptance/STUDIO_V3_G8_READONLY_20261017.md)。这些失败不覆盖、不换问题、不改oracle；修复发布必须另冻profile。
+
 ## 已读依据
 
 - [本仓库 Gate G8 与证据规则](STUDIO_V3_CODING_AGENT_ACCEPTANCE.md#gate-g8-real-model-task-qualification)：固定60×3、原门槛、保留全部失败、独立输出证据。

@@ -81,6 +81,8 @@ npm run studio:coding-runner -- --origin https://studio.example.com
 
 2026-10-17更新：上述0/60、0/180为历史检查点。现有[冻结语料](STUDIO_V3_G8_CORPUS.zh-CN.md)包含60个实际输入、20个holdout及独立字节/进程/制品消费者；冻结不等于执行。本次语料提交尚无正式attempt，源码进程receipt必须另行实际留存，不能拿先前口述补位；G6/G9与真实资料许可不变。
 
+同日后续：browser-only ab9 profile 的T-qa-01三次真实执行均Fail，正式CSV已有3条实际记录，见[基线证据](acceptance/STUDIO_V3_G8_READONLY_20261017.md)。本任务没有执行source runner，不能补源码测试进程receipt或G6；源码历史结果不与只读profile混算。
+
 
 ## 官方研究
 

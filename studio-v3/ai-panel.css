@@ -48,6 +48,7 @@ body.ai-open.preview-only .studio-grid { grid-template-columns:0 minmax(0,1fr) v
 .ai-message { display:flex; flex-direction:column; gap:8px; max-width:100%; min-width:0; }
 .ai-message-label { font-size:13px; font-weight:600; color:var(--muted); }
 .ai-message-text { font-size:14px; line-height:1.7; white-space:pre-wrap; overflow-wrap:anywhere; }
+.ai-observation-receipt { font-size:12px; line-height:1.5; color:var(--muted); overflow-wrap:anywhere; }
 .ai-user { align-items:flex-end; }
 .ai-user .ai-message-text { padding:12px 14px; border-radius:16px 16px 4px 16px; background:var(--subtle); max-width:95%; }
 .ai-assistant .ai-message-text { padding:0; }

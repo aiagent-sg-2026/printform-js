@@ -18,6 +18,7 @@ function boundary(options = {}) {
     limits:{maxTurns:50,maxRepeatedFailures:3},onStep:step=>steps.push(step),stopRun:()=>stops++,...options}).map(tool=>[tool.name,tool]));
   return {project,draft,outcome,tools,steps,controller,get stops() { return stops; }};
 }
+const invoke = (state,name,input = {}) => state.tools[name].execute(`arguments-${name}`,state.tools[name].prepareArguments(input));
 const args = operations => ({summary:PRIVATE,operations});
 
 // Assertions concern the model-visible rejection and the actual candidate, never SDK exception wording.
@@ -149,5 +150,61 @@ describe('safe schema-derived argument repair',()=> {
     const stopped = boundary(); stopped.controller.abort();
     expect(rejection(()=>stopped.tools.apply_operations.prepareArguments(input)).name).toBe('AbortError');
     expect(stopped.steps).toEqual([]); expect(stopped.draft.count).toBe(0);
+  });
+});
+
+describe('nullable finish_answer evidence at the real tool boundary',()=> {
+  it.each([
+    ['guide','null','read_skill',{id:'form-authoring'},{observationId:null}],
+    ['context','null','get_context',{}, {observationId:null}],
+    ['guide','omitted','read_skill',{id:'form-authoring'},{}],
+    ['context','omitted','get_context',{},{}]
+  ])('accepts a %s-grounded answer with %s observationId without inventing a receipt',async(_evidence,_id,name,input,optional)=> {
+    const state = boundary({grant:createGrant('read-only')}), before = structuredClone(state.project);
+    await invoke(state,name,input);
+    const message = '{"toolsAvailable":true}', arguments_ = {message,...optional};
+    const result = await invoke(state,'finish_answer',arguments_);
+    expect(result.terminate).toBe(true);
+    expect(state.outcome.answer).toEqual({message,identity:undefined});
+    expect(arguments_).toEqual({message,...optional});
+    expect(state.outcome.proposal).toBeUndefined(); expect(state.outcome.blocked).toBeUndefined();
+    expect(state.draft.count).toBe(0); expect(state.draft.project).toEqual(before); expect(state.project).toEqual(before);
+  });
+
+  it('resolves null to the actual current observation without charging the receipt against the answer allowance',async()=> {
+    const state = boundary({grant:createGrant('read-only'),inspect:async()=>({report:{status:'ready'}})});
+    const inspected = await invoke(state,'inspect_draft'), receipt = JSON.parse(inspected.content[0].text).observation;
+    const message = 'x'.repeat(4000);
+    expect((await invoke(state,'finish_answer',{message,observationId:null})).terminate).toBe(true);
+    expect(state.outcome.answer).toEqual({message,identity:undefined,observation:receipt});
+    expect(state.draft.count).toBe(0); expect(state.outcome.proposal).toBeUndefined();
+  });
+
+  it('rejects an invented nonnull ID instead of treating it as null',async()=> {
+    const observationId = 'latest', state = boundary({grant:createGrant('read-only')});
+    await invoke(state,'get_context');
+    await expect(invoke(state,'finish_answer',{message:'Grounded answer.',observationId})).rejects.toMatchObject({code:'EVIDENCE_STALE'});
+    expect(state.outcome.answer).toBeUndefined(); expect(state.draft.count).toBe(0);
+  });
+
+  it('rejects an actual but superseded ID, then accepts the current ID',async()=> {
+    const state = boundary({grant:createGrant('read-only'),inspect:async()=>({report:{status:'ready'}})});
+    const first = JSON.parse((await invoke(state,'inspect_draft')).content[0].text).observation;
+    const latest = JSON.parse((await invoke(state,'inspect_draft')).content[0].text).observation;
+    await expect(invoke(state,'finish_answer',{message:'Old inspection.',observationId:first.id})).rejects.toMatchObject({code:'EVIDENCE_STALE'});
+    expect(state.outcome.answer).toBeUndefined();
+    await invoke(state,'finish_answer',{message:'Current inspection.',observationId:latest.id});
+    expect(state.outcome.answer.observation).toEqual(latest);
+  });
+
+  it('does not let null bypass required evidence or revive an invalidated observation',async()=> {
+    const empty = boundary({grant:createGrant('read-only')});
+    await expect(invoke(empty,'finish_answer',{message:'Ungrounded.',observationId:null})).rejects.toMatchObject({code:'AGENT_EVIDENCE_REQUIRED'});
+    expect(empty.outcome.answer).toBeUndefined();
+    const state = boundary({inspect:async()=>({report:{status:'ready'}})});
+    await invoke(state,'inspect_draft');
+    await invoke(state,'apply_operations',{summary:'Change heading',operations:[{type:'set_heading',value:'Updated heading'}]});
+    await expect(invoke(state,'finish_answer',{message:'Stale inspection.',observationId:null})).rejects.toMatchObject({code:'EVIDENCE_STALE'});
+    expect(state.outcome.answer).toBeUndefined(); expect(state.draft.count).toBe(1);
   });
 });

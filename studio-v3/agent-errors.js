@@ -35,7 +35,7 @@ export const TOOL_ERRORS = Object.freeze({
   AGENT_INSPECTION_BLOCKED:entry('EVIDENCE_STALE','evidence',true,'Fix the reported print issues and inspect again before finish.'),
   GRANT_DENIED:entry('SCOPE_DENIED','rejected',true,'This run does not grant that effect. Answer with finish_answer, or report_blocked if the request needs an edit.'),
   AGENT_EVIDENCE_REQUIRED:entry('EVIDENCE_STALE','evidence',true,'Read a guide, the form context or an inspection before finish_answer, so the answer rests on evidence.'),
-  AGENT_ANSWER_LIMIT:entry('QUOTA_EXCEEDED','rejected',true,'Shorten the answer so it and the host-authored latest observation citation fit within 4000 characters; nothing is silently omitted.'),
+  AGENT_ANSWER_LIMIT:entry('QUOTA_EXCEEDED','rejected',true,'Shorten the finalized answer to at most 4000 characters; the host shows a separately bounded observation receipt outside the answer. Nothing is silently omitted.'),
   TOOL_FAILED:entry('EFFECT_UNKNOWN','internal',false,'Do not repeat blindly; report_blocked with the failing step.')
 });
 
