@@ -6,7 +6,7 @@ Method: enumerate real Studio UI entry points and published tool contracts, comp
 
 Dispositions: `agent-callable` (eligible; may still lack a service/adapter), `human-mediated` (agent prepares or explains; the human completes), `intentionally-unavailable` (host mechanism or view preference; reason recorded).
 
-## Summary (checked against the CSV by `tests/studio-v3-feature-ledger.test.js`)
+## Summary (CSV source for generated human workflow registry)
 
 | Measure | Rows |
 | --- | --- |

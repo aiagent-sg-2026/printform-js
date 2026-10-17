@@ -5,12 +5,14 @@ import { datasetName } from './database-model.js';
 import { inspectProject } from './validation.js';
 import { runtimeSources } from './runtime-assets.js';
 import { assertBoundedJson, assertJsonBytes, assertJsonStructure, JSON_PROJECT_LIMITS, parseBoundedJson } from './json-safety.js';
+import { validateImportReceipt } from './structured-import-receipt.js';
 
 import { assertProjectSchema } from './dataset-schema.js';
 export { validateDesign } from './design-validation.js';
 import { validateDesign } from './design-validation.js';
 
 export function saveProject(project) {
+  validateImportReceipt(project.manifest.localImport,project.sampleData);
   assertProjectSchema(project);
   return JSON.stringify({format:'printform-studio-v3',version:1,project:{manifest:project.manifest,schema:project.schema,sampleData:project.sampleData,revision:project.revision}}, null, 2);
 }
@@ -38,6 +40,8 @@ export function readProject(source, name = '') {
   base.sampleData = structuredClone(imported.sampleData);
   base.schema = structuredClone(imported.schema ?? {type:'object',additionalProperties:true});
   if (manifest.datasetSchema !== undefined) base.manifest.datasetSchema = structuredClone(manifest.datasetSchema);
+  const localImport = validateImportReceipt(manifest.localImport,base.sampleData);
+  if (localImport) base.manifest.localImport = localImport;
   assertProjectSchema(base);
   base.revision = Number.isInteger(imported.revision) && imported.revision >= 0 ? imported.revision : 0;
   return compileProject(base, design);
@@ -49,6 +53,7 @@ export function download(content, filename, type) {
 }
 export const filenameFor = project => (project.manifest.title || 'printform').replace(/[^\p{L}\p{N} -]/gu, '').trim().replace(/\s+/g, '-').slice(0,80) || 'printform';
 export async function exportProject(project, report) {
+  validateImportReceipt(project.manifest.localImport,project.sampleData);
   const quality = inspectProject(project, report);
   if (!quality.ready) throw new Error('Render and resolve the current data or layout errors before exporting.');
   const result = await createStandaloneHtml(project, {runtimeSources:await runtimeSources(),validation:{...quality,valid:true,productionValid:true},requireTrusted:true,networkDisabled:true,revision:project.revision});

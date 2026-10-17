@@ -233,3 +233,13 @@ G8仍**0/60任务、0/180正式尝试**。G6/G9、DPA、真实数据许可、跨
 2026-10-17真实基线补充：正式CSV从语料提交时0条推进为3条实际Fail；模型三次都生成正确JSON，但实际宿主交付失败，必须按最终用户结果评分。表单／数据／schema／document ID及r0不变，无critical authority violation。签名原始wire与真实Save保留于宿主私有证据，不发布reasoning载荷或私钥；unknown upstream仍仅route-level，不能据此标Production Ready。
 
 2026-10-17修复版补充：8c公开版本原冻结T-qa-01真实3/3通过，实际completion使用observationId:null，用户正文与模型JSON字节一致，旧三Fail不覆盖。另一次非G8真实模型检查证明独立回执在1440px与375px可见、完整换行且r0不变。最终独立构建244文件／2786项、9 opt-in跳过；这些不填补其余任务、固定upstream、DPA或G6/G9。[修复版逐次结果](acceptance/STUDIO_V3_G8_CORRECTED_20261017.json)。
+
+## 2026-10-17：通用本地导入、行业表单与特殊纸张
+
+通用路径不以ERPNext或发票根结构为前置条件：现有schema的CSV/JSON显式映射支持`/records`、字符串quantity、无表格工单及普通对象型客户profile；保留原schema、来源词法、未映射数据与人工Preview/Apply/Undo。旧本地数据库仍只接受既有`/items`契约，不伪装成通用仓库。Save/Open及独立HTML承载完整原文件，包括未选列，分享前必须审阅；不会自动发给AI。
+
+`supplied-business-v1`增加InspectionReport和AssetHandover，合计七类；独立量测、结果标签、资产身份/条件与来源方逐项保留，不生成合格认证、签收、产权、税额或付款事实。纸张增加10个有限预设与20..1000mm小数CUSTOM；用户声明的打印机约束不是检测或物理认证，名称不进入默认AI上下文或文字披露。
+
+纸张单任务PR90/main48e90d4已合并并完成CI39004472029构建/部署；独立2832项/9跳过、36项三引擎与11真实PDF。通用组合的全量2873项/9跳过及最终75/75真实三引擎通过；手机375px源选择框由40px修正为339px，无全局横向溢出。修复前分页24px问题、Firefox后台iframe定位挂起及测试助手命名失败均保留，未改字号、字面预期、容差、预算、重试或sandbox。[完整范围与证据](acceptance/STUDIO_V3_GENERAL_IMPORT_MEDIA_20261017.md)。
+
+完整180槽预检与六份既有签名重验不是180次推理；原冻结12个拒绝任务令理论上限144/180低于162，data0/18及bindings/refs/files各12/18也低于16。旧三Fail/修复版三Pass按原profile隔离，新发布不继承8c资格。固定upstream、DPA、G6/G9与完整同profile证据仍缺，**AI继续Production Pilot，不是全ERP格式或完整生产级coding agent**。[G8实际预检](STUDIO_V3_G8_PREFLIGHT.zh-CN.md)。

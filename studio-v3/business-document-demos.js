@@ -1,12 +1,15 @@
 import { BUSINESS_DOCUMENT_PROFILE } from './business-document-adapter.js';
 import { serviceDemo, packingDemo } from './business-service-logistics-demos.js';
+import { inspectionDemo, handoverDemo } from './business-inspection-handover-demos.js';
 
 export const BUSINESS_DEMO_TEMPLATES = Object.freeze([
   { documentKind: 'AccountStatement', label: 'Account statement · 对账单', baseType: 'invoice', description: 'Explicit references/due dates, debit/credit meanings and supplied balances; no aging or reconciliation.' },
   { documentKind: 'StockMovement', label: 'Stock movement · 库存移动单', baseType: 'delivery', description: 'Supplied lot, serial list, expiry, locations, quantity precision and UOM; no stock posting or conversion.' },
   { documentKind: 'PayrollSlip', label: 'Payroll slip · 工资明细', baseType: 'invoice', description: 'Fictional supplied earnings, deductions, hours, hourly rate and net pay; no payroll calculation or bank data.' },
   { documentKind: 'ServiceReport', label: 'Service report · 维修服务报告', baseType: 'delivery', description: 'Supplied job, customer, asset and work observations with provenance; no acceptance, fees or completion inference.' },
-  { documentKind: 'PackingList', label: 'Packing list · 装箱单', baseType: 'delivery', description: 'Supplied packages, item quantities, locations and independent weights with provenance; no summation or conversion.' }
+  { documentKind: 'PackingList', label: 'Packing list · 装箱单', baseType: 'delivery', description: 'Supplied packages, item quantities, locations and independent weights with provenance; no summation or conversion.' },
+  { documentKind: 'InspectionReport', label: 'Inspection report · 检验报告', baseType: 'delivery', description: 'Supplied observations, independent measurements and source result labels; no inferred conformance or certification.' },
+  { documentKind: 'AssetHandover', label: 'Asset handover · 资产交接', baseType: 'delivery', description: 'Supplied asset identities, condition, quantities and source parties; no signature, receipt or ownership inference.' }
 ].map(entry => Object.freeze({ ...entry, status: 'ready', scenarioCount: 1 })));
 const provenance = (sourcePath, meaning) => ({ sourcePath, meaning });
 const money = (amount, sourcePath, meaning, minorUnitDigits = 3) => ({ amount, currency: 'SGD', minorUnitDigits, provenance: provenance(sourcePath, meaning) });
@@ -70,7 +73,8 @@ function payroll() {
   }, notes: 'All identities and amounts were invented for this fixture. No real employee records, bank identifiers or payroll provider. Not statutory payroll certification or payment execution.' };
 }
 export function businessDemoInput(kind) {
-  const factories = { AccountStatement: statement, StockMovement: stock, PayrollSlip: payroll, ServiceReport: () => serviceDemo(common), PackingList: () => packingDemo(common) };
+  const factories = { AccountStatement: statement, StockMovement: stock, PayrollSlip: payroll, ServiceReport: () => serviceDemo(common), PackingList: () => packingDemo(common),
+    InspectionReport: () => inspectionDemo(common), AssetHandover: () => handoverDemo(common) };
   if (!Object.hasOwn(factories, kind)) throw new Error(`Unknown supplied business demo: ${kind}`);
   return factories[kind]();
 }

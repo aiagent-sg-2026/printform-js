@@ -20,6 +20,8 @@ who don't need the diary.
 - Add an executable read-only180-slot G8 preflight: recheck exact-profile signed evidence and registry agreement, retain prior failures and report immutable144/180 ceiling, missing custody and release mismatch without model calls or fabricated attempts.
 - Add10 finite paper presets plus fractional20..1000mm CUSTOM, typed reversible page authoring and user-declared printer constraints; device names stay private and native device/driver/physical qualification remains blocked.
 - Fix the real24px inner-page screen-gap regression without changing paper, margins, fonts or geometry tolerances. Independent paper-only build:2832 tests passed/9 skipped; strict3-engine36/36 with11 actual PDFs,114 agent contract examples passed.
+- Add bounded local CSV/JSON review and explicit field mapping against existing schemas, including custom collections/string quantity and no-table forms; preserve raw-source receipts and warn that Save/HTML includes unselected columns. Keep legacy dataset storage separate and raw imports out of AI context.
+- Add sourced InspectionReport/AssetHandover, completing seven supplied-business starters without invented certification/receipt/ownership. Fix object-profile misclassification, hidden-items default selection and mobile16% column inheritance;2873 tests/9 skipped,75 strict browser scenarios and18 real PDFs, with prior failures retained.
 
 ### Service reports and packing lists — 2026-10-17
 

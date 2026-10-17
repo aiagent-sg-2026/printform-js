@@ -16,7 +16,7 @@ import { AIElementTags } from './ai-element-tags.js';
 import { restoreZoom, persistZoom } from './zoom-preference.js';
 import { setupUpdates } from './update.js';
 import { createUpdateWork } from './update-work.js';
-import { pageDimensions, pageSettings } from './design-authoring.js';
+import { pageDimensions, pageSettings, sectionOrder } from './design-authoring.js';
 import { syncPageControls, navigatePages } from './page-navigation.js';
 import { createValidateAll } from './validate-all.js';
 import { scenarioCandidate } from './scenario-matrix.js';
@@ -27,17 +27,17 @@ let bus, displayed, zoom = 1, pageIndex = 0, editQueue = Promise.resolve();
 const database = new DemoDatabase({
   project:() => bus?.project, state:() => state, context:() => bus,
   render:renderPanels, busy:syncControls, download,
-  apply:async (data,reference,context,source = null,title = undefined,sourceSchema = undefined) => {
+  apply:async (data,reference,context,source = null,title = undefined,sourceSchema = undefined,localImport = null) => {
     if (context !== bus) throw new Error('Dataset was saved, but the document changed. Load it into the intended form again.');
-    await replaceData(bus,data,'erp',reference,source,title,sourceSchema); state.dataDraft = null; await changed();
+    await replaceData(bus,data,'erp',reference,source,title,sourceSchema,localImport); state.dataDraft = null; await changed();
   }
 });
 const drafts = new FormDrafts({
   selection:() => state.selected, context:() => bus, render:renderPanels,
-  externalPending:() => Boolean(database.draft), clearJSON:() => { state.dataDraft = null; },
+  externalPending:() => Boolean(database.draft || database.importReview), clearJSON:() => { state.dataDraft = null; },
   discardExternal:() => database.resetDraft(),
   apply:snapshot => queueEdit(() => applyForm(snapshot)),
-  applyExternal:() => queueDatabase('apply-draft',{}),
+  applyExternal:() => queueDatabase(database.importReview ? 'import-apply' : 'apply-draft',{}),
   stay:() => {
     ai.suspend();
     if (drafts.focusMeta?.key === 'data:global') { database.group = 'json'; database.render(); drafts.restore(); }
@@ -145,7 +145,8 @@ function queueDatabase(name,target) {
 }
 function install(project, reference = null, source = 'imported-data') {
   stopRun(); bus?.deactivate(); paper.cancel(); bus = createBus(project,reference,source); ai.invalidate(); database.resetDraft(); drafts.clear();
-  Object.assign(state,{selected:'items',sample:'erp',report:null,matrix:{},dirty:false,dataDraft:null,collapsed:{},search:'',jsonError:''});
+  const design = designOf(project), selected = design.blocks.items.enabled ? 'items' : sectionOrder(design).find(id=>design.blocks[id].enabled) || 'global-style';
+  Object.assign(state,{selected,sample:'erp',report:null,matrix:{},dirty:false,dataDraft:null,collapsed:{},search:'',jsonError:''});
   pageIndex = 0; renderPanels(); syncControls(); render();
 }
 async function switchSample(id) {
@@ -257,14 +258,15 @@ document.addEventListener('change', e => {
   }
   if (e.target.id === 'database-choice') { const id = e.target.value; e.target.value = bus.project.studioV3Session.database?.id || ''; drafts.guard(() => queueDatabase('choose',{id})).catch(e=>status(e.message)); }
 });
+$('#dataset-file').accept = '.csv,.json,text/csv,application/json';
 $('#dataset-file').addEventListener('change', async e => {
   const file = e.target.files[0], context = bus; e.target.value = ''; if (!file) return;
   state.fileReads += 1;
   try {
     if (file.size > 2*1024*1024) throw new Error('Dataset exceeds the 2 MB limit.');
-    const source = await file.text();
+    let source; try { source = new TextDecoder('utf-8',{fatal:true,ignoreBOM:true}).decode(await file.arrayBuffer()); } catch { throw new Error('Import requires valid UTF-8 text. The form and saved datasets are unchanged.'); }
     if (context !== bus) throw new Error('The document changed. Import the dataset again.');
-    queueDatabase('import-data',{source});
+    await queueDatabase('import-file',{source,filename:file.name});
   } catch (error) { status(error.message); } finally { state.fileReads -= 1; }
 });
 $('#document-name').addEventListener('change', e => { const title = e.target.value.trim(); if (title) queueEdit(() => mutate([{type:'set_manifest_value',path:'/title',value:title}],'template name')); });

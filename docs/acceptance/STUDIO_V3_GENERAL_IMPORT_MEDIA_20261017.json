@@ -1,0 +1,260 @@
+{
+  "schema": "general-studio-import-media-evidence-v1",
+  "sourceBase": "b7bcf68799631887ace5b621d17c8e7acadbc7ec",
+  "scope": "Fixed-source isolated snapshot plus owned overlays; feature evidence, not G8 or production qualification",
+  "fullSuite": {
+    "filesPassed": 249,
+    "filesSkipped": 1,
+    "testsPassed": 2873,
+    "testsSkipped": 9,
+    "afterwardChange": "Import table HTML class and CSS only;24 import consumers and rebuilt site passed afterward"
+  },
+  "browser": {
+    "stats": {
+      "startTime": "2026-10-17T05:27:38.658Z",
+      "duration": 97372.99900000001,
+      "expected": 75,
+      "skipped": 0,
+      "unexpected": 0,
+      "flaky": 0
+    },
+    "engines": [
+      "chromium",
+      "firefox",
+      "webkit"
+    ],
+    "importCases": 18,
+    "businessCases": 21,
+    "paperCases": 36,
+    "retries": 0,
+    "chromiumSandbox": true,
+    "reportSha256": "56aad088b53717c3c87822fcbc03fdaea3b141efec5c4d89f25ff33cc553ab01"
+  },
+  "actualPdfCount": 18,
+  "actualPdfs": [
+    {
+      "case": "AccountStatement: no-code New plus supplied Open/save/reopen/offline export",
+      "engine": "chromium",
+      "bytes": 124379,
+      "sha256": "2936957941f6d3711ac92f0bd929e676b90b4f90be9e1594a3ce8e97129a8efb"
+    },
+    {
+      "case": "StockMovement: no-code New plus supplied Open/save/reopen/offline export",
+      "engine": "chromium",
+      "bytes": 133991,
+      "sha256": "db797ee67914d23c485ecb43dd9850dc32b35b4b9dc9701336b5e9a8fbfea135"
+    },
+    {
+      "case": "PayrollSlip: no-code New plus supplied Open/save/reopen/offline export",
+      "engine": "chromium",
+      "bytes": 117455,
+      "sha256": "2d809759d6cc9eb8a581278d42579cf5b529170248cfeab85e4082f68d0f30b0"
+    },
+    {
+      "case": "ServiceReport: no-code New plus supplied Open/save/reopen/offline export",
+      "engine": "chromium",
+      "bytes": 192158,
+      "sha256": "0207dec7751afd566bc0bf5c4f1ffb620fc49e25f352a92b669ead71761f8f04"
+    },
+    {
+      "case": "PackingList: no-code New plus supplied Open/save/reopen/offline export",
+      "engine": "chromium",
+      "bytes": 193980,
+      "sha256": "576f7b0eb2dc4a5237a12191d7f2e671340eafb19c45735efd3ee879652ebe6b"
+    },
+    {
+      "case": "InspectionReport: no-code New plus supplied Open/save/reopen/offline export",
+      "engine": "chromium",
+      "bytes": 138368,
+      "sha256": "f427120c2b7c3d3b786c58223b247e1ba3b48a5228325cc47f6caac054346161"
+    },
+    {
+      "case": "AssetHandover: no-code New plus supplied Open/save/reopen/offline export",
+      "engine": "chromium",
+      "bytes": 135751,
+      "sha256": "9dea9f8fc59ca575a9c6a4d72c5e380a09a17d2b15a6c2cc7e3395d53bbbc1d5"
+    },
+    {
+      "case": "A4: no-code selection, measured preview, save/open, offline HTML and actual PDF",
+      "engine": "chromium",
+      "bytes": 10984,
+      "sha256": "e58b5618fada35600d752da875b512a07fa0b0b14e3922588e50c6c78e1ba910"
+    },
+    {
+      "case": "A5: no-code selection, measured preview, save/open, offline HTML and actual PDF",
+      "engine": "chromium",
+      "bytes": 10982,
+      "sha256": "decfc2d832daa89e0781bdecc700bd565bccab6127cfda6cb82bcd03780f30cc"
+    },
+    {
+      "case": "LETTER: no-code selection, measured preview, save/open, offline HTML and actual PDF",
+      "engine": "chromium",
+      "bytes": 10966,
+      "sha256": "cf6ff9b7850656550efa9b039db372898afa27b49cbfb0d77f609bc725b88fb6"
+    },
+    {
+      "case": "LEGAL: no-code selection, measured preview, save/open, offline HTML and actual PDF",
+      "engine": "chromium",
+      "bytes": 10969,
+      "sha256": "a5d41f3721a1cee7dadda7b15184436353cae25a2785c523e6b66ae600453c7a"
+    },
+    {
+      "case": "RECEIPT_58: no-code selection, measured preview, save/open, offline HTML and actual PDF",
+      "engine": "chromium",
+      "bytes": 10987,
+      "sha256": "f64bab1bfec6ddd84282074174049613df87ab978d9675e5be83a010ff07fcb1"
+    },
+    {
+      "case": "RECEIPT_80: no-code selection, measured preview, save/open, offline HTML and actual PDF",
+      "engine": "chromium",
+      "bytes": 10989,
+      "sha256": "4f76bd5e1d49a42a210f7a4e14720263afe77fd91338e3ec151a906c97e7d75e"
+    },
+    {
+      "case": "LABEL_100_70: no-code selection, measured preview, save/open, offline HTML and actual PDF",
+      "engine": "chromium",
+      "bytes": 10971,
+      "sha256": "2890c64a006db8fb9e532660f961eb5ad62a46e34bb9675ad368fd564575bcf6"
+    },
+    {
+      "case": "LABEL_50_30: no-code selection, measured preview, save/open, offline HTML and actual PDF",
+      "engine": "chromium",
+      "bytes": 10990,
+      "sha256": "7db9502831769b8268c6bc16863804497b31dbc78e45650569bb6b8a3d83d9db"
+    },
+    {
+      "case": "CONTINUOUS_210_140: no-code selection, measured preview, save/open, offline HTML and actual PDF",
+      "engine": "chromium",
+      "bytes": 10989,
+      "sha256": "9d672566b250b7b48dbb27ae945e8e496f9e0d9cb23383a2ebeadb9d73c9d808"
+    },
+    {
+      "case": "FANFOLD_210_280: no-code selection, measured preview, save/open, offline HTML and actual PDF",
+      "engine": "chromium",
+      "bytes": 10984,
+      "sha256": "e1d73c8cccd3d11fb97114037fdca69dc19001c0f44570a50e7e319b0dc947e6"
+    },
+    {
+      "case": "CUSTOM: no-code selection, measured preview, save/open, offline HTML and actual PDF",
+      "engine": "chromium",
+      "bytes": 10983,
+      "sha256": "c6832f238f90ef97e23ec79c6f1480394a548adb4fd4d2fdc13ea0d8dc20252d"
+    }
+  ],
+  "agent": {
+    "tools": 22,
+    "operations": 13,
+    "guides": 3,
+    "contractExamples": 114,
+    "reviewedChanges": 38,
+    "publicationBaseline": "a99c932e45a95d4d5b5c811e7dbc0db3256ddf99"
+  },
+  "nativeVisual": {
+    "chrome": "155.0.8059.84",
+    "desktopWidth": 1440,
+    "mobileWidth": 375,
+    "mobileRowWidth": 355,
+    "beforeSourceControlWidth": 40.796875,
+    "afterSourceControlWidths": [
+      339,
+      339
+    ],
+    "globalOverflow": 0,
+    "revisionBeforeHumanApply": "r0",
+    "sideFalseErrorsBefore": 1,
+    "sideErrorsAfter": 0,
+    "fullSourceSharingWarningVisible": true
+  },
+  "preservedFailures": [
+    {
+      "run": "first66",
+      "pass": 30,
+      "fail": 36,
+      "reason": "30 geometry failures and6 NodeDOMParser test calls"
+    },
+    {
+      "run": "selection72",
+      "pass": 71,
+      "fail": 1,
+      "reason": "Firefox auxiliary iframe locator world stalled; use existing live main-world DOM and actual visible Preview workflow, unchanged source oracle and90s/12s budgets"
+    },
+    {
+      "run": "helper75",
+      "pass": 72,
+      "fail": 3,
+      "reason": "Test helper/local const name collision; helper renamed only"
+    }
+  ],
+  "privacy": {
+    "exportsContainOriginalCompleteFileIncludingUnselectedColumns": true,
+    "sourceAuthenticity": "unverified",
+    "automaticAIUpload": false,
+    "deviceNamesInDefaultOrTextContext": false
+  },
+  "g8": {
+    "qualified": false,
+    "frozenRefusalTasks": 12,
+    "maximumPass": 144,
+    "requiredPass": 162,
+    "familyMaximum": {
+      "data": 0,
+      "bindings": 12,
+      "refs": 12,
+      "files": 12
+    },
+    "familyRequired": 16,
+    "newFormalAttempts": 0,
+    "priorEvidenceProfilesStaySeparate": true
+  },
+  "physical": {
+    "status": "Blocked",
+    "reason": "No configured CUPS destination or default printer",
+    "jobsSubmitted": 0,
+    "userDeclarationsAreCertification": false
+  },
+  "productionAIQualified": false,
+  "runtimeSourceHashes": {
+    "src/printform/paper-sizes.js": "b5ee9846e7bfc5d2bf5c3ca28dcfd72f6ab63989be9d834b354699ee6586b7cd",
+    "src/printform/helpers.js": "1fddfeeed93776eb402b8765fec4d0f5e10aaeb49ed82f26a8abb47dd60182fe",
+    "studio-v3/paper-settings.js": "4fb52ae0f44583e0800ded3e6d0bd35e1155274c0374983c3f997e8d702b2ea6",
+    "studio-v3/paper-controls.js": "5a83f5c394a8f37217efd31ef61fd56e962c5703ad20d6efbf284639251b6269",
+    "studio-v3/design-authoring.js": "6067ec2f4c5423401e54c5cebe60b382286ef44860b7a335a762ece27f8857a7",
+    "studio-v3/design-validation.js": "47f3084f997101f3c14047163602c79358d4b7937fcc6e050b5049a87a74ceca",
+    "studio-v3/model.js": "19aad246faec5dd6b8281d2807c562d49ce9b9c89c98a4ec8bc1f1196c74e3b2",
+    "studio-v3/workspace-views.js": "c28b0c2d7b8744275076e94d918dabac643aed07cc564dbcf76291691c27e106",
+    "studio-v3/controller.js": "d3fd91dfc1812d1a756a2cf713b724b6232488037c28e85654596d07b65ab246",
+    "studio-v3/canvas-controls.js": "4190ae09e5fd78b82ef4b2734f0c26ad90cc1ee989510d632e9fc41f705f31ae",
+    "studio-v3/template.js": "94bbc9dd9e59e5fb91e6656e249d3781d6ce40a37ce753595cfd8d863eee2569",
+    "studio-v3/validation.js": "b4c2b3224c20a1dd47b664fc5b666be067e5ca73a2e795d95307e0fb615be2b1",
+    "studio-v3/form-drafts.js": "b70d15c6db09b1130250f8d19b9570f2669722339bf63f0871439a3e02383d14",
+    "studio-v3/agent-page-settings.js": "60368369400c5116d797e0632b49523e9a2d754e4e57cd040590869ba0a821b0",
+    "studio-v3/agent-operation-schemas.js": "6543941fc600ef7e3b1a0b8f4c751125046cf7a2be3de2bbc53262bf0382efb0",
+    "studio-v3/agent-contracts.js": "96c1ca691df4c755ea622d40ab85ac9b5afed6aa5fea0c05502781ac9fdcfe0e",
+    "studio-v3/agent-registry.js": "4370ddddbc64460387269f417ef8a1d1b9ac649c5bb7a7d5cff17ff31627fd2e",
+    "studio-v3/ai-authoring.js": "2e03f1e105f197b7352455dc84583285e525f6447751f805ee13e94356c698ef",
+    "studio-v3/ai-chat-protocol.js": "4e785e08d8beee296a38a77e8a65025b99365266b590839b590513b3d16e828a",
+    "studio-v3/agent-knowledge.js": "41821d8ce5e286155608ecfb3e42066f35051c47ca5ded463b9e9e7d9430e08d",
+    "studio-v3/observation-context.js": "a2160f8b9150f3d7972d668a113af06c9b577f9fc5e9a7253af4238feb652adc",
+    "studio-v3/app.js": "5b2dfb9371ebedb238272fb92f5ec7280356a05b4853691e1ebe4dd77d4d4c27",
+    "studio-v3/database-controller.js": "2d4f4c04de2a2ae12917748bf2292e0ad1e50f61fe8753b36255b323c7d5cc5c",
+    "studio-v3/database-model.js": "73a98a987c08978ddc26244be7e9fd959484693d713d18c03b115d9a82bddce1",
+    "studio-v3/database-view.js": "3be8fc5a28fadaac6ffd295c6ee2cd71ebed40363d4e16c5c7b6d7aa59a9b8a3",
+    "studio-v3/data-source-adapter.js": "a31610a283b9677ba9f182930c377c60caad3ef8bbcfa79d8838d61d47b7dd5a",
+    "studio-v3/file-io.js": "bd6fd013230c95dfc8e7324af6413d1edd29fefecda2e1f1e6af666aa414115f",
+    "studio-v3/database-compatibility.js": "c2035e3bdc8048bc27887b9c20ca962680ba3d4c8467783ef1c600b051bbbdbd",
+    "studio-v3/structured-import-parser.js": "5aa4a1c5a0de3661e438acb44187df05739497c2f8f31e475a3ab4c6bd8ae74e",
+    "studio-v3/structured-import-values.js": "214bbd6b02e6cfe4ef0fe06d8beffed759e25394f80302c45088dedfdbde951d",
+    "studio-v3/structured-import-model.js": "c1b99d9c34d65373e5685d4f417340027702e4526ec41c9a935177ce29eb0641",
+    "studio-v3/structured-import-receipt.js": "096ce77d05ba41b26d376a599a28288a158e988016909a690cb6bbb062dc2150",
+    "studio-v3/structured-import-controller.js": "123e5ebeb66289a56b48709c63034c3f74ad390743951ed49470c32a265083ae",
+    "studio-v3/structured-import-view.js": "f7c410fab316a2a00675e8f18fc552864aa20d856bddc85119364e17184356c8",
+    "studio-v3/business-inspection-handover.js": "9a5405c067db08506035fb04eced647c0c591daf7aab3b7dfd80030fd2dcb25a",
+    "studio-v3/business-inspection-handover-demos.js": "113659a298c680ad0fb8e70b157f31799d508427acf134e3102a236c82ac8f88",
+    "studio-v3/business-document-adapter.js": "0f735292419e9022bf01d22f8e77d264ddbcd03bf276ba81b7d9ca6b43c295fb",
+    "studio-v3/business-document-project.js": "114cb6003206d092b3c9fd3423f40dd5577b389d97189831fc2071f808184356",
+    "studio-v3/business-document-demos.js": "86268de9c033c3fccaee8d1912a8629835037b5b2ea7aba71d54a02cba4ab4f1",
+    "studio-v3/agent-binding-invariants.js": "2ef7f0662024a88088a43a205fbf3a2ce3a5a44cf4a5151d84f2e09700dd7e72",
+    "studio-v3/agent-workflows.js": "ef890c4f2c4c5aabd4c1ffb3ae4bf000a1b1d1d61173eeab87bea89179a1145b",
+    "studio-v3/styles.css": "7af22927f651eff7c19c8a2d9508b1c2b9a9bb2a1e7d62975df6885a03dfa213"
+  }
+}

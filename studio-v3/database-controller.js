@@ -1,14 +1,19 @@
 import { createLocalDatasetSource } from './data-source-adapter.js';
 import { createDatabase, storageMessage, DATABASE_NAME } from './database-store.js';
-import { datasetRecord, datasetMatchesProject, datasetName, datasetTitleFor, dataValue, exportDataset, importDataset, itemColumns, newItem, numericPaths, removeRowPaths, setDataValue, starterRecords, validateDataset } from './database-model.js';
+import { datasetRecord, datasetMatchesProject, datasetName, datasetTitleFor, dataValue, exportDataset, importDataset, itemColumns, newItem, numericPaths, removeRowPaths, sameData, setDataValue, starterRecords } from './database-model.js';
 import { designOf } from './model.js';
 import { databaseView } from './database-view.js';
 import { assertCollectionBinding, assertProjectSchema, projectSourceSchema, validateSourceSchema } from './dataset-schema.js';
+import { editImportReview, importReviewAction, reviewImportFile } from './structured-import-controller.js';
+import { validateImportReceipt } from './structured-import-receipt.js';
+import { assertLegacyDataset } from './database-compatibility.js';
+import { bindingValidation } from './validation.js';
 
 const referenceFor = record => ({id:record.id,title:record.title,type:record.type,revision:record.revision,origin:record.origin || 'local-demo'});
 function withRecordContract(project,record) {
   const contract = validateSourceSchema(record.sourceSchema,record.data,record.id) || projectSourceSchema({...project,sampleData:record.data});
-  return contract ? {...record,sourceSchema:{...contract,datasetId:record.id}} : record;
+  const localImport = validateImportReceipt(record.localImport,record.data);
+  return {...record,...(contract ? {sourceSchema:{...contract,datasetId:record.id}} : {}),...(localImport ? {localImport} : {})};
 }
 export class DemoDatabase {
   constructor(callbacks) {
@@ -36,12 +41,13 @@ export class DemoDatabase {
     if (!selected) return {project,reference:null};
     const record = withRecordContract(project,selected), sourceSchema = record.sourceSchema;
     const next = {...project,manifest:{...project.manifest,datasetSchema:sourceSchema ? {sourceId:sourceSchema.sourceId,datasetId:sourceSchema.datasetId,version:sourceSchema.version} : null,...(record.data.document?.currency ? {currency:record.data.document.currency} : {})},schema:sourceSchema?.schema || project.schema,sampleData:structuredClone(record.data)};
+    next.manifest.localImport = validateImportReceipt(record.localImport,record.data);
     assertProjectSchema(next);
     return {project:next,reference:referenceFor(record)};
   }
-  resetDraft() { this.draft = null; this.errors.clear(); this.rowPage = 0; this.error = ''; }
+  resetDraft() { this.draft = null; this.importReview = null; this.errors.clear(); this.rowPage = 0; this.error = ''; }
   guardDraft() {
-    if ((this.draft || this.state.dataDraft !== null) && !confirm('Discard unapplied table or JSON edits? Saved database records will not change.')) return false;
+    if ((this.draft || this.importReview || this.state.dataDraft !== null) && !confirm('Discard unapplied table, JSON or import review edits? Saved database records will not change.')) return false;
     this.resetDraft(); this.state.dataDraft = null; return true;
   }
   ensureDraft() {
@@ -53,6 +59,10 @@ export class DemoDatabase {
     return this.draft;
   }
   input(target) {
+    if (target.dataset.dbImportControl) {
+      try { editImportReview(this,target); } catch (error) { this.error = error.message; this.render(); }
+      return;
+    }
     if (target.id === 'database-name') this.ensureDraft().title = target.value;
     else if (target.dataset.dbPointer) {
       const draft = this.ensureDraft(), pointer = target.dataset.dbPointer;
@@ -75,9 +85,8 @@ export class DemoDatabase {
     const draft = this.ensureDraft(); this.draftErrors();
     if (this.errors.size) throw new Error(`Enter a finite number for ${[...this.errors][0]}.`);
     const title = datasetName(draft.title);
-    validateDataset(draft.data);
-    const candidate = {...this.project,sampleData:draft.data};
-    assertProjectSchema(candidate); assertCollectionBinding(candidate,designOf(candidate).collection,undefined,false);
+    const validation = bindingValidation({...this.project,sampleData:draft.data});
+    if (!validation.valid) throw new Error(validation.errors[0].message);
     draft.title = title; return draft;
   }
   render() {
@@ -95,7 +104,7 @@ export class DemoDatabase {
   }
   async refresh() { this.records = (await this.store.list()).sort((a,b)=>a.title.localeCompare(b.title)); }
   async apply(record, data = record.data) {
-    await this.callbacks.apply(data,record ? referenceFor(record) : null,this.context,null,undefined,record?.sourceSchema);
+    await this.callbacks.apply(data,record ? referenceFor(record) : null,this.context,null,undefined,record?.sourceSchema,record?.localImport || null);
     this.resetDraft(); this.message = this.store.persistent ? 'Dataset saved locally and applied to the print form.' : 'Applied in this tab only. Export before leaving; storage is unavailable.';
   }
   async choose(id) {
@@ -110,6 +119,7 @@ export class DemoDatabase {
   }
   async save(copy) {
     if (this.state.dataDraft !== null) throw new Error('Apply your advanced JSON edits before saving the dataset.');
+    assertLegacyDataset(this.draft?.data || this.project.sampleData);
     const draft = this.validateDraft();
     const reference = copy ? null : draft.reference;
     if (!copy && !reference) throw new Error('Save this form draft as a new dataset.');
@@ -122,6 +132,9 @@ export class DemoDatabase {
     const record = datasetRecord(designOf(this.project).type,draft.data,title,reference?.id);
     const sourceSchema = projectSourceSchema({...this.project,sampleData:draft.data});
     if (sourceSchema) record.sourceSchema = {...sourceSchema,datasetId:record.id};
+    const receipt = sameData(draft.data,this.project.sampleData) ? validateImportReceipt(this.project.manifest.localImport,draft.data) : null;
+    if (receipt) record.localImport = receipt;
+    if (receipt) exportDataset(record);
     if (this.project.studioV3Session.source?.kind === 'imported-data') record.origin = 'imported-data';
     const [saved] = await this.store.write([{id:record.id,record,expectedRevision:reference?.revision ?? null}],{key:`active:${record.type}`,value:record.id});
     await this.refresh(); this.selected[record.type] = record.id;
@@ -184,15 +197,20 @@ export class DemoDatabase {
       } else if (name === 'save' || name === 'copy') await this.save(name === 'copy');
       else if (name === 'choose') await this.choose(target.id);
       else if (name === 'import-data') await this.import(target.source);
+      else if (name === 'import-file') await reviewImportFile(this,target.source,target.filename);
+      else if (['import-preview','import-apply','import-cancel'].includes(name)) await importReviewAction(this,name);
       else if (name === 'reload') await this.choose(this.project.studioV3Session.database?.id);
       else if (name === 'delete') await this.remove();
       else if (name === 'reset') await this.restore();
       else if (name === 'refresh') { await this.refresh(); this.message = 'Saved dataset list refreshed. Your form and draft are unchanged.'; }
       else if (name === 'export') {
         const draft = this.draft;
+        assertLegacyDataset(draft?.data || this.project.sampleData);
         const record = datasetRecord(designOf(this.project).type,draft?.data || this.project.sampleData,draft?.title || datasetTitleFor(this.project));
         const sourceSchema = projectSourceSchema({...this.project,sampleData:record.data});
         if (sourceSchema) record.sourceSchema = {...sourceSchema,datasetId:record.id};
+        const receipt = sameData(record.data,this.project.sampleData) ? validateImportReceipt(this.project.manifest.localImport,record.data) : null;
+        if (receipt) record.localImport = receipt;
         this.callbacks.download(exportDataset(record),'studio-v3-dataset.json','application/json');
       }
     } catch (error) { this.error = error.code === 'DATASET_CONFLICT' || error instanceof DOMException ? storageMessage(error) : error.message; throw error; }
