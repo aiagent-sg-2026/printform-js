@@ -4,14 +4,15 @@
 
 ## 入口与生命周期
 
-- 非编程用户：Studio v3 → **New** → **Business demo templates** → 对账单、库存移动单、工资明细、服务记录、装箱单、检验报告或资产交接。七者使用同一个 New 对话框、编辑器、FormSpec、JSON Pointer 绑定、预览和分页器。
+- 非编程用户：Studio v3 → **New** → **Business demo templates** → 对账单、库存移动单、工资明细、服务记录、装箱单、检验报告、资产交接、生产工单或工时表。九者共用New、编辑器、FormSpec、JSON Pointer、预览和分页。New只提供虚构starter；真实来源需显式映射的SDK构造便携项目后Open，不是已挂载的ERP连接器。
 - 可编辑标题、字段标签、排版、样式；Save 保存包含当前事实的 `.printform.json`，Open 可重开该文件或导出的 HTML；Export 导出内联运行时的离线 HTML。Print 使用浏览器打印流程，不执行支付、出入库或过账。
 - 供应方 API：`normalizeBusinessDocument(input)` 位于 `studio-v3/business-document-adapter.js`；`createBusinessDocumentProject(input)` 位于 `studio-v3/business-document-project.js`。后者返回可供既有 `saveProject` / `readProject` / `exportProject` 消费的完整项目。
-- 七份完整、只含自造资料的输入：`businessDemoInput('AccountStatement' | 'StockMovement' | 'PayrollSlip' | 'ServiceReport' | 'PackingList' | 'InspectionReport' | 'AssetHandover')`，入口仍为 `studio-v3/business-document-demos.js`，服务/物流及检验/资产资料在独立模块内。每次返回独立新对象，不读取真实业务系统或模型资料。
+- 九份完整虚构输入：`businessDemoInput('AccountStatement' | 'StockMovement' | 'PayrollSlip' | 'ServiceReport' | 'PackingList' | 'InspectionReport' | 'AssetHandover' | 'ManufacturingOrder' | 'Timesheet')`，入口为 `studio-v3/business-document-demos.js`；制造／工时事实位于独立模块。每次返回独立对象，不读取真实业务系统或模型资料。
 - 源事实归一化时生成 `/printRows` 打印快照，不伪造 `/items`，不冒充发票总额。旧 catalogue 和旧 `/items` 本地 dataset workbench 的契约不变；本 profile 不宣称可在那个工作台保存为 legacy dataset。模板编辑、工程 Save/Open/Export 与该限制无关。
 - Advanced JSON 里的源事实和 `/printRows` 是快照，不存在自动双向重算；源事实变化应重新运行 creator 并 Open 新工程，不要仅改源字段后声称打印值已更新。直接编辑工程 JSON 须同时维护真实来源与绑定快照；schema 会校验声明的打印行形状，但不能认证供应方事实或替代 canonical 输入校验。
+- 制造工单与工时表的完整字段、非零负数量拒绝、原词法／UOM／来源保留及“不推算完工、工资或审批”边界，见[制造／工时来源契约](GENERAL_CURRENCY_MANUFACTURING_TIMESHEET.zh-CN.md)。这是有限打印投影，不是任意ERP原生文件自动识别。
 
-Node 侧将三份完整虚构输入写成可 Open 的工程（需已安装仓库依赖；使用项目要求的 Node 版本；不会调用模型）：
+Node侧将完整虚构输入写成可Open工程（集成方SDK示例，不是要求终端用户写代码；不会调用模型）：
 
 ```sh
 node --input-type=module -e '
@@ -28,7 +29,7 @@ for (const {documentKind} of BUSINESS_DEMO_TEMPLATES)
 
 ## 紧凑 A4 纸面
 
-五个 supplied-facts creator 使用封闭的 `supplied-facts` 预设；原商业单据预设及分页引擎不变。四列元数据、通栏说明、局部紧凑留白与按业务分配的追踪列宽，保留全部六列、完整来源与边界说明。正文保持9pt，追踪文字8.5pt；不隐藏、裁切或缩放整页来假装单页。
+supplied-facts creator使用封闭的 `supplied-facts` 预设；原商业单据预设及分页引擎不变。四列元数据、通栏说明、局部紧凑留白与按业务分配的追踪列宽，保留来源与边界说明。正文保持9pt，追踪文字8.5pt；不隐藏、裁切或缩放整页来假装单页。
 
 2026-10-16的三类组合快照实际三引擎 **9/9、零重试**通过，新建、定制来源Open、Save/reopen、禁网络离线HTML、导出HTML重开与文字/几何守恒均执行；当时三份标准样张及Chromium实际三份PDF各1页。长来源/备注或更多行允许正常分页，不保证任意输入都一页。
 
@@ -44,8 +45,8 @@ for (const {documentKind} of BUSINESS_DEMO_TEMPLATES)
 | `profile` | exact `supplied-business-v1` |
 | `source` | `{system, documentType, id, number}` 必填；可选 `currency,date,partyId,companyId`，与既有 source reference 形状相同 |
 | `company` | `{id,name}` 必填，可选 `address` |
-| `document` | `{kind,number,date}` 必填；kind 为上述七个 exact 类型之一；原三类可选显式 status，其余四类状态须放入各自带来源的分支 |
-| `document.currency` | 对账单和工资必填，库存无金额可省略；有限 Studio 币种 `MYR,USD,SGD,EUR,CNY,JPY`。服务/装箱/检验/资产交接不接收 source/document currency，不推入金融事实 |
+| `document` | `{kind,number,date}` 必填；kind为上述九个exact类型；原三类可选显式status，其余非财务类型的状态须放入各自带来源的分支 |
+| `document.currency` | 对账单和工资必填，库存无金额可省略；Studio主币种限[16代码目录](GENERAL_CURRENCY_MANUFACTURING_TIMESHEET.zh-CN.md)，不是完整ISO表。服务／装箱／检验／交接／制造／工时不接收source/document currency，不推入金融事实；合法外币来源及核心formatter原有支持不被主币种目录缩窄 |
 | `notes` | 可选供应原文；省略不补默认事实 |
 
 日期必须是实际存在的 `YYYY-MM-DD`；期间 `{from,to}` 不可倒置。每个数组最多 500 个元素；业务行/事实 ID 在同一输入内唯一。

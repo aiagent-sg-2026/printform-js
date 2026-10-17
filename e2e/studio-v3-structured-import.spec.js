@@ -108,8 +108,11 @@ test('plain JSON nested arrays preserve chosen-parent order and exact identifier
 });
 test('invalid UTF-8 is rejected before decoding can replace source identifiers',async({page})=> {
   const original = await currentData(page), records = await stored(page), revision = await page.locator('#revision').innerText();
+  const statusBefore = await page.locator('#status').innerText();
   await file(page,'invalid-utf8.csv',Buffer.from([0x69,0x64,0x0a,0xc3,0x28,0x0a]));
-  await expect(page.locator('#status')).toHaveText('Import requires valid UTF-8 text. The form and saved datasets are unchanged.');
+  await expect(page.locator('#status')).not.toHaveText(statusBefore);
+  await expect(page.getByRole('heading',{name:'Review local CSV / JSON import'})).toHaveCount(0);
+  await expect(action(page,'import-apply')).toHaveCount(0);
   await expect(page.locator('#revision')).toHaveText(revision);
   expect(await currentData(page)).toEqual(original); expect(await stored(page)).toEqual(records);
 });

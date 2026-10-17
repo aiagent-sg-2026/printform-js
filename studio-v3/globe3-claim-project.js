@@ -3,13 +3,14 @@ import { newProject, designOf, compileProject } from './model.js';
 import { bindingValidation } from './validation.js';
 import { claimPrecision, parseClaimAmount, displayClaimAmount } from './globe3-claim-money.js';
 import { newDemoProject } from './demo-templates.js';
+import { isSupportedCurrency } from './currency-catalog.js';
 
 const field = (id, label, pointer) => ({ id: id.replace(/[A-Z]/g, letter => `-${letter.toLowerCase()}`), label, pointer, format: '' });
 
 // Read-only print projection. Call createBus(project, null, 'imported-data') for host provenance.
 export function createGlobe3CertifiedClaimProject(input) {
   const normalized = adaptGlobe3CertifiedClaim(input);
-  if (!['MYR', 'USD', 'SGD', 'EUR', 'CNY', 'JPY'].includes(normalized.document.currency)) {
+  if (!isSupportedCurrency(normalized.document.currency)) {
     throw Object.assign(new Error('This Studio version cannot round-trip the supplied currency.'), { code: 'GLOBE3_CLAIM_CURRENCY', path: 'header.curr_short_forex' });
   }
   const project = newProject('invoice'), design = designOf(project);
@@ -67,7 +68,7 @@ export function createGlobe3ProgressClaimProject(data) {
     throw Object.assign(new Error('Choose an evidence-backed Previous/Current basis.'), { code: 'GLOBE3_CLAIM_BASIS' });
   }
   const precision = claimPrecision(data.document.minorUnitDigits), currency = data.document.currency;
-  if (!['MYR', 'USD', 'SGD', 'EUR', 'CNY', 'JPY'].includes(currency)) {
+  if (!isSupportedCurrency(currency)) {
     throw Object.assign(new Error('This Studio version cannot round-trip the supplied currency.'), { code: 'GLOBE3_CLAIM_CURRENCY' });
   }
   const project = newDemoProject('PCAR'), design = designOf(project);

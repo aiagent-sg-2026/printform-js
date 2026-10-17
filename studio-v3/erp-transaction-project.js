@@ -11,9 +11,6 @@ const optional = (fields, data, base, labels, prefix = '') => {
 
 export function createErpTransactionProject(input) {
   const normalized = normalizeErpTransaction(input), kind = normalized.document.kind;
-  if (!['MYR', 'USD', 'SGD', 'EUR', 'CNY', 'JPY'].includes(normalized.document.currency)) {
-    throw transactionError('PROJECT_CURRENCY', 'document.currency', 'Studio manifest supports MYR, USD, SGD, EUR, CNY and JPY; linked/base monetary facts may use other supported ISO currencies.');
-  }
   const project = newProject(normalized.party.type === 'supplier' ? 'purchase' : 'invoice'), design = designOf(project);
   project.manifest.title = `ERP ${titles[kind]} · Supplied facts`;
   project.manifest.sampleDataTitle = `${normalized.document.number} · supplied transaction`.slice(0, 100);

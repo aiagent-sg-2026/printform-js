@@ -1,13 +1,14 @@
 import { adaptGlobe3ProgressClaim } from './globe3-progress-claim-adapter.js';
 import { newProject, designOf, compileProject } from './model.js';
 import { bindingValidation } from './validation.js';
+import { isSupportedCurrency } from './currency-catalog.js';
 
 const field = (id, label, pointer) => ({ id, label, pointer, format: '' });
 
 // Node/bundler integration: rerun for each ERP snapshot, then saveProject/Open in Studio.
 export function createGlobe3RawProgressClaimProject(input) {
   const data = adaptGlobe3ProgressClaim(input), currency = data.document.currency;
-  if (!['MYR', 'USD', 'SGD', 'EUR', 'CNY', 'JPY'].includes(currency)) throw Object.assign(new Error('Studio cannot round-trip this primary currency.'), { code: 'GLOBE3_PCAR_CURRENCY' });
+  if (!isSupportedCurrency(currency)) throw Object.assign(new Error('Studio cannot round-trip this primary currency.'), { code: 'GLOBE3_PCAR_CURRENCY' });
   const project = newProject('invoice'), design = designOf(project);
   project.manifest.title = 'Globe3 raw PCAR work-done projection';
   project.manifest.sampleDataTitle = `${data.document.number} · supplied SO work done`.slice(0, 100);

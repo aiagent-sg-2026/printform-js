@@ -24,9 +24,10 @@
       <button data-action="redo" data-icon="redo" title="Redo (⌘/Ctrl Shift Z)">Redo</button>
       <button data-action="new" data-icon="plus">New</button>
       <button data-action="open" data-icon="open">Open</button>
-      <button data-action="save" data-icon="save" title="Save the editable template and current active data">Save</button>
+      <button data-action="save" data-icon="save" title="Portable editable form: retains active data, original local source file, filename and mappings">Save with source</button>
       <button data-action="print" data-icon="print" disabled>Print</button>
-      <button data-action="export" data-icon="download" title="Export standalone HTML with current active data embedded" disabled>Export HTML</button>
+      <button data-action="export" data-icon="download" title="Standalone HTML: retains active data and the complete original local import source" disabled>HTML with source</button>
+      <button data-action="share" data-icon="download" title="Choose a separate copy without the original local import receipt">Share copy…</button>
     </div>
   </header>
   <nav class="workspace-bar" aria-label="Workspace">
@@ -90,7 +91,14 @@
   <button id="drawer-backdrop" aria-label="Close panel backdrop" hidden></button>
   <dialog id="new-dialog" aria-labelledby="new-heading"><h2 id="new-heading">Start a print form</h2><p id="new-warning"></p><div class="new-template-options"><div class="template-options"><button data-template="blank">Blank form<span>Build your structure step by step</span></button><button data-template="invoice">Invoice<span>Customer, line items, supplied totals</span></button><button data-template="purchase">Purchase order<span>Supplier, delivery and approval</span></button><button data-template="delivery">Delivery note<span>Quantities, packages and receipt</span></button></div></div><button data-action="cancel-new">Cancel</button></dialog>
   <dialog id="draft-dialog" aria-labelledby="draft-heading"><h2 id="draft-heading">Unapplied edits</h2><p>These edits have not changed the print form. Apply commits them to the form; Discard restores current values; Stay keeps editing. Database saves and template-file saves remain explicit.</p><ul id="draft-list"></ul><div class="draft-dialog-actions"><button data-draft-choice="apply" class="primary">Apply</button><button data-draft-choice="discard">Discard</button><button data-draft-choice="stay" autofocus>Stay</button></div></dialog>
-  <dialog id="update-dialog" aria-labelledby="update-heading"><h2 id="update-heading">Update Studio</h2><p data-update-summary></p><p>Keep writes a verified, browser-local recovery backup in this tab’s session storage before reload, including document data and unapplied edits. It is removed after successful recovery. It never sends work to a server or saves database records. Pending AI requests are cancelled. Recovered element references must be removed and added again before Send. Saved datasets and paper Zoom stay unchanged.</p><div class="update-choices"><button data-update-choice="keep" class="primary">Keep work & update</button><button data-update-choice="discard">Discard work & update</button><button data-update-choice="stay" autofocus>Stay</button></div></dialog>
+  <dialog id="share-dialog" aria-labelledby="share-heading">
+    <h2 id="share-heading">Export a share copy · review remaining data</h2>
+    <p>Save with source and HTML with source preserve the complete original local file, its filename and mapping, including source columns you did not map. Keep these portable originals for your own editing and source traceability.</p>
+    <p><strong>The copies below omit the local import receipt, original source text and its filename.</strong> Unmapped values that exist only in that source text are not included. Every value already in live form data (including unbound fields), printed values, labels, embedded images and template metadata remain. These copies are not anonymous; inspect their contents before sharing. A source filename typed into live data or template text remains too.</p>
+    <p>The editable copy reopens in Studio. Standalone HTML includes live data and needs a current valid render. Neither action changes your current form, source receipt, unsaved status or Undo history. Nothing is uploaded.</p>
+    <div class="draft-dialog-actions database-actions"><button data-action="save-share">Download editable share copy</button><button data-action="export-share" disabled>Export share HTML</button><button data-action="close-share" autofocus>Cancel</button></div>
+  </dialog>
+  <dialog id="update-dialog" aria-labelledby="update-heading"><h2 id="update-heading">Update Studio</h2><p data-update-summary></p><p>Keep writes a verified, browser-local recovery backup in this tab’s session storage before reload, including document data, unapplied edits and the original file/mappings of an import review. Import previews expire: Preview again before Apply. The backup is removed after successful recovery. It never sends work to a server or saves database records. Pending AI requests are cancelled. Recovered element references must be removed and added again before Send. Saved datasets and paper Zoom stay unchanged.</p><div class="update-choices"><button data-update-choice="keep" class="primary">Keep work & update</button><button data-update-choice="discard">Discard work & update</button><button data-update-choice="stay" autofocus>Stay</button></div></dialog>
   <noscript>Studio requires JavaScript to design and paginate forms.</noscript>
 </body>
 </html>

@@ -10,13 +10,13 @@ Dispositions: `agent-callable` (eligible; may still lack a service/adapter), `hu
 
 | Measure | Rows |
 | --- | --- |
-| Ledger rows | 84 |
-| agent-callable | 51 |
-| human-mediated | 24 |
+| Ledger rows | 89 |
+| agent-callable | 49 |
+| human-mediated | 31 |
 | intentionally-unavailable | 9 |
-| Eligible gaps (missing or limited agent paths) | 26 |
+| Eligible gaps (missing or limited agent paths) | 23 |
 
-Origins:66 historical rows,13 reconciliation rows and5 bounded source-workspace rows. Historical access labels/dispositions remain unchanged. Source pairing and disclosure are human-mediated; file/process/artifact tools are callable only in the explicit local Node/JSON profile, not in ordinary design/read-only runs.
+Origins:66 historical rows,13 reconciliation rows,5 bounded source-workspace rows and5 General capability rows. All rows remain proposed. New blank/starter and primary currency choice are now explicitly human-mediated, not callable tools. Source pairing and disclosure are human-mediated; source tools retain their separate explicit local Node/JSON grant.
 
 ## Added by reconciliation (13)
 
@@ -38,7 +38,7 @@ The agent reads this ledger at runtime through the generated `studio-v3/agent-wo
 
 ## Eligible gaps by domain
 
-Data10, Project5, Observation4, Authoring4, References3 remain the26 eligible gaps. CA-07 adds separately scoped source file/process/artifact workflows below; it does not close the18 parallel CA-04 Studio workflows, hosted execution, arbitrary dependencies or G8/G9 qualification.
+Data10, Project2, Observation4, Authoring4, References3 account for23 eligible gaps. CA-07 adds separately scoped source file/process/artifact workflows below; this inventory is not acceptance of parallel Studio workflows, hosted execution, arbitrary dependencies or G8/G9 qualification.
 
 ## UI entry mapping
 
@@ -91,3 +91,14 @@ The five `printform.source.*` rows separate human pairing/disclosure from model 
 
 Current scope is local Docker/Node24/UTF8 and structured operation JSON, not arbitrary repositories/HTML or hosted multi-tenant execution. Default build conformance exercises missing-session rejection; real Docker and true-browser Origin checks are separate evidence. No formal G6/G8/G9 closure follows merely from tool discovery, a process exit or model-writable tests.
 
+## General bounded capabilities (2026-10-17)
+
+The five `general-option2` CSV rows describe implementation boundaries, not fresh verification. [Independent tables/barcodes](GENERAL_SOURCE_TABLES_BARCODES.zh-CN.md), [offline barcode](STUDIO_V3_OFFLINE_BARCODE.zh-CN.md) and [currency/manufacturing/timesheet](GENERAL_CURRENCY_MANUFACTURING_TIMESHEET.zh-CN.md) own the detailed contracts.
+
+- Primary plus at most four additional tables, each at most30 columns, use independent collection/column pointers; no joins or sums. Table creation/configuration and extra-column add/reorder are manual (`add-table`, `remove-table`, `form:additional-table`). Existing extra columns support `set_field`/`remove_field`; `add_field`/`reorder_fields` retain only the original five section enums.
+- Barcode field operations accept exact supplied strings: CODE1281–128 printable ASCII; EAN13 supplied13 digits with valid checksum. V3 integer moduleWidth1–4 and height20–160; no trim, padding, source generation or physical scanner qualification. The public service-parity register records barcode as `parallel`: shared validation/runtime do not prove inspector/Pi transformation parity, and no new parity pass is claimed.
+- The16 currency catalog applies only to Studio primary UI/project construction. Source ISO facts (including legal BHD/AED) and core formatter retain original support; outside-catalog project primary currency retains `PROJECT_CURRENCY`. Supplied `/document/currency` synchronizes primary currency, and mismatch produces `SOURCE_CURRENCY_MISMATCH`, not FX.
+- Nine supplied-business kinds include ManufacturingOrder/Timesheet. New is human fictional-starter choice. Explicit profile normalizers/project SDKs are not direct raw ERP UI import; Data CSV/JSON uses human mapping/Preview/Apply. No completion, wages, certification, FX or totals inference.
+- Save/HTML with source retain the original import receipt, text, filename and mapping. Human share-copy download omits that receipt/source text/filename only; all live data including unbound values, printed values, labels, images and metadata remain. This is not anonymization or upload.
+
+Regenerate `studio-v3/agent-workflows.js` centrally from the CSV; do not hand-edit the generated module. No tests, builds, lint, formatter or generator were executed for this documentation update.

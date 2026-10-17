@@ -15,6 +15,16 @@ who don't need the diary.
 
 ## [Unreleased]
 
+### General source tables, offline barcodes and recoverable sharing — 2026-10-17
+
+- Add up to4 independent source tables, fixed-size offline CODE128/EAN13,16 primary display currencies and supplied manufacturing/timesheet starters; existing foreign-currency facts and core formatting remain supported. No joins, FX, payroll or ERP posting are inferred.
+- Preserve declared empty schemas and canonical additional-table identities; route table/header references through actual ownership while keeping headers label-only and cross-table edits denied. Restore ordinary nonfinancial primary quantity collection compatibility.
+- Keep malformed ordinary primary data editable but print/export blocked until repair. Exclude primitive array-row roots from field suggestions without dropping declared empty-object children or missing-row diagnostics.
+- Check barcode overflow against every same-page cell/field ancestor, not just the page or nearest wrapper; retain exact source/quiet zones. Two native PNGs independently decode with Apple Vision, not physical/GS1 certification.
+- Reject oversized files before reading and invalid UTF8 without replacement; guard late reads against newer work. Recover explicit CSV/JSON format independently of truncated display filenames; page mapping controls without weakening all-row validation.
+- Keep source-preserving Save/HTML defaults; explicit share copies omit only receipt/session. Actual native JSON/HTML downloads preserve all live/unbound data, original receipt/history and reopen behavior; sharing is not anonymization.
+- Show bounded assistant-reported blockers as unverified model statements, not host capability claims. Re-measure unsent multiline chat text on viewport/panel-width changes; human Apply, existing model/routes/budgets and qualification gates stay intact.
+
 ### Proposal-only grants for explicit AI drafts — 2026-10-17
 
 - Subtract the answer effect for explicit design/coding draft requests using existing frozen grants and Pi tool exposure; hidden/direct `finish_answer` calls reject. Questions remain read-only, source authorization stays intact, and only an inspected proposal plus explicit UI Apply can change the live form.

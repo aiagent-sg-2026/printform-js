@@ -1,6 +1,7 @@
 import { test, expect } from './studio-v3-test.js';
 import { fictionalErpNextReturn, erpnextCases } from '../tests/fixtures/erpnext-return.js';
 import { saveProject, readProject } from '../studio-v3/file-io.js';
+import { createErpNextReturnProject } from '../studio-v3/erpnext-return-adapter.js';
 import { readFile } from 'node:fs/promises';
 import { pathToFileURL } from 'node:url';
 import { getDocument } from 'pdfjs-dist/legacy/build/pdf.mjs';
@@ -56,10 +57,7 @@ for (const [name, doctype, stock, kind, inventory, accounting] of erpnextCases) 
   const input = fictionalErpNextReturn(doctype, stock);
   page.on('dialog', dialog => dialog.accept());
   await page.goto('/studio-v3/'); await ready(page);
-  const project = await page.evaluate(async source => {
-    const { createErpNextReturnProject } = await import('/studio-v3/erpnext-return-adapter.js');
-    return createErpNextReturnProject(source);
-  }, input);
+  const project = createErpNextReturnProject(input);
   await page.locator('#open-file').setInputFiles({ name: `${name}.printform.json`, mimeType: 'application/json', buffer: Buffer.from(saveProject(project)) });
   await expect(page.locator('#document-name')).toHaveValue(project.manifest.title); await ready(page);
   await facts(page.frameLocator('#preview-frame'), prefix, kind, inventory, accounting);

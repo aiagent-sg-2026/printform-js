@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { createAgentContext } from "../../studio-v2/core/agent-context.js";
 import { sanitizeAgentResponse, sanitizeAgentResult } from "../../studio-v2/core/agent-sanitize.js";
+import { inspectTemplate } from "../../studio-v2/core/template-inspection.js";
 
 const CANARY = "BUSINESS LABEL CANARY";
 const NOW = "2026-09-08T00:00:00.000Z";
@@ -114,6 +115,40 @@ describe("Studio v2 Agent output boundary", () => {
     expect(design.tables[0].columns[0].label).toBe("Column 1");
     expect(design.repeatedAreas).not.toHaveProperty("unexpected");
     expect(JSON.stringify(design)).not.toContain(CANARY);
+  });
+
+  it.each(["/identifiers/private-code", "./private-code"])("projects barcode paths as stable opaque refs: %s", (pointer) => {
+    const ctx = context();
+    const rawValue = "00012345-PRIVATE-BARCODE";
+    const component = {
+      id: "barcode-component", type: "DocumentMeta",
+      binding: { barcode: pointer, barcodeValue: rawValue, privateSource: CANARY },
+      value: rawValue, sampleData: { privateSource: CANARY },
+    };
+    const single = sanitizeAgentResult("get_component", { revision: 0, component }, { context: ctx });
+    const listed = sanitizeAgentResult("list_components", { revision: 0, components: [component] }, { context: ctx });
+    const form = sanitizeAgentResult("get_form_spec", {
+      revision: 0, spec: {
+        version: "1.0.0", mode: "canonical", document: { paper: "A4", orientation: "portrait" },
+        sections: [{ id: "section-1", componentIds: [component.id] }], components: [component],
+      },
+    }, { context: ctx });
+    const inspection = sanitizeAgentResult("inspect_document", {
+      revision: 0,
+      ...inspectTemplate(`<span data-pf-barcode="${pointer}">${rawValue}</span>`),
+      sampleData: { privateSource: CANARY },
+    }, { context: ctx });
+    const opaque = single.component.binding.barcode;
+    expect(opaque).toMatch(/^ref:path:/);
+    expect(ctx.references.resolve("path", opaque)).toBe(pointer);
+    expect(single.component.binding).toEqual({ barcode: opaque });
+    expect(listed.components[0].binding).toEqual({ barcode: opaque });
+    expect(form.spec.components[0].binding).toEqual({ barcode: opaque });
+    expect(inspection.bindings[0].barcode).toBe(opaque);
+    const serialized = JSON.stringify([single, listed, form, inspection]);
+    for (const secret of [pointer, rawValue, CANARY, "barcodeValue", "privateSource", "sampleData"]) {
+      expect(serialized).not.toContain(secret);
+    }
   });
 
   it("does not fabricate reviewedRevision and rejects malformed envelopes safely", () => {

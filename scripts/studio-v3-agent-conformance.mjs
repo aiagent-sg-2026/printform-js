@@ -8,6 +8,7 @@ import { createDraft } from '../studio-v3/agent-draft.js';
 import { createGrant } from '../studio-v3/agent-effects.js';
 import { chatRequest } from '../studio-v3/ai-chat-protocol.js';
 import { newProject } from '../studio-v3/demo-templates.js';
+import { designOf, compileProject } from '../studio-v3/model.js';
 import { DEMO_CONFIG } from '../studio-v3/ai-gateway-config.js';
 import { authorizeObservation } from '../studio-v3/observation-policy.js';
 import { staticProject, unitImage } from '../tests/support/pixel-observation.js';
@@ -18,7 +19,18 @@ const FIXTURES = Object.freeze({
   invoice:() => newProject('invoice'),
   static:staticProject,
   // Invoice rows carry financial bindings that keep their collection; a delivery note has none.
-  'second-collection':() => { const project = newProject('delivery'); project.sampleData.lines = structuredClone(project.sampleData.items); return project; }
+  'second-collection':() => { const project = newProject('delivery'); project.sampleData.lines = structuredClone(project.sampleData.items); return project; },
+  'general-print':() => {
+    const project=newProject(), design=designOf(project);
+    project.sampleData.identifiers={code:'00012345-AB',ean:'0123456789012'};
+    project.sampleData.operations=[{operation:'Cut supplied material',hours:'01.500'}];
+    design.footer.push({id:'code',label:'Supplied identifier',pointer:'/identifiers/code',format:''});
+    design.additionalTables=[{id:'table-work',label:'Supplied work',collection:'/operations',enabled:true,repeatHeader:true,breakBefore:false,columns:[
+      {id:'operation',label:'Operation',pointer:'./operation',format:'',width:50},
+      {id:'hours',label:'Supplied hours',pointer:'./hours',format:'',width:40}
+    ]}];
+    return compileProject(project,design);
+  }
 });
 const INSPECTIONS = {ready:{report:{status:'ready'}},blocked:{report:{status:'blocked',issues:[{code:'OVERFLOW'}]}},stale:{report:{status:'ready'}}};
 

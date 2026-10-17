@@ -37,7 +37,9 @@ test('canvas label and structure value become removable composer references; onl
   expect(calls).toHaveLength(0);
   await expect(page.locator('#ai-consent')).toHaveCount(0);
   await page.locator('[data-ai-send]').click();
-  await expect(page.locator('[data-ai-status]')).toContainText('Read-only answer');
+  await expect(page.locator('.ai-assistant[data-state=error]')).toBeVisible();
+  await expect(page.locator('[data-ai-proposal]')).toHaveCount(0);
+  await expect(page.locator('[data-ai=apply]')).toHaveCount(0);
   expect(calls.filter(call=>isInference(call.path))).toHaveLength(1);
   const wire = calls.find(call=>isInference(call.path)).body;
   expect(JSON.stringify(wire)).not.toContain('ACME'); expect(JSON.stringify(wire)).not.toContain('Sterling');

@@ -50,24 +50,66 @@ test('invalid JSON and typed table drafts survive update as unapplied values; no
 });
 
 for(const target of ['open-file','dataset-file']) {
-  test(`pending ${target} read blocks snapshot and activation until import completes`,async({page})=> {
+  test(`pending ${target} read blocks snapshot and activation until native bytes settle`,async({page})=> {
     const server=await upgradeServer();
     try {
       await start(page,server);
+      if(target==='dataset-file')await page.locator('[data-mode=data]').click();
       await page.evaluate(()=> {
-        const original=File.prototype.text;let release;
-        const held=new Promise(resolve=>release=resolve);globalThis.finishFixtureRead=release;
-        File.prototype.text=async function(){const text=await original.call(this);await held;return text;};
+        const original=File.prototype.arrayBuffer;let release;
+        const held=new Promise(resolve=>release=resolve);
+        globalThis.fixtureRead={bytesReady:false,settled:false};
+        globalThis.fixtureController=navigator.serviceWorker.controller;
+        globalThis.finishFixtureRead=()=>{File.prototype.arrayBuffer=original;release();};
+        File.prototype.arrayBuffer=async function(){
+          const bytes=await original.call(this);globalThis.fixtureRead.bytesReady=true;
+          await held;globalThis.fixtureRead.settled=true;return bytes;
+        };
       });
-      const project=newProject();project.manifest.title='Fictional delayed import';
+      const project=newProject();project.manifest.title='Fictional delayed import';project.sampleData.items[0].sku='FICTIONAL-NATIVE-READ';
       await page.locator(`#${target}`).setInputFiles({name:target==='open-file'?'fictional.printform.json':'fictional-dataset.json',mimeType:'application/json',buffer:Buffer.from(target==='open-file'?saveProject(project):JSON.stringify(project.sampleData))});
-      server.publish();await page.locator('#update-button').click();await expect(page.locator('#update-button')).toContainText('Update to');
-      await page.locator('#update-button').click();await expect(page.locator('#update-status')).toContainText('file read');
+      await expect.poll(()=>page.evaluate(()=>globalThis.fixtureRead.bytesReady)).toBe(true);
+      const updateStatus=await page.locator('#update-status').innerText();
+      server.publish();await page.locator('#update-button').click();
+      await expect(page.locator('#update-status')).not.toHaveText(updateStatus);await expect(page.locator('#update-button')).toBeEnabled();
       await expect(page.locator('#update-dialog')).toBeHidden();await expect(page.locator('#app-version')).toContainText('aaaaaaaaaaaa');
-      expect(await page.evaluate(()=>sessionStorage.getItem('printform-studio-v3:update-recovery'))).toBeNull();
+      expect(await page.evaluate(()=>({settled:globalThis.fixtureRead.settled,sameController:navigator.serviceWorker.controller===globalThis.fixtureController,backup:sessionStorage.getItem('printform-studio-v3:update-recovery')}))).toEqual({settled:false,sameController:true,backup:null});
+      await expect(page.locator('#revision')).toHaveText('r0');
       await page.evaluate(()=>globalThis.finishFixtureRead());await ready(page);
-      if(target==='open-file')await expect(page.locator('#document-name')).toHaveValue('Fictional delayed import');
-      else await expect(page.locator('#revision')).toContainText('r1');
+      if(target==='open-file') {
+        await expect(page.locator('#document-name')).toHaveValue('Fictional delayed import');
+        await expect(page.frameLocator('#preview-frame').locator('.printform_page').first()).toContainText('FICTIONAL-NATIVE-READ');
+        // Opening installs a clean r0 form. Add a real unapplied draft so Keep is an explicit choice.
+        await page.locator('#left-panel [data-select=items-sku]').click();
+        await page.getByLabel('Label',{exact:true}).fill('Fictional recovered label draft');
+      }
+      else {
+        await expect(page.getByRole('heading',{name:'Review local CSV / JSON import'})).toBeVisible();
+        await page.locator('#database-import-source').selectOption('/items');
+        await page.getByLabel('Source for /sku',{exact:true}).selectOption('/sku');
+        await expect(page.getByLabel('Source for /sku',{exact:true})).toContainText('FICTIONAL-NATIVE-READ');
+        await expect(page.locator('[data-db-action=import-apply]')).toBeDisabled();
+      }
+      await expect(page.locator('#revision')).toHaveText('r0');
+      expect(await page.evaluate(()=>({settled:globalThis.fixtureRead.settled,sameController:navigator.serviceWorker.controller===globalThis.fixtureController,backup:sessionStorage.getItem('printform-studio-v3:update-recovery')}))).toEqual({settled:true,sameController:true,backup:null});
+      await page.locator('#update-button').click();await expect(page.locator('#update-dialog')).toBeVisible();
+      await page.locator('[data-update-choice=keep]').click();await ready(page);await expect(page.locator('#app-version')).toContainText(NEXT.slice(0,12));
+      await expect(page.locator('#revision')).toHaveText('r0');
+      if(target==='open-file') {
+        await expect(page.locator('#document-name')).toHaveValue('Fictional delayed import');
+        await expect(page.getByLabel('Label',{exact:true})).toHaveValue('Fictional recovered label draft');
+        await expect(page.frameLocator('#preview-frame').locator('.printform_page').first()).toContainText('FICTIONAL-NATIVE-READ');
+      }
+      else {
+        await expect(page.getByRole('heading',{name:'Review local CSV / JSON import'})).toBeVisible();
+        await expect(page.locator('.database-source')).toContainText('fictional-dataset.json');
+        await expect(page.locator('#database-import-source')).toHaveValue('/items');
+        await expect(page.getByLabel('Source for /sku',{exact:true})).toHaveValue('/sku');
+        await expect(page.getByLabel('Source for /sku',{exact:true})).toContainText('FICTIONAL-NATIVE-READ');
+        await expect(page.locator('[data-db-action=import-apply]')).toBeDisabled();
+        await expect(page.getByRole('region',{name:'Reviewed import preview'})).toHaveCount(0);
+      }
+      expect(await page.evaluate(()=>sessionStorage.getItem('printform-studio-v3:update-recovery'))).toBeNull();
     }finally{await server.close();}
   });
 }
@@ -81,10 +123,10 @@ test('AI conversation recovers without token or consent and old candidates remai
       return {status:path.endsWith('/session')?201:200,body};
     });
     await start(page,server);
-    await page.locator('[data-ai-toggle]').click();await page.locator('#ai-prompt').fill('Fictional navy layout');await page.locator('[data-ai-send]').click();
+    await page.locator('[data-ai-toggle]').click();await page.locator('#ai-prompt').fill('Set the form accent color to navy #163a65.');await page.locator('[data-ai-send]').click();
     await expect(page.locator('[data-ai-proposal]')).toBeVisible();await page.locator('[data-ai=preview]').click();await expect(page.locator('[data-ai=apply]')).toBeEnabled();
     await update(page,server);await expect(page.locator('#app-version')).toContainText(NEXT.slice(0,12));await ready(page);
-    await expect(page.locator('#ai-prompt')).toHaveValue('');await expect(page.locator('[data-ai-log]')).toContainText('Fictional navy layout');await expect(page.locator('#ai-consent')).toHaveCount(0);
+    await expect(page.locator('#ai-prompt')).toHaveValue('');await expect(page.locator('[data-ai-log]')).toContainText('Set the form accent color to navy #163a65.');await expect(page.locator('#ai-consent')).toHaveCount(0);
     await expect(page.locator('[data-ai-proposal]')).toHaveCount(0);await expect(page.locator('[data-ai=apply]')).toHaveCount(0);await expect(page.locator('[data-ai-log]')).toContainText('Expired');expect(calls).toBe(3);
     expect(await page.evaluate(()=>[...Object.keys(sessionStorage),...Object.keys(localStorage)].some(key=>/token|credential|demo-session/i.test(key)))).toBe(false);
     await expect(page.locator('[data-ai=preview]')).toHaveCount(0);await expect(page.locator('#revision')).toHaveText('r0');expect(calls).toBe(3);
@@ -124,7 +166,7 @@ test('unsupported recovery is retained with a download and blocks another update
     await page.addInitScript(()=> {sessionStorage.setItem('printform-studio-v3:update-recovery','{"version":99}');Object.defineProperty(globalThis,'indexedDB',{value:undefined});});
     await start(page,server);await expect(page.locator('#recovery-download')).toBeVisible();
     expect(await page.evaluate(()=>sessionStorage.getItem('printform-studio-v3:update-recovery'))).toBe('{"version":99}');
-    server.publish();await page.locator('#update-button').click();await expect(page.locator('#update-button')).toContainText('Update to');await page.locator('#update-button').click();
+    server.publish();await page.locator('#update-button').click();await expect(page.locator('#update-button')).toBeEnabled();await page.locator('#update-button').click();
     await expect(page.locator('#update-status')).toContainText('retained recovery backup');await expect(page.locator('#app-version')).toContainText('aaaaaaaaaaaa');
     const download=page.waitForEvent('download');await page.locator('#recovery-download').click();await download;
     expect(await page.evaluate(()=>sessionStorage.getItem('printform-studio-v3:update-recovery'))).toBe('{"version":99}');
@@ -151,7 +193,7 @@ test('tab-only saved datasets block update before reload and remain available to
   const server=await upgradeServer();
   try {
     await page.addInitScript(()=>Object.defineProperty(globalThis,'indexedDB',{value:undefined}));await start(page,server);
-    server.publish();await page.locator('#update-button').click();await expect(page.locator('#update-button')).toContainText('Update to');await page.locator('#update-button').click();
+    server.publish();await page.locator('#update-button').click();await expect(page.locator('#update-button')).toBeEnabled();await page.locator('#update-button').click();
     await expect(page.locator('#update-status')).toContainText('Database storage is tab-only');await expect(page.locator('#app-version')).toContainText('aaaaaaaaaaaa');
     await expect(page.locator('#update-dialog')).toBeHidden();await ready(page);
   }finally{await server.close();}

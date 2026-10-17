@@ -38,7 +38,7 @@ function tableIdFor(node) {
 function bindingFor(node) {
   if (!node?.getAttribute) return null;
   const binding = {};
-  for (const name of ["text", "each", "if", "href", "i18n"]) {
+  for (const name of ["text", "barcode", "each", "if", "href", "i18n"]) {
     const value = node.getAttribute(`data-pf-${name}`);
     if (value) binding[name] = value;
   }

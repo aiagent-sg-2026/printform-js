@@ -72,6 +72,7 @@ export class DemoDatabase {
       if (type === 'number' && (typeof value !== 'number' || !Number.isFinite(value))) this.errors.add(pointer); else this.errors.delete(pointer);
       setDataValue(draft.data,pointer,value);
     } else return;
+    this.draftVersion = (this.draftVersion || 0)+1;
     this.error = '';
     const status = document.querySelector('#db-draft-status'); if (status) status.textContent = 'Table draft · not applied';
     const notice = document.querySelector('#database-notice'); if (notice) notice.textContent = '';
@@ -184,6 +185,7 @@ export class DemoDatabase {
         draft.numberPaths = removeRowPaths(draft.numberPaths,index,collection);
         this.rowPage = Math.min(this.rowPage,Math.max(0,Math.ceil(rows.length/25)-1)); this.draftErrors();
       }
+      this.draftVersion = (this.draftVersion || 0)+1;
       this.error = this.errors.size ? `Enter a finite number for ${[...this.errors][0]}.` : ''; this.render(); return;
     }
     this.context = this.callbacks.context();
@@ -198,7 +200,7 @@ export class DemoDatabase {
       else if (name === 'choose') await this.choose(target.id);
       else if (name === 'import-data') await this.import(target.source);
       else if (name === 'import-file') await reviewImportFile(this,target.source,target.filename);
-      else if (['import-preview','import-apply','import-cancel'].includes(name)) await importReviewAction(this,name);
+      else if (['import-preview','import-apply','import-cancel','import-previous-fields','import-next-fields'].includes(name)) await importReviewAction(this,name);
       else if (name === 'reload') await this.choose(this.project.studioV3Session.database?.id);
       else if (name === 'delete') await this.remove();
       else if (name === 'reset') await this.restore();

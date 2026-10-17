@@ -125,7 +125,7 @@ describe('real Globe3 CCAR project and portable print projection', () => {
   });
 
   it.each([
-    ['unsupported currency', input => { input.header.curr_short_forex = 'GBP'; }, 'GLOBE3_CLAIM_CURRENCY'],
+    ['unsupported currency', input => { input.header.curr_short_forex = 'ZZZ'; }, 'GLOBE3_CLAIM_CURRENCY'],
     ['unknown numeric profile', input => { input.context.numericSlotPrefix = 'num_unknown_'; }, 'GLOBE3_CLAIM_NUMERIC_PROFILE'],
     ['wrong storage type', input => { input.header.tag_table_usage = input.header.cslsegm = 'entp_pbill'; }, 'GLOBE3_CLAIM_TYPE'],
     ['excess precision', input => { input.tabData[0].num_20_2_d0_010 = '1.2345'; }, 'GLOBE3_CLAIM_AMOUNT_PRECISION']
@@ -192,7 +192,7 @@ describe('canonical Globe3 PCAR project preserves supplied valuation profiles', 
     ['wrong document kind', data => { data.document.kind = 'CCAR'; }, 'GLOBE3_CLAIM_TYPE'],
     ['summary currency mismatch', data => { data.summary.currency = 'SGD'; }, 'GLOBE3_CLAIM_CURRENCY'],
     ['row currency mismatch', data => { data.items[1].currency = 'SGD'; }, 'GLOBE3_CLAIM_CURRENCY'],
-    ['unsupported currency', data => { data.document.currency = 'GBP'; }, 'GLOBE3_CLAIM_CURRENCY'],
+    ['unsupported currency', data => { data.document.currency = 'ZZZ'; }, 'GLOBE3_CLAIM_CURRENCY'],
     ['unknown precision', data => { data.document.minorUnitDigits = 'three'; }, 'GLOBE3_CLAIM_PRECISION'],
     ['unrepresentable row precision', data => { data.items[0].currentWork = 1.2345; }, 'GLOBE3_CLAIM_AMOUNT_PRECISION'],
     ['unrepresentable summary precision', data => { data.summary.total = 1.2345; }, 'GLOBE3_CLAIM_AMOUNT_PRECISION'],

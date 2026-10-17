@@ -3,7 +3,7 @@ import { pageSettings, pageDimensions } from './paper-settings.js';
 
 export const BLOCKS = Object.freeze(['header', 'customer', 'items', 'totals', 'footer']);
 export const FIELD_STYLE_KEYS = Object.freeze(['fontSize', 'bold', 'color', 'align']);
-export const FIELD_KINDS = Object.freeze(['bound', 'static', 'image']);
+export const FIELD_KINDS = Object.freeze(['bound', 'static', 'image', 'barcode']);
 export const ALIGNMENTS = Object.freeze(['left', 'center', 'right']);
 export const FORMATS = Object.freeze(['', 'currency', 'number', 'percent']);
 export const fieldKind = field => field.kind || (field.pointer ? 'bound' : 'static');
@@ -13,7 +13,7 @@ export function usesFlowSections(design) {
   // Custom page geometry needs independently pageable body sections; legacy
   // grouped final footers can exceed a short page after its repeated header.
   const customPage = page.paper !== 'A4' || page.orientation !== 'portrait' || Object.values(page.margins).some(Boolean);
-  return Boolean(customPage || design.sectionOrder || BLOCKS.some(id => design.blocks[id].breakBefore));
+  return Boolean(customPage || design.sectionOrder || design.additionalTables?.some(table=>table.enabled) || BLOCKS.some(id => design.blocks[id].breakBefore));
 }
 export function contentDimensions(design) {
   const {width,height} = pageDimensions(design), {margins:m} = pageSettings(design);

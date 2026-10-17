@@ -80,9 +80,10 @@ export function setupPanelLayout(panel) {
   const key = 'printform-studio-v3:ai-width', separator = panel.node('[data-ai-resize]');
   let width = 390;
   try { const saved = localStorage.getItem(key); if (/^\d{3}$/.test(saved) && Number(saved) >= 320 && Number(saved) <= 600) width = Number(saved); } catch {}
-  const set = value=> { width = Math.max(320,Math.min(600,Math.round(value))); document.body.style.setProperty('--ai-width',`${width}px`); separator.setAttribute('aria-valuenow',String(width)); };
+  const set = value=> { width = Math.max(320,Math.min(600,Math.round(value))); document.body.style.setProperty('--ai-width',`${width}px`); separator.setAttribute('aria-valuenow',String(width)); panel.fitPrompt(); };
   const save = ()=> { try { localStorage.setItem(key,String(width)); } catch {} };
   set(width);
+  window.addEventListener('resize',()=>panel.fitPrompt());
   separator.addEventListener('keydown',event=> {
     if (!['ArrowLeft','ArrowRight','Home','End'].includes(event.key)) return;
     event.preventDefault(); set(event.key === 'Home' ? 320 : event.key === 'End' ? 600 : width+(event.key === 'ArrowLeft' ? 20 : -20)); save();

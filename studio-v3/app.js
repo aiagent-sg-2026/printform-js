@@ -3,7 +3,11 @@ import { createBus, editProject, replaceData, designOperations, formDesign, alte
 import { icon } from './icons.js';
 import { leftView, rightView } from './views.js';
 import { PaperPreview } from './preview.js';
-import { readProject, saveProject, filenameFor, download, exportProject } from './file-io.js';
+import { readProject, download } from './file-io.js';
+import { setupWorkspaceFileReads } from './workspace-file-reads.js';
+import { projectFileAction, syncShareControls } from './project-file-actions.js';
+import { alterTables } from './additional-table-controls.js';
+import { isSupportedCurrency } from './currency-catalog.js';
 import { inspectProject } from './validation.js';
 import { DemoDatabase } from './database-controller.js';
 import { databaseList } from './database-view.js';
@@ -82,6 +86,7 @@ function syncControls() {
   $('[data-action=undo]').disabled = !bus.history.canUndo;
   $('[data-action=redo]').disabled = !bus.history.canRedo;
   for (const action of ['print','export']) $(`[data-action=${action}]`).disabled = !q.ready || state.running || ai.viewing || database.busy || database.pending;
+  syncShareControls(document,q.ready && !state.running && !ai.viewing && !database.busy && !database.pending);
   $('#revision').textContent = `r${bus.revision}${state.dirty ? ' · unsaved template' : ''}`;
   $('#document-name').value = bus.project.manifest.title;
   $('#data-source').textContent = sourceLabel(bus.project);
@@ -139,7 +144,9 @@ function queueEdit(work,reportOnly = true) {
 function queueDatabase(name,target) {
   if (database.pending) return;
   database.pending = true; syncControls(); database.render();
-  return queueEdit(() => database.action(name,target)).finally(() => {
+  return queueEdit(() => { target.assertCurrent?.(); return database.action(name,target); },false).catch(error=> {
+    if (!target.isCurrent || target.isCurrent()) status(error.message);
+  }).finally(() => {
     database.pending = false; syncControls(); renderPanels();
   });
 }
@@ -162,13 +169,7 @@ async function action(name) {
   else if (name === 'new') { $('#new-warning').textContent = state.dirty || database.draft || state.dataDraft !== null ? 'Starting another form discards unsaved form, table and JSON edits. Save first to keep them.' : 'Choose a complete starter or a blank form.'; $('#new-dialog').showModal(); }
   else if (name === 'cancel-new') $('#new-dialog').close();
   else if (name === 'open') { if (!(state.dirty || database.draft || state.dataDraft !== null) || confirm('Open another file and discard unsaved form, table and JSON edits? Saved datasets are retained.')) $('#open-file').click(); }
-  else if (name === 'save') { download(saveProject(bus.project),`${filenameFor(bus.project)}.printform.json`,'application/json'); state.dirty = false; syncControls(); status('Saved editable template file, including the active sample data.'); }
-  else if (name === 'export') {
-    const context = bus, revision = bus.revision, project = structuredClone(bus.project), report = state.report;
-    const result = await exportProject(project,report);
-    if (bus !== context || bus.revision !== revision || state.running) throw new Error('The form changed while exporting. Export the current revision again.');
-    download(result.html,`${filenameFor(project)}.html`,'text/html'); status('Exported standalone HTML. Review every page in native print preview.');
-  }
+  else if (await projectFileAction(name,{bus,state,installStatus:status,syncControls,getBus:()=>bus})) return;
   else if (name === 'print') { if (inspectProject(bus.project,state.report).ready && !state.running && !ai.viewing) paper.send('print'); }
   else if (name === 'preview') { document.body.classList.toggle('preview-only'); $('[data-action=preview]').setAttribute('aria-pressed',document.body.classList.contains('preview-only')); database.render(); resizePaper(); }
   else if (name === 'previous' || name === 'next') goPage(pageIndex + (name === 'next' ? 1 : -1));
@@ -177,6 +178,10 @@ async function action(name) {
   else if (name === 'properties' || name === 'binding') { state.tab = name; renderPanels(); }
   else if (name === 'rerender') { ai.invalidate(); stopRun(); await render(); }
   else if (name === 'validate-all') await validateAll();
+  else if (['add-table','remove-table'].includes(name)) {
+    const altered = alterTables(bus.project,state.selected,name); state.selected = altered.selected;
+    await mutate(designOperations(bus.project,altered.design),name);
+  }
   else if (['add-field','remove-field','move-up','move-down'].includes(name)) {
     const altered = alterFields(bus.project,state.selected,name); state.selected = altered.selected;
     await mutate(designOperations(bus.project,altered.design),name);
@@ -214,7 +219,7 @@ document.addEventListener('click', e => {
     const name = control.dataset.action;
     if (name === 'cancel-draft') { drafts.discard(control.closest('[data-form]')); return; }
     const perform = () => ['validate-all','rerender','new','cancel-new','open','preview','next','previous','properties','binding','go-data','go-style'].includes(name) ? action(name).catch(e=>status(e.message)) : name === 'review-drafts' ? undefined : queueEdit(() => action(name));
-    if (['new','open','properties','binding','go-data','go-style','save','export','print','undo','redo','validate-all','add-field','remove-field','move-up','move-down','review-drafts'].includes(name)) drafts.guard(perform).catch(e=>status(e.message)); else perform();
+    if (['new','open','properties','binding','go-data','go-style','save','export','share','save-share','export-share','print','undo','redo','validate-all','add-field','remove-field','move-up','move-down','add-table','remove-table','review-drafts'].includes(name)) drafts.guard(perform).catch(e=>status(e.message)); else perform();
   }
 });
 document.addEventListener('submit', e => {
@@ -234,6 +239,7 @@ async function applyForm({kind,context,selected,form,key,values}) {
       database.resetDraft(); state.dataDraft = null;
     } else if (kind === 'locale') {
       const values = new FormData(form);
+      if (!isSupportedCurrency(values.get('currency'))) throw new Error('Choose a supported currency.');
       await editProject(bus,[{type:'set_manifest_value',path:'/locale',value:values.get('locale')},{type:'set_manifest_value',path:'/currency',value:values.get('currency')}],'locale & currency');
     } else await editProject(bus,designOperations(bus.project,formDesign(bus.project,selected,form,kind)),`edit ${kind}`);
     drafts.applied({key}); await changed();
@@ -258,23 +264,9 @@ document.addEventListener('change', e => {
   }
   if (e.target.id === 'database-choice') { const id = e.target.value; e.target.value = bus.project.studioV3Session.database?.id || ''; drafts.guard(() => queueDatabase('choose',{id})).catch(e=>status(e.message)); }
 });
-$('#dataset-file').accept = '.csv,.json,text/csv,application/json';
-$('#dataset-file').addEventListener('change', async e => {
-  const file = e.target.files[0], context = bus; e.target.value = ''; if (!file) return;
-  state.fileReads += 1;
-  try {
-    if (file.size > 2*1024*1024) throw new Error('Dataset exceeds the 2 MB limit.');
-    let source; try { source = new TextDecoder('utf-8',{fatal:true,ignoreBOM:true}).decode(await file.arrayBuffer()); } catch { throw new Error('Import requires valid UTF-8 text. The form and saved datasets are unchanged.'); }
-    if (context !== bus) throw new Error('The document changed. Import the dataset again.');
-    await queueDatabase('import-file',{source,filename:file.name});
-  } catch (error) { status(error.message); } finally { state.fileReads -= 1; }
-});
+setupWorkspaceFileReads({getBus:()=>bus,state,database,queueDatabase,queueEdit,install,readProject,status,
+  draftState:()=>JSON.stringify([...drafts.drafts].filter(([,draft])=>draft.kind !== 'data').map(([key,draft])=>[key,draft.values]))});
 $('#document-name').addEventListener('change', e => { const title = e.target.value.trim(); if (title) queueEdit(() => mutate([{type:'set_manifest_value',path:'/title',value:title}],'template name')); });
-$('#open-file').addEventListener('change', async e => {
-  const file = e.target.files[0], context = bus; e.target.value = ''; if (!file) return;
-  state.fileReads += 1;
-  try { const source = await file.text(); if (bus !== context || database.busy || database.pending) throw new Error('The document changed or a database save is active. Open it again.'); install(readProject(source,file.name)); status('Opened editable v3 form. Data is an unsaved draft; Save as new retains existing database records.'); } catch (error) { status(error.message); } finally { state.fileReads -= 1; }
-});
 $('#zoom').onchange = () => { persistZoom($('#zoom')); resizePaper(); }; window.addEventListener('resize',resizePaper);
 $('#paper-scroll').addEventListener('scroll',()=> {
   const top = $('#paper-scroll').scrollTop/zoom;

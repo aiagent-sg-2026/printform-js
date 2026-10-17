@@ -53,6 +53,26 @@
 
 Chrome155/sandbox原生界面烟测：`local`身份，桌面及375×812手机截图已查看，原请求仅输入未发送；手机关闭AI可回Data，r0与全局横向溢出0保持。本地界面/脚本测试不是公开真实模型或物理打印证据。追加source的公开同提示词任务必须待其真实部署后单次执行另记；不把此前失败profile重跑刷绿，不推断生产通过。
 
+## PR94 公开阻碍与诊断交付修复
+
+PR94/main `0c02e1bc20b8b94bcf43f3c8d0ee109afafad78f` 部署后，主代理以原fixture、原精确请求、demo-auto及原预算单次实测：8个HTTP200、21.315秒，最终AGENT_BLOCKED，没有候选，真实任务仍 **Fail**。保存的5242字节source在该run前后SHA完全相同，仍r1/A4；3个canary未出站。公开卡片仅显示通用“supported operations”句子，未交付模型的公开report_blocked理由。本次及旧ed/e385失败永久保留，不重跑同profile刷绿。已知用户声明仅maxWidthMm220、dpi203，188.5毫米未违反该宽度界限；通用失败文案不能证明产品不支持该尺寸。
+
+原始验收driver中的`hostDidNotPretendDraftDelivered:false`只识别旧`draft-not-produced`通知，未识别新的AGENT_BLOCKED卡片；实际屏幕是error、无proposal、源未变，不是宿主声称交付成功。原记录原样保留，未把false改成true。
+
+追加修改前，按授权实际执行一次独立最小脚本，使用真实Pi Harness/工具边界与脚本化provider，不调用远程模型：
+
+| 实际消费者路径 | 调用数 | 修复前错误 | 修复前公开reason | 修复前UI |
+| --- | ---: | --- | --- | --- |
+| 正常report_blocked终止 | 1 | AGENT_BLOCKED | 原字符串保留 | 通用句，理由丢失 |
+| 终止交付故障后内部deadline中断 | 2 | AGENT_BLOCKED | null | 通用句，理由丢失 |
+
+两条路径都实际调用report_blocked，故障路径在工具已记录理由后注入终止交付错误并触发内部deadline，复现catch分支丢字段；正常路径同时证实UI忽略现有字段。最小脚本执行后已删除，没有留作产品入口或测试脚手架；没有读取私有wire/reasoning。
+
+`agent-blocked.js` 统一normal/catch的错误构造，只保留code恰为AGENT_BLOCKED且reason为1..500字符字符串的公开字段。非法/超长/其他错误码的reason完全不展示，不截断；异常message、cause、source stdout/stderr与日志不作为理由来源。UI经既有textContent路径显示“Assistant-reported blocker”及明确的“非宿主已验证能力限制”归属，不据模型说法断言产品缺少能力。失败历史仍不可Apply，不自动retry；允许的只读answer JSON及独立citation不变。
+
+新增 `tests/studio-v3-blocked-reason.test.js`、`tests/studio-v3-blocked-reason-panel.test.js` 已随完整隔离单线程构建执行通过：覆盖真实Pi normal/内部中断、用户取消、500字符边界、无截断/无跨错误码泄漏、schema拒绝、HTML纯文本、恢复后保持error且不回送模型、独立只读JSON/citation。脚本化provider不冒充远程模型；前版2983通过/并发17失败及本次公开0c02 Fail均保留。权限、inspection/current-draft、Apply、模型/路由/预算和提示词策略未放宽。
+
+
 ## 限制
 
 意图策略是保守的宿主语法，不是通用自然语言理解或完整提示注入检测器；未识别的委婉/复杂命令会保持只读，可改写成直接请求后重新发送。它不增加工具能力、不放宽观察授权、绑定保护、scope、Apply、模型/路由/预算、沙盒、测试或外部验收门槛。此修正能可靠揭示“未交付”，不能保证真实模型每次都会产生正确候选。
@@ -62,3 +82,4 @@ Chrome155/sandbox原生界面烟测：`local`身份，桌面及375×812手机截
 - [OpenAI官方工具调用流程](https://developers.openai.com/api/docs/guides/function-calling#the-tool-calling-flow)：模型提出调用，应用侧执行并返回结果；模型结束不是宿主交付验收。
 - 现有固定`@earendil-works/pi-agent-core`／`pi-ai`0.85.1及[包声明仓库](https://github.com/earendil-works/pi)继续使用，没有替换provider或Harness预算。
 - 已读取KB的`news-digest:golden-evaluator`1.0.0（skill ref `270d896a-12b0-40b4-856f-f6274d872c95:00f0459c-5a2b-477e-aeb0-74b058f20f1f`）；仅复用冻结评估、保留失败、把真实执行与确定性测试分开的原则，不套用新闻业务阈值。
+- 本轮另读取KB `agent:autonomous-delivery-verification-loop`1.1.0、`ui:ux-quality-auditor`1.0.3、`codex:orchestrated-implementation-worker`1.5.0的完整定义；使用独立后置结果、实际界面／下载与保留失败原则，不以agent声明或测试数量认证模型／生产资格。

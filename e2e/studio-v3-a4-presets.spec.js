@@ -4,6 +4,7 @@ import fs from 'node:fs/promises';
 import {pathToFileURL} from 'node:url';
 import {A4_PRESETS} from '../studio-v3/a4-presets.js';
 import {demoStarterRecords} from '../studio-v3/demo-catalog.js';
+import { previewDocument } from './studio-v3-rendered-probes.js';
 
 // Runs under the repository's normal GitHub PR CI in all three browser engines.
 // No provider request or model output is represented by this layout acceptance test.
@@ -84,8 +85,8 @@ for(const preset of A4_PRESETS)test(`${preset.documentKind}: real data → edit 
  // Upload from memory: the output path carries the test title (non-ASCII arrows), which some environments cannot hand to the file chooser.
  await page.locator('#open-file').setInputFiles({name:`${preset.id}-long-names.printform.json`,mimeType:'application/json',buffer:Buffer.from(JSON.stringify(long))});
  await expect(page.locator('#document-name')).toHaveValue(long.project.manifest.title);await ready(page);
- await expect(preview(page).locator('[data-v3-id=header-company]').first()).toHaveText(long.project.sampleData.company.name);
- await expect(preview(page).locator('[data-v3-id=customer-bill]').first()).toHaveText(long.project.sampleData.customer.name);
+ await expect.poll(()=>previewDocument(page,()=>document.querySelector('[data-v3-id=header-company]')?.textContent)).toBe(long.project.sampleData.company.name);
+ await expect.poll(()=>previewDocument(page,()=>document.querySelector('[data-v3-id=customer-bill]')?.textContent)).toBe(long.project.sampleData.customer.name);
  const reopened=await save(page,info,`${preset.id}-reopened`,{id:'',title:long.project.manifest.sampleDataTitle,data:long.project.sampleData});
  expect(reopened.source.project.sampleData).toEqual(long.project.sampleData);
  expect(reopened.source.project.manifest.studioV3).toEqual(long.project.manifest.studioV3);

@@ -1,6 +1,7 @@
 import { validateData, validateSchemaProfile } from '../studio-v2/core/schema.js';
 import { resolvePointer, encodePointerToken } from '../studio-v2/core/json.js';
 import { assertBoundedJson } from './json-safety.js';
+import { validateBarcode } from '../studio-v2/core/barcode.js';
 
 const object = value => value !== null && typeof value === 'object' && !Array.isArray(value);
 const identity = value => typeof value === 'string' && value.length > 0 && value.length <= 120;
@@ -38,7 +39,7 @@ function declaredFields(schema,path='',required=true,result=[]) {
   if (!schema) return result;
   if (allowsType(schema,'object') || schema.properties) {
     for (const [key,node] of Object.entries(schema.properties || {})) declaredFields(node,childPath(path,key),required && (schema.required || []).includes(key),result);
-  } else if (!allowsType(schema,'array') && schema.type) result.push({pointer:path,type:Array.isArray(schema.type) ? schema.type.join('|') : schema.type,required,origin:'authoritative'});
+  } else if (path && !allowsType(schema,'array') && schema.type) result.push({pointer:path,type:Array.isArray(schema.type) ? schema.type.join('|') : schema.type,required,origin:'authoritative'});
   return result;
 }
 export function declaredCollectionFields(schema,pointer) {
@@ -54,7 +55,7 @@ function observedFields(rows,prefix='') {
   const visit = (value,path,index) => {
     if (Array.isArray(value)) return;
     if (object(value)) for (const [key,next] of Object.entries(value)) visit(next,childPath(path,key),index);
-    else {
+    else if (path) {
       const previous = fields.get(path), type = scalarType(value);
       const entry = previous || {pointer:path,type,origin:'observed',seen:new Set()};
       if (entry.type !== type) entry.type = 'mixed';
@@ -105,16 +106,17 @@ export function assertCollectionBinding(project,pointer,columns=project.manifest
   if (!Array.isArray(rows)) fail('Collection must be an array in the selected parent scope.');
   if (rows.some(row=>!object(row))) fail('Every collection row must be an object.');
   const fields = collectionFields(project,pointer);
-  for (const column of columns.filter(field=>field.pointer && (!field.kind || field.kind === 'bound'))) {
+  for (const column of columns.filter(field=>field.pointer && (!field.kind || ['bound','barcode'].includes(field.kind)))) {
     const declared = fields.find(field=>field.pointer === column.pointer);
     if (requireEmptySchema && !rows.length && !declared) fail(`Empty collection has no explicit schema field ${column.pointer}.`);
     if (declared?.type === 'mixed') fail(`Collection field ${column.pointer} has inconsistent row types.`);
     for (const row of rows) {
       const value = resolvePointer(project.sampleData,column.pointer,row);
       if (value === undefined) fail(`Missing collection field ${column.pointer}.`);
-      if (value === null) continue;
+      if (value === null) { if (column.kind === 'barcode') validateBarcode(value,column.barcode); continue; }
       if (typeof value === 'object') fail(`Collection field ${column.pointer} must be scalar.`);
       if (['currency','number','percent'].includes(column.format) && typeof value !== 'number') fail(`Collection field ${column.pointer} requires a number.`);
+      if (column.kind === 'barcode') validateBarcode(value,column.barcode);
     }
   }
 }

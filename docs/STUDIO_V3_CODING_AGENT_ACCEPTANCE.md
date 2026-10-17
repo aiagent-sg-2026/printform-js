@@ -217,3 +217,9 @@ The same Pi Harness now has a separately authorized local Docker/Node24 source/J
 实际`preflight`逐一检查180槽、既有六份签名/CSV/身份及独立消费者结论；只选同profile的三次，不合并旧Fail与新Pass。原冻结12个拒绝任务决定最高144/180，data0/18、bindings/refs/files各12/18，均不能满足原162总数与16逐类门槛；不执行或伪造缺失尝试，不改60/20冻结输入、oracle、alias、route或预算。[可执行预检与真实报告](STUDIO_V3_G8_PREFLIGHT.zh-CN.md)。
 
 通用本地CSV/JSON、七类业务starter、10有限纸张和小数CUSTOM的2873项/9跳过、75项三引擎及真实PDF，只证明明确范围的功能。完整原始导入文件可被Save/HTML携带；设备声明无认证效力。本机没有配置CUPS目的地、零打印任务；固定upstream/DPA/G6/G9/独立业务与视觉资格仍未关闭，当前新版本不能继承旧8c单题资格或标Production Ready。
+
+## 2026-10-17 General authoring is not production qualification
+
+Bounded independent source tables, offlineCODE128/EAN13,16primary display currencies and nine supplied-business forms extend feature contracts only; existing source facts/core foreign currency support remain intact. Human New/collections/import/share and model-callable typed edits are distinct. Explicit draft grants omitfinish_answer, but a model may still reportblocked: public0c02's8HTTP200 produced no candidate and remainsFail, with actual source unchanged.
+
+Public report_blocked reason is displayed only as an unverified assistant statement; no private reasoning/log fallback, automaticretry orApply is admitted. Native UI, filesystem export, barcode pixel decoding and deterministic test evidence do not close fixedupstream/DPA, fullsame-profileG8/G6/G9, physical printer/scanner or independent natural-language outcome qualification. No new formalG8attempt is recorded by this integration.

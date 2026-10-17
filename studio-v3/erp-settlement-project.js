@@ -11,9 +11,6 @@ const optional = (fields, data, base, labels, prefix = '') => {
 // Existing Studio Open/save/export consumes this project without a database adapter.
 export function createErpSettlementProject(input) {
   const normalized = normalizeErpSettlement(input);
-  if (!['MYR', 'USD', 'SGD', 'EUR', 'CNY', 'JPY'].includes(normalized.document.currency)) {
-    throw settlementError('PROJECT_CURRENCY', 'document.currency', 'Studio portable manifest supports MYR, USD, SGD, EUR, CNY and JPY; normalization itself supports other ISO currencies.');
-  }
   const receipt = normalized.document.kind === 'BankReceipt';
   const project = newProject(receipt ? 'invoice' : 'purchase'), design = designOf(project);
   project.manifest.title = receipt ? 'ERP Bank Receipt · Pilot' : 'ERP Bank Payment · Pilot';

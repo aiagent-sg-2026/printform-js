@@ -1,4 +1,5 @@
 import { BLOCKS, selectionField } from './model.js';
+import { tableDefinitions, tableOf } from './additional-tables.js';
 
 export const MAX_ELEMENT_TAGS = 8;
 export const MAX_ELEMENT_COMMENT = 500;
@@ -12,16 +13,17 @@ export function elementMetadata(project,id) {
   const design = project?.manifest?.studioV3;
   if (!design || typeof id !== 'string') return null;
   if (BLOCKS.includes(id)) return {id,kind:'section',block:id,role:id === 'items' ? 'table' : id};
-  if (id === 'items-header') return {id,kind:'table-header',block:'items',role:'table-header'};
+  const table = tableDefinitions(design).find(table=>table.id === id || `${table.id}-header` === id);
+  if (table) return {id,kind:id === table.id ? 'section' : 'table-header',block:table.id,role:id === table.id ? 'table' : 'table-header'};
   if (id === 'header-title') return {id,kind:'heading',block:'header',role:'heading'};
   if (id === 'header-logo') return {id,kind:'image',block:'header',role:'logo'};
   if (id === 'page-number') return {id,kind:'page-number',block:'footer',role:'page-number'};
   const selected = selectionField(design,id);
-  return selected ? {id,kind:id.startsWith('label-') ? 'label' : selected.block === 'items' ? 'column' : 'field',block:selected.block,role:id.startsWith('label-') ? 'label' : 'value'} : null;
+  return selected ? {id,kind:id.startsWith('label-') ? 'label' : tableOf(design,selected.block) ? 'column' : 'field',block:selected.block,role:id.startsWith('label-') ? 'label' : 'value'} : null;
 }
 function cleanReference(reference) {
   if (!reference || typeof reference !== 'object' || Array.isArray(reference) || Object.keys(reference).some(key=>!keys.includes(key)) || keys.some(key=>!(key in reference))) throw error('Invalid element reference. Remove it and add the element again.');
-  if (typeof reference.documentId !== 'string' || !/^[a-z0-9-]{1,104}$/i.test(reference.documentId) || !Number.isInteger(reference.revision) || reference.revision < 0 || typeof reference.id !== 'string' || !/^[a-z0-9-]{1,80}$/.test(reference.id) || !BLOCKS.includes(reference.block) || !['section','table-header','heading','image','page-number','column','field','label'].includes(reference.kind) || ![...BLOCKS,'table','table-header','heading','logo','page-number','value','label'].includes(reference.role) || typeof reference.comment !== 'string' || reference.comment.length > MAX_ELEMENT_COMMENT) throw error('Invalid element reference. Remove it and add the element again.');
+  if (typeof reference.documentId !== 'string' || !/^[a-z0-9-]{1,104}$/i.test(reference.documentId) || !Number.isInteger(reference.revision) || reference.revision < 0 || typeof reference.id !== 'string' || !/^[a-z0-9-]{1,80}$/.test(reference.id) || !(BLOCKS.includes(reference.block) || /^table-[a-z0-9-]{1,40}$/.test(reference.block)) || !['section','table-header','heading','image','page-number','column','field','label'].includes(reference.kind) || ![...BLOCKS,'table','table-header','heading','logo','page-number','value','label'].includes(reference.role) || typeof reference.comment !== 'string' || reference.comment.length > MAX_ELEMENT_COMMENT) throw error('Invalid element reference. Remove it and add the element again.');
   return Object.fromEntries(keys.map(key=>[key,reference[key]]));
 }
 export function validateElementReferences(project,references=[],revision=project?.revision) {
@@ -38,7 +40,7 @@ export function validateElementReferences(project,references=[],revision=project
 }
 function caption(project,id) {
   const design = project?.manifest?.studioV3, selected = design && selectionField(design,id);
-  return selected ? `${selected.field.label}${id.startsWith('label-') ? ' · label' : ''}` : design?.blocks?.[id]?.label || ({'items-header':'Table header','header-title':'Document heading','header-logo':'Logo / brand mark','page-number':'Page number'}[id] || id);
+  return selected ? `${selected.field.label}${id.startsWith('label-') ? ' · label' : ''}` : design?.blocks?.[id]?.label || (design && tableOf(design,id)?.label) || ({'items-header':'Table header','header-title':'Document heading','header-logo':'Logo / brand mark','page-number':'Page number'}[id] || id);
 }
 
 export class AIElementTags {

@@ -5,7 +5,9 @@ import { designOf } from './model.js';
 import { parseStructuredImport } from './structured-import-parser.js';
 import { importParts, convertImportValue, protectedImportPath as protectedPath, declaresSourceProfile } from './structured-import-values.js';
 import { bindingValidation } from './validation.js';
+import { suppliedPrimaryCurrency } from './currency-catalog.js';
 
+import { tableDefinitions } from './additional-tables.js';
 const fail = message => { throw new Error(message); };
 export function assertGeneralImportProject(project) {
   if (declaresSourceProfile(project.sampleData)) fail('This form declares a protected source-profile tag. Generic mapping cannot replace tagged source facts or derived print rows. Use the profile-specific source adapter; schema-defined general forms without source-profile tags can use local mapping.');
@@ -13,7 +15,7 @@ export function assertGeneralImportProject(project) {
 function labelsFor(design) {
   const globals = new Map();
   for (const section of ['header','customer','totals','footer']) for (const field of design[section]) {
-    if ((!field.kind || field.kind === 'bound') && field.pointer?.startsWith('/')) globals.set(field.pointer,field.label);
+    if ((!field.kind || ['bound','barcode'].includes(field.kind)) && field.pointer?.startsWith('/')) globals.set(field.pointer,field.label);
   }
   return globals;
 }
@@ -25,14 +27,14 @@ export function importTargets(project,targetPointer) {
   const collection = descriptor.collections.find(entry=>entry.pointer === targetPointer);
   if (!collection || protectedPath(targetPointer)) fail('Choose an existing unprotected target collection.');
   if (collection.fields.some(field=>protectedPath(field.pointer.slice(1)))) fail('This collection includes protected status or provenance facts and cannot be replaced by generic mapping.');
-  const bound = design.blocks.items.enabled && targetPointer === design.collection ? design.columns.filter(field=>(!field.kind || field.kind === 'bound') && field.pointer) : [];
+  const bound = tableDefinitions(design).filter(table=>table.enabled && table.collection === targetPointer).flatMap(table=>table.columns.filter(field=>(!field.kind || ['bound','barcode'].includes(field.kind)) && field.pointer));
   const result = new Map(collection.fields.map(field=>[field.pointer.slice(1),{...field,pointer:field.pointer.slice(1),label:field.pointer,required:field.required}]));
   for (const field of bound) {
     if (!field.pointer.startsWith('./')) fail('The current table has an unsupported row binding.');
     const pointer = field.pointer.slice(1), previous = result.get(pointer);
     importParts(pointer);
     if (protectedPath(pointer)) fail('The table includes a protected business field.');
-    result.set(pointer,{...previous,pointer,label:field.label,required:true,type:['number','currency','percent'].includes(field.format) ? 'number' : previous?.type || 'string'});
+    result.set(pointer,{...previous,pointer,label:field.label,required:true,type:field.kind === 'barcode' ? 'string' : ['number','currency','percent'].includes(field.format) ? 'number' : previous?.type || 'string'});
   }
   if (result.size > 250) fail('At most 250 target fields are supported.');
   return [...result.values()];
@@ -93,7 +95,8 @@ export function previewImport(project,review) {
   if (review.targetPointer) setDataValue(data,review.targetPointer,mapped);
   else for (const [pointer] of mappings) setDataValue(data,pointer,dataValue(mapped[0],pointer));
   assertBoundedJson(data);
-  const candidate = {...project,sampleData:data}, validation = bindingValidation(candidate);
+  const currency = suppliedPrimaryCurrency(data) ?? project.manifest.currency;
+  const candidate = {...project,sampleData:data,manifest:{...project.manifest,currency}}, validation = bindingValidation(candidate);
   if (!validation.valid) fail(validation.errors[0].message);
-  return {data,rows:mapped,mappings:mappings.map(([target,mapping])=>({target,...mapping})),sourceRows:scope.rows,targets};
+  return {data,currency,rows:mapped,mappings:mappings.map(([target,mapping])=>({target,...mapping})),sourceRows:scope.rows,targets};
 }

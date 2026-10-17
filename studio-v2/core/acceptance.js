@@ -1,4 +1,5 @@
 import { inspectMonetaryTokens } from "./monetary-inspection.js";
+import { inspectBarcodeContent } from "./barcode-inspection.js";
 import { inspectPageChrome } from "./page-chrome-inspection.js";
 import { LIMITS, PROTOCOL_VERSION, TRUST, protocolMajor } from "./constants.js";
 import { validateData, validateSchemaProfile } from "./schema.js";
@@ -138,7 +139,7 @@ export function inspectRenderedDocument(doc, manifest, options = {}) {
   errors.push(...rowIntegrity.errors);
   const overflow = pageList.flatMap((page, pageIndex) => {
     const pageRect = page.getBoundingClientRect();
-    return Array.from(page.querySelectorAll("table,td,th,img,[data-pf-text],[data-pf-href]")).filter((node) => {
+    return Array.from(page.querySelectorAll("table,td,th,img,[data-pf-text],[data-pf-href],[data-pf-barcode],[data-pf-barcode-svg]")).filter((node) => {
       const rect = node.getBoundingClientRect();
       if (rect.width <= 0 || rect.height <= 0) return false;
       return rect.left < pageRect.left - 1 || rect.right > pageRect.right + 1;
@@ -147,6 +148,8 @@ export function inspectRenderedDocument(doc, manifest, options = {}) {
   if (overflow.length) errors.push(error("HORIZONTAL_OVERFLOW", `${overflow.length} rendered elements overflow horizontally`));
   const unreadableMoney = inspectMonetaryTokens(doc);
   if (unreadableMoney.length) errors.push(error("MONETARY_TOKEN_UNREADABLE", `${unreadableMoney.length} currency values wrap, overlap or exceed their cells; allocate more width or fewer columns at the intended typography`));
+  const barcodeOverflow = inspectBarcodeContent(doc);
+  if (barcodeOverflow.count) errors.push(error("BARCODE_CONTENT_OVERFLOW", `${barcodeOverflow.count} barcodes exceed their cell or field content boxes; allocate enough space for the full symbol and quiet zones without scaling or changing the source`));
   const templateRoot = doc.getElementById("pf-template")?.content?.querySelector(".printform");
   errors.push(...inspectPageChrome(pageList));
   // Repeated-region completeness: data-repeat-header/-docinfo are simple
@@ -208,6 +211,7 @@ export function inspectRenderedDocument(doc, manifest, options = {}) {
   // without screenshots; capped per category to bound the report size.
   const issues = [
     ...unreadableMoney.slice(0, MAX_ISSUE_DETAILS).map(node=>issueEntry("MONETARY_TOKEN_UNREADABLE",node,pageIndexOf(node))),
+    ...barcodeOverflow.issues,
     ...overflow.slice(0, MAX_ISSUE_DETAILS).map(({ node, pageIndex }) => issueEntry("HORIZONTAL_OVERFLOW", node, pageIndex)),
     ...verticalOverflow.slice(0, MAX_ISSUE_DETAILS).map((page) => issueEntry("VERTICAL_OVERFLOW", page, pageIndexOf(page))),
     ...lowContrast.slice(0, MAX_ISSUE_DETAILS).map((node) => issueEntry("CONTRAST_FAILURE", node, pageIndexOf(node))),
@@ -246,6 +250,7 @@ export function inspectRenderedDocument(doc, manifest, options = {}) {
     metrics: {
       logicalPages: pages.length,
       overflowElements: overflow.length,
+      barcodeContentOverflows: barcodeOverflow.count,
       verticalOverflowPages: verticalOverflow.length,
       contrastFailures: lowContrast.length,
       renderedRows: rowIntegrity.renderedRows,

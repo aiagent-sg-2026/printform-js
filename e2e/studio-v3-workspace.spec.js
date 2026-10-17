@@ -1,6 +1,7 @@
 import { test, expect } from '@playwright/test';
 import { keepStructureOpen } from './studio-v3-structure.js';
 import fs from 'node:fs/promises';
+import { previewDocument } from './studio-v3-rendered-probes.js';
 const frame = page=>page.frameLocator('#preview-frame');
 async function ready(page) {await expect(page.locator('[data-action=export]')).toBeEnabled({timeout:30000});}
 async function edit(page,work) {const revision=await page.locator('#revision').innerText();await work();await expect(page.locator('#revision')).not.toHaveText(revision);await ready(page);}
@@ -53,7 +54,7 @@ test('properties and binding are separate; picker paths, static text and truthfu
   await page.locator('[data-action=properties]').click();await page.locator('#left-panel [data-select=items-sku]').click();await page.locator('[data-action=binding]').click();
   await page.getByLabel('Pick a data field',{exact:true}).selectOption('./quantity');await expect(page.getByLabel('Row field (./field)',{exact:true})).toHaveValue('./quantity');
   await edit(page,()=>page.getByRole('button',{name:'Apply binding',exact:true}).click());
-  await expect(frame(page).locator('.prowitem_processed').first().locator('td').nth(1)).toHaveText('2');
+  await expect.poll(()=>previewDocument(page,()=>document.querySelector('.prowitem_processed td:nth-child(2)')?.textContent)).toBe('2');
   await page.locator('[data-mode=data]').click();await page.locator('#database-workbench [data-db-group=json]').click();
   const data=JSON.parse(await page.locator('#data-json').inputValue());data.items=data.items.slice(0,2);data.company.name='Imported fixture company';
   await page.locator('#data-json').fill(JSON.stringify(data));await edit(page,()=>page.getByRole('button',{name:'Apply JSON data',exact:true}).click());
@@ -129,12 +130,17 @@ test('Data field tree proposes document, collection and row paths; values stay i
   await page.locator('#data-json').fill(JSON.stringify({...original,items:{}}));const before=await page.locator('#revision').innerText();
   await page.getByRole('button',{name:'Apply JSON data',exact:true}).click();await expect(page.locator('#revision')).not.toHaveText(before);
   await expect(page.locator('[data-action=export]')).toBeDisabled();await page.locator('#database-workbench [data-db-group=items]').click();
-  await expect(page.locator('#database-workbench')).toContainText('/items must be an array');await expect(page.locator('[data-db-action=add-row]')).toBeDisabled();
+  await expect(page.locator('#database-workbench .data-schema-tree')).toBeVisible();
+  await expect(page.locator('#database-workbench [data-db-pointer]')).toHaveCount(0);await expect(page.locator('[data-db-action=add-row]')).toHaveCount(0);
+  for(const action of ['save','copy','export'])await expect(page.locator(`#database-workbench [data-db-action=${action}]`)).toBeDisabled();
   await page.locator('#database-workbench [data-db-group=json]').click();await page.locator('#data-json').fill(JSON.stringify({...original,items:[7]}));
   await page.getByRole('button',{name:'Apply JSON data',exact:true}).click();await page.locator('#database-workbench [data-db-group=schema]').click();
   await expect(page.getByRole('button',{name:'Use .',exact:true})).toHaveCount(0);await expect(page.locator('#right-panel option[value="."]')).toHaveCount(0);
+  for(const action of ['print','export'])await expect(page.locator(`[data-action=${action}]`)).toBeDisabled();
   await page.locator('#database-workbench [data-db-group=json]').click();await page.locator('#data-json').fill(JSON.stringify(original));
   await edit(page,()=>page.getByRole('button',{name:'Apply JSON data',exact:true}).click());await page.locator('#database-workbench [data-db-group=schema]').click();
   await expect(page.locator('.data-schema-tree')).toContainText(original.customer.name);await expect(page.locator('.data-schema-tree img')).toHaveCount(0);
+  await page.locator('#database-workbench [data-db-group=items]').click();await expect(page.locator('[data-db-action=add-row]')).toBeEnabled();
+  await expect(page.locator('[data-action=export]')).toBeEnabled();
   expect(await page.evaluate(()=>window.treeLeak)).toBeUndefined();await page.screenshot({path:info.outputPath('Data-field-tree.png')});expect(errors).toEqual([]);
 });

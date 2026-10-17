@@ -82,3 +82,36 @@ InspectionReport/AssetHandover补齐到既有业务profile的七类；不是认�
 ### 公开版本的实际AI交付缺口
 
 e385公开版本接受自然语言改纸/先预览后人工Apply任务，原demo-auto实际5次HTTP200但返回说明和额外确认，没有修改候选，按任务Fail保留；不是授权误判，design effect本可调用set_page，answer终止本身合法但不证明完成需求。独立实际Save确认r1/A4与完整项目未变，原始文件/设备/未选列canary未出站。没有调prompt/alias/预算或弱化finish来补绿。仍需明确的意图完成策略与独立多任务资格，不能把安全不变与生产可用混为一谈。[非G8原始结论](acceptance/STUDIO_V3_GENERAL_AI_LIVE_20261017.json)。
+
+## 2026-10-17：独立来源表、文件隐私及实际消费者审查
+
+下表包含已发布AI缺口和本轮**未发布集成中**发现的回归，不把开发态错误倒算成旧main缺陷；不是整仓库“所有bug已清零”结论。
+
+| 已复现问题／风险 | 根因与修正 |
+| --- | --- |
+| 编辑请求以回答终止却没有候选 | 明确draft意图删除answer effect，仍无权强迫模型成功；ed5HTTP200与0c8HTTP200真实Fail保留 |
+| 模型公开blocker丢失 | Pi正常/中断catch和UI不共用公开字段；统一仅AGENT_BLOCKED的1..500字符reason，归属明确且不读私有推理 |
+| 空集合的声明schema被改设计丢掉 | 按稳定表/列身份保留既有声明；改变/新增/重新启用绑定仍需schema |
+| 加表错误选择纯量数组 | 只选择所有行都为安全对象的合法候选，跳过tags等纯量数组 |
+| 条码切换真实图片残留配置 | 清除旧barcode配置，保留可返回的来源pointer；不是隐藏验证错误 |
+| 条码仍在纸内却跨单元格 | page-only和nearest-only都不足；遍历所有同页cell/field祖先，原生窄列拒绝、只加宽分配后通过，SVG/数据不变 |
+| 主币种目录错误缩窄外币来源 | 开发态16代码共用validator曾拒绝原合法BHD/AED；恢复原来源/core支持，只限制主币种UI/构造 |
+| 换显示币种重贴已有来源金额 | 显式document.currency参与一致性检查和映射预览；不重算、不做FX |
+| 通用invariant误锁普通quantity主集合 | 恢复原非财务主表可换collection的语义；额外表集合和canonical来源仍保护，未修改原正向契约样例 |
+| 工时附加身份可伪造成static | `/printRows`档案附加表固定原身份/绑定/kind；实际API由接受变UNSAFE_PROPOSAL，label/style保留 |
+| 额外表引用进入旧范围消费者 | 实际chat及private-draft两个路径曾UNSAFE_SCOPE且表头广告错指主表；统一metadata block ownership，自身header仅label，不扩跨表权限 |
+| 老文件read覆盖较新编辑/review | 读前大小及代际/上下文检查；原生延迟Open和两CSV竞态守住较新工作 |
+| 非法UTF8被替换字符接受 | fatal decode明确拒绝，实际Save不变；大project在native读取前拒绝，dataset原有大小护栏保留 |
+| 长CSV名称截断导致恢复猜JSON | recovery保存并验证显式csv/json格式，不能靠截掉扩展名的display label猜测；raw source/mapping/backup保留 |
+| 分享时原始文件仍嵌在输出 | 默认来源合同不变，新增明确share clone只去receipt/session；真实下载证明unbound live data仍在，不伪称匿名 |
+| 手机旋转/面板缩放裁切聊天草稿 | 原生27字草稿64px容器/70px内容；resize及面板宽度改变重测后70/70、最窄85/85，文本不变、零推理 |
+| 普通主表坏data不能进入可修复状态 | 过广collection guard把原人类JSON/缺失路径编辑提前拒绝；仅普通主表保留invalid-authoring，原生r1锁输出→原数据r2可导出，source/schema/additional/barcode守卫不变 |
+| primitive row被错误建议为对象根`.` | `observedFields([7])`把空后缀前缀成`.`；仅排除标量根，保留声明空object子字段与缺失诊断，坏行仍不可打印/导出 |
+
+独立只读审查中，文件/恢复/隐私未发现进一步有证据的P0/P1/P2；契约审查发现的额外表scope P2已修复并复核。该审查不是runtime Pass。真正原生下载、250目标分页、500末行拒绝/完整成功、六档视口与独立条码像素解码见[文件证据](acceptance/STUDIO_V3_FILES_PRIVACY_20261017.md)及[条码证据](STUDIO_V3_OFFLINE_BARCODE.zh-CN.md)；最终浏览器/发布记录须另记。
+
+错误的Intl负号精确文案、版本/registry镜像、CSV selector/源码清单镜像及依赖未构建dist的HTML用例已删除，不重新钉住实现。合成change重复触发、双视口截图、外部配置default互操作等驱动故障与首次失败均保留，不伪装成产品缺陷或模型通过。
+
+继续开放：任意ERP/raw格式/法定本地化、原生XLSX/未知连接器、join/会计/税/FX/工资推算、GS1/真实扫码/打印、固定上游与DPA、完整同profile G8/G6/G9。当前是有界通用Studio，不是通用任意代码执行或Production Ready。
+
+后续完整来源构建266文件/3238项通过、9opt-in跳过，原127契约实例与39审查通过。旧729场景623/106保留；发现的raw模块404、旧入口/隐藏结构、终止文案/原生File.text假设分开修复，不把Node SDK本身当浏览器集成证明。原生55000字符长描述实际合法34页且逐字完整；错误按semantic ID只取两段的3167字符观察也保留，改读真实续页单元格而不是宣称数据丢失。原子页尾则保留所有纸张/字体/原文，仅明确keepTogether并实际阻断。[完整范围](acceptance/STUDIO_V3_GENERAL_CAPABILITIES_20261017.md)。

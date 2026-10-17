@@ -1,11 +1,11 @@
 // Generated from docs/STUDIO_V3_FEATURE_LEDGER.csv by scripts/generate-studio-v3-workflows.mjs. Do not edit by hand.
 // [ledger id, workflow, status, human path or reason] for every workflow the agent cannot perform today.
 export const LEDGER_WORKFLOWS = Object.freeze([
-  ["printform.project.blank","Start a blank form","not-yet-callable","Eligible; the Studio UI has this service but no agent adapter yet"],
-  ["printform.project.starter","Start a business demo/template","not-yet-callable","Eligible; the Studio UI has this service but no agent adapter yet"],
+  ["printform.project.blank","Start a blank form","human-mediated","New > Blank"],
+  ["printform.project.starter","Start a business demo/template","human-mediated","New > choose listed starter"],
   ["printform.design.preset","Use business-specific A4 layout presets","not-yet-callable","Eligible; the Studio UI has this service but no agent adapter yet"],
   ["printform.asset.import","Import local raster design assets","human-mediated","Asset picker in logo/image field"],
-  ["printform.project.locale-currency","Choose locale and currency","not-yet-callable","Eligible; the Studio UI has this service but no agent adapter yet"],
+  ["printform.project.locale-currency","Choose locale and one of 16 Studio primary currencies","human-mediated","Data mode > right-side Locale & currency; supplied document currency must match"],
   ["printform.project.open","Open editable v3 JSON or exported HTML","human-mediated","Open button"],
   ["printform.project.save","Save editable template including active data","human-mediated","Save button / Ctrl+S"],
   ["printform.project.export-html","Export validated standalone HTML","human-mediated","Export button"],
@@ -50,4 +50,8 @@ export const LEDGER_WORKFLOWS = Object.freeze([
   ["printform.workspace.layout-toggles","Panel toggles, zoom, fold","intentionally-unavailable","Host mechanism or view preference; not a model capability"],
   ["printform.source.pairing","Pair or revoke an owned local companion","human-mediated","AI settings > Isolated source workspace > Pair or Disconnect"],
   ["printform.source.disclosure","Authorize fictional source for one run","human-mediated","Sharing permissions > Use isolated source for one request"],
+  ["printform.table.additional","Create and configure independent source tables","human-mediated","Template structure > Add independent source table; Properties > Apply source table"],
+  ["printform.business.supplied","Use nine supplied-business source contracts","human-mediated","New > listed fictional starter; real facts use external normalization/project SDK then Studio Open; no mounted SDK tool"],
+  ["printform.schema.normalization","Normalize explicit source profiles through SDK adapters","human-mediated","Use external documented adapter/SDK then Studio Open; no mounted SDK tool; Data > Import CSV / JSON is separate human mapping"],
+  ["printform.project.share-copy","Download editable or standalone share copy without original import receipt","human-mediated","Share copy > review remaining data > choose editable copy or HTML"],
 ].map(row=>Object.freeze(row)));

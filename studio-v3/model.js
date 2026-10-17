@@ -6,6 +6,7 @@ export const STUDIO_V3_VERSION = '0.2.0';
 export { BLOCKS } from './design-authoring.js';
 import { BLOCKS, sectionOrder, pageSettings, fieldKind, labelSelection } from './design-authoring.js';
 import { validateDesign } from './design-validation.js';
+import { fieldRows, tableDefinitions } from './additional-tables.js';
 const field = (id, label, pointer, format = '') => ({ id, label, pointer, format });
 export function defaultDesign(type = 'invoice', blank = false) {
   const title = blank ? 'PRINT FORM' : { invoice: 'INVOICE', purchase: 'PURCHASE ORDER', delivery: 'DELIVERY NOTE' }[type] || 'PRINT FORM';
@@ -61,8 +62,8 @@ export function compileProject(project, design) {
     add(id, design.blocks[id].label, { header: 'DocumentHeader', customer: 'ProjectInfo', items: 'DataTable', totals: 'MoneySummary', footer: 'PageFooter' }[id], id === 'items' ? 'table-row' : id === 'header' ? 'document-header' : id, id === 'items' ? { each: design.collection } : null);
     const fields = id === 'items' ? design.columns : design[id];
     fields.forEach(f => {
-      add(`${id}-${f.id}`,f.label,'DocumentMeta','field',fieldKind(f) === 'bound' ? {text:f.pointer} : null,id);
-      Object.assign(spec.components.at(-1), {kind:fieldKind(f),labelStyle:structuredClone(f.labelStyle || {}),valueStyle:structuredClone(f.valueStyle || {}),showLabel:f.showLabel !== false, ...(id === 'items' ? {width:f.width} : {}), ...(fieldKind(f) === 'image' ? {assetId:f.assetId,width:f.width,height:f.height,fit:f.fit || 'contain'} : {})});
+      add(`${id}-${f.id}`,f.label,'DocumentMeta','field',['bound','barcode'].includes(fieldKind(f)) ? {[fieldKind(f) === 'barcode' ? 'barcode' : 'text']:f.pointer} : null,id);
+      Object.assign(spec.components.at(-1), {kind:fieldKind(f),labelStyle:structuredClone(f.labelStyle || {}),valueStyle:structuredClone(f.valueStyle || {}),showLabel:f.showLabel !== false, ...(id === 'items' ? {width:f.width} : {}), ...(fieldKind(f) === 'image' ? {assetId:f.assetId,width:f.width,height:f.height,fit:f.fit || 'contain'} : {}),...(f.barcode ? {barcode:structuredClone(f.barcode)} : {})});
     });
     if (id === 'header') {
       add('header-title','Document title','DocumentMeta','title',null,'header');
@@ -76,6 +77,17 @@ export function compileProject(project, design) {
     spec.components.find(c => c.id === id).keepTogether = Boolean(design.blocks[id].keepTogether);
     spec.sections.push({ id, layout:structuredClone(design.blocks[id].layout || {}), componentIds: spec.components.filter(c => c.id === id || c.parent === id).map(c => c.id) });
   });
+  for (const table of tableDefinitions(design).filter(table=>table.id !== 'items' && table.enabled)) {
+    add(table.id,table.label,'DataTable','table-row',{each:table.collection});
+    Object.assign(spec.components.at(-1),{tableId:table.id});
+    add(`${table.id}-header`,`${table.label} header`,'DataTable','table-header',null,table.id);
+    Object.assign(spec.components.at(-1),{tableId:table.id});
+    for (const f of table.columns) {
+      add(`${table.id}-${f.id}`,f.label,'DocumentMeta','field',f.pointer ? {[fieldKind(f) === 'barcode' ? 'barcode' : 'text']:f.pointer} : null,table.id);
+      Object.assign(spec.components.at(-1),structuredClone(f),{id:`${table.id}-${f.id}`,tableId:table.id,kind:fieldKind(f)});
+    }
+    spec.sections.push({id:table.id,layout:{},componentIds:spec.components.filter(c=>c.id === table.id || c.parent === table.id).map(c=>c.id)});
+  }
   if (design.pageNumbers) {
     add('page-number','Page number','PageFooter','footer',null);
     spec.components.at(-1).style = structuredClone(design.pageNumberStyle || {});
@@ -96,8 +108,8 @@ export function newProject(type = 'invoice', blank = false) {
 
 export function selectionField(design, id) {
   id = labelSelection(id);
-  for (const block of BLOCKS) {
-    const fields = block === 'items' ? design.columns : design[block];
+  for (const block of [...BLOCKS,...(design.additionalTables || []).map(table=>table.id)]) {
+    const fields = fieldRows(design,block);
     const index = fields.findIndex(f => `${block}-${f.id}` === id);
     if (index !== -1) return { block, field: fields[index], index };
   }

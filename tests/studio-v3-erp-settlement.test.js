@@ -113,7 +113,7 @@ describe('ERP supplied settlement facts, without posting or recalculation', () =
     expect(text(fragment, 'totals-unapplied-amount')).toBe(`MYR ${precision ? `0.${'0'.repeat(precision)}` : '0'}`);
   });
 
-  it('accepts foreign invoice currencies outside the six manifest currencies', () => {
+  it('accepts maintained foreign invoice and primary manifest currencies without conversion', () => {
     const input = fictionalMixedReceipt();
     input.allocations[0].sourceReference.currency = 'GBP';
     for (const key of ['invoiceAppliedAmount', 'invoiceClearedAmount', 'invoiceBalanceBefore', 'invoiceRemainingBalance']) input.allocations[0][key].currency = 'GBP';
@@ -121,7 +121,7 @@ describe('ERP supplied settlement facts, without posting or recalculation', () =
     expect([...fragment.querySelectorAll('[data-v3-id="items-amount"]')].map(node => node.textContent)).toContain('GBP 100.000');
     const foreign = fictionalAdvance(); foreign.document.currency = 'GBP'; foreign.cashMovement.amount.currency = foreign.summary.unappliedAmount.currency = 'GBP';
     expect(normalizeErpSettlement(foreign).cashMovement.amount.currency).toBe('GBP');
-    expect(() => createErpSettlementProject(foreign)).toThrow(expect.objectContaining({ code: 'ERP_SETTLEMENT_PROJECT_CURRENCY' }));
+    expect(reopened(foreign).manifest.currency).toBe('GBP');
   });
 });
 

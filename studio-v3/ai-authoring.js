@@ -8,19 +8,21 @@ import { tableStyleChange } from './table-style.js';
 import { elementStyleChange } from './element-style.js';
 import { projectDescriptor } from './dataset-schema.js';
 import { agentPageSettings } from './agent-page-settings.js';
+import { fieldRows, tableOf, tableDefinitions, isTable } from './additional-tables.js';
+import { CURRENCY_CODES } from './currency-catalog.js';
 
 const unsafe = () => { throw Object.assign(new Error('UNSAFE_PROPOSAL'),{code:'UNSAFE_PROPOSAL'}); };
 const assertFieldWidth = (section,kind,width) => {
-  if (section !== 'items' && kind !== 'image' && width !== undefined) throw contractError('FIELD_WIDTH_UNSUPPORTED');
+  if (section !== 'items' && !section.startsWith('table-') && kind !== 'image' && width !== undefined) throw contractError('FIELD_WIDTH_UNSUPPORTED');
 };
-const fieldKeys = ['label','pointer','format','kind','text','showLabel','labelStyle','valueStyle','width','assetId','height','fit'];
+const fieldKeys = ['label','pointer','format','kind','text','showLabel','labelStyle','valueStyle','width','assetId','height','fit','barcode'];
 const sectionKeys = ['enabled','label','layout','breakBefore','keepTogether'];
 const object = (value,keys) => {
   if (!value || typeof value !== 'object' || Array.isArray(value) || Object.keys(value).some(k=>!keys.includes(k))) unsafe();
 };
 const same = (a,b) => JSON.stringify(a) === JSON.stringify(b);
 const display = value => value === undefined ? '(unset)' : typeof value === 'object' ? JSON.stringify(value) : value;
-const fieldList = (d,id) => id === 'items' ? d.columns : d[id];
+const fieldList = fieldRows;
 function reorder(list,order,ids) {
   if (!Array.isArray(order) || order.length !== list.length || new Set(order).size !== list.length || order.some(id=>!ids.includes(id))) unsafe();
   return order.map(id=>list[ids.indexOf(id)]);
@@ -70,9 +72,10 @@ export function applyAuthoring(design,operations,project,explicitPointers=[]) {
       }
       // Explicit mode transitions cannot retain hidden bound data.
       if ((op.patch.kind === 'static' || op.patch.kind === 'image') && selected.field.pointer) { record(op.target,'pointer',selected.field.pointer,''); selected.field.pointer = ''; }
-      if (op.patch.kind && op.patch.kind !== 'image') for (const key of ['assetId','height','fit',...(selected.block === 'items' ? [] : ['width'])]) {
+      if (op.patch.kind && op.patch.kind !== 'image') for (const key of ['assetId','height','fit',...(isTable(design,selected.block) ? [] : ['width'])]) {
         if (selected.field[key] !== undefined) { record(op.target,key,selected.field[key],undefined); delete selected.field[key]; }
       }
+      if (op.patch.kind && op.patch.kind !== 'barcode' && selected.field.barcode !== undefined) { record(op.target,'barcode',selected.field.barcode,undefined); delete selected.field.barcode; }
     } else if (op.type === 'add_field') {
       object(op,['type','section','field']); object(op.field,['id',...fieldKeys]);
       if (!BLOCKS.includes(op.section)) unsafe();
@@ -123,9 +126,9 @@ export function applyAuthoring(design,operations,project,explicitPointers=[]) {
   if (design.columns.reduce((sum,c)=>sum+c.width,0) > 100.01) throw Object.assign(new Error('COLUMN_WIDTH_LIMIT'),{code:'COLUMN_WIDTH_LIMIT'});
   try { validateDesign(design); } catch { unsafe(); }
   // Binding edits select current local paths; they never create/recalculate ERP values.
-  for (const block of BLOCKS) for (const f of fieldList(design,block)) {
-    const old = selectionField(project.manifest.studioV3,`${block}-${f.id}`)?.field;
-    if (f.pointer && (f.pointer !== old?.pointer || (block === 'items' && design.collection !== project.manifest.studioV3.collection)) && !availableBindings(project,explicitPointers,design.collection).some(b=>b.pointer === f.pointer && b.relative === (block === 'items') && (!b.relative || b.collection === design.collection) && b.type !== 'array')) unsafe();
+  for (const block of [...BLOCKS,...(design.additionalTables || []).map(table=>table.id)]) for (const f of fieldList(design,block)) {
+    const old = selectionField(project.manifest.studioV3,`${block}-${f.id}`)?.field, table = tableOf(design,block), collection = table?.collection || design.collection;
+    if (f.pointer && (f.pointer !== old?.pointer || table && collection !== tableOf(project.manifest.studioV3,block)?.collection) && !availableBindings(project,explicitPointers,collection).some(b=>b.pointer === f.pointer && b.relative === Boolean(table) && (!b.relative || b.collection === collection) && b.type !== 'array')) unsafe();
   }
   if (design.collection !== project.manifest.studioV3.collection && !availableBindings(project,explicitPointers).some(b=>b.pointer === design.collection && b.type === 'array')) unsafe();
   assertProtectedBindings(protectedBindings(project.manifest.studioV3),design);
@@ -139,7 +142,7 @@ export function explicitBindingPointers(request='',references=[]) {
 }
 export function availableBindings(project,explicitPointers=[],effectiveCollection=project.manifest.studioV3.collection) {
   const result = [], seen = new Set(), collection = project.manifest.studioV3.collection, descriptor = projectDescriptor(project);
-  const collections = [...new Set([collection,effectiveCollection,...explicitPointers.filter(pointer=>pointer.startsWith('/') && Array.isArray(resolvePointer(project.sampleData,pointer)))])];
+  const collections = [...new Set([...tableDefinitions(project.manifest.studioV3).map(table=>table.collection),effectiveCollection,...explicitPointers.filter(pointer=>pointer.startsWith('/') && Array.isArray(resolvePointer(project.sampleData,pointer)))])];
   const add = (pointer,owner=collection) => {
     const relative = pointer.startsWith('./'), key = relative ? `${owner}:${pointer}` : pointer; if (seen.has(key) || result.length >= 80 || !validPointer(pointer,relative)) return;
     const value = resolvePointer(project.sampleData,pointer);
@@ -155,6 +158,7 @@ export function availableBindings(project,explicitPointers=[],effectiveCollectio
     for (const id of BLOCKS) for (const f of fieldList(d,id)) if (f.pointer.startsWith('./')) for (const owner of collections) add(f.pointer,owner); else add(f.pointer);
   }
   for (const pointer of DEMO_BINDING_PATHS) if (pointer.startsWith('./')) for (const owner of collections) add(pointer,owner); else add(pointer);
+  for (const table of tableDefinitions(project.manifest.studioV3)) { add(table.collection); for (const field of table.columns) if (field.pointer) add(field.pointer,table.collection); }
   const walkSchema = (schema,path='',depth=0,owner=collection)=> {
     if (depth > 4 || !schema || typeof schema !== 'object') return;
     if (schema.type === 'array') { add(path); if (collections.includes(path)) walkSchema(schema.items,'.',depth+1,path); }
@@ -167,8 +171,8 @@ export function shareAuthoring(project,context={}) {
   const d = project.manifest.studioV3;
   return {
     contract:AUTHORING_CONTRACT,
-    sections:BLOCKS.map(id=>({id,enabled:d.blocks[id].enabled,layout:d.blocks[id].layout || {},breakBefore:Boolean(d.blocks[id].breakBefore),keepTogether:Boolean(d.blocks[id].keepTogether),fields:fieldList(d,id).map(f=>({id:`${id}-${f.id}`,kind:f.kind || (f.pointer ? 'bound' : 'static'),format:f.format,width:f.width,labelStyle:f.labelStyle || {},valueStyle:f.valueStyle || {},showLabel:f.showLabel !== false}))})),
+    sections:[...BLOCKS,...(d.additionalTables || []).map(table=>table.id)].map(id=>{const block=d.blocks[id] || tableOf(d,id);return {id,enabled:block.enabled,layout:block.layout || {},breakBefore:Boolean(block.breakBefore),keepTogether:Boolean(block.keepTogether),...(tableOf(d,id) ? {collection:tableOf(d,id).collection} : {}),fields:fieldList(d,id).map(f=>({id:`${id}-${f.id}`,kind:f.kind || (f.pointer ? 'bound' : 'static'),format:f.format,width:f.width,...(f.barcode ? {barcode:f.barcode} : {}),labelStyle:f.labelStyle || {},valueStyle:f.valueStyle || {},showLabel:f.showLabel !== false}))};}),
     elements:[{id:'header-title',visible:d.blocks.header.enabled,style:d.titleStyle || {}},{id:'page-number',visible:d.pageNumbers,style:d.pageNumberStyle || {}},{id:'header-logo',assetId:d.logo?.assetId || null,visible:d.blocks.header.enabled && d.logo !== null},{id:'items',visible:d.blocks.items.enabled,style:d.tableStyle || {},styleOperation:'set_table_style'}],sectionOrder:d.sectionOrder || BLOCKS,page:agentPageSettings(d),
-    assets:(d.assets || []).map(({id})=>({id})),bindings:availableBindings(project,explicitBindingPointers(context.request,context.references))
+    currency:{selected:project.manifest.currency,supported:CURRENCY_CODES},assets:(d.assets || []).map(({id})=>({id})),bindings:availableBindings(project,explicitBindingPointers(context.request,context.references))
   };
 }

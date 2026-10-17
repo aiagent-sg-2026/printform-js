@@ -4,6 +4,9 @@ import { nestedDatasetFixture } from '../tests/fixtures/nested-dataset.js';
 import { readProject,saveProject } from '../studio-v3/file-io.js';
 import { readFile } from 'node:fs/promises';
 import { pathToFileURL } from 'node:url';
+import { JSDOM } from 'jsdom';
+
+globalThis.DOMParser ??= new JSDOM('').window.DOMParser;
 
 const ready = page => expect(page.locator('[data-action=export]')).toBeEnabled({timeout:30000});
 const paper = page => page.frameLocator('#preview-frame');
@@ -79,10 +82,7 @@ test('explicit empty schema survives real nested binding/save/reopen/later input
   const pending = page.waitForEvent('download'); await page.locator('[data-action=export]').click();
   const exported = await pending, path = info.outputPath('nested.html'); await exported.saveAs(path);
   const html = await readFile(path,'utf8');
-  const reopened = await page.evaluate(async text=> {
-    const {readProject} = await import('/studio-v3/file-io.js');
-    return readProject(text,'nested.html');
-  },html);
+  const reopened = readProject(html,'nested.html');
   expect(reopened.schema).toEqual(full.schema); expect(reopened.sampleData).toEqual(saved.project.sampleData);
   const offline = await context.newPage(); await offline.route(/^https?:/,route=>route.abort());
   await offline.goto(pathToFileURL(path).href); await expect(offline.locator('html')).toHaveAttribute('data-printform-status','ready');

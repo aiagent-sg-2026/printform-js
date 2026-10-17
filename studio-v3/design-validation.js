@@ -3,6 +3,7 @@ import { validatePageSettings } from './paper-settings.js';
 import { A4_PRESET_IDS } from './a4-presets.js';
 import { validateTableStyle } from './table-style.js';
 import { validateFieldStyle } from './element-style.js';
+import { validateAdditionalTables } from './additional-tables.js';
 export { validateFieldStyle } from './element-style.js';
 const color = value => typeof value === 'string' && /^#[0-9a-f]{6}$/i.test(value);
 const number = (value,min,max) => typeof value === 'number' && Number.isFinite(value) && value >= min && value <= max;
@@ -11,6 +12,11 @@ const text = (value,max) => typeof value === 'string' && value.length <= max;
 const fail = message => { throw new Error(message); };
 export function exactDesignKeys(value, keys, label) {
   if (!value || typeof value !== 'object' || Array.isArray(value) || Object.keys(value).some(key => !keys.includes(key))) fail(`Unsupported ${label} property.`);
+}
+export function validateBarcodeSettings(value) {
+  exactDesignKeys(value,['format','moduleWidth','height','displayValue'],'barcode');
+  if (!['CODE128','EAN13'].includes(value.format) || !Number.isInteger(value.moduleWidth) || !number(value.moduleWidth,1,4) || !Number.isInteger(value.height) || !number(value.height,20,160) || typeof value.displayValue !== 'boolean') fail('Invalid barcode format or dimensions.');
+  return value;
 }
 function image(value,assets,label) {
   if (!identifier(value.assetId) || !assets.has(value.assetId)) fail(`${label} must reference an existing embedded raster asset.`);
@@ -54,27 +60,34 @@ function validateBlock(block,id) {
     if (id === 'items') fail('Table layout uses column widths, not section grid columns.');
   }
 }
-function validateField(f,id,assets,ids) {
-  exactDesignKeys(f,['id','label','pointer','lastPointer','format','text','width','kind','labelStyle','valueStyle','showLabel','assetId','height','fit'],`${id} field`);
-  if (!identifier(f.id) || ids.has(`${id}-${f.id}`) || ['header-title','header-logo','items-header','page-number'].includes(`${id}-${f.id}`)) fail('Invalid or duplicate field id.');
+function validateField(f,id,assets,ids,relative = id === 'items') {
+  exactDesignKeys(f,['id','label','pointer','lastPointer','format','text','width','kind','labelStyle','valueStyle','showLabel','assetId','height','fit','barcode'],`${id} field`);
+  if (!identifier(f.id) || `${id}-${f.id}`.length > 74 || ids.has(`${id}-${f.id}`) || ['header-title','header-logo','items-header','page-number'].includes(`${id}-${f.id}`)) fail('Invalid or duplicate field id.');
   ids.add(`${id}-${f.id}`);
   if (!text(f.label,100) || !FORMATS.includes(f.format ?? '') || (f.text !== undefined && !text(f.text,10000))) fail('Invalid field label, text or format.');
   if (f.kind !== undefined && !FIELD_KINDS.includes(f.kind)) fail('Unsupported field kind.');
-  if (f.pointer !== undefined && (typeof f.pointer !== 'string' || (f.pointer && !validPointer(f.pointer,id === 'items')))) fail('Use /field for document bindings and ./field for item bindings. Wildcards and prototype paths are not supported.');
-  if (f.lastPointer !== undefined && (typeof f.lastPointer !== 'string' || (f.lastPointer && !validPointer(f.lastPointer,id === 'items')))) fail('Invalid saved binding pointer.');
-  if (fieldKind(f) === 'bound' && !f.pointer) fail('A bound field needs a JSON pointer.');
-  if (fieldKind(f) !== 'bound' && f.pointer) fail('Static text and images cannot have data bindings.');
+  if (f.pointer !== undefined && (typeof f.pointer !== 'string' || (f.pointer && !validPointer(f.pointer,relative)))) fail('Use /field for document bindings and ./field for table bindings. Wildcards and prototype paths are not supported.');
+  if (f.lastPointer !== undefined && (typeof f.lastPointer !== 'string' || (f.lastPointer && !validPointer(f.lastPointer,relative)))) fail('Invalid saved binding pointer.');
+  if (['bound','barcode'].includes(fieldKind(f)) && !f.pointer) fail('A bound field or barcode needs a JSON pointer.');
+  if (!['bound','barcode'].includes(fieldKind(f)) && f.pointer) fail('Static text and images cannot have data bindings.');
   if (f.showLabel !== undefined && typeof f.showLabel !== 'boolean') fail('showLabel must be a boolean.');
   for (const key of ['labelStyle','valueStyle']) if (f[key] !== undefined) validateFieldStyle(f[key]);
-  if (fieldKind(f) === 'image') {
-    if (id === 'items') fail('Table columns support bound values or static text.');
-    image(f,assets,'Image field');
-    if (f.format || f.text) fail('Image fields cannot contain text or numeric formatting.');
-  } else if (['assetId','height','fit'].some(key => f[key] !== undefined) || (id !== 'items' && f.width !== undefined)) fail('Image dimensions belong to image fields.');
-  if (id === 'items' && !number(f.width,1,100)) fail('Column width must be between 1 and 100%.');
+  if (fieldKind(f) === 'barcode') {
+    validateBarcodeSettings(f.barcode);
+    if (f.format || f.text || ['assetId','height','fit'].some(key=>f[key] !== undefined) || (!relative && f.width !== undefined)) fail('Barcodes cannot replace formatted text or image values.');
+    if (/(?:^|[-/_])(amount|total|subtotal|tax|rate|price|balance|discount)(?:[-/_]|$)/i.test(`${f.id}/${f.pointer}`)) fail('Financial values cannot be replaced with barcodes.');
+  } else {
+    if (f.barcode !== undefined) fail('Barcode settings belong to barcode fields.');
+    if (fieldKind(f) === 'image') {
+      if (relative) fail('Table columns support bound values, barcodes or static text.');
+      image(f,assets,'Image field');
+      if (f.format || f.text) fail('Image fields cannot contain text or numeric formatting.');
+    } else if (['assetId','height','fit'].some(key => f[key] !== undefined) || (!relative && f.width !== undefined)) fail('Image dimensions belong to image fields.');
+  }
+  if (relative && !number(f.width,1,100)) fail('Column width must be between 1 and 100%.');
 }
 export function validateDesign(d) {
-  exactDesignKeys(d,['version','title','type','color','font','padding','striped','borders','repeatHeader','repeatTable','pageNumbers','breakBefore','blocks','header','customer','collection','columns','totals','footer','sectionOrder','page','assets','logo','titleStyle','pageNumberStyle','tableStyle','layoutPreset'],'design');
+  exactDesignKeys(d,['version','title','type','color','font','padding','striped','borders','repeatHeader','repeatTable','pageNumbers','breakBefore','blocks','header','customer','collection','columns','totals','footer','sectionOrder','page','assets','logo','titleStyle','pageNumberStyle','tableStyle','layoutPreset','additionalTables'],'design');
   if (d.layoutPreset !== undefined && !A4_PRESET_IDS.includes(d.layoutPreset)) fail('Unsupported document layout preset.');
   if (d.version !== 1 || !['invoice','purchase','delivery'].includes(d.type)) fail('Unsupported v3 template version or document type.');
   if (!text(d.title,100)) fail('Document heading must contain at most 100 characters.');
@@ -88,6 +101,7 @@ export function validateDesign(d) {
     if (!Array.isArray(fields) || fields.length > 30) fail('A block supports at most 30 fields.');
     fields.forEach(f => validateField(f,id,assets,ids));
   });
+  validateAdditionalTables(d,validateField,assets,ids);
   if (!validPointer(d.collection)) fail('Collection must be an absolute JSON pointer such as /items.');
   for (const key of ['striped','borders','repeatHeader','repeatTable','pageNumbers','breakBefore']) if (typeof d[key] !== 'boolean') fail(`Invalid ${key} setting.`);
   if (d.columns.reduce((sum,c) => sum+c.width,0) > 100.01) fail('Column widths must total 100% or less.');

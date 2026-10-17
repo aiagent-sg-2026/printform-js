@@ -3,6 +3,7 @@ import { rightView } from './views.js';
 import { parseProposal } from './ai-edits.js';
 import { AIPanel } from './ai-panel.js';
 import { restoreDraftRecords } from './form-drafts.js';
+import { importReviewSnapshot, restoreImportReview } from './structured-import-recovery.js';
 
 export const RECOVERY_KEY = 'printform-studio-v3:update-recovery';
 const LIMIT = 4 * 1024 * 1024;
@@ -36,19 +37,20 @@ export function decodeRecovery(text) {
   if (!Number.isInteger(saved.history.cursor) || saved.history.cursor < 0 || saved.history.cursor >= saved.history.entries.length) throw new Error('Invalid recovery history.');
   if (!saved.ui || !['design','data','validate'].includes(saved.ui.mode) || !Array.isArray(saved.forms) || saved.forms.length > 50) throw new Error('Invalid recovery workspace.');
   restoreDraftRecords(saved.forms,record=>recoveryForm(saved.project,saved.ui,record),null);
+  if (saved.database?.importReview) restoreImportReview(saved.project,saved.database.importReview);
   if (saved.ai) AIPanel.validateSnapshot(saved.ai);
   if (saved.ai?.proposal) saved.ai.parsed = parseProposal(JSON.stringify(saved.ai.proposal),saved.project);
   return saved;
 }
 export function createUpdateWork({getBus,state,database,drafts,ai,install,renderPanels,syncControls,render,settle}) {
   let recoveryFailed = false, updating = false;
-  const pending = () => recoveryFailed || state.dirty || database.draft || state.dataDraft !== null || drafts.drafts.size || ai.busy || ai.proposal || document.querySelector('#ai-prompt').value || document.querySelector('#document-name').value !== getBus()?.project.manifest.title;
+  const pending = () => recoveryFailed || state.dirty || database.draft || database.importReview || state.dataDraft !== null || drafts.drafts.size || ai.busy || ai.proposal || document.querySelector('#ai-prompt').value || document.querySelector('#document-name').value !== getBus()?.project.manifest.title;
   function capture() {
     const bus = getBus(), draft = database.draft;
     return {version:1,project:projectRecord(bus.project),history:{cursor:bus.history.cursor,entries:bus.history.entries.map(entry=>({...entry,project:projectRecord(entry.project)}))},
       ui:{mode:state.mode,selected:state.selected,tab:state.tab,sample:state.sample,dirty:state.dirty,dataDraft:state.dataDraft,jsonError:state.jsonError},
       title:document.querySelector('#document-name').value,forms:[...drafts.drafts.values()].map(({key,kind,selected,values})=>({key,kind,selected,values})),
-      database:{group:database.group,screen:database.screen,rowPage:database.rowPage,draft:draft ? {...draft,numberPaths:[...draft.numberPaths],columnTypes:[...draft.columnTypes]} : null},
+      database:{group:database.group,screen:database.screen,rowPage:database.rowPage,importReview:importReviewSnapshot(database.importReview),draft:draft ? {...draft,numberPaths:[...draft.numberPaths],columnTypes:[...draft.columnTypes]} : null},
       ai:ai.snapshot()};
   }
   async function restore() {
@@ -59,8 +61,10 @@ export function createUpdateWork({getBus,state,database,drafts,ai,install,render
       install(saved.project,saved.project.studioV3Session.database,saved.project.studioV3Session.source?.kind);
       const bus = getBus(); bus.history.currentProject = saved.project; bus.history.entries = saved.history.entries; bus.history.cursor = saved.history.cursor;
       Object.assign(state,saved.ui); Object.assign(database,saved.database);
+      database.importReview = restoreImportReview(bus.project,saved.database?.importReview);
       if (database.draft) { database.draft.numberPaths = new Set(database.draft.numberPaths); database.draft.columnTypes = new Map(database.draft.columnTypes); database.draftErrors(); }
       drafts.restoreRecords(saved.forms,record=>recoveryForm(bus.project,state,record));
+      if (database.importReview) database.message = 'Import source and mappings recovered locally. Preview every record again before Apply; the form remains unchanged.';
       renderPanels(); syncControls(); await render();
       if (saved.ai) ai.restoreSnapshot(saved.ai);
       document.querySelector('#document-name').value = saved.title;
@@ -97,7 +101,7 @@ export function createUpdateWork({getBus,state,database,drafts,ai,install,render
     let choice = 'discard';
     if (pending()) {
       const dialog = document.querySelector('#update-dialog');
-      dialog.querySelector('[data-update-summary]').textContent = 'This tab has unsaved work. Keep preserves the template, history, field/data drafts and AI input/conversation locally (old proposals expire) for this tab’s reload.';
+      dialog.querySelector('[data-update-summary]').textContent = 'This tab has unsaved work. Keep preserves the template, history, field/data drafts, original import file (including unmapped values), mappings and AI input/conversation locally for this tab’s reload. Old previews/proposals expire; no source is uploaded.';
       dialog.returnValue = 'stay';
       choice = await new Promise(resolve=> { dialog.addEventListener('close',()=>resolve(dialog.returnValue),{once:true}); dialog.showModal(); });
     }
