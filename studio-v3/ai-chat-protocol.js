@@ -29,6 +29,8 @@ export function measuredFontQuestion(request,conversation=[]) {
   return fontQuestion(request) || (/what|how|多少|多大|什么/i.test(request) && /header|heading|title|company|table|标题|表头|公司/i.test(request) && !CHANGES.test(request) && conversation.some(m=>m.role === 'user' && fontQuestion(m.content)));
 }
 export function readOnlyRequest(request,conversation=[]) {
+  // Explicit user restrictions win over words describing changes or negated edits.
+  if (/^\s*(?:read(?:[\s-]+)?only\b|只[读讀]|唯[读讀])/i.test(request)) return true;
   const edit=`change|set|make|increase|reduce|adjust|add|remove|delete|move|reorder|resize|enable|disable|apply|amend|design|create|replace|align|bind|${IMPROVE}`;
   if (new RegExp(`^\\s*(?:please\\s+)?(?:(?:can|could|would|will)\\s+you\\s+(?:please\\s+)?|do\\s+)(?:${edit})\\b`,'i').test(request)) return false;
   return measuredFontQuestion(request,conversation) || /^\s*(?:please\s+)?(?:what\b|why\b|which\b|where\b|when\b|how\b|should\b|may\b|might\b|is\b|are\b|was\b|were\b|do\b|does\b|did\b|will\b|can\b|could\b|would\b|has\b|have\b|explain\b|describe\b|tell me (?:about|what|how|why|if|whether)\b|请问|为什么|多少|多大|怎么|如何|应该|能否|可否|请解释|解释一下|是否)/i.test(request);

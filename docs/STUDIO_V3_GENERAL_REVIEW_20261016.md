@@ -23,6 +23,8 @@
 | strict cwd无根目录表示 | optional参数经provider变成必填，原schema排除空串 | canonical `cwd:""`显式可表达；不接受"."或绝对路径 |
 | cwd lookahead阻断真实模型 | 相同alias/预算下，仅加入该schema即空incomplete；并非已证明真实token耗尽 | 保留相同安全语义的正向分支恢复22工具；公开74073f0实际完成源码→候选→人工Apply→离线PDF→Undo，正式G8不计分 |
 | 复合来源描述可被模型替换 | 原金额保护不覆盖描述中的工时/费率；实际API接受static0，原费率111.000仍存但未打印 | 初始/printRows四种复合事实固定原绑定，不交给单值数值oracle；43行业消费者与原7绑定规格通过，合法样式/删除/原绑定恢复保留 |
+| 同profile混用执行身份仍误报qualified | 真实API合成控制把模型、route、预算换掉仍返回true | 固定八项执行身份；合法基线仍通过、混合身份拒绝，不改阈值或混入真实attempt |
+| 显式只读被否定修改词误判可写 | “只读…不要修改”含“改”，旧分类false且真实API接受font-change proposal | 前导read-only/只读/唯读优先限制；实际API转为true并拒绝修改，不变提示/模型/预算/字体formatter |
 
 ## 没有冒充产品缺陷的失败
 
@@ -35,7 +37,7 @@
 
 | 项目 | 当前事实 / 下一验证边界 |
 | --- | --- |
-| 全面生产资格 | 正式G8仍0/60、0/180；DPA、固定模型/价格/SLA/数据驻留、G6/G9和外部业务授权不可由测试数代替 |
+| 全面生产资格 | 2026-10-17已冻结60输入/20holdout，语料提交尚无正式attempt；12项不可用请求只能Blocked，不能满足G8。DPA、固定模型/价格/SLA/数据驻留、G6/G9和外部业务授权仍开放 |
 | 所有ERP/法定格式 | 仅声明的交易适配器与supplied-business-v1有边界；任意raw ERP、混合币种对账、法定工资/税务需显式映射及独立审核 |
 | 无代码优先 | 普通设计无需companion；源码profile需要管理员本地Docker及真实浏览器配对，不是已认证托管多租户服务 |
 | 业务纸面密度 | 旧三份样张各2页的记录保留；新局部预设组合快照三引擎9/9、三份Chromium PDF各1页，来源全文及字号/几何检查通过。超长内容允许正常分页，不宣称任意输入全局最优 |
@@ -48,4 +50,4 @@
 
 [末页实际证据](acceptance/STUDIO_V3_FINAL_PAGE_FLOW_20261016.md) · [通用业务及OASIS/GOV.UK研究](GENERAL_BUSINESS_FORMS.zh-CN.md) · [源码操作及Docker/Chrome/Node/RFC研究](STUDIO_V3_CODING_RUNNER.zh-CN.md) · [生产证据](STUDIO_V3_GENERAL_AI_READINESS.zh-CN.md)。
 
-本轮完整组合 Node24 `build:site`：240文件/2601项通过，9项opt-in跳过；新增行业字段在真实三引擎9/9纸面生命周期中保留。源码真实模型的有界成功、单页样张和消费者测试分别证明不同边界，不能互相替代正式生产资格。
+2026-10-16完整组合 Node24 `build:site`：240文件/2601项通过，9项opt-in跳过；当时新增行业字段在真实三引擎9/9生命周期中保留。2026-10-17资格任务独立快照为243文件/2728项通过、9项opt-in跳过；冻结语料与API拒绝证明不等于模型180次资格，亦不替代纸面或物理设备验收。

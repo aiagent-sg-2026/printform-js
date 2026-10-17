@@ -90,6 +90,24 @@ describe('Studio v3 CA-09 task register', () => {
     expect(validateRegister(register)).toEqual([]);
     expect(qualification(register,'p1').qualified).toBe(true);
   });
+  it.each(['source_commit','app_digest','knowledge_digest','runner_image','provider_route','model_version','browser_os','budgets_digest'])(
+    'does not pool different %s identities into the same qualification profile',key => {
+      const register = synthetic();
+      expect(qualification(register,'p1').qualified).toBe(true);
+      register.attempts.rows[0][key] = ['app_digest','knowledge_digest','budgets_digest'].includes(key) ? digest(999) : 'different';
+      const result = qualification(register,'p1');
+      expect(result.qualified).toBe(false);
+      expect(result.reasons.some(reason => reason.includes(`mixes ${key} execution identity`))).toBe(true);
+    });
+  it('keeps separately named profiles independent while preserving varying per-attempt usage and duration', () => {
+    const register = synthetic();
+    const second = register.attempts.rows.map(row => ({...row,profile:'p2',source_commit:'different',provider_route:'other',model_version:'unavailable',budgets_digest:digest(9)}));
+    register.attempts.rows.push(...second);
+    register.attempts.rows[0].usage = 'unavailable';
+    register.attempts.rows[0].duration_ms = '1';
+    expect(qualification(register,'p1').qualified).toBe(true);
+    expect(qualification(register,'p2').qualified).toBe(true);
+  });
   it.each(['Not run','Blocked','Invalid environment'])('preserves an unexecuted %s row without invented execution metadata',outcome => {
     const register = synthetic(), attempt = register.attempts.rows[0];
     for (const key of ['source_commit','app_digest','knowledge_digest','runner_image','provider_route','model_version','browser_os','budgets_digest','duration_ms','oracle_result','evidence_digest']) attempt[key] = '';

@@ -1,0 +1,12 @@
+{
+  "date": "2026-10-17",
+  "scope": "Independent real qualification() API control using an explicitly synthetic 60-task/180-row register; not a model run",
+  "before": {"baselineQualified": true, "mixedQualified": true, "reasons": []},
+  "mutation": {"sameProfile": true, "provider_route": "different-provider", "model_version": "different-model", "budgets_digest": "sha256:0000000000000000000000000000000000000000000000000000000000000999"},
+  "after": {"baselineQualified": true, "mixedQualified": false, "rejection": "profile mixes provider_route/model_version/budgets_digest execution identity"},
+  "fix": "Executed Pass/Fail rows sharing a profile must match source_commit, runner_image, provider_route, model_version, browser_os, app_digest, knowledge_digest and budgets_digest. Different named profiles remain independent; per-attempt usage/duration and unexecuted empty metadata stay valid.",
+  "formalModelAttemptsCreatedByControl": 0,
+  "thresholdsChanged": false,
+  "modelOrRouteOrBudgetsChanged": false,
+  "limitations": "Identity consistency is not evidence-byte authenticity, oracle correctness, fixed upstream identity, DPA, operational qualification or a full G8 pass. Unknown but consistent model_version still permits only explicitly route-level evidence."
+}

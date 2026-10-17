@@ -190,7 +190,7 @@ PCAR 历史截止、CCAR 重复来源记录、同发票拆分 Payment/Receipt、
 | 真实业务数据处理 | 当前 route 是 Demo；未找到可验证的具体服务训练/保留/地区/分包处理约定，不能授权机密数据。KB 的公开 Demo 目标只证明短期浏览器 session 和服务端成本/滥用控制的设计意图 |
 | 底层模型身份 | `demo-auto` 未提供固定 upstream model/version；只能记录 route-level 行为，不能归因模型或承诺跨版本等价 |
 | 任意源代码代理 G6 | 现有配对Node24 sandbox已完成一个实际公开模型的源码→JSON制品→候选→人工Apply任务；任意仓库/依赖、托管多租户、跨平台与完整G6仍未qualified |
-| 全任务资格 G8 | [现有标准](STUDIO_V3_CODING_AGENT_ACCEPTANCE.md#gate-g8-real-model-task-qualification)是 60 tasks × 3 = 180 attempts / profile；实际 `tasks.csv` / `attempts.csv` 均只有表头，即正式冻结任务 0/60、登记尝试 0/180。独立 live smoke 不冒充该语料、保留集或逐类阈值 |
+| 全任务资格 G8 | 原标准仍60 tasks×3=180 attempts/profile；2026-10-17已冻结60个实际输入、20个holdout及六个essential，input/oracle摘要实际校验无错；本次语料提交尚无正式attempt。12个不可用请求正确拒绝只记Blocked，不能满足完整资格；[独立消费者与操作](STUDIO_V3_G8_CORPUS.zh-CN.md) |
 | 运行发布 G9 | 未证明具体生产 tenant 身份、服务 SLO、容量/费用治理、审计及事故恢复；真实打印机和真实辅助技术验收也不能从浏览器测试推出 |
 
 不把这些项目标为完成，不删除门禁，不把“像 coding agent 一样工作”偷换成无限制执行代码或获得全部生产权限。
@@ -222,3 +222,10 @@ G8仍**0/60任务、0/180正式尝试**。G6/G9、DPA、真实数据许可、跨
 
 2026-10-16后续：相同 `demo-auto` / route /预算的真实对照将空incomplete定位到cwd lookahead schema；保留同等路径拒绝的正向模式恢复全部22工具。PR80/main74073f0部署后，11次模型请求、13次源码后端操作实际完成默认标题唯一修改、测试/构建命令提交、diff、制品导入、候选检查及人工Apply（r0→r1）；原data/schema不变。离线HTML与真实单页PDF含 `SOURCE READY CHECK`，Undo至r2恢复原设计且撤销工作区确认。测试exit receipt未独立留存，不把模型报告当独立oracle。此单任务不写入正式G8，也不覆盖旧失败或扩大真实数据许可。[独立完整证据](acceptance/STUDIO_V3_SOURCE_LIVE_20261016.json)。
 
+## 2026-10-17：可执行语料，不是资格通过
+
+正式语料由空结构推进为60个有实际字节和独立oracle的冻结输入；旧0/60记录保留其原日期。本次语料提交未执行模型，不改变alias/route/预算。真实API另复现同profile混合模型/路由/预算仍误报qualified，现已固定八项执行身份；不同profile仍独立，usage/耗时可变。[前后证据](acceptance/STUDIO_V3_PROFILE_IDENTITY_20261017.json)。
+
+离线独立消费者从真实状态/逐格文本/纸面几何/固定测试与进程/制品字节计算判断，拒绝伪stdout、改测试、异源或缺receipt；collector签名仅证明观察字节归属，不能替代原始记录。12个不可用/拒绝任务仍Blocked而非Pass，完整G8持续不合格。严禁为了过测试放宽JSON预期或覆盖历史失败。
+
+独立预检还复现显式“只读…不要修改”被误判可写、并接受修改proposal；现优先识别前导只读约束，实际API已拒绝该修改。没有调整原JSON任务/字体formatter来凑通过，[前后原始结论](acceptance/STUDIO_V3_READONLY_PREFIX_20261017.json)与真实模型验收分开。

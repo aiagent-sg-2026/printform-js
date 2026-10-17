@@ -1,0 +1,19 @@
+{
+  "date": "2026-10-17",
+  "scope": "Actual readOnlyRequest and parseChatReply consumer API, no network/model attempt",
+  "request": "只读：当前全局字号是多少 pt？只回答 JSON {\"fontPt\":数字}，不要修改任何内容。",
+  "before": {
+    "request": "只读：当前全局字号是多少 pt？只回答 JSON {\"fontPt\":数字}，不要修改任何内容。",
+    "readOnly": false,
+    "measuredFont": false,
+    "editProposalAccepted": true
+  },
+  "after": {
+    "request": "只读：当前全局字号是多少 pt？只回答 JSON {\"fontPt\":数字}，不要修改任何内容。",
+    "readOnly": true,
+    "measuredFont": false,
+    "editProposalAccepted": false
+  },
+  "decision": "Honor explicit leading read-only/readonly/只读/唯读 restrictions before change vocabulary; do not broaden any authority or change font-answer handling, frozen inputs, model, route, budgets or acceptance oracle.",
+  "remaining": "Ordinary font questions may retain existing measured typography formatting; actual delivered format must be judged independently. This API control is not a G8 attempt."
+}

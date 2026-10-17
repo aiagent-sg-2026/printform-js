@@ -16,6 +16,7 @@ const SELF_JUDGES = new Set(['model','agent','self']);
 const present = value => typeof value === 'string' && value.trim().length > 0;
 const EXECUTION_FIELDS = ['source_commit','runner_image','provider_route','model_version','browser_os'];
 const EXECUTION_DIGESTS = ['app_digest','knowledge_digest','budgets_digest'];
+const PROFILE_IDENTITY = [...EXECUTION_FIELDS,...EXECUTION_DIGESTS];
 
 export function parseCsv(text) {
   const rows = []; let row = [], cell = '', quoted = false;
@@ -67,7 +68,7 @@ export function validateRegister({tasks,attempts},{capabilityIds} = {}) {
     }
     if (SELF_JUDGES.has(String(t.oracle_owner || '').trim().toLowerCase())) errors.push(`${at}: the model cannot own its own oracle`);
   }
-  const seen = new Set();
+  const seen = new Set(), identities = new Map();
   for (const a of attempts.rows) {
     const at = `attempt ${a.task_id}/${a.profile}/${a.attempt}`, task = byId.get(a.task_id);
     if (!task) errors.push(`${at}: unknown task`);
@@ -88,6 +89,11 @@ export function validateRegister({tasks,attempts},{capabilityIds} = {}) {
       for (const key of EXECUTION_FIELDS) if (!present(a[key])) errors.push(`${at}: executed attempt needs ${key}`);
       for (const key of EXECUTION_DIGESTS) if (!DIGEST.test(a[key])) errors.push(`${at}: executed attempt needs sha256 ${key}`);
       if (!/^\d+$/.test(a.duration_ms)) errors.push(`${at}: executed attempt needs non-negative integer duration_ms`);
+      if (present(a.profile)) {
+        const identity = identities.get(a.profile);
+        if (!identity) identities.set(a.profile,a);
+        else for (const key of PROFILE_IDENTITY) if (a[key] !== identity[key]) errors.push(`${at}: profile ${a.profile} mixes ${key} execution identity`);
+      }
     }
   }
   return errors;
