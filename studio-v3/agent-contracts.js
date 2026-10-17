@@ -65,7 +65,7 @@ export const TOOL_CONTRACTS = Object.freeze({
       {args:{summary:'Nothing'},error:'NO_CHANGES'},{args:{summary:'Blocked'},setup:prepared,inspection:'blocked',error:'AGENT_INSPECTION_BLOCKED'},
       {args:{summary:'Reverted'},setup:[...prepared,['apply_operations',{summary:'Red accents',operations:[{type:'set_style',patch:{color:'#a82938'}}]}],['undo_step',{}]],error:'AGENT_INSPECTION_REQUIRED'},
       {args:{summary:'Navy accents'},grant:'read-only',error:'GRANT_DENIED'}]},
-  finish_answer:{contractVersion:'1.3.0',outputSchema:text,errors:[ARGS,'AGENT_EVIDENCE_REQUIRED','EVIDENCE_STALE','AGENT_ANSWER_LIMIT'],limits:{maxAnswerChars:ANSWER_MAX},
+  finish_answer:{contractVersion:'1.4.0',outputSchema:text,errors:[ARGS,'GRANT_DENIED','AGENT_EVIDENCE_REQUIRED','EVIDENCE_STALE','AGENT_ANSWER_LIMIT'],limits:{maxAnswerChars:ANSWER_MAX},
     examples:[{args:{message:'The guide lists the tools for this release.'},setup:[['read_skill',{id:'form-authoring'}]],grant:'read-only'},
       {args:{message:'The guide lists the tools for this release.',observationId:null},setup:[['read_skill',{id:'form-authoring'}]],grant:'read-only'},
       {args:{message:'Current inspection.',observationId:null},fixture:'static',setup:[['inspect_draft',{}]],grant:'read-only'},

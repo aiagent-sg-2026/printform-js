@@ -15,6 +15,11 @@ who don't need the diary.
 
 ## [Unreleased]
 
+### Proposal-only grants for explicit AI drafts — 2026-10-17
+
+- Subtract the answer effect for explicit design/coding draft requests using existing frozen grants and Pi tool exposure; hidden/direct `finish_answer` calls reject. Questions remain read-only, source authorization stays intact, and only an inspected proposal plus explicit UI Apply can change the live form.
+- Retain the public ed816282 no-candidate Fail. The isolated existing single-worker site build passed2983 tests with9 opt-in skips; this is not a live-model or production qualification.
+
 ### Truthful AI draft handoff — 2026-10-17
 
 - Separate grounded answers from requested private-draft delivery: answer-only finishes retain exact text/citations but report `draft-not-produced`; only a current inspected candidate is `draft-ready`, never an automatic Apply or semantic qualification.
