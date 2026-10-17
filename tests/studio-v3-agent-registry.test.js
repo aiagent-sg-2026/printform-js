@@ -65,7 +65,7 @@ describe('feature-owned registry and knowledge',()=> {
     const operations=[{type:'set_style',patch:{font:kind==='coercion' ? '10' : 'large'}}];
     faux.setResponses(Array.from({length:10},()=>call('apply_operations',{summary:'Invalid',operations})));
     const models=createModels();models.setProvider(faux.provider);const steps=[];
-    await expect(runAgentLoop({models,model:faux.getModel(),project:newProject(),request:'Invalid',context:()=>'',signal:new AbortController().signal,
+    await expect(runAgentLoop({models,model:faux.getModel(),project:newProject(),request:'Set the global font to 10pt.',context:()=>'',signal:new AbortController().signal,
       limits:{maxTurns:kind==='budget' ? 2 : 100,maxRepeatedFailures:kind==='budget' ? 10 : 3,maxRunMs:60000},onStep:step=>steps.push(step)})).rejects.toMatchObject({code:kind==='budget' ? 'AGENT_BUDGET' : 'AGENT_STALLED'});
     expect(faux.state.callCount).toBe(3);expect(steps).toHaveLength(3);
   });
@@ -74,7 +74,7 @@ describe('feature-owned registry and knowledge',()=> {
     faux.setResponses([call('apply_operations',{summary:'Invalid',operations:[{type:'set_style',patch:{font:'large',script:'bad'}}]}),context=> {
       expect(context.messages.at(-1).isError).toBe(true);return call('report_blocked',{reason:'Unsupported shape'});
     }]);const models=createModels();models.setProvider(faux.provider);const project=newProject(),before=structuredClone(project);
-    await expect(runAgentLoop({models,model:faux.getModel(),project,request:'Invalid',context:()=>'',signal:new AbortController().signal})).rejects.toMatchObject({code:'AGENT_BLOCKED'});
+    await expect(runAgentLoop({models,model:faux.getModel(),project,request:'Set the global font to 10pt.',context:()=>'',signal:new AbortController().signal})).rejects.toMatchObject({code:'AGENT_BLOCKED'});
     expect(project).toEqual(before);
   });
 });

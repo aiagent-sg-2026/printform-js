@@ -1,5 +1,7 @@
 import { STYLE_KEYS, MAX_AUTHORING_DIFFS, fail } from './ai-edits.js';
 import { isHexColor } from './table-style.js';
+import { TASK_OUTCOMES } from './ai-task-outcome.js';
+import { validatePageSettings, validatePrinterProfile } from './paper-settings.js';
 export const HISTORY_LIMIT = 12;
 const roles = ['user','assistant'];
 const statuses = ['answer','ready','applied','expired','error','cancelled'];
@@ -8,7 +10,18 @@ const receiptIdentity = observation => {
   return {id:observation.id};
 };
 const authoringProperties = new Set(['id','lastPointer','label','kind','pointer','format','text','showLabel','labelStyle','valueStyle','width','assetId','height','fit','add_field','remove_field','field_order','enabled','layout','breakBefore','keepTogether','sectionOrder','page.paper','page.orientation','page.margins','logo','collection','title','typography']);
+function validPageDiff(property,value) {
+  if (value === '(unset)') return true;
+  if (typeof value !== 'string' || value.length > 10000) return false;
+  try {
+    const parsed = JSON.parse(value);
+    if (property === 'page.customSizeMm') validatePageSettings({paper:'CUSTOM',customSizeMm:parsed});
+    else validatePrinterProfile(parsed);
+    return true;
+  } catch { return false; }
+}
 function validAuthoringDiff(d) {
+  if (['page.customSizeMm','page.printerProfile'].includes(d.property)) return d.target === 'document' && [d.before,d.after].every(value=>validPageDiff(d.property,value));
   if (d.property === 'tableStyle.rowBackground') return d.target === 'items' && [d.before,d.after].every(v=>v === '(unset)' || isHexColor(v));
   const target = typeof d.target === 'string' && /^(document|page-number|header-logo|header-title|(?:label-)?(?:header|customer|items|totals|footer)(?:-[a-z0-9-]{1,60})?)$/.test(d.target);
   const scalar = v=>v === null || typeof v === 'boolean' || (typeof v === 'string' && v.length <= 10000) || (typeof v === 'number' && Number.isFinite(v) && Math.abs(v) <= 1000000);
@@ -20,6 +33,11 @@ export function cleanMessages(messages) {
     if (!message || !roles.includes(message.role) || typeof message.text !== 'string' || message.text.length > 4000 || !Number.isFinite(message.time) || message.time < 0 || message.time > 8640000000000000) throw fail('INVALID_CHAT_RECOVERY');
     const cleaned = {id:crypto.randomUUID(),role:message.role,text:message.text,time:message.time,status:statuses.includes(message.status) ? message.status : 'answer'};
     if (message.observationProtected === true) cleaned.observationProtected = true;
+    if (message.taskOutcome !== undefined) {
+      if (message.role !== 'assistant' || !TASK_OUTCOMES.includes(message.taskOutcome)) throw fail('INVALID_CHAT_RECOVERY');
+      cleaned.taskOutcome = message.taskOutcome;
+      if (message.taskOutcome === 'draft-not-produced') cleaned.status = 'error';
+    }
     if (message.observation !== undefined) {
       if (message.role !== 'assistant') throw fail('INVALID_CHAT_RECOVERY');
       cleaned.observation = receiptIdentity(message.observation);
@@ -51,7 +69,7 @@ export class Conversation {
     let remaining = 3000;
     return recent.reverse().map(m=> { const content = m.text.slice(0,Math.min(800,remaining)); remaining -= content.length; return {role:m.role,content}; }).filter(m=>m.content).reverse();
   }
-  snapshot() { return this.messages.map(({role,text,time,status,diff,documentKey,observationProtected,observation})=>({role,text,time,status,documentKey,...(observationProtected ? {observationProtected:true} : {}),...(observation ? {observation:receiptIdentity(observation)} : {}),...(diff ? {diff} : {})})); }
+  snapshot() { return this.messages.map(({role,text,time,status,diff,documentKey,observationProtected,observation,taskOutcome})=>({role,text,time,status,documentKey,...(taskOutcome ? {taskOutcome} : {}),...(observationProtected ? {observationProtected:true} : {}),...(observation ? {observation:receiptIdentity(observation)} : {}),...(diff ? {diff} : {})})); }
   restore(messages,documentKey) { this.messages = cleanMessages(messages); }
   expire() { for (const m of this.messages) if (m.diff && m.status === 'ready') m.status = 'expired'; }
 }

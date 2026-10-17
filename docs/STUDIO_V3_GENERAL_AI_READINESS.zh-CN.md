@@ -249,3 +249,9 @@ G8仍**0/60任务、0/180正式尝试**。G6/G9、DPA、真实数据许可、跨
 在实际公开Origin、Chrome155/sandbox、原demo-auto/working-in-steps与原预算下，导入虚构一般工单后，要求生成188.5×244.2mm纵向私有候选、先预览后人工Apply。实际5次HTTP200、UI92131tokens，模型只说明当前A4并要求额外确认，未交付候选，**该任务Fail**。静态审查确认该文本基础effect是design且具有改纸工具；“Read-only answer”标签只是返回kind，不代表宿主只读授权。未通过换提示词、模型、预算或完成规则伪装为通过。
 
 真实键盘Save生成独立5.1KB字节，与运行前项目完全相同：r1/A4、数据/schema/原文件回执/打印机声明未变；5个出站请求均未包含私有文件名、设备名或未选列canary。初始手机AI覆盖层与CDP下载上下文接管失败属保留的实测边界，不能据此报产品死锁。一次模型运行不计正式G8，也不替代缺失生产前提。[实际Fail与独立字节证明](acceptance/STUDIO_V3_GENERAL_AI_LIVE_20261017.json)。
+
+## 2026-10-17：回答结束不再冒充草稿交付
+
+宿主区分直接编辑请求与真实问题/否定/引文；权限仍以既有profile/scope为上限。明确请求私有候选却只收到`finish_answer`时，保留原回答及独立引用，但标记`draft-not-produced`失败，不创建候选、不自动重试或Apply。`draft-ready`只表示当前经过inspection的候选可交人审阅，不保证自然语言要求、图像相似或生产资格。
+
+独立AI切片先保留25项失败，再修复真实语法回归并通过2970项、9项opt-in跳过；发布CLI114实例、38散列审查通过。原16k知识边界不变；本地Chrome155 sandbox桌面/375px编辑器烟测零pageerror/零模型请求。实际公开模型结果须另记，不能把这些检查当作G8或删除旧e385 Fail。[机制与实测边界](STUDIO_V3_AI_DRAFT_OUTCOME.zh-CN.md)。
