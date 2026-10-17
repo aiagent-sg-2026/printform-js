@@ -78,3 +78,7 @@ InspectionReport/AssetHandover补齐到既有业务profile的七类；不是认�
 本轮最终75/75三引擎含18导入、21业务、36纸张；独立全量2873通过/9 opt-in跳过，114契约示例。首次66场景30通过/36失败、后续71/72 Firefox定位挂起及72/75测试助手命名冲突均保留；最后使用既有真实主世界DOM及可见Print preview流程，不回放桥接HTML、放松oracle或延长90s/12s预算。[完整审计](acceptance/STUDIO_V3_GENERAL_IMPORT_MEDIA_20261017.md)。
 
 生产与硬件仍开放：G8原冻结集合最高144/180；本机CUPS无配置目的地，零打印任务。浏览器/PDF与用户声明能力表都不替代实际走纸、裁切、驱动、切刀、字体/条码及跨OS验收。
+
+### 公开版本的实际AI交付缺口
+
+e385公开版本接受自然语言改纸/先预览后人工Apply任务，原demo-auto实际5次HTTP200但返回说明和额外确认，没有修改候选，按任务Fail保留；不是授权误判，design effect本可调用set_page，answer终止本身合法但不证明完成需求。独立实际Save确认r1/A4与完整项目未变，原始文件/设备/未选列canary未出站。没有调prompt/alias/预算或弱化finish来补绿。仍需明确的意图完成策略与独立多任务资格，不能把安全不变与生产可用混为一谈。[非G8原始结论](acceptance/STUDIO_V3_GENERAL_AI_LIVE_20261017.json)。

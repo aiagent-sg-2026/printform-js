@@ -22,6 +22,7 @@ who don't need the diary.
 - Fix the real24px inner-page screen-gap regression without changing paper, margins, fonts or geometry tolerances. Independent paper-only build:2832 tests passed/9 skipped; strict3-engine36/36 with11 actual PDFs,114 agent contract examples passed.
 - Add bounded local CSV/JSON review and explicit field mapping against existing schemas, including custom collections/string quantity and no-table forms; preserve raw-source receipts and warn that Save/HTML includes unselected columns. Keep legacy dataset storage separate and raw imports out of AI context.
 - Add sourced InspectionReport/AssetHandover, completing seven supplied-business starters without invented certification/receipt/ownership. Fix object-profile misclassification, hidden-items default selection and mobile16% column inheritance;2873 tests/9 skipped,75 strict browser scenarios and18 real PDFs, with prior failures retained.
+- Preserve the publice385 live AI task failure: fiveHTTP200 calls returned an explanation instead of the requested private paper proposal. Independent actual Save and egress canaries confirm no project/private-value change; do not relabel it production-ready or tune prompt/model/budget to green.
 
 ### Service reports and packing lists — 2026-10-17
 
