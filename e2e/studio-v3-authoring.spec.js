@@ -72,10 +72,11 @@ test('blocked custom geometry still shows its actual paper and keeps print/expor
   const p=newProject(),d=designOf(p);p.manifest.title='Oversized A5 footer';
   d.page={paper:'A5',orientation:'landscape',margins:{top:20,right:16,bottom:20,left:16}};
   d.footer[0].valueStyle={fontSize:72};
+  // Prose may legally fragment; this case requires an indivisible oversized section.
+  d.blocks.footer.keepTogether=true;
   await page.locator('#open-file').setInputFiles({name:'blocked-a5.printform.json',mimeType:'application/json',buffer:Buffer.from(saveProject(compileProject(p,d)))});
   await expect(page.locator('#document-name')).toHaveValue(p.manifest.title);
-  await expect(page.locator('#page-count')).toHaveText('Render blocked',{timeout:30000});
-  await expect(page.locator('#status')).toContainText('exceed');
+  await expect(preview(page).locator('html')).toHaveAttribute('data-printform-status','blocked',{timeout:30000});
   await expect(page.locator('#paper-kind')).toHaveText('A5');
   await expect(page.locator('#paper-dimensions')).toHaveText('210 × 148 mm');
   await expect(page.locator('[data-action=print]')).toBeDisabled();

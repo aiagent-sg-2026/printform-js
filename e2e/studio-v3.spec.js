@@ -2,6 +2,7 @@ import { test, expect } from '@playwright/test';
 import { keepStructureOpen } from './studio-v3-structure.js';
 import fs from 'node:fs/promises';
 import { pathToFileURL } from 'node:url';
+import { previewDocument } from './studio-v3-rendered-probes.js';
 
 const frame = page => page.frameLocator('#preview-frame');
 test.setTimeout(90000);
@@ -12,9 +13,10 @@ async function revisionEdit(page, operation) {
   await expect(page.locator('#revision')).not.toHaveText(before);
 }
 async function sample(page, id) {
+  const token = await page.evaluate(()=>window.sampleRender?.token);
   await revisionEdit(page,() => page.locator(`[data-sample="${id}"]`).click());
   await ready(page);
-  await expect(frame(page).locator('.prowitem_processed')).toHaveCount(id === 'long' ? 45 : Number(id));
+  await expect.poll(()=>page.evaluate(before=>window.sampleRender?.token !== before ? window.sampleRender?.rows : null,token)).toBe(id === 'long' ? 45 : Number(id));
 }
 async function newForm(page,type) {
   await page.locator('[data-action=new]').click();
@@ -25,6 +27,14 @@ async function openJSON(page) { await page.locator('[data-mode=data]').click(); 
 test.beforeEach(async ({page}) => {
   page.on('dialog', dialog => dialog.accept());
   await keepStructureOpen(page);
+  await page.addInitScript(()=> {
+    if(window !== window.top)return;
+    window.addEventListener('message',event=> {
+      const data=event.data;
+      if(event.source === document.querySelector('#preview-frame')?.contentWindow && data?.source === 'printform-studio-v3-preview' && data.type === 'rendered')
+        window.sampleRender={token:data.token,rows:data.payload.pages.reduce((count,p)=>count+new DOMParser().parseFromString(p.html,'text/html').querySelectorAll('.prowitem_processed').length,0)};
+    });
+  });
   await page.goto('/studio-v3/');
   await ready(page);
 });
@@ -38,9 +48,24 @@ test('fresh blank -> structure -> bind -> save -> reopen -> validate -> export',
     await page.getByLabel('Show section',{exact:true}).check();
     if (id === 'header') await page.getByLabel('Document heading',{exact:true}).fill('ACME INVOICE');
     await revisionEdit(page,() => page.getByRole('button',{name:'Apply section',exact:true}).click());
+    if (id === 'items') {
+      await expect(page.locator('[data-action=export]')).toBeDisabled();
+      for (const [label,pointer] of [['#','./no'],['Item code','./sku'],['Description','./description']]) {
+        await page.locator('#left-panel [data-select=items]').click();
+        await revisionEdit(page,()=>page.locator('#right-panel [data-action=add-field]').click());
+        await page.locator('[data-action=properties]').click();
+        await page.getByLabel('Label',{exact:true}).fill(label);
+        await revisionEdit(page,()=>page.getByRole('button',{name:'Apply field',exact:true}).click());
+        await page.locator('[data-action=binding]').click();
+        await page.getByLabel('Value source',{exact:true}).selectOption('bound');
+        await page.getByLabel('Row field (./field)',{exact:true}).fill(pointer);
+        await revisionEdit(page,()=>page.getByRole('button',{name:'Apply binding',exact:true}).click());
+        await page.locator('[data-action=properties]').click();
+      }
+    }
     await ready(page);
   }
-  await page.locator('#left-panel [data-select=items-description]').click();
+  await page.locator('#left-panel [data-tree-group=items]').getByRole('button',{name:'Description',exact:true}).click();
   await page.getByLabel('Label',{exact:true}).fill('Item / 项目');
   await revisionEdit(page,() => page.getByRole('button',{name:'Apply field',exact:true}).click()); await ready(page);
   await page.locator('[data-action=binding]').click();
@@ -118,16 +143,19 @@ test('data errors recover; malicious text stays inert; data remains isolated bet
   expect(await frame(page).locator('img').count()).toBe(0);
   const isolated = await context.newPage(); await isolated.goto('/studio-v3/'); await ready(isolated);
   await expect(frame(isolated).locator('[data-v3-id=header-company]').first()).toHaveText('ACME Industrial Supply');
+  await isolated.close(); await page.bringToFront();
   expect(await page.evaluate(()=>Object.keys(localStorage).filter(k=>k.includes('v3') && k !== 'printform-studio-v3:structure-open'))).toEqual([]);
   await sample(page,'1');
   await revisionEdit(page,()=>page.locator('[data-sample=erp]').click()); await ready(page);
   await expect(frame(page).locator('[data-v3-id=header-company]').first()).toHaveText(hostile.company.name);
   expect(outbound).toEqual([]);
-  const invalid = {...hostile,items:[{...hostile.items[0],description:'Oversized description '.repeat(2500)}]};
-  await page.locator('#data-json').fill(JSON.stringify(invalid));
-  await revisionEdit(page,() => page.getByRole('button',{name:'Apply JSON data',exact:true}).click());
-  await expect(page.locator('#page-count')).toHaveText('Render blocked');
-  await expect(page.locator('[data-action=export]')).toBeDisabled();
+  const descriptionColumn=await frame(page).locator('[data-v3-id=label-items-description]').first().evaluate(label=>label.closest('th').cellIndex);
+  const longData = {...hostile,items:[{...hostile.items[0],description:'Oversized description '.repeat(2500)}]};
+  await page.locator('#data-json').fill(JSON.stringify(longData));
+  await revisionEdit(page,() => page.getByRole('button',{name:'Apply JSON data',exact:true}).click()); await ready(page);
+  const continuedText=await frame(page).locator('.printform_page tr').evaluateAll((rows,column)=>rows.filter(row=>row.querySelector('td')).map(row=>row.cells[column].textContent).join(''),descriptionColumn);
+  expect(continuedText).toBe(longData.items[0].description);
+  expect(await frame(page).locator('.printform_page').count()).toBeGreaterThan(1);
 });
 
 test('undo/redo, column operations, repeat header, explicit break and interrupted validation', async ({page}) => {
@@ -204,7 +232,7 @@ test('remaining authoring controls, completed matrix, page navigation and HTML r
   await page.getByRole('combobox',{name:'Locale',exact:true}).selectOption('zh-CN');
   await page.getByRole('combobox',{name:'Currency',exact:true}).selectOption('USD');
   await revisionEdit(page,()=>page.getByRole('button',{name:'Apply locale',exact:true}).click()); await ready(page);
-  await expect(frame(page).locator('html')).toHaveAttribute('lang','zh-CN');
+  await expect.poll(()=>previewDocument(page,()=>document.documentElement.lang)).toBe('zh-CN');
   await page.locator('[data-db-action=preview]').click();
   await page.locator('#zoom').selectOption('0.75');
   await expect(page.locator('#preview-frame')).toHaveCSS('transform','matrix(0.75, 0, 0, 0.75, 0, 0)');

@@ -12,9 +12,9 @@ function restoreValues(form,values) {
 }
 export function restoreDraftRecords(records,formFor,context) {
   return records.map(record=> {
-    if (!['field','binding','block','style','collection','locale','data','logo'].includes(record.kind) || typeof record.selected !== 'string' || !/^[a-z0-9-]+$/.test(record.selected)) throw new Error('Invalid recovery form.');
+    if (!['field','binding','block','additional-table','style','collection','locale','data','logo'].includes(record.kind) || typeof record.selected !== 'string' || !/^[a-z0-9-]+$/.test(record.selected)) throw new Error('Invalid recovery form.');
     if (!record.values || Object.values(record.values).some(value=>!['string','boolean'].includes(typeof value))) throw new Error('Invalid recovery values.');
-    const form = formFor(record), key = `${record.kind}:${['field','binding','block'].includes(record.kind) ? record.selected : 'global'}`;
+    const form = formFor(record), key = `${record.kind}:${['field','binding','block','additional-table','collection'].includes(record.kind) ? record.selected : 'global'}`;
     if (!form || key !== record.key) throw new Error('Unavailable recovery form.');
     const names = new Set([...form.elements].map(node=>node.name || node.id));
     if (Object.keys(record.values).some(name=>!names.has(name))) throw new Error('Unavailable recovery control.');
@@ -33,7 +33,7 @@ export class FormDrafts {
     });
     this.dialog.addEventListener('cancel',event=> { event.preventDefault(); this.dialog.close('stay'); });
   }
-  key(form) { const kind = form.dataset.form; return `${kind}:${['field','binding','block'].includes(kind) ? this.callbacks.selection() : 'global'}`; }
+  key(form) { const kind = form.dataset.form; return `${kind}:${['field','binding','block','additional-table','collection'].includes(kind) ? this.callbacks.selection() : 'global'}`; }
   snapshot(form) {
     const values = valuesOf(form), copy = form.cloneNode(true); restoreValues(copy,values);
     return {key:this.key(form),kind:form.dataset.form,selected:this.callbacks.selection(),values,form:copy,context:this.callbacks.context()};

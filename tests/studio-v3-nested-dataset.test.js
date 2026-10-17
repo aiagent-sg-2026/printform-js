@@ -3,13 +3,15 @@ import { bindTemplate } from '../studio-v2/core/binding.js';
 import { nestedDatasetFixture } from './fixtures/nested-dataset.js';
 import { createLocalDatasetSource } from '../studio-v3/data-source-adapter.js';
 import { createBus,editProject,designOperations,replaceData } from '../studio-v3/controller.js';
-import { designOf } from '../studio-v3/model.js';
+import { designOf,newProject,selectionField } from '../studio-v3/model.js';
 import { readProject,saveProject } from '../studio-v3/file-io.js';
 import { exportDataset,importDataset } from '../studio-v3/database-model.js';
 import { DemoDatabase } from '../studio-v3/database-controller.js';
 import { bindingValidation } from '../studio-v3/validation.js';
 import { availableBindings } from '../studio-v3/ai-authoring.js';
-import { datasetDescriptor,assertCollectionBinding } from '../studio-v3/dataset-schema.js';
+import { datasetDescriptor,assertCollectionBinding,collectionFields,declaredCollectionFields } from '../studio-v3/dataset-schema.js';
+import { dataTree } from '../studio-v3/data-tree-view.js';
+import { fieldBinding } from '../studio-v3/binding-view.js';
 
 function render(project) {
   const template = document.createElement('template'); template.innerHTML = project.templateHtml;
@@ -67,33 +69,83 @@ describe('nested collections use the source JSON Schema through real consumers',
     expect(bus.project).toEqual(before); expect(bus.revision).toBe(revision);
   });
 
-  it('rejects invalid parent scope and untyped empty rebinding without committing a layout',async()=> {
-    const {project} = nestedDatasetFixture(true), bus = createBus(project), before = structuredClone(bus.project);
+  it('keeps invalid primary parent selection repairable but rejects untyped empty rebinding',async()=> {
+    const {project} = nestedDatasetFixture(true), bus = createBus(project), before = structuredClone(bus.project.sampleData);
     const design = designOf(project); design.collection = '/parentDocuments/9/allocations';
-    await expect(editProject(bus,designOperations(bus.project,design),'wrong parent')).rejects.toThrow();
-    expect(bus.project).toEqual(before);
+    await editProject(bus,designOperations(bus.project,design),'author unresolved parent');
+    expect(bindingValidation(bus.project).errors).toContainEqual(expect.objectContaining({code:'COLLECTION_NOT_ARRAY',path:design.collection}));
+    const repaired = designOf(bus.project); repaired.collection = '/parentDocuments/0/allocations';
+    await editProject(bus,designOperations(bus.project,repaired),'select declared empty parent');
+    expect(bindingValidation(bus.project).valid).toBe(true); expect(bus.project.sampleData).toEqual(before);
     const observed = structuredClone(project); observed.schema = {type:'object',additionalProperties:true}; delete observed.manifest.datasetSchema;
     const observedBus = createBus(observed), next = designOf(observed); next.collection = '/a~1b~0c';
     await expect(editProject(observedBus,designOperations(observed,next),'unknown empty fields')).rejects.toThrow();
     expect(designOf(observedBus.project).collection).toBe('/allocations');
   });
 
-  it('validates all observed rows and retains safe fields absent from the declared schema',async()=> {
+  it('diagnoses untyped invalid rows for repair and retains safe fields absent from the declared schema',async()=> {
     const {record,project} = nestedDatasetFixture(); delete record.sourceSchema;
     record.data.allocations.push({'line/id':'second','amount~raw':5,currency:'USD'});
     const descriptor = await local(record).schema(record.id);
     expect(descriptor.collections.find(entry=>entry.pointer === '/allocations').fields.find(field=>field.pointer === './amount~0raw').type).toBe('mixed');
     const observed = structuredClone(project); observed.schema = {type:'object',additionalProperties:true}; delete observed.manifest.datasetSchema;
-    const observedBus = createBus(observed), beforeObserved = structuredClone(observedBus.project);
-    await expect(replaceData(observedBus,record.data)).rejects.toThrow();
+    const observedBus = createBus(observed), beforeObserved = structuredClone(observedBus.project.sampleData);
+    await replaceData(observedBus,record.data);
+    expect(observedBus.project.sampleData).toEqual(record.data);
+    expect(bindingValidation(observedBus.project).errors).toContainEqual(expect.objectContaining({code:'COLLECTION_SCHEMA_INVALID'}));
     delete record.data.allocations[1]['amount~raw'];
-    await expect(replaceData(observedBus,record.data)).rejects.toThrow();
-    expect(observedBus.project).toEqual(beforeObserved);
+    await replaceData(observedBus,record.data);
+    expect(observedBus.project.sampleData).toEqual(record.data);
+    expect(bindingValidation(observedBus.project).errors).toContainEqual(expect.objectContaining({code:'MISSING_FIELD',path:'/allocations/1/amount~0raw'}));
+    await replaceData(observedBus,beforeObserved);
+    expect(bindingValidation(observedBus.project).valid).toBe(true); expect(observedBus.project.sampleData).toEqual(beforeObserved);
     const bus = createBus(project), data = structuredClone(project.sampleData);
     data.allocations[0].unlisted = '正常未知字段'; await replaceData(bus,data);
     const next = designOf(bus.project); next.columns[0].pointer = './unlisted';
     await editProject(bus,designOperations(bus.project,next),'bind safe extension');
     expect(render(bus.project).fragment.textContent).toContain('正常未知字段');
+  });
+
+  it.each([[7],['primitive'],[null],[false]])('keeps malformed primary rows repairable without suggesting a row-root field: %j',async row=> {
+    const project = newProject(), bus = createBus(project), schema = structuredClone(project.schema);
+    const data = {...structuredClone(project.sampleData),items:[row]};
+    await replaceData(bus,data);
+    expect(bus.project.sampleData).toEqual(data); expect(bus.project.schema).toEqual(schema);
+    expect(collectionFields(bus.project)).toEqual([]);
+    const view = document.createElement('div');
+    view.innerHTML = dataTree(bus.project,{selected:'items-sku'}) + fieldBinding(bus.project,selectionField(designOf(bus.project),'items-sku'));
+    expect(view.querySelector('[data-tree-path="."]')).toBeNull();
+    expect(view.querySelector('option[value="."]')).toBeNull();
+    expect(bindingValidation(bus.project)).toMatchObject({valid:false,errors:expect.arrayContaining([expect.objectContaining({code:'ROW_NOT_OBJECT',path:'/items'})])});
+    expect(()=>assertCollectionBinding(bus.project,'/items')).toThrow();
+    await replaceData(bus,project.sampleData);
+    expect(bindingValidation(bus.project).valid).toBe(true);
+    expect(collectionFields(bus.project).some(field=>field.pointer === './sku')).toBe(true);
+  });
+
+  it('does not catalog scalar array items as a declared root or hide later-row missing fields',async()=> {
+    const schema = {type:'object',properties:{items:{type:'array',items:{type:'number'}}}};
+    expect(datasetDescriptor({items:[7]},schema).collections[0].fields).toEqual([]);
+    expect(declaredCollectionFields(schema,'/items')).toEqual([]);
+    const project = newProject(), bus = createBus(project), data = structuredClone(project.sampleData);
+    data.items = [data.items[0],7];
+    await replaceData(bus,data);
+    expect(collectionFields(bus.project).some(field=>field.pointer === '.')).toBe(false);
+    expect(collectionFields(bus.project).find(field=>field.pointer === './sku')).toMatchObject({required:false});
+    data.items[1] = {...data.items[0]}; delete data.items[1].sku;
+    await replaceData(bus,data);
+    expect(bindingValidation(bus.project).errors).toContainEqual(expect.objectContaining({code:'MISSING_FIELD',path:'/items/1/sku'}));
+  });
+
+  it('keeps authoritative empty object-row fields in both human binding consumers',()=> {
+    const {project} = nestedDatasetFixture(true), before = structuredClone(project.schema);
+    const view = document.createElement('div');
+    view.innerHTML = dataTree(project,{selected:'items-identity'}) + fieldBinding(project,selectionField(designOf(project),'items-identity'));
+    expect(view.querySelector('[data-tree-path="./line~1id"]:not([disabled])')).not.toBeNull();
+    expect(view.querySelector('option[value="./line~1id"]')).not.toBeNull();
+    expect(view.querySelector('[data-tree-path="."]')).toBeNull();
+    expect(project.schema).toEqual(before); expect(bindingValidation(project).valid).toBe(true);
+    assertCollectionBinding(project,'/allocations');
   });
 
   it('rejects source identity, schema language and combined budgets at the read boundary',async()=> {

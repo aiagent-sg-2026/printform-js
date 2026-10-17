@@ -1,18 +1,17 @@
 import { test, expect } from './studio-v3-test.js';
 
-test('quiet composer retains accessible exact-request inspection and the complete footer',async({page})=>{
- const requests=[];await page.route('https://gpt.yapweijun1996.com/demo/**',route=>{requests.push(route.request().url());return route.abort();});
+test('retains and fits an unsent multiline request across viewport and panel-width changes',async({page})=>{
+ await page.setViewportSize({width:1440,height:900});
  await page.goto('/studio-v3/');await expect(page.locator('[data-action=export]')).toBeEnabled({timeout:30000});
  await page.locator('[data-ai-toggle]').click();
- await expect(page.getByText('Send shares your message, comments and reviewed context with gpt.yapweijun1996.com and its model provider.',{exact:false})).toHaveCount(0);
- await expect(page.getByText('Sharing details · review exact request',{exact:true})).toHaveCount(0);
- await expect(page.getByText('Ask about this layout, or review an edit proposal.',{exact:true})).toHaveCount(0);
- // The request preview control is gone: no eye button, no sharing panel, no echoed request.
- await expect(page.locator('.ai-sharing')).toHaveCount(0);await expect(page.locator('#ai-share')).toHaveCount(0);
- await expect(page.getByLabel('Inspect outgoing request')).toHaveCount(0);
- const footer=page.locator('body > footer.status-bar');await expect(footer).toHaveCount(1);
- await expect(footer.locator('#status')).toContainText('45 rows');await expect(footer).toContainText('current layout passed');
- await expect(footer).toContainText('Built-in demo');await expect(page.locator('#app-version')).toBeVisible();
- await expect(page.getByRole('button',{name:'Check for updates',exact:true})).toBeVisible();await expect(page.locator('#update-status')).toHaveCount(1);
- await expect(page.getByRole('link',{name:'Studio v2',exact:true})).toBeVisible();expect(requests).toHaveLength(0);
+ const prompt=page.getByRole('textbox',{name:'Message AI assistant'}),draft='先预览打印布局，等我确认后再应用。请保留所有来源事实。';
+ await prompt.fill(draft);
+ const fits=()=>expect.poll(()=>prompt.evaluate(el=>el.scrollHeight-el.clientHeight)).toBeLessThanOrEqual(1);
+ await fits();
+ for(const viewport of [{width:390,height:844},{width:320,height:720},{width:1440,height:900}]) {
+  await page.setViewportSize(viewport);await fits();await expect(prompt).toHaveValue(draft);
+  expect(await page.evaluate(()=>document.documentElement.scrollWidth-innerWidth)).toBeLessThanOrEqual(1);
+ }
+ await page.locator('[data-ai-resize]').press('Home');await fits();await expect(prompt).toHaveValue(draft);
+ await page.locator('[data-ai-resize]').press('End');await fits();await expect(prompt).toHaveValue(draft);
 });

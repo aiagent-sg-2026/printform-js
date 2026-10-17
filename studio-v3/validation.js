@@ -7,6 +7,9 @@ import { validPointer, fieldKind, pageDimensions, pageSettings } from './design-
 import { validateDesign } from './design-validation.js';
 import { assertProjectSchema, assertCollectionBinding } from './dataset-schema.js';
 import { printerStatus } from './paper-settings.js';
+import { tableDefinitions } from './additional-tables.js';
+import { validateBarcode } from '../studio-v2/core/barcode.js';
+import { projectCurrencyIssue } from './currency-catalog.js';
 
 export function bindingValidation(project) {
   const d = designOf(project);
@@ -17,35 +20,40 @@ export function bindingValidation(project) {
     return {valid:false,errors,errorCount:errors.length};
   }
   try { assertProjectSchema(project); } catch (error) { issue('SOURCE_SCHEMA_INVALID','/schema',error.message,'document'); }
+  const currencyIssue = projectCurrencyIssue(project);
+  if (currencyIssue) errors.push(currencyIssue);
   BLOCKS.filter(id => d.blocks[id].enabled).forEach(id => {
     if (id === 'items') return;
     d[id].forEach(f => {
-      if (fieldKind(f) !== 'bound') return;
+      if (!['bound','barcode'].includes(fieldKind(f))) return;
       const component = `${id}-${f.id}`;
       if (!validPointer(f.pointer)) return issue('INVALID_POINTER', f.pointer, 'Use an absolute JSON pointer such as /customer/name.', component);
       check(resolvePointer(project.sampleData, f.pointer), f, f.pointer, component, issue);
     });
   });
-  if (d.blocks.items.enabled) {
-    const items = validPointer(d.collection) ? resolvePointer(project.sampleData, d.collection) : undefined;
-    if (!Array.isArray(items)) issue('COLLECTION_NOT_ARRAY', d.collection, 'Collection must be an array. Use /items, without a wildcard.', 'items');
-    else if (items.some(row=>!row || typeof row !== 'object' || Array.isArray(row))) issue('ROW_NOT_OBJECT',d.collection,'Every collection row must be an object.','items');
-    else d.columns.forEach(f => {
-      if (fieldKind(f) !== 'bound') return;
-      if (!validPointer(f.pointer, true)) return issue('INVALID_POINTER', f.pointer, 'Use a row-relative pointer such as ./description.', `items-${f.id}`);
-      items.forEach((item, i) => check(resolvePointer(project.sampleData, f.pointer, item), f, `${d.collection}/${i}/${f.pointer.slice(2)}`, `items-${f.id}`, issue));
+  for (const table of tableDefinitions(d).filter(table=>table.enabled)) {
+    const {id,collection,columns} = table;
+    const items = validPointer(collection) ? resolvePointer(project.sampleData,collection) : undefined;
+    if (!Array.isArray(items)) issue('COLLECTION_NOT_ARRAY',collection,'Collection must be an array in its explicit source scope.',id);
+    else if (items.some(row=>!row || typeof row !== 'object' || Array.isArray(row))) issue('ROW_NOT_OBJECT',collection,'Every collection row must be an object.',id);
+    else columns.forEach(f => {
+      if (!['bound','barcode'].includes(fieldKind(f))) return;
+      if (!validPointer(f.pointer,true)) return issue('INVALID_POINTER',f.pointer,'Use a row-relative pointer such as ./description.',`${id}-${f.id}`);
+      items.forEach((item,i)=>check(resolvePointer(project.sampleData,f.pointer,item),f,`${collection}/${i}/${f.pointer.slice(2)}`,`${id}-${f.id}`,issue));
     });
-    if (!d.columns.length) issue('COLUMNS_EMPTY', '/columns', 'Add at least one item column.', 'items');
-    const width = d.columns.reduce((sum, c) => sum + Number(c.width), 0);
-    if (width > 100.1 || width <= 0) issue('COLUMN_WIDTHS', '/columns', 'Column widths must total 100% or less.', 'items');
-  }
-  if (d.blocks.items.enabled) {
-    try { assertCollectionBinding(project,d.collection,d.columns,false); } catch (error) { issue('COLLECTION_SCHEMA_INVALID',d.collection,error.message,'items'); }
+    if (!columns.length) issue('COLUMNS_EMPTY',collection,'Add at least one table column.',id);
+    const width = columns.reduce((sum,c)=>sum+Number(c.width),0);
+    if (width > 100.1 || width <= 0) issue('COLUMN_WIDTHS',collection,'Column widths must total 100% or less.',id);
+    try { assertCollectionBinding(project,collection,columns,false); } catch (error) { issue('COLLECTION_SCHEMA_INVALID',collection,error.message,id); }
   }
   return { valid: !errors.length, errors: errors.slice(0, 30), errorCount: errors.length };
 }
 function check(value, field, path, component, issue) {
   if (value === undefined || value === null) return issue('MISSING_FIELD', path, `No value found for ${path}.`, component);
+  if (field.kind === 'barcode') {
+    try { validateBarcode(value,field.barcode); } catch (error) { issue('BARCODE_INVALID',path,error.message,component); }
+    return;
+  }
   if (['currency', 'number', 'percent'].includes(field.format) && (typeof value !== 'number' || !Number.isFinite(value))) issue('NUMBER_REQUIRED', path, 'A numeric format requires a finite ERP number.', component);
   if (typeof value === 'object') issue('SCALAR_REQUIRED', path, 'Bind a text or numeric field, not an object.', component);
 }

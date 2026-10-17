@@ -58,3 +58,8 @@ Not covered yet: binomial confidence intervals, paired built-in-advantage compar
 
 2026-10-16历史：本地Node/JSON源码profile机械检查不写入正式CSV，当时仍0/60、0/180；[有界源码证据](STUDIO_V3_CODING_RUNNER.zh-CN.md)保留。2026-10-17的新语料明确包含12个不可用/拒绝请求：正确拒绝记Blocked，不是功能成功；理论最高144/180，完整G8不能因此合格，须真实补齐能力并另冻版本。
 
+## 2026-10-17 General extension checkpoint
+
+Nine supplied-business starters, bounded independent tables/barcodes,16 primary currencies and recoverable CSV/JSON/share copies are feature evidence, not new formal model attempts. Public e385 and ed816282 each returned no requested paper candidate; public0c02 returnedAGENT_BLOCKED after8HTTP200. All remain taskFail with independently unchanged saved source; no record is promoted toPass because grants or deterministic tests improved.
+
+The new general-print guide separates human New/table/collection/currency/import/download paths from callable tools. Existing60tasks/20holdout, six signed historical attempts, per-profile identity and original thresholds remain unchanged. Do not refreeze, reinterpret correct refusals as featurePass, merge profiles, or read/publish private model reasoning to manufacture qualification.

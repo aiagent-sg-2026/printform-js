@@ -7,6 +7,8 @@ import { applyRow, fieldBinding, collectionBinding, imageControls } from './bind
 import { sectionOrder, fieldKind } from './design-authoring.js';
 import { paperControls } from './paper-controls.js';
 import { SCENARIOS } from './scenario-matrix.js';
+import { tableOf, tableDefinitions, fieldRows, isTable } from './additional-tables.js';
+import { CURRENCY_CODES } from './currency-catalog.js';
 
 export const SAMPLES = [['erp','Current document data','Restore original dataset'],...SCENARIOS];
 const button = (action,text,symbol='',extra='') => `<button type="button" data-action="${action}" ${extra}>${symbol ? icon(symbol) : ''}${escape(text)}</button>`;
@@ -38,14 +40,18 @@ function styleForm(design) {
   </form>`;
 }
 function fieldProperties(design,selected,focusLabel=false) {
-  const {field,block,index} = selected, count = (block === 'items' ? design.columns : design[block]).length;
+  const {field,block,index} = selected, count = fieldRows(design,block).length, table = isTable(design,block);
   return `<form data-form="field" class="form-stack">
-    ${input('Label','label',field.label,'text','maxlength="100"')}${fieldKind(field) === 'image' ? '' : formats(field.format)}
+    ${input('Label','label',field.label,'text','maxlength="100"')}${['image','barcode'].includes(fieldKind(field)) ? '' : formats(field.format)}
     <input type="hidden" name="showLabel-present" value="1">${check('Show label','showLabel',field.showLabel !== false)}
-    ${typographyControls('Label','labelStyle',field.labelStyle,focusLabel)}${fieldKind(field) === 'image' ? '<p class="hint">Image source and dimensions are in Data binding.</p>' : typographyControls('Value','valueStyle',field.valueStyle,!focusLabel)}
-    ${block === 'items' ? input('Width (%)','width',field.width,'number','min="1" max="100"') : ''}
+    ${typographyControls('Label','labelStyle',field.labelStyle,focusLabel)}${['image','barcode'].includes(fieldKind(field)) ? '<p class="hint">Source and dimensions are in Data binding.</p>' : typographyControls('Value','valueStyle',field.valueStyle,!focusLabel)}
+    ${table ? input('Width (%)','width',field.width,'number','min="1" max="100"') : ''}
     <p class="hint">Label and appearance. Use Data binding to choose the printed value.</p>${applyRow('Apply field')}
   </form><div class="action-row">${button('move-up','Up','up',index === 0 ? 'disabled' : '')}${button('move-down','Down','down',index === count-1 ? 'disabled' : '')}${button('remove-field','Remove','trash')}</div>`;
+}
+function additionalTableProperties(design,id) {
+  const table = tableOf(design,id);
+  return `<form data-form="additional-table" class="form-stack">${input('Table name','label',table.label,'text','maxlength="100"')}${input('Collection','collection',table.collection,'text','maxlength="240"')}${check('Show table','enabled',table.enabled)}${check('Repeat this table header','repeatHeader',table.repeatHeader)}${check('Page break before table','breakBefore',table.breakBefore)}<p class="hint">Independent array; no joins or totals are inferred. Edit each column binding under this table.</p>${applyRow('Apply source table')}</form>${button('add-field','Add column at end','plus')}${button('remove-table','Remove additional table','trash')}`;
 }
 function blockProperties(design,id) {
   const block = design.blocks[id], order = sectionOrder(design);
@@ -67,8 +73,8 @@ export function leftView(project,state) {
     ${state.mode === 'validate' ? button('validate-all',state.running ? 'Stop validation' : 'Run all synthetic samples','check') : ''}
   </div><details><summary>${icon('data')}Binding guide</summary><div class="panel-body"><p class="callout">Collection /items<br>Row field ./description<br>Document field /customer/name</p><p class="muted">Amounts and taxes are supplied values. No ERP connection is configured.</p></div></details>`;
   const query = (state.search || '').toLowerCase();
-  const tree = sectionOrder(design).map(id=> {
-    const block = design.blocks[id], fields = id === 'items' ? design.columns : design[id];
+  const tree = [...sectionOrder(design),...(design.additionalTables || []).map(table=>table.id)].map(id=> {
+    const block = design.blocks[id] || tableOf(design,id), fields = fieldRows(design,id);
     const matchBlock = block.label.toLowerCase().includes(query), matches = fields.filter(f=>matchBlock || f.label.toLowerCase().includes(query));
     const collapsed = state.collapsed?.[id] && !query;
     return `<div class="tree-group ${!block.enabled ? 'tree-disabled' : ''}" data-tree-group="${id}" ${query && !matchBlock && !matches.length ? 'hidden' : ''}>
@@ -76,7 +82,7 @@ export function leftView(project,state) {
       <div class="tree-fields" ${collapsed || !block.enabled ? 'hidden' : ''}>${fields.map(field=>`<button type="button" class="tree-node ${state.selected === `${id}-${field.id}` ? 'active' : ''}" data-select="${id}-${escape(field.id)}" ${query && !matchBlock && !field.label.toLowerCase().includes(query) ? 'hidden' : ''}>${icon('field')}<span class="tree-label">${escape(field.label)}</span></button>`).join('')}</div>
     </div>`;
   }).join('');
-  return `<div class="structure-toolbar"><h2 class="panel-heading">Template structure${close()}</h2><div class="structure-tools"><input id="structure-search" type="search" value="${escape(state.search || '')}" aria-label="Search structure" placeholder="Search fields">${button('go-style','Global style','style')}</div></div><nav aria-label="Form components">${tree}</nav><div class="tree-footer"><button type="button" data-ai-add="${escape(state.selected)}">${icon('sparkles')}Add selected to chat</button>${button('add-field','Add field / column at end','plus')}<p class="hint muted">Select a component to edit. Insertion appends to its section.</p></div>`;
+  return `<div class="structure-toolbar"><h2 class="panel-heading">Template structure${close()}</h2><div class="structure-tools"><input id="structure-search" type="search" value="${escape(state.search || '')}" aria-label="Search structure" placeholder="Search fields">${button('go-style','Global style','style')}</div></div><nav aria-label="Form components">${tree}</nav><div class="tree-footer"><button type="button" data-ai-add="${escape(state.selected)}">${icon('sparkles')}Add selected to chat</button>${button('add-field','Add field / column at end','plus')}${button('add-table','Add independent source table','plus')}<p class="hint muted">Select a component to edit. Additional tables require an existing second object-row array.</p></div>`;
 }
 function qualityView(project,state) {
   const quality = inspectProject(project,state.report);
@@ -90,7 +96,7 @@ function qualityView(project,state) {
 function localeForm(project) {
   return `<details><summary>Locale & currency</summary><div class="panel-body"><form data-form="locale" class="form-stack">
     <label>Locale<select name="locale">${['en-MY','zh-CN','ms-MY','ja-JP','vi-VN'].map(locale=>`<option ${locale === project.manifest.locale ? 'selected' : ''}>${locale}</option>`).join('')}</select></label>
-    <label>Currency<select name="currency">${['MYR','USD','SGD','EUR','CNY','JPY'].map(currency=>`<option ${currency === project.manifest.currency ? 'selected' : ''}>${currency}</option>`).join('')}</select></label>${applyRow('Apply locale')}
+    <label>Currency<select name="currency">${CURRENCY_CODES.map(currency=>`<option ${currency === project.manifest.currency ? 'selected' : ''}>${currency}</option>`).join('')}</select></label><p class="hint">Default display currency only, not FX conversion. An explicit source document currency must match; supplied amounts are never converted or relabelled.</p>${applyRow('Apply locale')}
   </form></div></details>`;
 }
 export function rightView(project,state) {
@@ -102,9 +108,11 @@ export function rightView(project,state) {
     }).join('')}<p class="hint muted">Template edits clear these results.</p></div>${quality}`;
   }
   if (['global-style','page-number'].includes(state.selected) && state.mode === 'design') return `<h2 class="panel-heading">Global style${close()}</h2><div class="panel-body">${styleForm(design)}</div>${quality}`;
-  const block = selected?.block || (state.selected.startsWith('header-') ? 'header' : BLOCKS.includes(state.selected) ? state.selected : 'items');
-  const heading = state.selected === 'header-title' ? 'Document heading' : state.selected === 'header-logo' ? 'Logo / brand mark' : selected ? `${selected.field.label}${state.selected.startsWith('label-') ? ' · Label' : ''}` : design.blocks[block].label;
-  const binding = selected ? fieldBinding(project,selected) : block === 'items' ? collectionBinding(project) : '<p class="callout">Select a field in the structure to bind a value. Document data is separate from layout properties.</p>';
+  const selectedTable = tableDefinitions(design).find(table=>state.selected === table.id || state.selected === `${table.id}-header`);
+  const block = selected?.block || selectedTable?.id || (state.selected.startsWith('header-') ? 'header' : BLOCKS.includes(state.selected) ? state.selected : 'items');
+  const extra = isTable(design,block) && block !== 'items';
+  const heading = state.selected === 'header-title' ? 'Document heading' : state.selected === 'header-logo' ? 'Logo / brand mark' : selected ? `${selected.field.label}${state.selected.startsWith('label-') ? ' · Label' : ''}` : (design.blocks[block] || tableOf(design,block)).label;
+  const binding = selected ? fieldBinding(project,selected) : isTable(design,block) ? collectionBinding(project,block) : '<p class="callout">Select a field in the structure to bind a value. Document data is separate from layout properties.</p>';
   if (state.mode === 'data') return `<h2 class="panel-heading">Data binding${close()}</h2><div class="panel-body form-stack"><h3 class="inspector-title">${icon('field')}${escape(heading)}</h3>${binding}<p class="source-line">${escape(sourceLabel(project))}</p><button type="button" data-db-group="json">Open wide JSON editor</button></div>${localeForm(project)}${quality}`;
-  return `<div class="panel-body inspector-heading"><h2 class="inspector-title">${icon(selected ? 'field' : block)}${escape(heading)}</h2>${close()}</div><div class="inspector-tabs"><button type="button" data-action="properties" aria-current="${state.tab === 'properties'}">Properties</button><button type="button" data-action="binding" aria-current="${state.tab === 'binding'}">Data binding</button></div><div class="panel-body form-stack"><button type="button" data-ai-add="${escape(state.selected)}">${icon('sparkles')}Add to chat</button>${state.tab === 'binding' ? binding : selected ? fieldProperties(design,selected,state.selected.startsWith('label-')) : blockProperties(design,block)}</div>${quality}`;
+  return `<div class="panel-body inspector-heading"><h2 class="inspector-title">${icon(selected ? 'field' : extra ? 'items' : block)}${escape(heading)}</h2>${close()}</div><div class="inspector-tabs"><button type="button" data-action="properties" aria-current="${state.tab === 'properties'}">Properties</button><button type="button" data-action="binding" aria-current="${state.tab === 'binding'}">Data binding</button></div><div class="panel-body form-stack"><button type="button" data-ai-add="${escape(state.selected)}">${icon('sparkles')}Add to chat</button>${state.tab === 'binding' ? binding : selected ? fieldProperties(design,selected,state.selected.startsWith('label-')) : extra ? additionalTableProperties(design,block) : blockProperties(design,block)}</div>${quality}`;
 }

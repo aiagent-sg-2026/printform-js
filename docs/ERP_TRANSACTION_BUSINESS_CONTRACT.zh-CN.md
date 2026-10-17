@@ -144,7 +144,7 @@ monetary fact 必填 `{id, label, role, amount: money}`，可选 `sourceReferenc
 - taxes 每项必须有非空 basis 说明税／费用语义；不求税率或按明细重新计税。
 - remainingBalance 必须 direction = balance 且有 basis 明确余额范围；不将财务余额当作退款金额。
 - 没有给 summary 时不生成 subtotal／taxTotal／grandTotal；有给但与明细看似不相加时原样保留，本模块不是账实核对器。
-- 标准 Intl 支持的 uppercase ISO 货币用于规范化及 linked/base 值；**现有便携 manifest 的 document.currency 仅支持 MYR／USD／SGD／EUR／CNY／JPY**。主币 GBP 等可规范化但项目创建抛 PROJECT_CURRENCY，不擅自改币种。
+- 标准 Intl 支持的 uppercase ISO 货币用于规范化及 linked/base 来源事实，合法 BHD、AED 等不受 Studio 主币种目录限制。便携 manifest 的 document.currency 使用16币种：MYR／USD／SGD／EUR／CNY／JPY／GBP／AUD／NZD／HKD／IDR／VND／THB／INR／KRW／CHF。GBP 可创建项目；目录外主币种仍可规范化，但项目创建抛 `PROJECT_CURRENCY`，不擅自改币种。核心 formatter 的原有 ISO 支持不变。
 
 ### 5.4 Refund：现金、来源侧金额和退款依据独立
 

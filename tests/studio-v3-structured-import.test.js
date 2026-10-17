@@ -12,6 +12,7 @@ import { createImportReview, previewImport, importTargets } from '../studio-v3/s
 import { convertImportValue } from '../studio-v3/structured-import-values.js';
 import { validateImportReceipt } from '../studio-v3/structured-import-receipt.js';
 import { nestedDatasetFixture } from './fixtures/nested-dataset.js';
+import { bindingValidation } from '../studio-v3/validation.js';
 
 const csv = 'n,code,description,qty,unit,total,uom\r\n1,00007,"Fictional, 中文\nline",2,001.250,2.500,box\r\n2,00008,Second,3,2.000,6.000,kg\r\n';
 const mappings = () => Object.fromEntries([
@@ -131,6 +132,29 @@ it('reviews then Applies through actual history, save/open, source reads and por
     await replaceData(bus,structuredClone(bus.project.sampleData),'erp',null);
     expect(bus.project.manifest.localImport).toBeNull();
   } finally { database.store.close(); vi.unstubAllGlobals(); }
+});
+
+it('previews an explicitly mapped source currency before Apply and preserves source amounts through Save/Open',async()=> {
+  const project = newProject('invoice'); project.sampleData.document.currency = 'MYR';
+  const {bus,database} = await setup(project), before = structuredClone(bus.project);
+  const source = '{"suppliedCurrency":"GBP","note":"Exact supplied record; no FX conversion"}';
+  try {
+    await database.action('import-file',{source,filename:'source-currency.json'});
+    database.importReview.targetPointer = '';
+    database.importReview.mappings = {'/document/currency':{source:'/suppliedCurrency',conversion:'preserve'}};
+    await database.action('import-preview',{});
+    expect(database.importReview.preview.currency).toBe('GBP');
+    expect(bus.project).toEqual(before);
+    await database.action('import-apply',{});
+    const reopened = readProject(saveProject(bus.project));
+    expect(reopened.manifest.currency).toBe('GBP');
+    expect(reopened.sampleData.document.currency).toBe('GBP');
+    expect(reopened.sampleData.items).toEqual(before.sampleData.items);
+    expect(reopened.sampleData.summary).toEqual(before.sampleData.summary);
+    expect(reopened.schema).toEqual(before.schema);
+    expect(reopened.manifest.localImport.sourceText).toBe(source);
+    expect(bindingValidation(reopened).valid).toBe(true);
+  } finally { database.store.close(); }
 });
 it('invalidates previews on mapping edits and rejects a stale project before commit',async()=> {
   vi.stubGlobal('indexedDB',undefined);

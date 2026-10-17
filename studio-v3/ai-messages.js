@@ -1,4 +1,5 @@
 import { SOURCE_ERROR_CONTRACTS } from './source-workspace-errors.js';
+import { publicBlockedReason } from './agent-blocked.js';
 export const AI_MESSAGES = {
   AGENT_RELEASE_MISMATCH:'The assistant and product resources belong to different versions. Reload Studio before retrying. Nothing changed.',
   AGENT_KNOWLEDGE_UNAVAILABLE:'This version’s assistant resources are unavailable. Retry when online or reload a complete offline installation. Nothing changed.',
@@ -17,7 +18,7 @@ export const AI_MESSAGES = {
   AGENT_TOKEN_BUDGET:'The run used up its token budget before it finished. Nothing changed.',
   AGENT_USAGE_UNAVAILABLE:'The AI service did not report reliable token usage. The run stopped to protect its budget. Nothing changed.',
   AGENT_STALLED:'The run kept repeating the same failing step and was stopped. Nothing changed.',
-  AGENT_BLOCKED:'The assistant could not meet this request with the supported operations. Nothing changed.',
+  AGENT_BLOCKED:'The assistant reported a blocker but did not deliver a proposal. This is not proof of a product limitation. Live form unchanged.',
   AGENT_TIMEOUT:'The run took too long and was stopped. Nothing changed.',
   AGENT_CONTEXT_LIMIT:'The run grew too large for the AI service and was stopped. Nothing changed.',
   DEMO_RATE_LIMIT:'Demo request limit reached. Try again later. Nothing changed.',
@@ -41,4 +42,9 @@ export const AI_MESSAGES = {
   AI_TIMEOUT:'The AI service is slow and the request timed out. Use Edit & resend to try again. Nothing changed.',
   AI_RUN_FAILED:'Pi could not complete a validated answer or proposal. Nothing changed.'
 };
-export const errorMessage = error=>error.name === 'AbortError' ? 'Cancelled. Live form unchanged.' : SOURCE_ERROR_CONTRACTS[error.code]?.retryAdvice || AI_MESSAGES[error.code] || 'AI request failed. Nothing changed.';
+export const errorMessage = error=> {
+  if (error.name === 'AbortError') return 'Cancelled. Live form unchanged.';
+  const reason = publicBlockedReason(error);
+  if (reason !== null) return `Assistant-reported blocker: ${reason}\nThis is the assistant’s report, not a host-verified capability limit. No proposal was delivered; the live form is unchanged.`;
+  return SOURCE_ERROR_CONTRACTS[error.code]?.retryAdvice || AI_MESSAGES[error.code] || 'AI request failed. Nothing changed.';
+};

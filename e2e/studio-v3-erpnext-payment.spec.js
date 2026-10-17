@@ -1,6 +1,7 @@
 import { test, expect } from './studio-v3-test.js';
 import { fictionalErpNextPayment, paymentEntryCases } from '../tests/fixtures/erpnext-payment.js';
 import { saveProject, readProject } from '../studio-v3/file-io.js';
+import { createErpNextPaymentEntryProject } from '../studio-v3/erpnext-payment-adapter.js';
 import { readFile } from 'node:fs/promises';
 import { pathToFileURL } from 'node:url';
 import { getDocument } from 'pdfjs-dist/legacy/build/pdf.mjs';
@@ -59,10 +60,7 @@ async function pdfFacts(bytes, sample, count) {
 for (const [name, type, advance, foreignInvoice] of paymentEntryCases) test(`${name}: public raw adapter, Open/save/reopen/offline and real PDF`, async ({ page, context, browserName }, info) => {
   page.on('dialog', dialog => dialog.accept());
   await page.goto('/studio-v3/'); await ready(page);
-  const project = await page.evaluate(async input => {
-    const { createErpNextPaymentEntryProject } = await import('/studio-v3/erpnext-payment-adapter.js');
-    return createErpNextPaymentEntryProject(input);
-  }, fictionalErpNextPayment(type, advance, foreignInvoice));
+  const project = createErpNextPaymentEntryProject(fictionalErpNextPayment(type, advance, foreignInvoice));
   const sample = project.sampleData;
   await page.locator('#open-file').setInputFiles({ name: `${name}.printform.json`, mimeType: 'application/json', buffer: Buffer.from(saveProject(project)) });
   await ready(page); await expect(page.locator('#document-name')).toHaveValue(project.manifest.title);

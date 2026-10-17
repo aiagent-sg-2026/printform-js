@@ -20,7 +20,7 @@ function ref(context, kind, value) {
 
 function projectBinding(binding, context) {
   if (!binding || typeof binding !== "object") return null;
-  return compact(Object.fromEntries(["text", "each", "if", "href", "i18n"].map((key) => [key, binding[key] == null ? undefined : ref(context, "path", binding[key])])));
+  return compact(Object.fromEntries(["text", "barcode", "each", "if", "href", "i18n"].map((key) => [key, binding[key] == null ? undefined : ref(context, "path", binding[key])])));
 }
 
 export function projectComponent(component, context) {
@@ -84,6 +84,7 @@ export function projectInspection(result, context) {
       id: ref(context, "element", binding.id),
       className: ref(context, "class", binding.className),
       text: ref(context, "path", binding.text),
+      barcode: ref(context, "path", binding.barcode),
       each: ref(context, "path", binding.each),
       condition: ref(context, "path", binding.condition),
       href: ref(context, "path", binding.href),

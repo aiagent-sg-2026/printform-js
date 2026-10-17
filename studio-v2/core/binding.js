@@ -3,6 +3,7 @@ import { SAFE_URL_PROTOCOLS } from "./constants.js";
 import { translateFragment } from "./i18n.js";
 import { tableRepeatDescriptor, measureBoundRows, resolveRowLimits, rowLimitErrors } from "./row-limits.js";
 import { formatBindingValue, formatIssue } from "./binding-format.js";
+import { bindBarcodeElement } from "./barcode-binding.js";
 
 
 export function safeUrl(value, baseUrl = "https://printform.invalid/") {
@@ -19,6 +20,10 @@ function bindElement(element, rootData, scope, manifest, report, scopeChain) {
   if (element.hasAttribute("data-pf-if")) {
     const value = resolvePointer(rootData, element.getAttribute("data-pf-if"), scope);
     if (!value) { element.remove(); return; }
+  }
+  if (element.hasAttribute("data-pf-barcode")) {
+    bindBarcodeElement(element, rootData, scope, report);
+    return;
   }
   if (element.hasAttribute("data-pf-text")) {
     const pointer = element.getAttribute("data-pf-text");

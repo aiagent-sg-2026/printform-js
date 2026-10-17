@@ -78,8 +78,8 @@ const input = {
 
 - 三个字段都必填。`amount` 为有限十进制数字或字符串；推荐字符串。可含合法千分组、正负号和尾随零；不接受科学记数法。
 - `minorUnitDigits` 是 0–6 的整数或相应字符串。按**该金额自身**的声明精度显示。同一个币种的不同来源值可用不同声明精度；例如 invoice applied 是 USD 100.00，ERP cleared 是 USD 105.000。禁止超出声明精度的非零位，不做四舍五入。
-- 货币代码必须是当前标准 Intl 支持的 uppercase ISO 代码。规范化和外币行不局限于六币种；例如主币 MYR、发票 GBP 可以打印。
-- 只有便携项目 manifest 的**主现金币种**受现有 Studio 限制：MYR、USD、SGD、EUR、CNY、JPY。规范化可处理主币 GBP，但项目构造会清楚报 `PROJECT_CURRENCY`，不会转换币种掩盖限制。
+- 货币代码必须是当前标准 Intl 支持的 uppercase ISO 代码。来源规范化及外币事实保留原有 ISO 支持，不受 Studio 主币种目录限制；合法 BHD、AED 等来源币种不会因不在目录中被拒绝。
+- 只有便携项目 manifest 的**主现金币种**使用 Studio 16币种目录：MYR、USD、SGD、EUR、CNY、JPY、GBP、AUD、NZD、HKD、IDR、VND、THB、INR、KRW、CHF。GBP 可直接构造项目；目录外主币种仍可规范化，但项目构造报 `PROJECT_CURRENCY`，不会转换币种掩盖限制。核心 formatter 保留原有 ISO 支持。
 - 正负号与零不改成绝对值。显式字符串 `-0.000`、`+0.000` 也保留并打印；数值 `-0` 因 JSON 会失去符号而被拒绝。
 - 数额必须可准确转换为安全整数 minor units。超大数额及无法无损保留的数额报错，不以浮点近似值通过。
 - 规范化 money 为 `{amount, currency, minorUnitDigits, amountMinor, displayAmount}`；`amount` 保存字符串表示，`amountMinor` 只用于无损数额表达／零检查，`displayAmount` 是准确文本，不使用默认两位 currency formatter。

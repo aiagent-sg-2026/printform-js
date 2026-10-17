@@ -1,4 +1,4 @@
-import { JSON_PROJECT_LIMITS, parseBoundedJson } from './json-safety.js';
+import { parseBoundedJson } from './json-safety.js';
 import { DATASET_FORMAT, sameData } from './database-model.js';
 import { createImportReview, importTargets, previewImport } from './structured-import-model.js';
 import { importReceipt } from './structured-import-receipt.js';
@@ -7,8 +7,12 @@ import { saveProject } from './file-io.js';
 
 function checkedPreview(database,review) {
   const preview = previewImport(database.project,review), receipt = importReceipt(review,preview);
-  const project = {...database.project,sampleData:preview.data,manifest:{...database.project.manifest,localImport:receipt}};
-  parseBoundedJson(saveProject(project),{...JSON_PROJECT_LIMITS,label:'Portable import (project with original source)'});
+  const project = {...database.project,sampleData:preview.data,manifest:{...database.project.manifest,currency:preview.currency,localImport:receipt}};
+  try { saveProject(project); }
+  catch (error) {
+    if (['JSON_STRUCTURE_LIMIT','JSON_SIZE_LIMIT'].includes(error.code)) error.message = error.message.replace(/^Project/,'Portable import (project with original source)');
+    throw error;
+  }
   return {preview:{...preview,receipt},receipt};
 }
 export async function reviewImportFile(database,source,filename='') {
@@ -25,10 +29,10 @@ export function editImportReview(database,target) {
   if (!review) return true;
   if (control === 'source') {
     if (!review.source.scopes.some(scope=>scope.pointer === target.value)) throw new Error('Choose an available source scope.');
-    review.sourcePointer = target.value; review.mappings = {};
+    review.sourcePointer = target.value; review.mappings = {}; review.mappingPage = 0;
   } else if (control === 'target') {
     importTargets(database.project,target.value);
-    review.targetPointer = target.value; review.mappings = {};
+    review.targetPointer = target.value; review.mappings = {}; review.mappingPage = 0;
   } else {
     const pointer = target.dataset.dbImportField;
     if (!importTargets(database.project,review.targetPointer).some(field=>field.pointer === pointer)) throw new Error('Unavailable import target.');
@@ -46,6 +50,10 @@ export async function importReviewAction(database,name) {
     database.importReview = null; database.error = ''; database.message = 'Import cancelled. Form data, table edits and saved datasets are unchanged.'; return;
   }
   if (!review) throw new Error('Choose a CSV or JSON file first.');
+  if (name === 'import-previous-fields' || name === 'import-next-fields') {
+    const last = Math.max(0,Math.ceil(importTargets(database.project,review.targetPointer).length/10)-1);
+    review.mappingPage = Math.max(0,Math.min(last,(review.mappingPage || 0)+(name === 'import-next-fields' ? 1 : -1))); return;
+  }
   if (name === 'import-preview') { review.preview = null; review.preview = checkedPreview(database,review).preview; return; }
   if (!review.preview) throw new Error('Preview this mapping before Apply. Mapping changes invalidate the previous preview.');
   const {preview,receipt} = checkedPreview(database,review);

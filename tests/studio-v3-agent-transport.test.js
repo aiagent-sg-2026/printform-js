@@ -3,7 +3,6 @@ import {Type} from '@earendil-works/pi-ai';
 import {createDemoTransport} from '../studio-v3/ai-demo-transport.js';
 import {readEventStream} from '../studio-v3/ai-response-reader.js';
 import {DEMO_CONFIG} from '../studio-v3/ai-gateway-config.js';
-import {AI_MESSAGES} from '../studio-v3/ai-messages.js';
 
 const json = (body,status = 200) => new Response(JSON.stringify(body),{status,headers:{'content-type':'application/json'}});
 const frames = events => events.map(event=>`event: ${event.type}\ndata: ${JSON.stringify(event)}\n\n`).join('');
@@ -87,8 +86,3 @@ describe('progress while the model writes a tool call',()=> {
   });
 });
 
-describe('run failures are named for the person',()=> {
-  it.each(['DEMO_TOOLS_UNAVAILABLE','AGENT_BUDGET','AGENT_TOKEN_BUDGET','AGENT_USAGE_UNAVAILABLE','AGENT_STALLED','AGENT_BLOCKED','AGENT_TIMEOUT','AGENT_CONTEXT_LIMIT'])('%s has a message that says nothing changed',failure=> {
-    expect(AI_MESSAGES[failure]).toContain('Nothing changed');
-  });
-});

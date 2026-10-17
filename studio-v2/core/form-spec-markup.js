@@ -34,7 +34,7 @@ function componentId(attrs, type, role, tableId, ordinal) {
 
 function binding(attrs) {
   const result = {};
-  for (const name of ["text", "each", "if", "href", "i18n"]) {
+  for (const name of ["text", "barcode", "each", "if", "href", "i18n"]) {
     const value = attribute(attrs, `data-pf-${name}`);
     if (value) result[name] = value;
   }

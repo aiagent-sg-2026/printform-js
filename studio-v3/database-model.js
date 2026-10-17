@@ -4,6 +4,7 @@ import { sampleData } from './model.js';
 import { assertBoundedJson, parseBoundedJson, unsafeJsonKey } from './json-safety.js';
 import { declaredCollectionFields, validateSourceSchema } from './dataset-schema.js';
 import { validateImportReceipt } from './structured-import-receipt.js';
+import { isSupportedCurrency } from './currency-catalog.js';
 
 export const DATASET_FORMAT = 'printform-studio-v3-dataset';
 export const DATA_TYPES = ['invoice', 'purchase', 'delivery'];
@@ -74,7 +75,7 @@ export function newItem(data, design, types = new Map()) {
 export function validateDataset(data) {
   assertBoundedJson(data);
   if (!data || typeof data !== 'object' || Array.isArray(data)) throw new Error('Dataset must be a JSON object.');
-  if (data.document?.currency !== undefined && !['MYR','USD','SGD','EUR','CNY','JPY'].includes(data.document.currency)) throw new Error('Dataset currency is unsupported.');
+  if (data.document?.currency !== undefined && !isSupportedCurrency(data.document.currency)) throw new Error('Dataset currency is unsupported.');
   if (data.document?.currency && data.summary?.currency && data.summary.currency !== data.document.currency) throw new Error('Document and totals currencies must match.');
   if (!Array.isArray(data.items) || data.items.length > 500) throw new Error('Dataset /items must be an array with at most 500 records.');
   if (data.items.some(row => !row || typeof row !== 'object' || Array.isArray(row))) throw new Error('Each item record must be an object.');

@@ -31,12 +31,14 @@ function sourceValues(input) {
   ]);
   if (input.inspection) return input.inspection.checks.map(row => row.measure ? `${row.measure.amount} ${row.measure.uom}` : '');
   if (input.handover) return input.handover.assets.map(row => row.quantity ? `${row.quantity.amount} ${row.quantity.uom}` : '');
+  if (input.manufacturing) return [input.manufacturing.quantity, ...input.manufacturing.lines.map(row => row.quantity)].map(fact => `${fact.amount} ${fact.uom}`);
+  if (input.timesheet) return input.timesheet.entries.map(row => `${row.hours.amount} ${row.hours.uom}`);
   throw new Error(`Unsupported supplied business kind: ${input.document.kind}`);
 }
 function sourceContext(input) {
-  const branch = input.service ? 'service' : input.packing ? 'packing' : input.inspection ? 'inspection' : input.handover ? 'handover' : null;
+  const branch = ['service', 'packing', 'inspection', 'handover', 'manufacturing', 'timesheet'].find(key => input[key]);
   if (!branch) return [];
-  const keys = {service:['job','customer','asset','status'],packing:['shipment','from','to','status'],inspection:['reference','subject','status'],handover:['record','from','to','status']}[branch];
+  const keys = {service:['job','customer','asset','status'],packing:['shipment','from','to','status'],inspection:['reference','subject','status'],handover:['record','from','to','status'],manufacturing:['order','product','status'],timesheet:['employee','period','status']}[branch];
   return keys.filter(key => input[branch][key]).flatMap(key => Object.entries(input[branch][key]).flatMap(([name, value]) =>
     name === 'provenance' ? [['source', value.sourcePath], ['meaning', value.meaning]].map(([suffix, text]) => [`${branch}-${key}-${suffix}`, text]) : [[`${branch}-${key}-${name.replace(/[A-Z]/g, letter => `-${letter.toLowerCase()}`)}`, value]]));
 }
@@ -147,6 +149,14 @@ for (const entry of BUSINESS_DEMO_TEMPLATES) test(`${entry.documentKind}: no-cod
   if (input.stock) input.stock.lines[0].quantity.amount = '-0.000';
   if (input.service) input.service.observations.find(row => row.quantity).quantity.amount = '-0000.000';
   if (input.packing) input.packing.packages[0].items[0].quantity.amount = '-0000.000';
+  if (input.manufacturing) {
+    input.manufacturing.lines[1].quantity.amount = '+0099.000';
+    input.manufacturing.status.value = '待复核 / Work In Progress';
+  }
+  if (input.timesheet) {
+    input.timesheet.entries[0].hours.amount = '+0011.125';
+    input.timesheet.entries[0].status.value = 'Recorded / 未批准';
+  }
   const project = createBusinessDocumentProject(input);
   paper = await changeDocument(page, () => page.locator('#open-file').setInputFiles({ name: `${entry.documentKind}.printform.json`, mimeType: 'application/json', buffer: Buffer.from(saveProject(project)) }));
   await assertFacts(paper, input);

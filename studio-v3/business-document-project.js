@@ -4,15 +4,16 @@ import { newProject, designOf, compileProject } from './model.js';
 import { bindingValidation } from './validation.js';
 import { serviceLogisticsFields } from './business-service-logistics.js';
 import { inspectionHandoverFields } from './business-inspection-handover.js';
+import { manufacturingTimesheetFields } from './business-manufacturing-timesheet.js';
 
-const titles = { AccountStatement: 'ACCOUNT STATEMENT', StockMovement: 'STOCK MOVEMENT', PayrollSlip: 'PAYROLL SLIP', ServiceReport: 'SERVICE REPORT', PackingList: 'PACKING LIST', InspectionReport: 'INSPECTION REPORT', AssetHandover: 'ASSET HANDOVER' };
+const titles = { AccountStatement: 'ACCOUNT STATEMENT', StockMovement: 'STOCK MOVEMENT', PayrollSlip: 'PAYROLL SLIP', ServiceReport: 'SERVICE REPORT', PackingList: 'PACKING LIST', InspectionReport: 'INSPECTION REPORT', AssetHandover: 'ASSET HANDOVER', ManufacturingOrder: 'MANUFACTURING ORDER', Timesheet: 'TIMESHEET' };
 const field = (id, label, pointer) => ({ id, label, pointer, format: '' });
 const optional = (fields, data, base, names, prefix = '') => {
   for (const [key, label] of Object.entries(names)) if (Object.hasOwn(data, key)) fields.push(field(`${prefix}${key.replace(/[A-Z]/g, letter => `-${letter.toLowerCase()}`)}`, label, `${base}/${key}`));
 };
 export function createBusinessDocumentProject(input) {
   const data = normalizeBusinessDocument(input), kind = data.document.kind;
-  const nonfinancial = ['ServiceReport', 'PackingList', 'InspectionReport', 'AssetHandover'].includes(kind);
+  const nonfinancial = ['ServiceReport', 'PackingList', 'InspectionReport', 'AssetHandover', 'ManufacturingOrder', 'Timesheet'].includes(kind);
   const project = newProject(kind === 'StockMovement' || nonfinancial ? 'delivery' : 'invoice'), design = designOf(project);
   project.manifest.title = `${titles[kind]} · Supplied facts`;
   project.manifest.sampleDataTitle = `${data.document.number} · supplied facts`.slice(0, 100);
@@ -64,7 +65,7 @@ export function createBusinessDocumentProject(input) {
     optional(design.customer, data.payroll.employee, '/payroll/employee', { department: 'Department', jobTitle: 'Job title' });
     optional(design.customer, data.payroll, '/payroll', { payDate: 'Supplied pay date (not proof of payment)' });
   }
-  if (nonfinancial) design.customer = [...serviceLogisticsFields(data, field), ...inspectionHandoverFields(data, field)];
+  if (nonfinancial) design.customer = [...serviceLogisticsFields(data, field), ...inspectionHandoverFields(data, field), ...manufacturingTimesheetFields(data, field)];
   design.collection = '/printRows';
   design.columns = [
     { ...field('no', '#', './no'), width: 3 }, { ...field('section', 'Business fact', './section'), width: 9 },
@@ -76,7 +77,7 @@ export function createBusinessDocumentProject(input) {
   // Summaries are source facts in the same pageable collection, not synthetic invoice totals.
   design.totals = []; design.blocks.totals.enabled = false;
   design.footer = [{ id: 'boundary', kind: 'static', label: 'Production Pilot boundary', pointer: '', format: '',
-    text: nonfinancial ? 'Supplied snapshot only; demo identities are fictional. No pricing, totals, UOM conversion or weight summation. Work notes and source status are not completion, customer acceptance, signature, approval, payment or delivery proof. No ISO/UBL/GS1 compliance claim.' : 'Supplied snapshot only. No ledger reconciliation, FX, stock posting, UOM conversion, payroll/tax calculation or bank/payment execution. Missing balances, totals and payment states are not inferred. Payroll demo identities are fictional.' }];
+    text: nonfinancial ? 'Supplied snapshot only; demo identities are fictional. No pricing, wages, inventory posting, BOM expansion, totals, UOM conversion or weight/hour summation. Source status is not completion, certification, acceptance, signature, approval, payment or delivery proof. No ERP connector or ISO/UBL/GS1 compliance claim.' : 'Supplied snapshot only. No ledger reconciliation, FX, stock posting, UOM conversion, payroll/tax calculation or bank/payment execution. Missing balances, totals and payment states are not inferred. Payroll demo identities are fictional.' }];
   if (data.notes) design.footer.push(field('notes', 'Source notes', '/notes'));
   const compiled = compileProject(project, design), validation = bindingValidation(compiled);
   if (!validation.valid) throw Object.assign(businessError('BINDING', 'project', 'Supplied business bindings are invalid.'), { validation });

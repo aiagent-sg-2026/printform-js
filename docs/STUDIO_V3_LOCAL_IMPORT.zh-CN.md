@@ -69,9 +69,11 @@ Apply 的事务同时保存 `manifest.localImport`：版本、文件名、原始
 
 **Save form、Export dataset JSON 和 Export HTML 会有意包含该原始文本，即使其中有未选择的列。** 界面在 Apply 前及当前数据来源行明确提示这一点。请仅用虚构数据或有权导入 / 分享的文件；本入口不向远程数据库发送数据，也不自动发送到 AI。正常数据替换、验证样本及手动数据编辑清除旧活动收据，避免把新数据误称为旧文件来源；字节相同的数据保存可保留收据。Undo / Redo 同时恢复当时的数据与收据，便携文件 Save / Open 恢复实际数据、既有 schema 和匹配收据，而不是重放隐藏的数据库选择。
 
+新增 **Share copy…** 可显式下载另一份可编辑 JSON 或独立 HTML，只去掉本地导入 receipt/session，不改默认 Save with source／HTML with source。全部 live data（包括未绑定值）、打印内容、图片和设计元数据仍保留；原文件名若也存入这些位置仍在，不是匿名化。原生下载逐字检查、unsaved/Undo/原receipt及重开证据见[文件隐私验收](acceptance/STUDIO_V3_FILES_PRIVACY_20261017.md)。
+
 ## 有界范围
 
-- 输入文件最多 2 MiB（UTF-8 字节）；无效 UTF-8 在解码前拒绝，不以替代字符改写原值。JSON 最深 16 层、最多 50,000 节点；CSV 也受总节点限制。
+- 输入文件最多2MiB，先检查 native File 字节大小，再以fatal UTF8解码拒绝非法序列，不用替代字符改写原值。项目文件相同入口读前限制10MiB。JSON最深16层、最多50,000节点；CSV也受总节点限制。
 - 单次选定来源为 1–500 条对象记录；最多 250 个来源 scope、每 scope 最多 250 个标量字段、最多 250 个目标映射。
 - 数组内的子数组按具体父 scope 单独选择；标量数组不自动转换为对象表。
 - 映射后数据仍受既有项目限制。预览调用真实 Save form 序列化函数，连同完整 manifest、原 schema、数据和原始文件收据，按现有项目 Open 契约校验 10 MiB、18 层及 50,000 节点限制。收据自身的 JSON 序列化另限 3 MiB；单独来源文件、数据和 schema 即使各自合格，完整项目仍可能超限，不会截断原文或记录来通过。旧数据集包装另保留其既有 2 MiB 限制，不作为一般表单导入的根结构门槛；含新收据的旧数据集会在写入前核对该包装限制。
@@ -85,3 +87,5 @@ Apply 的事务同时保存 `manifest.localImport`：版本、文件名、原始
 ## 实际验收（2026-10-17）
 
 两个消费者文件24项通过；最终三引擎18/18覆盖严格records、无表格工单、手机375px、真实文件选择/Preview/Apply/Undo/Redo/Save/Open/独立HTML及无效UTF8。原生Chrome额外验证普通对象型profile可审阅，预览仍r0；手机来源/转换框均339px、所在行355px、全局横向溢出0，完整原文分享警告紧邻Apply可见。Firefox后台iframe定位失败与测试助手命名错误保留，最终用真实可见打印预览和现有主世界DOM策略，不放宽原预期或预算。[组合验收](acceptance/STUDIO_V3_GENERAL_IMPORT_MEDIA_20261017.md)。
+
+同日追加：250target/250source fields原生只呈现10个映射选择框、2510options；翻到第25页再返回，先前映射保留。500行坏数据在第500行被拒绝，合法版本实际保存500行及完整原CSV。Keep恢复显式csv/json格式、raw source与mapping，不靠240字符display filename猜扩展名；过期read不能覆盖新编辑或新review。上述机制不扩大大小／节点／格式限制。

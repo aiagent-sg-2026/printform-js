@@ -7,7 +7,18 @@ const fail = (message,code) => { throw Object.assign(new Error(message),{code});
 export function assertJsonBytes(source, options = JSON_DATA_LIMITS) {
   if (typeof source !== 'string') fail('JSON source must be text.','INVALID_JSON_VALUE');
   const {maxBytes,label} = {...JSON_DATA_LIMITS,...options};
-  if (new TextEncoder().encode(source).length > maxBytes) fail(`${label} exceeds the ${maxBytes/(1024*1024)} MB limit.`,'JSON_SIZE_LIMIT');
+  const reject = () => fail(`${label} exceeds the ${maxBytes/(1024*1024)} MB limit.`,'JSON_SIZE_LIMIT');
+  if (source.length > maxBytes) reject();
+  if (source.length * 3 <= maxBytes) return;
+  let bytes = 0;
+  for (let index = 0; index < source.length; index++) {
+    const code = source.charCodeAt(index);
+    if (code < 0x80) bytes++;
+    else if (code < 0x800) bytes += 2;
+    else if (code >= 0xd800 && code <= 0xdbff && source.charCodeAt(index+1) >= 0xdc00 && source.charCodeAt(index+1) <= 0xdfff) { bytes += 4; index++; }
+    else bytes += 3;
+    if (bytes > maxBytes) reject();
+  }
 }
 export function assertJsonStructure(data, options = JSON_DATA_LIMITS) {
   const {maxDepth,maxNodes,label} = {...JSON_DATA_LIMITS,...options};

@@ -12,8 +12,9 @@ export const GLOBAL_STYLE_SCHEMA = object(optional({color,font:Type.Number({mini
   ...Object.fromEntries(['striped','borders','repeatHeader','repeatTable','pageNumbers','breakBefore'].map(key=>[key,Type.Boolean()]))}));
 const fieldProperties = {label:Type.String({maxLength:100}),kind:choice(FIELD_KINDS),pointer:Type.String({maxLength:240}),text:Type.String({maxLength:10000}),format:choice(FORMATS),
   showLabel:Type.Boolean(),labelStyle:typography,valueStyle:typography,
-  width:Type.Number({minimum:1,maximum:400,description:'Only items columns (1..100 percent) or image fields (8..400 pixels). Omit on non-items static/bound fields; use section layout.columns.'}),
-  assetId:Type.String({pattern:'^[a-z0-9-]{1,60}$'}),height:Type.Number({minimum:8,maximum:200}),fit:choice(['contain','cover'])};
+  width:Type.Number({minimum:1,maximum:400,description:'Primary items or existing additional-table columns:1..100 percent. Image fields:8..400 pixels. Omit on document static/bound/barcode fields; use section grids. Barcode moduleWidth/height belong to barcode settings.'}),
+  assetId:Type.String({pattern:'^[a-z0-9-]{1,60}$'}),height:Type.Number({minimum:8,maximum:200}),fit:choice(['contain','cover']),
+  barcode:object({format:choice(['CODE128','EAN13']),moduleWidth:Type.Integer({minimum:1,maximum:4}),height:Type.Integer({minimum:20,maximum:160}),displayValue:Type.Boolean()})};
 const operation = (type,properties) => object({type:Type.Literal(type),...properties});
 const customSizeMm = object({width:Type.Number({minimum:20,maximum:1000}),height:Type.Number({minimum:20,maximum:1000})});
 const printerProfile = Type.Union([Type.Null(),object({

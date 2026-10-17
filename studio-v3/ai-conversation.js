@@ -2,6 +2,7 @@ import { STYLE_KEYS, MAX_AUTHORING_DIFFS, fail } from './ai-edits.js';
 import { isHexColor } from './table-style.js';
 import { TASK_OUTCOMES } from './ai-task-outcome.js';
 import { validatePageSettings, validatePrinterProfile } from './paper-settings.js';
+import { validateBarcodeSettings } from './design-validation.js';
 export const HISTORY_LIMIT = 12;
 const roles = ['user','assistant'];
 const statuses = ['answer','ready','applied','expired','error','cancelled'];
@@ -20,10 +21,16 @@ function validPageDiff(property,value) {
     return true;
   } catch { return false; }
 }
+function validBarcodeDiff(value) {
+  if (value === '(unset)') return true;
+  if (typeof value !== 'string' || value.length > 10000) return false;
+  try { validateBarcodeSettings(JSON.parse(value)); return true; } catch { return false; }
+}
 function validAuthoringDiff(d) {
   if (['page.customSizeMm','page.printerProfile'].includes(d.property)) return d.target === 'document' && [d.before,d.after].every(value=>validPageDiff(d.property,value));
   if (d.property === 'tableStyle.rowBackground') return d.target === 'items' && [d.before,d.after].every(v=>v === '(unset)' || isHexColor(v));
-  const target = typeof d.target === 'string' && /^(document|page-number|header-logo|header-title|(?:label-)?(?:header|customer|items|totals|footer)(?:-[a-z0-9-]{1,60})?)$/.test(d.target);
+  const target = typeof d.target === 'string' && d.target.length <= 80 && /^(document|page-number|header-logo|header-title|(?:label-)?(?:header|customer|items|totals|footer)(?:-[a-z0-9-]{1,60})?|(?:label-)?table-[a-z0-9-]{1,68})$/.test(d.target);
+  if (d.property === 'barcode') return target && !d.target.startsWith('label-') && !['document','page-number','header-logo','header-title','header','customer','items','totals','footer'].includes(d.target) && [d.before,d.after].every(validBarcodeDiff);
   const scalar = v=>v === null || typeof v === 'boolean' || (typeof v === 'string' && v.length <= 10000) || (typeof v === 'number' && Number.isFinite(v) && Math.abs(v) <= 1000000);
   return target && authoringProperties.has(d.property) && scalar(d.before) && scalar(d.after);
 }
@@ -46,7 +53,7 @@ export function cleanMessages(messages) {
     if (message.diff) {
       if (message.role !== 'assistant' || !Array.isArray(message.diff) || message.diff.length > MAX_AUTHORING_DIFFS) throw fail('INVALID_CHAT_RECOVERY');
       cleaned.diff = message.diff.map(d=> {
-        const style = d.target === 'style' && STYLE_KEYS.includes(d.property), column = /^items-[a-z0-9-]{1,80}$/i.test(d.target) && d.property === 'width';
+        const style = d.target === 'style' && STYLE_KEYS.includes(d.property), column = /^(?:items-[a-z0-9-]{1,80}|table-[a-z0-9-]{1,68})$/i.test(d.target) && d.property === 'width';
         const valid = v=>d.property === 'color' ? typeof v === 'string' && /^#[a-f0-9]{6}$/i.test(v) : ['font','padding','width'].includes(d.property) ? Number.isFinite(v) && v >= (d.property === 'font' ? 6 : d.property === 'padding' ? 2 : 1) && v <= (d.property === 'font' ? 14 : d.property === 'padding' ? 16 : 100) : typeof v === 'boolean';
         const structuralWidth = column && (d.before === '(unset)' || d.after === '(unset)') && [d.before,d.after].every(v=>v === '(unset)' || valid(v));
         if ((!style && !column) ? !validAuthoringDiff(d) : !structuralWidth && (!valid(d.before) || !valid(d.after))) throw fail('INVALID_CHAT_RECOVERY');

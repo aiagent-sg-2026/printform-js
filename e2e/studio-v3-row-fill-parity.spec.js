@@ -110,8 +110,8 @@ test('real Pi schema and column scope reject row fill before fresh table-scope r
   await gateway(page,[['apply_operations',fill('#gggggg')],['apply_operations',fill('#12aBcD')],['report_blocked',{reason:'Column selection cannot recolor the table.'}],...completion('#12aBcD')]);
   await page.goto('/studio-v3/'); await ready(page); const before = await save(page,info,'rejection-before.printform.json');
   await page.locator('#left-panel [data-select=items-description]').click(); await page.locator('[data-ai-toggle]').click(); await limitToSelection(page);
-  await send(page,'Set table row background to #12aBcD.'); await expect(page.locator('.ai-message').filter({hasText:'The assistant could not meet this request'})).toBeVisible({timeout:60000});
-  await expect(page.locator('[data-ai-proposal]')).toBeHidden(); await expect(page.locator('#revision')).toHaveText('r0');
+  await send(page,'Set table row background to #12aBcD.'); await expect(page.locator('.ai-assistant[data-state=error]')).toBeVisible({timeout:60000});
+  await expect(page.locator('[data-ai-proposal]')).toBeHidden(); await expect(page.locator('[data-ai=apply]')).toHaveCount(0); await expect(page.locator('#revision')).toHaveText('r0');
   const rejected = await save(page,info,'rejected.printform.json'); expect(rejected.project).toEqual(before.project);
   const wire = await page.evaluate(()=>window.__rowFillWire);
   expect(wire[1].input.find(item=>item.type === 'function_call_output' && item.call_id === 'row_fill_1').output).toContain('AGENT_ARGUMENTS_INVALID');

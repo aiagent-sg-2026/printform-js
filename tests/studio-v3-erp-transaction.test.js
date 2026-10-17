@@ -80,13 +80,13 @@ describe('six explicit inventory, adjustment and actual cash contracts', () => {
     const stock = fictionalTransaction('SalesReturn'); stock.scope.extent = 'full';
     expect(normalizeErpTransaction(stock).lines[0].quantities[0].amount).toBe('-1.250');
   });
-  it('allows foreign linked/base currencies but rejects unsupported Studio manifest currencies', () => {
+  it('allows maintained foreign linked/base and primary manifest currencies without conversion', () => {
     const input = fictionalTransaction('Refund'); input.references[0].document.currency = 'GBP';
     input.allocations[0].amount.currency = input.allocations[0].remainingAmount.currency = 'GBP';
     expect(reopened(input).sampleData.allocations[0].amount.displayAmount).toBe('GBP 25.000');
     input.document.currency = input.cashMovement.amount.currency = input.allocations[0].cashAppliedAmount.currency = 'GBP';
     expect(normalizeErpTransaction(input).document.currency).toBe('GBP');
-    expect(() => createErpTransactionProject(input)).toThrow(expect.objectContaining({ code: 'ERP_TRANSACTION_PROJECT_CURRENCY', path: 'document.currency' }));
+    expect(reopened(input).manifest.currency).toBe('GBP');
   });
   it('supports customer debit increase and vendor credit decrease explicitly', () => {
     const debit = fictionalOdooDebit(); debit.party.type = 'customer'; debit.effects.accounting.basis = 'receivable';

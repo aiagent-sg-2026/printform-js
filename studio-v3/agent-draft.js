@@ -27,7 +27,7 @@ export function createDraft(project,{scope = {mode:'whole'},request = '',referen
     get count() { return steps.length; },
     apply(summary,operations) {
       const step = parseProposal(JSON.stringify({summary,operations}),current,explicit);
-      assertScope(step,scope);
+      assertScope(step,scope,current);
       assertProtectedBindings(baseline,step.design);
       steps.push({before:current,...step}); current = step.candidate; version += 1;
       return step;

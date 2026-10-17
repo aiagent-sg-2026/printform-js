@@ -5,6 +5,7 @@ import { a4PresetTheme } from './a4-theme.js';
 import { sectionOrder, usesFlowSections, fieldKind, styleCss, assetOf, pageSettings, pageDimensions, contentDimensions } from './design-authoring.js';
 import { paperMillimeters } from './paper-settings.js';
 import { financialField } from './agent-binding-invariants.js';
+import { tableDefinitions } from './additional-tables.js';
 export const escape = value => String(value ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const attr = (name, value) => ` ${name}="${escape(value)}"`;
 const styleAttr = style => styleCss(style) ? attr('style',styleCss(style)) : '';
@@ -16,6 +17,7 @@ function imageNode(d, image, id, role = 'value') {
 function valueNode(d, block, f) {
   const id = `${block}-${f.id}`;
   if (fieldKind(f) === 'image') return imageNode(d,f,id);
+  if (fieldKind(f) === 'barcode') return `<span${component(id)} data-v3-role="value"${attr('data-pf-barcode',f.pointer)}${attr('data-pf-barcode-format',f.barcode.format)}${attr('data-pf-barcode-module-width',f.barcode.moduleWidth)}${attr('data-pf-barcode-height',f.barcode.height)}${attr('data-pf-barcode-display-value',f.barcode.displayValue)}></span>`;
   const binding = fieldKind(f) === 'bound' ? attr('data-pf-text', f.pointer) : '';
   const monetary = fieldKind(f) === 'bound' && !f.format && financialField(f) ? ' data-pf-monetary="currency"' : '';
   return `<span${component(id)} data-v3-role="value"${binding}${f.format ? attr('data-pf-format', f.format) : ''}${monetary}${styleAttr(f.valueStyle)}>${escape(f.text || '')}</span>`;
@@ -35,17 +37,16 @@ function sectionClass(d, id, legacy) {
   const flow = usesFlowSections(d) && !(id === 'header' && sectionOrder(d)[0] === 'header');
   return `${flow ? 'ptac-rowitem without_prowheader' : legacy} v3-${{header:'header',customer:'customer',totals:'totals',footer:'notes'}[id]}${d.blocks[id].layout ? ' v3-custom-layout' : ''}${flow && d.blocks[id].breakBefore ? ' tb_page_break_before' : ''}`;
 }
-function tableNode(d) {
-  const cols = d.columns;
+function tableNode(d,table) {
+  const {id,columns:cols,repeatHeader,breakBefore,collection} = table;
   const cell = (f, heading) => {
     const align = (heading ? f.labelStyle : f.valueStyle)?.align || (['number','currency'].includes(f.format) ? 'right' : 'left');
-    return `<${heading ? 'th' : 'td'}${attr('style',`width:${f.width}%;text-align:${align}${heading && f.labelStyle ? ';'+styleCss(f.labelStyle) : ''}`)}>${heading ? labelNode('items',f) : valueNode(d,'items',f)}</${heading ? 'th' : 'td'}>`;
+    return `<${heading ? 'th' : 'td'}${attr('style',`width:${f.width}%;text-align:${align}${heading && f.labelStyle ? ';'+styleCss(f.labelStyle) : ''}`)}>${heading ? labelNode(id,f) : valueNode(d,id,f)}</${heading ? 'th' : 'td'}>`;
   };
-  const flow = usesFlowSections(d), breakBefore = d.breakBefore || d.blocks.items.breakBefore;
-  const headingFlow = (flow || breakBefore) && !d.repeatTable;
-  const heading = `<table class="${headingFlow ? 'ptac-rowitem without_prowheader' : 'prowheader'} v3-grid" data-pf-table-id="${headingFlow ? 'v3-items-heading' : 'items'}"${component('items-header')} data-pf-repeat-rowheader="${d.repeatTable ? 'y' : 'n'}"><thead><tr>${cols.map(f=>cell(f,true)).join('')}</tr></thead></table>`;
-  const pageBreak = breakBefore ? '<div class="ptac-rowitem tb_page_break_before without_prowheader" data-pf-table-id="v3-items-break" style="height:1px"></div>' : '';
-  return `${pageBreak}${heading}<table class="prowitem v3-grid" data-pf-each="${escape(d.collection)}" data-pf-table-id="items"${sectionAttributes(d,'items')}><tbody><tr>${cols.map(f=>cell(f,false)).join('')}</tr></tbody></table>`;
+  const headingFlow = (usesFlowSections(d) || breakBefore) && !repeatHeader;
+  const heading = `<table class="${headingFlow ? 'ptac-rowitem without_prowheader' : 'prowheader'} v3-grid"${attr('data-pf-table-id',headingFlow ? `v3-${id}-heading` : id)}${component(`${id}-header`)} data-pf-repeat-rowheader="${repeatHeader ? 'y' : 'n'}"><thead><tr>${cols.map(f=>cell(f,true)).join('')}</tr></thead></table>`;
+  const pageBreak = breakBefore ? `<div class="ptac-rowitem tb_page_break_before without_prowheader"${attr('data-pf-table-id',`v3-${id}-break`)} style="height:1px"></div>` : '';
+  return `${pageBreak}${heading}<table class="prowitem v3-grid"${attr('data-pf-each',collection)}${attr('data-pf-table-id',id)}${component(id)}><tbody><tr>${cols.map(f=>cell(f,false)).join('')}</tr></tbody></table>`;
 }
 export function compileTemplate(d) {
   validateDesign(d);
@@ -56,9 +57,12 @@ export function compileTemplate(d) {
   const keepWithFooter = order[order.indexOf('totals') + 1] === 'footer' && !d.blocks.footer.breakBefore;
   const totals = `<footer class="${sectionClass(d,'totals','pfooter')}"${sectionAttributes(d,'totals')}${keepWithFooter ? ' data-pf-keep-with-next="true"' : ''} data-pf-table-id="v3-totals"><div class="summary">${fields(d,'totals')}</div></footer>`;
   const footer = `<footer class="${sectionClass(d,'footer','pfooter002')}"${sectionAttributes(d,'footer')} data-pf-table-id="v3-footer">${fields(d,'footer')}</footer>`;
-  const nodes = {header,customer,items:tableNode(d),totals,footer};
+  const tables = tableDefinitions(d);
+  const nodes = {header,customer,items:tables.filter(table=>table.enabled).map(table=>tableNode(d,table)).join(''),totals,footer};
+  // Extra tables occupy the primary table's body slot, even when it is hidden.
+  const renderOrder = sectionOrder(d).filter(id=>enabled(id) || id === 'items' && tables.some(table=>table.enabled));
   const manualSize = page.paper === 'CUSTOM' || Object.values(page.margins).some(Boolean) ? `${attr('data-papersize-width',size.width)}${attr('data-papersize-height',size.height)}` : '';
-  return `<section class="printform"${attr('data-paper-size',page.paper)}${attr('data-papersize',page.paper)}${attr('data-orientation',page.orientation)}${manualSize} data-repeat-header="${enabled('header') && d.repeatHeader ? 'y' : 'n'}" data-repeat-docinfo="n" data-repeat-rowheader="${d.repeatTable ? 'y' : 'n'}" data-repeat-ptac-rowheader="n" data-repeat-footer="n" data-repeat-footer002="n" data-repeat-footer-pagenum="${d.pageNumbers ? 'y' : 'n'}" data-insert-ptac-dummy-row-items="n" data-insert-dummy-row-item-while-format-table="n" data-insert-footer-spacer-while-format-table="y">${sectionOrder(d).filter(enabled).map(id=>nodes[id]).join('')}${d.pageNumbers ? `<footer class="pfooter_pagenum v3-page-number" data-v3-id="page-number"${styleAttr(d.pageNumberStyle)}>Page <span data-page-number></span> of <span data-page-total></span></footer>` : ''}</section>`;
+  return `<section class="printform"${attr('data-paper-size',page.paper)}${attr('data-papersize',page.paper)}${attr('data-orientation',page.orientation)}${manualSize} data-repeat-header="${enabled('header') && d.repeatHeader ? 'y' : 'n'}" data-repeat-docinfo="n" data-repeat-rowheader="${d.repeatTable ? 'y' : 'n'}" data-repeat-ptac-rowheader="n" data-repeat-footer="n" data-repeat-footer002="n" data-repeat-footer-pagenum="${d.pageNumbers ? 'y' : 'n'}" data-insert-ptac-dummy-row-items="n" data-insert-dummy-row-item-while-format-table="n" data-insert-footer-spacer-while-format-table="y">${renderOrder.map(id=>nodes[id]).join('')}${d.pageNumbers ? `<footer class="pfooter_pagenum v3-page-number" data-v3-id="page-number"${styleAttr(d.pageNumberStyle)}>Page <span data-page-number></span> of <span data-page-total></span></footer>` : ''}</section>`;
 }
 export function documentTheme(d) {
   validateDesign(d);
