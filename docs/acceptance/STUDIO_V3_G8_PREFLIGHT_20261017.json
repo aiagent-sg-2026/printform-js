@@ -1,0 +1,105 @@
+{
+  "schema": "studio-g8-preflight-public-evidence-v1",
+  "observedAt": "2026-10-17T04:13:35.142Z",
+  "auditBaseSource": "99091b3ecdab691cfa803027477ef49d562f4d56",
+  "scope": "Complete offline180-slot inventory and independent re-evaluation of six pre-existing actual attempts, NOT180 model executions",
+  "exitCode": 1,
+  "modelCalls": 0,
+  "attemptsWritten": 0,
+  "qualified": false,
+  "readyForFullQualification": false,
+  "counts": {
+    "required": 180,
+    "registeredTotal": 6,
+    "registeredSelected": 3,
+    "recordedSlots": 3,
+    "missingSlots": 177,
+    "recordedPass": 3,
+    "verifiedSelected": 3,
+    "verifiedPass": 3,
+    "missingRegisteredEvidence": 0,
+    "providedEnvelopes": 6,
+    "knownEvidenceProfiles": 2
+  },
+  "corpus": {
+    "tasks": 60,
+    "holdout": 20,
+    "digest": "sha256:5ec182f03ba8ffb3895ad98c94c7d8bd0ee1832adc9583cae6cfba3cc29e1058",
+    "unsupportedTasks": 12,
+    "maxPass": 144,
+    "minPass": 162
+  },
+  "actualProfiles": [
+    {"profile":"browser-readonly-ab9e349-20261017","selected":false,"registered":3,"required":180,"recordedSlots":3,"missingSlots":177,"pass":0,"critical":0,"extraAttempts":0,"recordedQualified":false,"checkedEnvelopes":3,"checkedPass":0,"identityVariants":1},
+    {"profile":"browser-readonly-8c492ce-20261017","selected":true,"registered":3,"required":180,"recordedSlots":3,"missingSlots":177,"pass":3,"critical":0,"extraAttempts":0,"recordedQualified":false,"checkedEnvelopes":3,"checkedPass":3,"identityVariants":1}
+  ],
+  "families": {"qa":{"tasks":6,"attempts":3,"pass":3,"required":18,"minPass":16,"verifiedPass":3,"unsupportedTasks":0,"maxPass":18},"authoring":{"tasks":6,"attempts":0,"pass":0,"required":18,"minPass":16,"verifiedPass":0,"unsupportedTasks":0,"maxPass":18},"layout":{"tasks":6,"attempts":0,"pass":0,"required":18,"minPass":16,"verifiedPass":0,"unsupportedTasks":0,"maxPass":18},"bindings":{"tasks":6,"attempts":0,"pass":0,"required":18,"minPass":16,"verifiedPass":0,"unsupportedTasks":2,"maxPass":12},"data":{"tasks":6,"attempts":0,"pass":0,"required":18,"minPass":16,"verifiedPass":0,"unsupportedTasks":6,"maxPass":0},"references":{"tasks":6,"attempts":0,"pass":0,"required":18,"minPass":16,"verifiedPass":0,"unsupportedTasks":2,"maxPass":12},"files":{"tasks":6,"attempts":0,"pass":0,"required":18,"minPass":16,"verifiedPass":0,"unsupportedTasks":2,"maxPass":12},"source-repair":{"tasks":6,"attempts":0,"pass":0,"required":18,"minPass":16,"verifiedPass":0,"unsupportedTasks":0,"maxPass":18},"source-implement":{"tasks":6,"attempts":0,"pass":0,"required":18,"minPass":16,"verifiedPass":0,"unsupportedTasks":0,"maxPass":18},"source-artifact":{"tasks":6,"attempts":0,"pass":0,"required":18,"minPass":16,"verifiedPass":0,"unsupportedTasks":0,"maxPass":18}},
+  "essential": [
+    {"slot":"ESS-QA","task":"T-qa-01","pass":3,"required":3,"verifiedPass":3},
+    {"slot":"ESS-BLANK","task":"T-authoring-01","pass":0,"required":3,"verifiedPass":0},
+    {"slot":"ESS-SOURCE-EDIT","task":"T-source-implement-01","pass":0,"required":3,"verifiedPass":0},
+    {"slot":"ESS-TEST-REPAIR","task":"T-source-repair-01","pass":0,"required":3,"verifiedPass":0},
+    {"slot":"ESS-BUILD","task":"T-source-artifact-01","pass":0,"required":3,"verifiedPass":0},
+    {"slot":"ESS-ARTIFACT-IMPORT","task":"T-source-artifact-02","pass":0,"required":3,"verifiedPass":0}
+  ],
+  "liveRelease": {
+    "status": "different-release",
+    "matches": false,
+    "mismatches": [
+      "release",
+      "packageHash"
+    ],
+    "actual": {
+      "release": "99091b3ecdab691cfa803027477ef49d562f4d56",
+      "contractHash": "9d2859419125fc52fc5cecf598b040b224bd2ffb143241257d1647a1682cfa9b",
+      "knowledgeHash": "033abc3954915c506ecc2d55ced80ff52ba2703941ebdc4e819631fc60c07bb3",
+      "packageHash": "ef685dd1a970b3dc0045a0a737613aaf3d4e7d55c60883e9e4b9f93ed8a92da8"
+    }
+  },
+  "validation": {
+    "corpus": [],
+    "profile": [],
+    "prerequisites": []
+  },
+  "evidence": [
+    {"taskId":"T-qa-01","attempt":1,"profile":"browser-readonly-ab9e349-20261017","errors":[],"outcome":"Fail","oracleMatched":false,"evidenceDigest":"sha256:5a3eb69dcbab8e0707528213f55e1786738494bfde465af2ecb94c71c671716f"},
+    {"taskId":"T-qa-01","attempt":2,"profile":"browser-readonly-ab9e349-20261017","errors":[],"outcome":"Fail","oracleMatched":false,"evidenceDigest":"sha256:3c758f079ed65d92c45d99a3932a2395c361c80357f227d1cf3e3ce5638f8251"},
+    {"taskId":"T-qa-01","attempt":3,"profile":"browser-readonly-ab9e349-20261017","errors":[],"outcome":"Fail","oracleMatched":false,"evidenceDigest":"sha256:fa419fdecbcc908b928dbdeaad550258226555aa8126b78d581d06ec7515ad2e"},
+    {"taskId":"T-qa-01","attempt":1,"profile":"browser-readonly-8c492ce-20261017","errors":[],"outcome":"Pass","oracleMatched":true,"evidenceDigest":"sha256:415c286ab1771dab99f7743e2a1f3cc28f80f07ea3664d3a9cf58fbafcd2eddb"},
+    {"taskId":"T-qa-01","attempt":2,"profile":"browser-readonly-8c492ce-20261017","errors":[],"outcome":"Pass","oracleMatched":true,"evidenceDigest":"sha256:87d10e4c29baac8d74a29366565ac635c9bcfd2e46fbb4f281c7226c5f53e599"},
+    {"taskId":"T-qa-01","attempt":3,"profile":"browser-readonly-8c492ce-20261017","errors":[],"outcome":"Pass","oracleMatched":true,"evidenceDigest":"sha256:433afe33db1ce66bc168b7654eb95abea66cef08c00fb80a0982c420746770d5"}
+  ],
+  "missingRegisteredEvidence": 0,
+  "blockers": [
+    {"code":"immutable-pass-ceiling","detail":"Frozen denial semantics cap Pass at 144/180; original minimum remains 162."},
+    {"code":"immutable-family-ceiling","family":"bindings","detail":"Maximum 12/18; original minimum remains 16."},
+    {"code":"immutable-family-ceiling","family":"data","detail":"Maximum 0/18; original minimum remains 16."},
+    {"code":"immutable-family-ceiling","family":"references","detail":"Maximum 12/18; original minimum remains 16."},
+    {"code":"immutable-family-ceiling","family":"files","detail":"Maximum 12/18; original minimum remains 16."},
+    {"code":"recorded-qualification","detail":"family qa passed 3/18"},
+    {"code":"recorded-qualification","detail":"family authoring passed 0/18"},
+    {"code":"recorded-qualification","detail":"family layout passed 0/18"},
+    {"code":"recorded-qualification","detail":"family bindings passed 0/18"},
+    {"code":"recorded-qualification","detail":"family data passed 0/18"},
+    {"code":"recorded-qualification","detail":"family references passed 0/18"},
+    {"code":"recorded-qualification","detail":"family files passed 0/18"},
+    {"code":"recorded-qualification","detail":"family source-repair passed 0/18"},
+    {"code":"recorded-qualification","detail":"family source-implement passed 0/18"},
+    {"code":"recorded-qualification","detail":"family source-artifact passed 0/18"},
+    {"code":"recorded-qualification","detail":"attempts 3/180"},
+    {"code":"recorded-qualification","detail":"passed 3/180, needs 162"},
+    {"code":"recorded-qualification","detail":"essential ESS-BLANK passed 0/3"},
+    {"code":"recorded-qualification","detail":"essential ESS-SOURCE-EDIT passed 0/3"},
+    {"code":"recorded-qualification","detail":"essential ESS-TEST-REPAIR passed 0/3"},
+    {"code":"recorded-qualification","detail":"essential ESS-BUILD passed 0/3"},
+    {"code":"recorded-qualification","detail":"essential ESS-ARTIFACT-IMPORT passed 0/3"},
+    {"code":"prerequisite-source-runner","detail":"missing: Paired same-release Node24 Docker runner; immutable image digest, source lease, complete independent process/tree/build/artifact receipts."},
+    {"code":"prerequisite-fixed-upstream","detail":"missing: Service-owner fixed upstream provider/model snapshot, route configuration, no unknown fallback and per-request dispatch proof; alias alone is insufficient."},
+    {"code":"prerequisite-g6-g7","detail":"missing: Exact-profile isolated execution, confinement/recovery and artifact gate evidence; a single source workflow is not complete G6/G7."},
+    {"code":"prerequisite-data-governance","detail":"missing: Applicable operator/tenant DPA, confidentiality, training, retention/deletion, regions, subprocessors and explicit disclosure authority. Fictional offline diagnostics do not grant real-data permission."},
+    {"code":"prerequisite-g9","detail":"missing: Exact deployment/tenant/authentication/isolation, route conformance, capacity/cost/audit/incident/rollback evidence and maintainer release decision."},
+    {"code":"prerequisite-live-release","detail":"missing: Independent live app/knowledge/contract release identity must equal the frozen profile; do not transfer old Pass to a newer build."},
+    {"code":"live-release-mismatch","detail":"Supplied live release differs from frozen evidence profile; historical attempts cannot transfer.","mismatches":["release","packageHash"]}
+  ],
+  "verification": {"files":5,"testsPassed":174,"previousNewTestFailures":2,"regressionNotes":"Valid independent-run fixture event correlation fixed; incidental stderr assertion removed, no oracle/runtime/warning suppression change."}
+}
