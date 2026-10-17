@@ -67,7 +67,7 @@ export function documentTheme(d) {
   const grid = Object.entries(d.blocks).filter(([,b])=>b.layout).map(([id,b])=>`#pf-mount .v3-${{header:'header',customer:'customer',totals:'totals',footer:'notes'}[id]} ${id === 'header' ? '.company-fields' : id === 'totals' ? '.summary' : ''} {display:grid;grid-template-columns:repeat(${b.layout.columns || 1},minmax(0,1fr));gap:${b.layout.gap ?? 12}px;}`).join('\n');
   return `${setPrintTypographyBase(PRINT_TYPOGRAPHY_CSS, font)}
 * { box-sizing:border-box; } body { margin:0; background:#e5eaf1; }
-#pf-mount { color:#1c2638; font-family:Arial,'PingFang SC','Microsoft YaHei',sans-serif; line-height:1.4; }
+#pf-mount { color:#1c2638; font-family:Arial,'Hiragino Sans GB','PingFang SC','Microsoft YaHei',sans-serif; line-height:1.4; }
 #pf-mount .printform, #pf-mount .printform_page { width:${size.width}px; background:white; }
 #pf-mount .printform_page { margin-bottom:24px; box-shadow:0 4px 18px #0002; }
 ${pageMargins ? `#pf-mount .physical_page_wrapper {width:${physical.width}px!important;padding:${m.top}px ${m.right}px ${m.bottom}px ${m.left}px;background:white;margin-bottom:24px;} #pf-mount .physical_page_wrapper .printform_page {margin:0;box-shadow:none;}` : ''}

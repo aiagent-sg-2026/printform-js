@@ -12,46 +12,75 @@ async function changeDocument(page, change) {
   await change();
   await page.waitForFunction(previous => window.businessRenderGeneration > previous, before, {timeout:30000});
   await ready(page);
+  // A render postMessage precedes iframe navigation completion; wait for the current browsing context too.
+  const element = await page.locator('#preview-frame').elementHandle();
+  const frame = await element.contentFrame();
+  if (!frame) throw new Error('The rendered preview iframe is detached.');
+  await frame.waitForLoadState('load');
+  await element.dispose();
+  return frame;
 }
 function sourceValues(input) {
   if (input.statement) return [...input.statement.entries.flatMap(row => row.amounts), ...(input.statement.balances || [])].map(row => `${row.amount.currency} ${row.amount.amount}`);
   if (input.stock) return input.stock.lines.map(row => `${row.quantity.amount} ${row.quantity.uom}`);
-  return [...input.payroll.components, ...(input.payroll.summary || [])].map(row => `${row.amount.currency} ${row.amount.amount}`);
+  if (input.payroll) return [...input.payroll.components, ...(input.payroll.summary || [])].map(row => `${row.amount.currency} ${row.amount.amount}`);
+  if (input.service) return input.service.observations.map(row => row.quantity ? `${row.quantity.amount} ${row.quantity.uom}` : '');
+  if (input.packing) return input.packing.packages.flatMap(pack => [
+    '', ...['grossWeight', 'netWeight'].filter(key => pack[key]).map(key => `${pack[key].amount} ${pack[key].uom}`),
+    ...pack.items.map(row => `${row.quantity.amount} ${row.quantity.uom}`)
+  ]);
+  throw new Error(`Unsupported supplied business kind: ${input.document.kind}`);
+}
+function sourceContext(input) {
+  const branch = input.service ? 'service' : input.packing ? 'packing' : null;
+  if (!branch) return [];
+  const keys = branch === 'service' ? ['job', 'customer', 'asset', 'status'] : ['shipment', 'from', 'to', 'status'];
+  return keys.filter(key => input[branch][key]).flatMap(key => Object.entries(input[branch][key]).flatMap(([name, value]) =>
+    name === 'provenance' ? [['source', value.sourcePath], ['meaning', value.meaning]].map(([suffix, text]) => [`${branch}-${key}-${suffix}`, text]) : [[`${branch}-${key}-${name.replace(/[A-Z]/g, letter => `-${letter.toLowerCase()}`)}`, value]]));
 }
 async function assertFacts(paper, input) {
-  await expect(paper.locator('[data-v3-id=header-kind]').last()).toHaveText(input.document.kind);
-  await expect(paper.locator('[data-v3-id=header-source-id]').last()).toHaveText(input.source.id);
-  await expect(paper.locator('[data-v3-id=header-number]').last()).toHaveText(input.document.number);
-  await expect(paper.locator('[data-v3-id=header-company]').last()).toHaveText(input.company.name);
-  await expect(paper.locator('[data-v3-id=items-amount]')).toHaveText(sourceValues(input));
+  // Capture the current live DOM in its main world; do not depend on an auxiliary locator world across srcdoc navigation.
+  const actual = await paper.evaluate(() => {
+    const fields = {};
+    for (const node of document.querySelectorAll('[data-v3-id]')) (fields[node.dataset.v3Id] ||= []).push(node.textContent || '');
+    return {fields, forbidden:document.querySelectorAll('[data-v3-id=totals-total],[data-v3-id=totals-tax],[data-v3-id=customer-bill]').length};
+  });
+  const normalize = value => String(value).replace(/\s+/g, ' ').trim();
+  const values = id => actual.fields[id] || [];
+  const last = (id, expected) => { expect(values(id).at(-1)).toBeDefined(); expect(normalize(values(id).at(-1))).toBe(normalize(expected)); };
+  const rows = (id, expected) => expect(values(id).map(normalize)).toEqual(expected.map(normalize));
+  last('header-kind', input.document.kind);
+  last('header-source-id', input.source.id);
+  last('header-number', input.document.number);
+  last('header-company', input.company.name);
+  rows('items-amount', sourceValues(input));
   const project = createBusinessDocumentProject(input);
-  for (const key of ['no', 'section', 'description', 'direction', 'trace']) {
-    await expect(paper.locator(`[data-v3-id=items-${key}]`)).toHaveText(project.sampleData.printRows.map(row => String(row[key])));
-  }
-  await expect(paper.locator('[data-v3-id=header-company-id]').last()).toHaveText(input.company.id);
-  await expect(paper.locator('[data-v3-id=header-address]').last()).toHaveText(input.company.address);
-  await expect(paper.locator('[data-v3-id=footer-notes]')).toHaveText(input.notes);
-  await expect(paper.locator('[data-v3-id=footer-boundary]')).toHaveText(project.manifest.studioV3.footer.find(field => field.id === 'boundary').text);
-  await expect(paper.locator('[data-v3-id=totals-total],[data-v3-id=totals-tax],[data-v3-id=customer-bill]')).toHaveCount(0);
+  for (const key of ['no', 'section', 'description', 'direction', 'trace']) rows(`items-${key}`, project.sampleData.printRows.map(row => String(row[key])));
+  last('header-company-id', input.company.id);
+  last('header-address', input.company.address);
+  rows('footer-notes', [input.notes]);
+  rows('footer-boundary', [project.manifest.studioV3.footer.find(field => field.id === 'boundary').text]);
+  expect(actual.forbidden).toBe(0);
+  for (const [id, value] of sourceContext(input)) last(`customer-${id}`, value);
   if (input.statement) {
-    await expect(paper.locator('[data-v3-id=customer-debit-meaning]').last()).toHaveText(input.statement.account.debitMeaning);
-    await expect(paper.locator('[data-v3-id=customer-credit-meaning]').last()).toHaveText(input.statement.account.creditMeaning);
-    await expect(paper.locator('[data-v3-id=customer-account-id]').last()).toHaveText(input.statement.account.id);
-    const trace = (await paper.locator('[data-v3-id=items-trace]').allTextContents()).join('\n');
+    last('customer-debit-meaning', input.statement.account.debitMeaning);
+    last('customer-credit-meaning', input.statement.account.creditMeaning);
+    last('customer-account-id', input.statement.account.id);
+    const trace = values('items-trace').join('\n');
     for (const entry of input.statement.entries) expect(trace).toContain(entry.reference.id);
   }
   if (input.stock) {
-    await expect(paper.locator('[data-v3-id=customer-purpose]').last()).toHaveText(input.stock.purpose);
-    const directions = await paper.locator('[data-v3-id=items-direction]').allTextContents();
+    last('customer-purpose', input.stock.purpose);
+    const directions = values('items-direction');
     input.stock.lines.forEach((line, i) => {
       expect(directions[i]).toContain(line.direction);
       for (const location of [line.from, line.to].filter(Boolean)) expect(directions[i]).toContain(location.id);
     });
   }
   if (input.payroll) {
-    await expect(paper.locator('[data-v3-id=customer-employee-id]').last()).toHaveText(input.payroll.employee.id);
-    await expect(paper.locator('[data-v3-id=customer-employee]').last()).toHaveText(input.payroll.employee.name);
-    await expect(paper.locator('[data-v3-id=items-direction]')).toHaveText([...input.payroll.components, ...(input.payroll.summary || [])].map(row => row.role));
+    last('customer-employee-id', input.payroll.employee.id);
+    last('customer-employee', input.payroll.employee.name);
+    rows('items-direction', [...input.payroll.components, ...(input.payroll.summary || [])].map(row => row.role));
   }
 }
 async function assertGeometry(page) {
@@ -87,7 +116,7 @@ async function assertPdf(bytes, input) {
     // Compare non-financial prose by standard NFKC equivalence; DOM stays exact.
     const semantic = value => compact(String(value).normalize('NFKC')), project = createBusinessDocumentProject(input);
     const supplied = [input.company.id, input.company.name, input.company.address, input.source.system, input.source.documentType,
-      input.source.number, input.document.date, input.document.kind, input.notes,
+      input.source.number, input.document.date, input.document.kind, input.notes, ...sourceContext(input).map(([, value]) => value),
       ...project.sampleData.printRows.flatMap(row => ['section', 'description', 'amount', 'direction', 'trace'].map(key => row[key])),
       project.manifest.studioV3.footer.find(field => field.id === 'boundary').text];
     for (const value of supplied) expect(semantic(all)).toContain(semantic(value));
@@ -107,21 +136,23 @@ for (const entry of BUSINESS_DEMO_TEMPLATES) test(`${entry.documentKind}: no-cod
   await page.goto('/studio-v3/'); await ready(page);
   await page.locator('[data-action=new]').click();
   await page.locator('#new-dialog details').filter({ has: page.locator(`[data-demo-template="${entry.documentKind}"]`) }).locator('summary').click();
-  await changeDocument(page, () => page.locator(`[data-demo-template="${entry.documentKind}"]`).click());
-  await assertFacts(page.frameLocator('#preview-frame'), businessDemoInput(entry.documentKind));
+  let paper = await changeDocument(page, () => page.locator(`[data-demo-template="${entry.documentKind}"]`).click());
+  await assertFacts(paper, businessDemoInput(entry.documentKind));
   const input = businessDemoInput(entry.documentKind);
   // Deliberately independent source snapshots: a print creator must not reconcile/recompute them.
   if (input.statement) input.statement.balances.at(-1).amount.amount = '-0007.2300';
   if (input.payroll) input.payroll.summary.find(row => row.role === 'netPay').amount.amount = '+0.001';
   if (input.stock) input.stock.lines[0].quantity.amount = '-0.000';
+  if (input.service) input.service.observations.find(row => row.quantity).quantity.amount = '-0000.000';
+  if (input.packing) input.packing.packages[0].items[0].quantity.amount = '-0000.000';
   const project = createBusinessDocumentProject(input);
-  await changeDocument(page, () => page.locator('#open-file').setInputFiles({ name: `${entry.documentKind}.printform.json`, mimeType: 'application/json', buffer: Buffer.from(saveProject(project)) }));
-  await assertFacts(page.frameLocator('#preview-frame'), input);
+  paper = await changeDocument(page, () => page.locator('#open-file').setInputFiles({ name: `${entry.documentKind}.printform.json`, mimeType: 'application/json', buffer: Buffer.from(saveProject(project)) }));
+  await assertFacts(paper, input);
   const saving = page.waitForEvent('download'); await page.locator('[data-action=save]').click();
   const saved = await saving, savedPath = info.outputPath(`${entry.documentKind}.printform.json`); await saved.saveAs(savedPath);
   expect(readProject(await readFile(savedPath, 'utf8')).sampleData).toEqual(project.sampleData);
-  await changeDocument(page, () => page.locator('#open-file').setInputFiles(savedPath));
-  await assertFacts(page.frameLocator('#preview-frame'), input);
+  paper = await changeDocument(page, () => page.locator('#open-file').setInputFiles(savedPath));
+  await assertFacts(paper, input);
   const exporting = page.waitForEvent('download'); await page.locator('[data-action=export]').click();
   const exported = await exporting, exportedPath = info.outputPath(`${entry.documentKind}.html`); await exported.saveAs(exportedPath);
   const offline = await context.newPage(); await offline.route(/^https?:/, route => route.abort());
@@ -136,6 +167,6 @@ for (const entry of BUSINESS_DEMO_TEMPLATES) test(`${entry.documentKind}: no-cod
     await assertPdf(bytes, input); await info.attach(`${entry.documentKind}.pdf`, { body: bytes, contentType: 'application/pdf' });
   }
   await offline.close();
-  await changeDocument(page, () => page.locator('#open-file').setInputFiles(exportedPath));
-  await assertFacts(page.frameLocator('#preview-frame'), input);
+  paper = await changeDocument(page, () => page.locator('#open-file').setInputFiles(exportedPath));
+  await assertFacts(paper, input);
 });

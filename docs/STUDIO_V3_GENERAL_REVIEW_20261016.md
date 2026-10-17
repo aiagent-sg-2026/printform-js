@@ -25,6 +25,9 @@
 | 复合来源描述可被模型替换 | 原金额保护不覆盖描述中的工时/费率；实际API接受static0，原费率111.000仍存但未打印 | 初始/printRows四种复合事实固定原绑定，不交给单值数值oracle；43行业消费者与原7绑定规格通过，合法样式/删除/原绑定恢复保留 |
 | 同profile混用执行身份仍误报qualified | 真实API合成控制把模型、route、预算换掉仍返回true | 固定八项执行身份；合法基线仍通过、混合身份拒绝，不改阈值或混入真实attempt |
 | 显式只读被否定修改词误判可写 | “只读…不要修改”含“改”，旧分类false且真实API接受font-change proposal | 前导read-only/只读/唯读优先限制；实际API转为true并拒绝修改，不变提示/模型/预算/字体formatter |
+| 装箱重量复合单元格阻断导出 | 同一 amount 塞入 Gross/Net 两个来源事实，真实既有数值几何门禁拒绝 | 毛／净重各独立来源行，包装头数值为空；真实预览4行受阻→7行1页可导出，canonical 数据原样保留 |
+| 非财务状态可被伪造为已验收付款 | ServiceReport/PackingList 上下文未受原始绑定保护；实际 API 接受 `Accepted and paid` | `/printRows` 限定的上下文值／provenance 保留初始绑定及格式；实际 API 拒绝，标签／样式与普通表单契约不变 |
+| macOS PDF 中文字符映射错误 | 原字体路径把来源 `长` 提取成 `⻓`，原 PDF 文本断言真实失败 | 三份隔离字体 PDF 中 Hiragino Sans GB／Songti SC 保留原字，PingFang SC 未保留；主题优先既有 Hiragino Sans GB，不改来源或比较规则 |
 
 ## 没有冒充产品缺陷的失败
 
@@ -51,3 +54,5 @@
 [末页实际证据](acceptance/STUDIO_V3_FINAL_PAGE_FLOW_20261016.md) · [通用业务及OASIS/GOV.UK研究](GENERAL_BUSINESS_FORMS.zh-CN.md) · [源码操作及Docker/Chrome/Node/RFC研究](STUDIO_V3_CODING_RUNNER.zh-CN.md) · [生产证据](STUDIO_V3_GENERAL_AI_READINESS.zh-CN.md)。
 
 2026-10-16完整组合 Node24 `build:site`：240文件/2601项通过，9项opt-in跳过；当时新增行业字段在真实三引擎9/9生命周期中保留。2026-10-17资格任务独立快照为243文件/2728项通过、9项opt-in跳过；冻结语料与API拒绝证明不等于模型180次资格，亦不替代纸面或物理设备验收。
+
+2026-10-17行业集成隔离构建：244文件／2778项通过、9项opt-in跳过；五类单据三引擎15/15、5份Chromium PDF。Firefox重导入后的定位挂起与失败报告保留，最终统一读取当前真实主世界DOM，不复用桥接HTML或放松断言。完整记录：[服务／装箱及官方语义研究](GENERAL_SERVICE_LOGISTICS.zh-CN.md)。
