@@ -60,4 +60,6 @@ WebKit缺口未跳过或改绿：不包含Printform/脚本的114字节最小HTML
 
 原冻结60任务/20holdout、六条历史正式attempt与所有失败不覆盖；本轮零新增正式G8。12拒绝任务决定原集合上限144/180低于162，data0/18及bindings/refs/files各12/18低于16。固定upstream、DPA、完整G8/G6/G9、物理打印/扫码与自然语言独立oracle仍缺，AI继续Production Pilot，不是Production Ready。
 
+发布后真实新增证据：[PR95](https://github.com/yapweijun1996/printform-js/pull/95)、main`c89d85bd`、[Pages39039021333成功](https://github.com/yapweijun1996/printform-js/actions/runs/39039021333)，实际Chrome155版本meta匹配。原精确任务1run/6HTTP200/19.793秒，真正未应用纸上预览正确CUSTOM188.5×244.2mm portrait/r1；授权虚构验收驱动显式UIApply后实际Save r2深比较仅允许纸张/revision改变，其余来源/样式/绑定/margins/printer profile逐字段相同。独立任务Pass，3canary均未进请求，0pageerrors，正式G8仍零新增；旧Fail/Blocked一律保留。详见[AI记录](../STUDIO_V3_AI_DRAFT_OUTCOME.zh-CN.md)。
+
 [通用表格边界](../GENERAL_SOURCE_TABLES_BARCODES.zh-CN.md) · [条码实现与独立解码](../STUDIO_V3_OFFLINE_BARCODE.zh-CN.md) · [来源及官方研究](../GENERAL_CURRENCY_MANUFACTURING_TIMESHEET.zh-CN.md) · [文件证据](STUDIO_V3_FILES_PRIVACY_20261017.md) · [AI交付历史](../STUDIO_V3_AI_DRAFT_OUTCOME.zh-CN.md)。

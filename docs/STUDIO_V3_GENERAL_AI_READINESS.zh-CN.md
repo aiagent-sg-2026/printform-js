@@ -277,3 +277,5 @@ PR93/main`ed816282`公开同精确请求1run/5HTTP200仍无候选，`draft-not-p
 同一55000字符来源长描述合法34页，实际单元格拼接连空白逐字相同；旧“长文必blocked”不是正确oracle。保持原纸张/字号/原文，明确keepTogether的A5原子页尾则实际blocked、210×148mm与print/export锁定。完整旧快照729场景623通过/106失败历史、后续逐类修复及结果分开记，不用模型/测试数量代替用户交付。[本轮完整证据与边界](acceptance/STUDIO_V3_GENERAL_CAPABILITIES_20261017.md)。
 
 最终来源完整构建3244项通过/9opt-in跳过；最终通用spec三引擎30/30通过，原126子集124通过/2失败不覆盖。WebKit transport-offline本地file导航在无项目代码的114字节基线上也失败，仍是明确浏览器验收Blocker；同一真实下载字节的冷offline内容执行和独立解码另证，不冒充file导航通过。AI正式生产门禁不变。
+
+[PR95](https://github.com/yapweijun1996/printform-js/pull/95)已合并main`c89d85bd5d153da81e46c0af9dd426f51b1a2691`，[Pages39039021333成功](https://github.com/yapweijun1996/printform-js/actions/runs/39039021333)。原生Chrome155新源单次原精确任务真实Pass：6HTTP200/19.793秒，正确纸上Preview仍r1，验收驱动显式UIApply后实际Save r2只改188.5×244.2mm纵向自定义纸张与revision，其他字段深比较原样；3canary未出站、pageerror0。先前0请求驱动诊断前置失败亦保留。[完整记录](STUDIO_V3_AI_DRAFT_OUTCOME.zh-CN.md)。不把一次独立Pass冒充完整生产资格或新增正式G8。
