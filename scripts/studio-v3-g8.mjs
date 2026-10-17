@@ -2,6 +2,9 @@ import fs from 'node:fs';
 import {readCorpus,validateCorpus,digest,publicInput,projectForCase,canonical} from './studio-v3-g8-corpus.mjs';
 import {evaluateEvidence,profileErrors} from './studio-v3-g8-evaluator.mjs';
 import {saveProject} from '../studio-v3/file-io.js';
+import {readRegister} from './studio-v3-task-register.mjs';
+import {readInventory} from './studio-v3-g8-inventory.mjs';
+import {preflight} from './studio-v3-g8-preflight.mjs';
 
 // Offline only: no model calls, execution scheduling, automatic attempts or Pass rows.
 const [command,...args] = process.argv.slice(2);
@@ -30,8 +33,14 @@ try {
     const result=evaluateEvidence(c,envelope,profile,{corpus});
     console.log(JSON.stringify(result,null,2));
     if (result.outcome!=='Pass') process.exitCode=1;
+  } else if (command==='preflight') {
+    if (!args[0] || args.length>2) throw new Error('Usage: studio-v3-g8.mjs preflight PROFILE_JSON [EVIDENCE_INDEX_JSON]');
+    const profile=JSON.parse(fs.readFileSync(args[0],'utf8'));
+    const result=preflight({corpus,register:readRegister(),profile,inventory:readInventory(args[1])});
+    console.log(JSON.stringify(result,null,2));
+    if (!result.qualified) process.exitCode=1;
   } else if (command==='canonical') console.log(canonical(JSON.parse(fs.readFileSync(args[0],'utf8'))));
-  else throw new Error('Usage: studio-v3-g8.mjs validate | input TASK [--qualification] | project TASK [--qualification] | profile IDENTITY_JSON COLLECTOR_PUBLIC_PEM PROFILE_NAME | evaluate PROFILE_JSON SIGNED_EVIDENCE_JSON | canonical EVIDENCE_JSON');
+  else throw new Error('Usage: studio-v3-g8.mjs validate | input TASK [--qualification] | project TASK [--qualification] | profile IDENTITY_JSON COLLECTOR_PUBLIC_PEM PROFILE_NAME | evaluate PROFILE_JSON SIGNED_EVIDENCE_JSON | preflight PROFILE_JSON [EVIDENCE_INDEX_JSON] | canonical EVIDENCE_JSON');
 } catch (error) {
   console.error(JSON.stringify({outcome:'Fail',errors:[error.message]}));
   process.exitCode=1;

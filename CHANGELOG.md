@@ -15,6 +15,10 @@ who don't need the diary.
 
 ## [Unreleased]
 
+### General Studio import, media and qualification audit — 2026-10-17
+
+- Add an executable read-only180-slot G8 preflight: recheck exact-profile signed evidence and registry agreement, retain prior failures and report immutable144/180 ceiling, missing custody and release mismatch without model calls or fabricated attempts.
+
 ### Service reports and packing lists — 2026-10-17
 
 - Add two bounded, provenance-bearing nonfinancial `supplied-business-v1` starters through the existing no-code New, canonical adapter, source bindings and portable lifecycle.
