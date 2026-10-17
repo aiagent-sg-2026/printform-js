@@ -1,0 +1,125 @@
+{
+  "date": "2026-10-17",
+  "browser": "155.0.8059.84",
+  "studioConsumerRelease": "0fd50b614a983232f6465606c922b099fb8e629b",
+  "method": "Actual public Studio human Open of real locally-created new canonical projects; no model inference or fake response",
+  "before": {
+    "rowCount": 4,
+    "firstAmount": "Gross: 0005.250 kg\nNet: +0004.000 kg",
+    "quality": "1 currency values wrap, overlap or exceed their cells",
+    "exportEnabled": false
+  },
+  "after": {
+    "rows": 7,
+    "amounts": [
+      "",
+      "0005.250 kg",
+      "+0004.000 kg",
+      "0012.500 set",
+      "",
+      "002.750 lb",
+      "0007.125 m"
+    ],
+    "pages": 1,
+    "exportEnabled": true
+  },
+  "canonicalPackingFactsExact": true,
+  "monetaryOracleUnchanged": true,
+  "sourceInvariantsUnchanged": true,
+  "service": {
+    "kind": "ServiceReport",
+    "pages": 1,
+    "amounts": [
+      "",
+      "0001.250 hour",
+      ""
+    ],
+    "exportEnabled": true
+  },
+  "limitation": "Only exact fictional fixtures and unchanged generic published renderer; final integrated New/offline/PDF matrix remains separately required.",
+  "contextIntegrity": {
+    "before": [
+      {
+        "kind": "ServiceReport",
+        "accepted": true,
+        "printed": "Accepted and paid",
+        "sourceStatus": "Inspection notes only · 仅检查记录"
+      },
+      {
+        "kind": "PackingList",
+        "accepted": true,
+        "printed": "Accepted and paid",
+        "sourceStatus": "Packing snapshot · 装箱快照"
+      }
+    ],
+    "after": [
+      {
+        "kind": "ServiceReport",
+        "accepted": false,
+        "code": "UNSAFE_PROPOSAL",
+        "sourceStatus": "Inspection notes only · 仅检查记录"
+      },
+      {
+        "kind": "PackingList",
+        "accepted": false,
+        "code": "UNSAFE_PROPOSAL",
+        "sourceStatus": "Packing snapshot · 装箱快照"
+      }
+    ],
+    "fix": "Retained non-items /service and /packing source-context bindings in canonical /printRows retain pointer/text/format, separately from numeric-token classification. Source status and provenance cannot become model-invented static approval/payment. Labels/style and existing structural deletion remain supported; old three document kinds and ordinary forms unchanged."
+  },
+  "pdfCharacterMapping": {
+    "originalSource": "长 U+957F",
+    "observedWrongExtraction": "⻓ U+2ED3",
+    "oracleUnchanged": true,
+    "fontSizeUnchanged": true,
+    "probes": [
+      {
+        "family": "Arial, PingFang SC, sans-serif",
+        "pages": 1,
+        "originalCharacterRetained": false,
+        "radicalPresent": true,
+        "sha256": "951a13e183e5d08eb181c98e3b48be1ff68c91c2da08fa4df82233c79c748d07"
+      },
+      {
+        "family": "Arial, Hiragino Sans GB, sans-serif",
+        "pages": 1,
+        "originalCharacterRetained": true,
+        "radicalPresent": false,
+        "sha256": "6f589002a0abe5cc78dd723a08a05d5c02de8f243cca6eff08fc7c7fae0f2f61"
+      },
+      {
+        "family": "Arial, Songti SC, sans-serif",
+        "pages": 1,
+        "originalCharacterRetained": true,
+        "radicalPresent": false,
+        "sha256": "6ce0153b21800b7c09559afd63b7ba26db2e88dd8edd3ab396462d3a9ff6a497"
+      }
+    ],
+    "retainedArtifacts": "/tmp/printform-g8-20261017/packing-font-{pingfang,hiragino,songti}.pdf",
+    "fix": "Prefer existing macOS Hiragino Sans GB ahead of PingFang SC in the generic Studio theme; retain existing platform fallbacks, original source text and assertions. No universal-font claim."
+  },
+  "verification": {
+    "build": {
+      "testFilesPassed": 244,
+      "testsPassed": 2778,
+      "testsSkipped": 9
+    },
+    "browser": {
+      "passed": 15,
+      "failed": 0,
+      "skipped": 0,
+      "retries": 0,
+      "deadlineMs": 45000,
+      "actualChromiumPdfs": 5
+    },
+    "report": "/tmp/printform-industry-task-20261017/report-business-live-dom.json",
+    "reportSha256": "d9dd11163041f1ed3b3d773e5c574d4cbd37062cf75bd4ed16856623c2d0c647",
+    "preservedFailures": [
+      "report-final.json:121 passed,2 failed (PackingList PDF and Firefox AccountStatement)",
+      "report-font-context.json:121 passed,2 failed (Firefox AccountStatement/StockMovement HTML reopen)",
+      "report-business-lifecycle.json:14 passed,1 failed (Firefox AccountStatement; load barrier alone insufficient)"
+    ],
+    "decision": "All engines assert the same current live main-world DOM facts after actual rendered/current-frame load lifecycle, not an auxiliary locator world, copied bridge HTML or a mocked model. Expected values, source quantity/row/provenance/forbidden-field checks, PDF/geometry,45s timeout and retries0 remain."
+  }
+}

@@ -1,16 +1,19 @@
 import { BUSINESS_DOCUMENT_PROFILE } from './business-document-adapter.js';
+import { serviceDemo, packingDemo } from './business-service-logistics-demos.js';
 
 export const BUSINESS_DEMO_TEMPLATES = Object.freeze([
   { documentKind: 'AccountStatement', label: 'Account statement · 对账单', baseType: 'invoice', description: 'Explicit references/due dates, debit/credit meanings and supplied balances; no aging or reconciliation.' },
   { documentKind: 'StockMovement', label: 'Stock movement · 库存移动单', baseType: 'delivery', description: 'Supplied lot, serial list, expiry, locations, quantity precision and UOM; no stock posting or conversion.' },
-  { documentKind: 'PayrollSlip', label: 'Payroll slip · 工资明细', baseType: 'invoice', description: 'Fictional supplied earnings, deductions, hours, hourly rate and net pay; no payroll calculation or bank data.' }
+  { documentKind: 'PayrollSlip', label: 'Payroll slip · 工资明细', baseType: 'invoice', description: 'Fictional supplied earnings, deductions, hours, hourly rate and net pay; no payroll calculation or bank data.' },
+  { documentKind: 'ServiceReport', label: 'Service report · 维修服务报告', baseType: 'delivery', description: 'Supplied job, customer, asset and work observations with provenance; no acceptance, fees or completion inference.' },
+  { documentKind: 'PackingList', label: 'Packing list · 装箱单', baseType: 'delivery', description: 'Supplied packages, item quantities, locations and independent weights with provenance; no summation or conversion.' }
 ].map(entry => Object.freeze({ ...entry, status: 'ready', scenarioCount: 1 })));
 const provenance = (sourcePath, meaning) => ({ sourcePath, meaning });
 const money = (amount, sourcePath, meaning, minorUnitDigits = 3) => ({ amount, currency: 'SGD', minorUnitDigits, provenance: provenance(sourcePath, meaning) });
 const fact = (id, label, role, amount, meaning, minorUnitDigits) => ({ id, label, role, basis: meaning, amount: money(amount, `fictional-ledger/${id}`, meaning, minorUnitDigits) });
 const reference = (documentType, id, number) => ({ system: 'Fictional local source', documentType, id, number });
 const common = (kind, number) => ({ profile: BUSINESS_DOCUMENT_PROFILE,
-  source: reference(kind, `fictional:${kind}:source`, number), document: { kind, number, date: '2026-10-15', ...(kind === 'StockMovement' ? {} : { currency: 'SGD' }) },
+  source: reference(kind, `fictional:${kind}:source`, number), document: { kind, number, date: '2026-10-15', ...(['AccountStatement', 'PayrollSlip'].includes(kind) ? { currency: 'SGD' } : {}) },
   company: { id: 'FICTIONAL-COMPANY-ONLY', name: 'Fictional Lantern Workshop', address: 'Fictional Demo Street · not a real business' }
 });
 function statement() {
@@ -67,7 +70,7 @@ function payroll() {
   }, notes: 'All identities and amounts were invented for this fixture. No real employee records, bank identifiers or payroll provider. Not statutory payroll certification or payment execution.' };
 }
 export function businessDemoInput(kind) {
-  const factories = { AccountStatement: statement, StockMovement: stock, PayrollSlip: payroll };
+  const factories = { AccountStatement: statement, StockMovement: stock, PayrollSlip: payroll, ServiceReport: () => serviceDemo(common), PackingList: () => packingDemo(common) };
   if (!Object.hasOwn(factories, kind)) throw new Error(`Unknown supplied business demo: ${kind}`);
   return factories[kind]();
 }

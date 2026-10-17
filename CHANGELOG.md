@@ -15,6 +15,14 @@ who don't need the diary.
 
 ## [Unreleased]
 
+### Service reports and packing lists — 2026-10-17
+
+- Add two bounded, provenance-bearing nonfinancial `supplied-business-v1` starters through the existing no-code New, canonical adapter, source bindings and portable lifecycle.
+- Preserve exact service quantities, package/item identities and independently supplied gross/net weights. Separate weight rows prevent real export blocking; no sums, unit conversion, acceptance, delivery or payment inference.
+- Protect service/packing context values and provenance against static substitutions, rebinding and reformatting while preserving labels, style and ordinary form rules.
+- Prefer the installed macOS Hiragino Sans GB fallback after actual PDFs exposed a `长`→`⻓` character mapping defect. Preserve original text, typography sizes and strict financial/PDF assertions.
+- Document ISO 14224 and UBL semantic references without claiming standards compliance or unrestricted industry support.
+
 ### Frozen task evidence and profile consistency — 2026-10-17
 
 - Bind60 actual fictional G8 inputs,20 held-out cases and six essential slots to exact input/oracle digests; no synthetic execution rows or weakened thresholds.

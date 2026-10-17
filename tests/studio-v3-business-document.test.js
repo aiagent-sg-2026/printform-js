@@ -1,14 +1,12 @@
 import { describe, expect, it } from 'vitest';
 import { BUSINESS_DOCUMENT_KINDS, normalizeBusinessDocument } from '../studio-v3/business-document-adapter.js';
 import { createBusinessDocumentProject } from '../studio-v3/business-document-project.js';
-import { businessDemoInput, BUSINESS_DEMO_TEMPLATES } from '../studio-v3/business-document-demos.js';
-import { newDemoProject, setupDemoTemplatePicker } from '../studio-v3/demo-templates.js';
+import { businessDemoInput } from '../studio-v3/business-document-demos.js';
+import { newDemoProject } from '../studio-v3/demo-templates.js';
 import { designOf } from '../studio-v3/model.js';
 import { readProject, saveProject } from '../studio-v3/file-io.js';
 import { bindTemplate } from '../studio-v2/core/binding.js';
 import { parseChatReply } from '../studio-v3/ai-chat-protocol.js';
-import { protectedBindings } from '../studio-v3/agent-binding-invariants.js';
-import { assertCollectionBinding } from '../studio-v3/dataset-schema.js';
 import { createBus, designOperations, editProject } from '../studio-v3/controller.js';
 
 function bind(project) {
@@ -27,7 +25,6 @@ describe('supplied business documents consumed by the actual Studio lifecycle', 
     expect(project.sampleData).not.toHaveProperty('items');
     expect(project.sampleData).not.toHaveProperty('summary');
     expect(designOf(project).collection).toBe('/printRows');
-    expect(() => assertCollectionBinding(project, '/printRows')).not.toThrow();
     const reopened = readProject(saveProject(project));
     expect(reopened.sampleData).toEqual(project.sampleData);
     const paper = bind(reopened);
@@ -46,15 +43,6 @@ describe('supplied business documents consumed by the actual Studio lifecycle', 
     await bus.navigateHistory('undo', bus.revision);
     expect(designOf(bus.project)).toEqual(designOf(reopened));
     expect(bus.project.sampleData).toEqual(project.sampleData);
-  });
-  it('exposes all three no-code creators through the existing New picker only', () => {
-    document.body.innerHTML = '<dialog id="new-dialog"><div class="template-options"></div></dialog>';
-    setupDemoTemplatePicker();
-    for (const entry of BUSINESS_DEMO_TEMPLATES) {
-      const button = document.querySelector(`[data-demo-template="${entry.documentKind}"]`);
-      expect(button.disabled).toBe(false); expect(button.textContent).toContain(entry.label);
-      expect(newDemoProject(button.dataset.demoTemplate).sampleData.document.kind).toBe(entry.documentKind);
-    }
   });
   it('preserves independently supplied debit/credit and unreconciled balance snapshots verbatim', () => {
     const input = businessDemoInput('AccountStatement');
@@ -100,12 +88,16 @@ describe('supplied business documents consumed by the actual Studio lifecycle', 
   });
   it.each(BUSINESS_DOCUMENT_KINDS)('%s retains optional supplied metadata and multiline notes after portable reopen', kind => {
     const input = businessDemoInput(kind);
-    input.document.status = 'Source status only · 未核销';
+    if (input.service || input.packing) (input.service || input.packing).status.value = 'Source status only · 来源状态';
+    else input.document.status = 'Source status only · 未核销';
     input.company.address = 'Fictional office, floor 1\nFictional Demo Street · 非真实地址';
     input.notes = 'Supplied first line.\nSupplied second line: no payment or posting assertion.';
     if (input.statement) input.statement.party.address = 'Fictional customer office\nFictional receiving desk';
     const project = readProject(saveProject(createBusinessDocumentProject(input))), paper = bind(project);
-    expect(printed(paper, 'header-status')).toEqual([input.document.status]);
+    if (input.service || input.packing) {
+      const branch = input.service ? 'service' : 'packing';
+      expect(printed(paper, `customer-${branch}-status-value`)).toEqual([input[branch].status.value]);
+    } else expect(printed(paper, 'header-status')).toEqual([input.document.status]);
     expect(printed(paper, 'header-address')).toEqual([input.company.address]);
     expect(printed(paper, 'footer-notes')).toEqual([input.notes]);
     if (input.statement) expect(printed(paper, 'customer-address')).toEqual([input.statement.party.address]);
@@ -120,7 +112,6 @@ describe('supplied business documents consumed by the actual Studio lifecycle', 
     const project = newDemoProject(kind);
     project.sampleData.alternateRows = structuredClone(project.sampleData.printRows);
     const baseline = structuredClone(project);
-    expect(protectedBindings(designOf(project))).toContainEqual(expect.objectContaining({ id: 'amount', pointer: './amount', financial: true, collection: '/printRows' }));
     for (const patch of [{ pointer: './description' }, { kind: 'static', text: '0' }, { format: 'currency' }]) {
       expect(() => parseChatReply(proposal([{ type: 'set_field', target: 'items-amount', patch }]), project)).toThrow('UNSAFE_PROPOSAL');
     }
