@@ -22,6 +22,7 @@ who don't need the diary.
 - Protect service/packing context values and provenance against static substitutions, rebinding and reformatting while preserving labels, style and ordinary form rules.
 - Prefer the installed macOS Hiragino Sans GB fallback after actual PDFs exposed a `长`→`⻓` character mapping defect. Preserve original text, typography sizes and strict financial/PDF assertions.
 - Document ISO 14224 and UBL semantic references without claiming standards compliance or unrestricted industry support.
+- Reuse11 finite paper profiles:108 actual three-engine cases and36 real Chromium PDFs passed with zero retries. Preserve sanitized native discovery and physical-output Blocked status: no accessible configured/discovered printer, no virtual-PDF substitution and zero print jobs.
 
 ### Frozen task evidence and profile consistency — 2026-10-17
 
