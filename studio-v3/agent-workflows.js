@@ -20,7 +20,7 @@ export const LEDGER_WORKFLOWS = Object.freeze([
   ["printform.dataset.edit","Edit typed data fields and item rows","not-yet-callable","Eligible; the Studio UI has this service but no agent adapter yet"],
   ["printform.dataset.save-copy","Save and Apply or create dataset copy","human-mediated","Save / Save as new dataset"],
   ["printform.dataset.load","Load/reload compatible saved dataset","not-yet-callable","Eligible; the Studio UI has this service but no agent adapter yet"],
-  ["printform.dataset.import","Import dataset JSON","human-mediated","Import dataset JSON"],
+  ["printform.dataset.import","Import local CSV/JSON with reviewed mapping or portable dataset","human-mediated","Data > Import CSV / JSON > map fields > Preview > Apply"],
   ["printform.dataset.export","Export active or pending dataset JSON","human-mediated","Dataset export"],
   ["printform.dataset.delete","Delete saved record while retaining current form","human-mediated","Delete saved record"],
   ["printform.dataset.restore","Restore known starter records","human-mediated","Restore starter datasets"],

@@ -8,6 +8,7 @@ Files:
 - [attempts.csv](studio-v3-task-register/attempts.csv)：每个真实执行独立一行；不得用单元合成记录填充。
 - [studio-v3-task-register.mjs](../scripts/studio-v3-task-register.mjs): `validateRegister` (structure and evidence rules) and `qualification` (G8 thresholds per profile). Checked by `tests/studio-v3-task-register.test.js`.
 - [G8 corpus/evaluator CLI](../scripts/studio-v3-g8.mjs)：离线核验实际请求/回答/状态/几何/进程/制品；不调用模型、不自动登记Pass。[完整操作与信任边界](STUDIO_V3_G8_CORPUS.zh-CN.md)。
+- [完整180槽离线预检](STUDIO_V3_G8_PREFLIGHT.zh-CN.md)：逐profile重验既有签名、CSV、独立oracle和实际清单；当前实际六份均与历史判断一致，修复profile仍仅3/180。原版144/180理论上限与四家族不可达门槛先行阻止错误资格宣称；不执行模型、不补造attempt。[脱敏实际结果](acceptance/STUDIO_V3_G8_PREFLIGHT_20261017.json)。
 
 ## Families and targets
 

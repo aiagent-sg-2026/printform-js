@@ -211,3 +211,9 @@ The same Pi Harness now has a separately authorized local Docker/Node24 source/J
 ## 2026-10-17：冻结语料与身份一致性
 
 上述0/60、空CSV是各自日期的历史状态，不覆盖当前60个已冻结输入；冻结任务不是执行通过。新增同profile执行身份一致性检查，修复实际API接受混合provider/model/budget而误报qualified的问题；独立字节/签名消费者另核验事实，签名本身不证明真实。[语料与已知边界](STUDIO_V3_G8_CORPUS.zh-CN.md) · [身份混用前后证据](acceptance/STUDIO_V3_PROFILE_IDENTITY_20261017.json)。固定模型、DPA、G6/G9和原180次门槛不因此关闭。
+
+## 2026-10-17：完整槽位预检与通用功能证据分离
+
+实际`preflight`逐一检查180槽、既有六份签名/CSV/身份及独立消费者结论；只选同profile的三次，不合并旧Fail与新Pass。原冻结12个拒绝任务决定最高144/180，data0/18、bindings/refs/files各12/18，均不能满足原162总数与16逐类门槛；不执行或伪造缺失尝试，不改60/20冻结输入、oracle、alias、route或预算。[可执行预检与真实报告](STUDIO_V3_G8_PREFLIGHT.zh-CN.md)。
+
+通用本地CSV/JSON、七类业务starter、10有限纸张和小数CUSTOM的2873项/9跳过、75项三引擎及真实PDF，只证明明确范围的功能。完整原始导入文件可被Save/HTML携带；设备声明无认证效力。本机没有配置CUPS目的地、零打印任务；固定upstream/DPA/G6/G9/独立业务与视觉资格仍未关闭，当前新版本不能继承旧8c单题资格或标Production Ready。

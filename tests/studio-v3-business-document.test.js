@@ -88,16 +88,15 @@ describe('supplied business documents consumed by the actual Studio lifecycle', 
   });
   it.each(BUSINESS_DOCUMENT_KINDS)('%s retains optional supplied metadata and multiline notes after portable reopen', kind => {
     const input = businessDemoInput(kind);
-    if (input.service || input.packing) (input.service || input.packing).status.value = 'Source status only · 来源状态';
+    const branch = ['service','packing','inspection','handover'].find(key=>input[key]);
+    if (branch) input[branch].status.value = 'Source status only · 来源状态';
     else input.document.status = 'Source status only · 未核销';
     input.company.address = 'Fictional office, floor 1\nFictional Demo Street · 非真实地址';
     input.notes = 'Supplied first line.\nSupplied second line: no payment or posting assertion.';
     if (input.statement) input.statement.party.address = 'Fictional customer office\nFictional receiving desk';
     const project = readProject(saveProject(createBusinessDocumentProject(input))), paper = bind(project);
-    if (input.service || input.packing) {
-      const branch = input.service ? 'service' : 'packing';
-      expect(printed(paper, `customer-${branch}-status-value`)).toEqual([input[branch].status.value]);
-    } else expect(printed(paper, 'header-status')).toEqual([input.document.status]);
+    if (branch) expect(printed(paper, `customer-${branch}-status-value`)).toEqual([input[branch].status.value]);
+    else expect(printed(paper, 'header-status')).toEqual([input.document.status]);
     expect(printed(paper, 'header-address')).toEqual([input.company.address]);
     expect(printed(paper, 'footer-notes')).toEqual([input.notes]);
     if (input.statement) expect(printed(paper, 'customer-address')).toEqual([input.statement.party.address]);

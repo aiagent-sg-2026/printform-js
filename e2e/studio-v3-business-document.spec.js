@@ -29,12 +29,14 @@ function sourceValues(input) {
     '', ...['grossWeight', 'netWeight'].filter(key => pack[key]).map(key => `${pack[key].amount} ${pack[key].uom}`),
     ...pack.items.map(row => `${row.quantity.amount} ${row.quantity.uom}`)
   ]);
+  if (input.inspection) return input.inspection.checks.map(row => row.measure ? `${row.measure.amount} ${row.measure.uom}` : '');
+  if (input.handover) return input.handover.assets.map(row => row.quantity ? `${row.quantity.amount} ${row.quantity.uom}` : '');
   throw new Error(`Unsupported supplied business kind: ${input.document.kind}`);
 }
 function sourceContext(input) {
-  const branch = input.service ? 'service' : input.packing ? 'packing' : null;
+  const branch = input.service ? 'service' : input.packing ? 'packing' : input.inspection ? 'inspection' : input.handover ? 'handover' : null;
   if (!branch) return [];
-  const keys = branch === 'service' ? ['job', 'customer', 'asset', 'status'] : ['shipment', 'from', 'to', 'status'];
+  const keys = {service:['job','customer','asset','status'],packing:['shipment','from','to','status'],inspection:['reference','subject','status'],handover:['record','from','to','status']}[branch];
   return keys.filter(key => input[branch][key]).flatMap(key => Object.entries(input[branch][key]).flatMap(([name, value]) =>
     name === 'provenance' ? [['source', value.sourcePath], ['meaning', value.meaning]].map(([suffix, text]) => [`${branch}-${key}-${suffix}`, text]) : [[`${branch}-${key}-${name.replace(/[A-Z]/g, letter => `-${letter.toLowerCase()}`)}`, value]]));
 }

@@ -7,7 +7,7 @@ export function financialField(field) {
 // numeric token. Protect their source binding without feeding prose to that oracle.
 const suppliedFacts = ['section','description','direction','trace'];
 const fixedSource = (design,block,field) => design.collection === '/printRows' &&
-  (block === 'items' ? suppliedFacts.includes(field.id) : /^\/(?:service|packing)\//.test(field.pointer));
+  (block === 'items' ? suppliedFacts.includes(field.id) : /^\/(?:service|packing|inspection|handover)\//.test(field.pointer));
 // Capture initial identities, not the last step: removal must not erase the protection of a later re-addition.
 export function protectedBindings(design) {
   return BLOCKS.flatMap(block=>fields(design,block).filter(field=>field.pointer && (financialField(field) || fixedSource(design,block,field) || ['currency','number','percent'].includes(field.format)))

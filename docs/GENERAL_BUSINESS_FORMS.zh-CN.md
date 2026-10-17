@@ -4,10 +4,10 @@
 
 ## 入口与生命周期
 
-- 非编程用户：Studio v3 → **New** → **Business demo templates** → 对账单、库存移动单、工资明细、`Service report · 服务记录` 或 `Packing list · 装箱单`。五者使用同一个现有 New 对话框、编辑器、FormSpec、JSON Pointer 绑定、预览和分页器。
+- 非编程用户：Studio v3 → **New** → **Business demo templates** → 对账单、库存移动单、工资明细、服务记录、装箱单、检验报告或资产交接。七者使用同一个 New 对话框、编辑器、FormSpec、JSON Pointer 绑定、预览和分页器。
 - 可编辑标题、字段标签、排版、样式；Save 保存包含当前事实的 `.printform.json`，Open 可重开该文件或导出的 HTML；Export 导出内联运行时的离线 HTML。Print 使用浏览器打印流程，不执行支付、出入库或过账。
 - 供应方 API：`normalizeBusinessDocument(input)` 位于 `studio-v3/business-document-adapter.js`；`createBusinessDocumentProject(input)` 位于 `studio-v3/business-document-project.js`。后者返回可供既有 `saveProject` / `readProject` / `exportProject` 消费的完整项目。
-- 五份完整、只含自造资料的输入：`businessDemoInput('AccountStatement' | 'StockMovement' | 'PayrollSlip' | 'ServiceReport' | 'PackingList')`，入口仍为 `studio-v3/business-document-demos.js`，服务/物流资料在独立模块内。每次返回独立的新对象，不读取真实业务系统或模型资料。
+- 七份完整、只含自造资料的输入：`businessDemoInput('AccountStatement' | 'StockMovement' | 'PayrollSlip' | 'ServiceReport' | 'PackingList' | 'InspectionReport' | 'AssetHandover')`，入口仍为 `studio-v3/business-document-demos.js`，服务/物流及检验/资产资料在独立模块内。每次返回独立新对象，不读取真实业务系统或模型资料。
 - 源事实归一化时生成 `/printRows` 打印快照，不伪造 `/items`，不冒充发票总额。旧 catalogue 和旧 `/items` 本地 dataset workbench 的契约不变；本 profile 不宣称可在那个工作台保存为 legacy dataset。模板编辑、工程 Save/Open/Export 与该限制无关。
 - Advanced JSON 里的源事实和 `/printRows` 是快照，不存在自动双向重算；源事实变化应重新运行 creator 并 Open 新工程，不要仅改源字段后声称打印值已更新。直接编辑工程 JSON 须同时维护真实来源与绑定快照；schema 会校验声明的打印行形状，但不能认证供应方事实或替代 canonical 输入校验。
 
@@ -44,8 +44,8 @@ for (const {documentKind} of BUSINESS_DEMO_TEMPLATES)
 | `profile` | exact `supplied-business-v1` |
 | `source` | `{system, documentType, id, number}` 必填；可选 `currency,date,partyId,companyId`，与既有 source reference 形状相同 |
 | `company` | `{id,name}` 必填，可选 `address` |
-| `document` | `{kind,number,date}` 必填；kind 为五个 exact 类型之一；原三类可选显式 status，服务/装箱状态须放入各自带来源的分支 |
-| `document.currency` | 对账单和工资必填，库存无金额可省略；有限 Studio 币种 `MYR,USD,SGD,EUR,CNY,JPY`。ServiceReport/PackingList 不接收 source/document currency，不推入金融事实 |
+| `document` | `{kind,number,date}` 必填；kind 为上述七个 exact 类型之一；原三类可选显式 status，其余四类状态须放入各自带来源的分支 |
+| `document.currency` | 对账单和工资必填，库存无金额可省略；有限 Studio 币种 `MYR,USD,SGD,EUR,CNY,JPY`。服务/装箱/检验/资产交接不接收 source/document currency，不推入金融事实 |
 | `notes` | 可选供应原文；省略不补默认事实 |
 
 日期必须是实际存在的 `YYYY-MM-DD`；期间 `{from,to}` 不可倒置。每个数组最多 500 个元素；业务行/事实 ID 在同一输入内唯一。
@@ -96,6 +96,13 @@ for (const {documentKind} of BUSINESS_DEMO_TEMPLATES)
 - ServiceReport 明确供应工单、客户、资产、观察/工作/建议及各自 provenance；可选数量原文及带来源状态，不证明完成、客户验收或付款。
 - PackingList 明确供应运单、起止位置、包装和物品；包装头、每项毛重/净重及物品各占独立事实行。不求和、换单位或推测送达；没有供应的重量不补零。源身份保留于 canonical 和追踪，输出行身份独立且唯一。
 - 实际公开Studio消费发现毛重/净重合在 amount 一格会被金额防换行检查拒绝；改为独立单值行后，保留同一canonical事实、7行、1页且导出恢复，没有放宽oracle。[前后证据](acceptance/STUDIO_V3_SERVICE_LOGISTICS_20261017.json)；完整字段、拒绝与ISO/UBL研究边界见[服务物流契约](GENERAL_SERVICE_LOGISTICS.zh-CN.md)。
+
+## InspectionReport / AssetHandover：检验与资产交接
+
+- 检验保留独立观察、来源要求/方法/结果及带符号测量，不根据要求与测量推断合格、失败或认证。
+- 资产交接保留身份、序列、状况、附件文字、可选原文数量和起止方；不补缺数量、不证明签名、签收、所有权、付款或折旧。
+- 完整 canonical 字段、拒绝边界、模型绑定保护及新建入口见[检验与资产交接契约](GENERAL_INSPECTION_HANDOVER.zh-CN.md)。普通本地[CSV/JSON映射](STUDIO_V3_LOCAL_IMPORT.zh-CN.md)不能绕过本 profile 的来源保护；该导入面向普通/空白表单的既有字段及集合。
+
 
 ## 绑定保护与规格入口
 

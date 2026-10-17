@@ -1,5 +1,6 @@
 import { validateDataset } from './database-model.js';
 import { datasetDescriptor, validateSourceSchema } from './dataset-schema.js';
+import { validateImportReceipt } from './structured-import-receipt.js';
 
 // Bounded, read-only application contract. Production implements this contract
 // on an authenticated server; a browser never receives SQL or DB credentials.
@@ -25,7 +26,8 @@ export function createLocalDatasetSource(store) {
       if (revision !== undefined && record.revision !== revision) throw new Error('Dataset changed. Refresh before reading.');
       const data = validateDataset(record.data);
       const sourceSchema = validateSourceSchema(record.sourceSchema,data,record.id);
-      return {...record,data,...(sourceSchema ? {sourceSchema} : {})};
+      const localImport = validateImportReceipt(record.localImport,data);
+      return {...record,data,...(sourceSchema ? {sourceSchema} : {}),...(localImport ? {localImport} : {})};
     },
     async schema(id) {
       const record = await this.read(id);

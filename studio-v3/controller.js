@@ -8,6 +8,7 @@ import { tableStyleChange } from './table-style.js';
 import { elementStyleChange } from './element-style.js';
 import { assertProjectSchema, assertCollectionBinding, validateSourceSchema } from './dataset-schema.js';
 import { pageFromForm } from './paper-controls.js';
+import { validateImportReceipt } from './structured-import-receipt.js';
 
 export function createBus(project, database = null, source = 'builtin-demo') {
   const initial = structuredClone(project);
@@ -24,6 +25,9 @@ export async function editProject(bus, operations, reason, dataSession = null) {
   const design = designOf(preview.candidate);
   validateDesign(design);
   assertProjectSchema(preview.candidate);
+  if (operations.some(op=>op.type === 'replace_sample_data' || op.type === 'replace_manifest' || op.type === 'set_manifest_value' && op.path === '/localImport')) {
+    validateImportReceipt(preview.candidate.manifest.localImport,preview.candidate.sampleData);
+  }
   const previous = designOf(bus.project);
   const bindingChanged = previous.collection !== design.collection || previous.columns.length !== design.columns.length || design.columns.some((field,index)=>field.pointer !== previous.columns[index]?.pointer || field.kind !== previous.columns[index]?.kind);
   if (bindingChanged || design.blocks.items.enabled && design.collection !== '/items' && operations.some(operation=>operation.type === 'replace_sample_data')) assertCollectionBinding(preview.candidate,design.collection,design.columns,bindingChanged);
@@ -31,7 +35,7 @@ export async function editProject(bus, operations, reason, dataSession = null) {
   if (dataSession) next.studioV3Session = structuredClone(dataSession);
   return bus.commit(next, reason, {expectedRevision:revision});
 }
-export async function replaceData(bus, data, sample = 'erp', database = undefined, sourceOverride = null, title = undefined, sourceSchema = undefined) {
+export async function replaceData(bus, data, sample = 'erp', database = undefined, sourceOverride = null, title = undefined, sourceSchema = undefined, localImport = null) {
   const session = bus.project.studioV3Session;
   const names = {'0':'Empty','1':'Single item','45':'Standard','100':'Multi-page','500':'Stress',long:'Long & bilingual'};
   const source = sourceOverride || (sample !== 'erp' ? dataSource('validation-sample',names[sample] || sample) : database === undefined ? session.erpSource : dataSource(database?.origin || 'imported-data'));
@@ -43,6 +47,7 @@ export async function replaceData(bus, data, sample = 'erp', database = undefine
     {type:'replace_schema',value:contract?.schema || {type:'object',additionalProperties:true}},
     {type:'set_manifest_value',path:'/datasetSchema',value:contract ? {sourceId:contract.sourceId,datasetId:contract.datasetId,version:contract.version} : null}
   ];
+  schemaOperations.push({type:'set_manifest_value',path:'/localImport',value:localImport});
   return editProject(bus,[...schemaOperations,{type:'replace_sample_data',value:data},{type:'set_manifest_value',path:'/sampleDataTitle',value:name},...(currency ? [{type:'set_manifest_value',path:'/currency',value:currency}] : [])],`data: ${sample}`,{
     sample,erpData:sample === 'erp' ? data : session.erpData,
     database:database === undefined ? session.database : database,

@@ -3,6 +3,7 @@ import { demoStarterRecords } from './demo-catalog.js';
 import { sampleData } from './model.js';
 import { assertBoundedJson, parseBoundedJson, unsafeJsonKey } from './json-safety.js';
 import { declaredCollectionFields, validateSourceSchema } from './dataset-schema.js';
+import { validateImportReceipt } from './structured-import-receipt.js';
 
 export const DATASET_FORMAT = 'printform-studio-v3-dataset';
 export const DATA_TYPES = ['invoice', 'purchase', 'delivery'];
@@ -117,7 +118,10 @@ export function starterRecords() {
 }
 export function exportDataset(record) {
   const sourceSchema = validateSourceSchema(record.sourceSchema,record.data,record.id);
-  return JSON.stringify({format:DATASET_FORMAT,version:1,dataset:{type:record.type,title:record.title,data:record.data,...(sourceSchema ? {id:record.id,sourceSchema} : {})}},null,2);
+  const localImport = validateImportReceipt(record.localImport,record.data);
+  const source = JSON.stringify({format:DATASET_FORMAT,version:1,dataset:{type:record.type,title:record.title,data:record.data,...(sourceSchema ? {id:record.id,sourceSchema} : {}),...(localImport ? {localImport} : {})}},null,2);
+  if (localImport) parseBoundedJson(source,{maxDepth:18,label:'Legacy dataset export with original source; use Save form for larger general projects'});
+  return source;
 }
 export function importDataset(source, type) {
   const parsed = parseBoundedJson(source,{maxDepth:18});
@@ -127,7 +131,8 @@ export function importDataset(source, type) {
     if (parsed.dataset.sourceSchema && (typeof parsed.dataset.id !== 'string' || !parsed.dataset.id)) throw new Error('Source schema requires the exported dataset identity.');
     const sourceSchema = validateSourceSchema(parsed.dataset.sourceSchema,parsed.dataset.data,parsed.dataset.id);
     const record = datasetRecord(type,parsed.dataset.data,parsed.dataset.title);
-    return {...record,origin:'imported-data',...(sourceSchema ? {sourceSchema:{...sourceSchema,datasetId:record.id}} : {})};
+    const localImport = validateImportReceipt(parsed.dataset.localImport,record.data);
+    return {...record,origin:'imported-data',...(sourceSchema ? {sourceSchema:{...sourceSchema,datasetId:record.id}} : {}),...(localImport ? {localImport} : {})};
   }
   return {...datasetRecord(type,parsed,'Imported sample'),origin:'imported-data'};
 }
@@ -136,6 +141,7 @@ export const sameData = (a,b) => JSON.stringify(a) === JSON.stringify(b);
 export function datasetMatchesProject(record,project) {
   const type=project.manifest.studioV3.type,kind=project.sampleData.document?.kind,recordKind=record.data.document?.kind;
   if(record.type!==type)return false;
+  if(!Array.isArray(dataValue(project.sampleData,project.manifest.studioV3.collection)))return false;
   const profile=project.sampleData.claim?.basisProfile;
   if(profile && record.data.claim?.basisProfile!==profile)return false;
   if(!Array.isArray(dataValue(record.data,project.manifest.studioV3.collection)))return false;

@@ -220,3 +220,12 @@ body.preview-only .side-panel { visibility:hidden; }
 .new-template-options{min-height:0;overflow:auto;overscroll-behavior:contain}
 #new-dialog [data-action="cancel-new"]{justify-self:end;margin-top:12px}
 .page-navigation{display:flex;align-items:center;gap:7px;margin-left:auto;flex-shrink:0;white-space:nowrap}
+.structured-import-table {table-layout:fixed}
+.structured-import-table th code,.structured-import-table th small,.structured-import-preview th small {display:block;font-weight:400;color:var(--muted)}
+.structured-import-table td select {width:100%;min-width:0}
+@media(max-width:1000px) {
+  .structured-import-table,.structured-import-table tbody,.structured-import-table tr,.structured-import-table th,.structured-import-table td {display:block;width:100%}
+  .structured-import-table thead {display:none}
+  .structured-import-table tr {border-bottom:1px solid var(--line);padding:8px 0}
+  .structured-import-table th,.structured-import-table td {border:0}
+}
