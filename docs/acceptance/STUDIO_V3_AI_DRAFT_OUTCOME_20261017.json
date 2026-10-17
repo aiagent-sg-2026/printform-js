@@ -55,5 +55,155 @@
   "formalG8": false,
   "newFormalAttempts": 0,
   "productionQualified": false,
-  "publicSamePromptCandidateRun": "not run at this record; must preserve its observed outcome separately"
+  "publicSamePromptCandidateRun": {
+    "release": "ed81628243a6eaaf9abfc1c0ba5f856e7d391729",
+    "origin": "https://yapweijun1996.github.io",
+    "taskOutcome": "Fail",
+    "modelRuns": 1,
+    "inferenceRequests": 5,
+    "httpStatuses": [
+      200,
+      200,
+      200,
+      200,
+      200
+    ],
+    "alias": "demo-auto",
+    "uiTokens": 95935,
+    "durationMs": 18274,
+    "proposal": false,
+    "committedProjectUnchanged": true,
+    "before": {
+      "sha256": "7adf5007bc09621128921053425b00ec15c8cb27ad06a678bea29d01af9ec597",
+      "bytes": 5242,
+      "revision": 1,
+      "paper": "A4"
+    },
+    "after": {
+      "sha256": "7adf5007bc09621128921053425b00ec15c8cb27ad06a678bea29d01af9ec597",
+      "bytes": 5242,
+      "revision": 1,
+      "paper": "A4"
+    },
+    "hostDidNotPretendDraftDelivered": true,
+    "checkedCanaries": 3,
+    "privateCanariesAbsentFromAllModelRequests": true,
+    "resolvedUpstream": "unavailable",
+    "formalG8": false,
+    "newFormalAttempts": 0,
+    "productionQualified": false
+  },
+  "originalCandidateRunStatus": "not run at this record; must preserve its observed outcome separately",
+  "proposalOnlyGrantFollowup": {
+    "baseline": "ed81628243a6eaaf9abfc1c0ba5f856e7d391729",
+    "status": "Source validated; actual new-source public model run awaits publication",
+    "initialParallel": {
+      "passed": 2966,
+      "failed": 17,
+      "skipped": 9,
+      "rawReportRetained": true,
+      "reportSha256": "668f623a9aac73fe77c2926b608c13444fb832a055188a156e1042ab7f414719",
+      "failureDetail": "STACK_TRACE_ERROR only; all durations above5s; do not claim17 product defects"
+    },
+    "existingBuild": {
+      "command": "npm run build:site",
+      "workerPolicy": "--maxWorkers=1 --no-file-parallelism (unchanged existing build)",
+      "passed": 2983,
+      "failed": 0,
+      "skipped": 9,
+      "siteBuilt": true
+    },
+    "agentConformance": {
+      "tools": 22,
+      "operations": 13,
+      "guides": 3,
+      "examples": 114,
+      "reviewedChanges": 38,
+      "baselineUnchanged": "a99c932e45a95d4d5b5c811e7dbc0db3256ddf99"
+    },
+    "knowledge": {
+      "formAuthoringCharacters": 15946,
+      "unchangedMaximum": 16000
+    },
+    "actualConsumer": {
+      "intent": "draft",
+      "profile": "design",
+      "effects": [
+        "read",
+        "memory",
+        "draft",
+        "proposal",
+        "stop"
+      ],
+      "modelVisibleToolCount": 12,
+      "catalogHasAnswer": false,
+      "catalogHasFinish": true,
+      "catalogHasBlocked": true,
+      "directAnswerDenied": "GRANT_DENIED",
+      "readOnlyAnswerRetained": true,
+      "readOnlyDraftDenied": true,
+      "liveProjectUnchanged": true,
+      "modelRuns": 0,
+      "formalG8": false,
+      "removedTools": [
+        "finish_answer"
+      ],
+      "addedTools": []
+    },
+    "nativeUi": {
+      "browser": "Chrome/155.0.8059.84",
+      "sandbox": true,
+      "source": "local",
+      "desktopDOMViewport": {
+        "width": 1440,
+        "height": 1000,
+        "overflow": 0
+      },
+      "typedButNotSent": {
+        "revision": "r0",
+        "typed": "把纸张设置为宽188.5毫米、高244.2毫米的自定义纸张，纵向。其他内容、字体、数据、绑定、页边距和现有打印机约束保持不变。先预览，等我确认后才应用。",
+        "overflow": 0,
+        "checkboxes": [
+          {
+            "id": "ai-agent",
+            "checked": true
+          },
+          {
+            "id": "ai-observation-text",
+            "checked": false
+          },
+          {
+            "id": "ai-observation-pixels",
+            "checked": false
+          },
+          {
+            "id": "ai-source-enabled",
+            "checked": false
+          }
+        ],
+        "closeButtons": [
+          {
+            "text": "",
+            "label": "Close AI editor"
+          }
+        ]
+      },
+      "phone": {
+        "width": 375,
+        "height": 812,
+        "overflow": 0,
+        "revision": "r0",
+        "dataActive": true,
+        "aiClosed": true
+      },
+      "modelRuns": 0,
+      "newFormalAttempts": 0,
+      "formalG8": false,
+      "productionQualified": false,
+      "screenshotLimit": "Desktop native-window screenshot and actual375x812 phone screenshot viewed; not a printer or live-model proof."
+    },
+    "modelRuns": 0,
+    "newFormalAttempts": 0,
+    "productionQualified": false
+  }
 }

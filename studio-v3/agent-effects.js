@@ -13,12 +13,16 @@ export const EFFECT_PROFILES = Object.freeze({
   'coding-read-only':Object.freeze({available:true,effects:Object.freeze(['read','memory','answer','stop','workspace-read'])})
 });
 
-export function createGrant(profile,{scope = {mode:'whole'},workspace} = {}) {
+export function createGrant(profile,{scope = {mode:'whole'},workspace,intent} = {}) {
   const entry = Object.hasOwn(EFFECT_PROFILES,profile) ? EFFECT_PROFILES[profile] : null;
   if (!entry) throw fail('GRANT_PROFILE_UNKNOWN');
   if (!entry.available) throw fail('GRANT_PROFILE_UNAVAILABLE');
   if (profile.startsWith('coding') && (!isSourceAuthorization(workspace) || workspace.profile !== profile)) throw fail('WORKSPACE_DISCLOSURE_REQUIRED');
-  return Object.freeze({profile,effects:entry.effects,scope:Object.freeze(structuredClone(scope))});
+  // A confirmed draft may finish only with an inspected proposal or a block. This
+  // subtracts one effect without changing profile identity or workspace authority.
+  const effects = intent?.kind === 'draft' && entry.effects.includes('draft')
+    ? Object.freeze(entry.effects.filter(effect=>effect !== 'answer')) : entry.effects;
+  return Object.freeze({profile,effects,scope:Object.freeze(structuredClone(scope))});
 }
 export const allows = (grant,effect) => grant.effects.includes(effect);
 export function assertEffect(grant,definition) {

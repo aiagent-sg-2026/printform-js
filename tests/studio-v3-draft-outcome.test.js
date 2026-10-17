@@ -26,18 +26,26 @@ function toolsFor(request=previewRequest,scope={mode:'whole'}) {
 }
 
 describe('host draft outcome, not model prose',()=> {
-  it('does not count the prior explicit private preview request as a completed no-op answer',async()=> {
+  it('rejects a hallucinated answer-only finish for the explicit private preview request',async()=> {
     const project = newProject(), before = structuredClone(project), message = '{"draftReady":true,"note":"先预览"}';
-    const result = await run([call('get_context'),call('finish_answer',{message})],{project});
+    let rejected;
+    const promise = run([call('get_context'),call('finish_answer',{message}),context=>{
+      rejected = context.messages.at(-1); return call('report_blocked',{reason:'No inspected proposal was delivered.'});
+    }],{project});
     expect(readOnlyRequest(previewRequest)).toBe(false);
-    expect(result).toMatchObject({kind:'answer',taskOutcome:'draft-not-produced',message,steps:0});
-    expect(result).not.toHaveProperty('candidate'); expect(result).not.toHaveProperty('inspection');
-    expect(project).toEqual(before);
+    await expect(promise).rejects.toMatchObject({code:'AGENT_BLOCKED',reason:'No inspected proposal was delivered.'});
+    expect(rejected).toMatchObject({isError:true,toolName:'finish_answer'});
+    expect(rejected.content[0].text).toMatch(/unavailable/); expect(project).toEqual(before);
   });
-  it('does not turn an inspected unchanged form or an abandoned draft into a delivered proposal',async()=> {
-    const result = await run([call('apply_operations',{summary:'Resize draft',operations:[resize]}),call('inspect_draft'),call('finish_answer',{message:'Ready to apply.'})]);
-    expect(result.taskOutcome).toBe('draft-not-produced'); expect(result).not.toHaveProperty('candidate');
-    expect(result.observation.id).toMatch(/^observation-/); expect(result.message).toBe('Ready to apply.');
+  it('cannot use an answer to deliver an edited draft, but can explicitly finish its current inspected proposal',async()=> {
+    let rejected;
+    const result = await run([call('apply_operations',{summary:'Resize draft',operations:[resize]}),call('inspect_draft'),
+      call('finish_answer',{message:'Ready to apply.'}),context=>{
+        rejected = context.messages.at(-1); return call('finish',{summary:'Inspected custom paper proposal'});
+      }]);
+    expect(rejected).toMatchObject({isError:true,toolName:'finish_answer'});
+    expect(result).toMatchObject({kind:'proposal',taskOutcome:'draft-ready',summary:'Inspected custom paper proposal'});
+    expect(result).not.toHaveProperty('message'); expect(result.inspection.ready).toBe(true);
   });
   it('retains single-step answer bytes with the same incomplete outcome instead of silently succeeding',()=> {
     const message = '{"width":188.5,"height":244.2}', result = parseChatReply(JSON.stringify({kind:'answer',message}),newProject(),{request:previewRequest});

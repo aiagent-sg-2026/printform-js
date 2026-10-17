@@ -39,7 +39,7 @@ export async function runAgentLoop({models,model,project,request,scope = {mode:'
     const intent = requestIntent(request);
     // A caller's profile is a ceiling. Question/source-quoted/ambiguous requests can only narrow it.
     const effectiveProfile = intent.kind === 'draft' ? profile : profile === 'coding' ? 'coding-read-only' : profile === 'design' ? 'read-only' : profile;
-    const grant = createGrant(effectiveProfile,{scope,workspace});
+    const grant = createGrant(effectiveProfile,{scope,workspace,intent});
     if (workspace) {
       if (workspace.profile !== profile) throw fail('WORKSPACE_DISCLOSURE_REQUIRED');
       await workspace.open({identity,project,baseRevision,runId},stop);
