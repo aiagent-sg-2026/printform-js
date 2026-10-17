@@ -18,6 +18,8 @@ who don't need the diary.
 ### General Studio import, media and qualification audit — 2026-10-17
 
 - Add an executable read-only180-slot G8 preflight: recheck exact-profile signed evidence and registry agreement, retain prior failures and report immutable144/180 ceiling, missing custody and release mismatch without model calls or fabricated attempts.
+- Add10 finite paper presets plus fractional20..1000mm CUSTOM, typed reversible page authoring and user-declared printer constraints; device names stay private and native device/driver/physical qualification remains blocked.
+- Fix the real24px inner-page screen-gap regression without changing paper, margins, fonts or geometry tolerances. Independent paper-only build:2832 tests passed/9 skipped; strict3-engine36/36 with11 actual PDFs,114 agent contract examples passed.
 
 ### Service reports and packing lists — 2026-10-17
 

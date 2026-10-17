@@ -20,6 +20,7 @@ import { pageDimensions, pageSettings } from './design-authoring.js';
 import { syncPageControls, navigatePages } from './page-navigation.js';
 import { createValidateAll } from './validate-all.js';
 import { scenarioCandidate } from './scenario-matrix.js';
+import { paperMillimeters } from './paper-settings.js';
 const $ = selector => document.querySelector(selector); setupDemoTemplatePicker();
 const state = {mode:'design',selected:'items',tab:'properties',sample:'erp',report:null,matrix:{},dirty:false,dataDraft:null,running:false,runId:0,collapsed:{},search:'',jsonError:'',fileReads:0};
 let bus, displayed, zoom = 1, pageIndex = 0, editQueue = Promise.resolve();
@@ -111,7 +112,8 @@ function resizePaper() {
   zoom = choice === 'fit' ? Math.min(Math.max(.15,available/width), Math.max(.15,($('#paper-scroll').clientHeight - 48)/height)) : choice === 'width' ? Math.max(.15,available/width) : Number(choice);
   zoom = Math.max(.15,Math.min(2,Number.isFinite(zoom) ? zoom : 1));
   $('#preview-frame').style.transform = `scale(${zoom})`; $('#preview-frame').style.width = `${width}px`;
-  $('#preview-frame').dataset.zoom = String(zoom); $('#paper-kind').textContent = design ? pageSettings(design).paper : 'A4'; $('#paper-dimensions').textContent = `${Math.round(width/96*25.4)} × ${Math.round(height/96*25.4)} mm`;
+  const page = design ? pageSettings(design) : null, mm = page?.paper === 'CUSTOM' ? paperMillimeters(page) : {width:Math.round(width/96*25.4),height:Math.round(height/96*25.4)};
+  $('#preview-frame').dataset.zoom = String(zoom); $('#paper-kind').textContent = page?.paper || 'A4'; $('#paper-dimensions').textContent = `${mm.width} × ${mm.height} mm`;
   $('#paper-wrap').style.width = `${width * zoom}px`;
   $('#paper-wrap').style.height = `${(paper.height || height) * zoom}px`;
   if (paper.pages[pageIndex]) $('#paper-scroll').scrollTop = paper.pages[pageIndex].top*zoom;

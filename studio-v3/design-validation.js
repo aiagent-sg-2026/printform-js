@@ -1,4 +1,5 @@
-import { BLOCKS, FIELD_KINDS, PAPERS, ORIENTATIONS, FORMATS, validPointer, fieldKind, sectionOrder } from './design-authoring.js';
+import { BLOCKS, FIELD_KINDS, FORMATS, validPointer, fieldKind, sectionOrder } from './design-authoring.js';
+import { validatePageSettings } from './paper-settings.js';
 import { A4_PRESET_IDS } from './a4-presets.js';
 import { validateTableStyle } from './table-style.js';
 import { validateFieldStyle } from './element-style.js';
@@ -41,15 +42,6 @@ function validateAssets(d) {
   const projectedBytes = (d.assets || []).reduce((sum,a)=>sum+a.src.length,0)+references.reduce((sum,ref)=>sum+(d.assets?.find(a=>a.id===ref.assetId)?.src.length || 0),0);
   if (projectedBytes > 5592408) fail('Repeated embedded images exceed the 4 MB portable asset budget.');
   return assets;
-}
-function validatePage(page) {
-  exactDesignKeys(page,['paper','orientation','margins'],'page');
-  if (page.paper !== undefined && !PAPERS.includes(page.paper)) fail('Unsupported paper size.');
-  if (page.orientation !== undefined && !ORIENTATIONS.includes(page.orientation)) fail('Unsupported paper orientation.');
-  if (page.margins !== undefined) {
-    exactDesignKeys(page.margins,['top','right','bottom','left'],'page margin');
-    if (Object.values(page.margins).some(v => !number(v,0,72))) fail('Page margins must be between 0 and 72px.');
-  }
 }
 function validateBlock(block,id) {
   exactDesignKeys(block,['enabled','label','layout','breakBefore','keepTogether'],`${id} block`);
@@ -103,7 +95,7 @@ export function validateDesign(d) {
   if (d.repeatHeader && sectionOrder(d)[0] !== 'header') fail('A repeating document header must be the first section.');
   if (d.blocks.header.breakBefore) fail('Use section ordering or body section page breaks; document header cannot break before itself.');
   if (d.blocks.items.keepTogether) fail('The items table paginates per row and cannot keep the whole collection together.');
-  if (d.page !== undefined) validatePage(d.page);
+  if (d.page !== undefined) validatePageSettings(d.page);
   for (const key of ['titleStyle','pageNumberStyle']) if (d[key] !== undefined) validateFieldStyle(d[key]);
   return d;
 }

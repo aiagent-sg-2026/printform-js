@@ -52,7 +52,7 @@ export function compileProject(project, design) {
   next.themeCss = documentTheme(design);
   const spec = createEmptyFormSpec(design.type);
   const page = pageSettings(design);
-  spec.document = {...spec.document,paper:page.paper,orientation:page.orientation,margins:page.margins};
+  spec.document = {...spec.document,...structuredClone(page)};
   spec.tokens = { brand: design.color, fontPt: design.font, cellPadding:design.padding };
   spec.assets = (design.assets || []).map(a=>({id:a.id,alt:a.alt,mime:a.src.slice(5,a.src.indexOf(';')),embedded:true}));
   spec.pagination = { ...spec.pagination, repeatDocumentHeader: design.blocks.header.enabled && design.repeatHeader, repeatTableHeader: design.repeatTable, pageNumbers: design.pageNumbers, keepTogether:BLOCKS.filter(id => design.blocks[id].enabled && design.blocks[id].keepTogether), pageBreakBefore:BLOCKS.filter(id => design.blocks[id].enabled && (design.blocks[id].breakBefore || (id === 'items' && design.breakBefore))) };

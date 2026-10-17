@@ -4,7 +4,8 @@ import { icon } from './icons.js';
 import { inspectProject } from './validation.js';
 import { sourceLabel } from './data-provenance.js';
 import { applyRow, fieldBinding, collectionBinding, imageControls } from './binding-view.js';
-import { sectionOrder, pageSettings, fieldKind } from './design-authoring.js';
+import { sectionOrder, fieldKind } from './design-authoring.js';
+import { paperControls } from './paper-controls.js';
 import { SCENARIOS } from './scenario-matrix.js';
 
 export const SAMPLES = [['erp','Current document data','Restore original dataset'],...SCENARIOS];
@@ -25,7 +26,6 @@ function sampleList(state) {
   return `<div class="sample-list">${SAMPLES.map(([id,label,detail])=>`<button type="button" class="${state.sample === id ? 'active' : ''}" data-sample="${id}"><span>${escape(label)}</span><small>${detail}</small></button>`).join('')}</div>`;
 }
 function styleForm(design) {
-  const page = pageSettings(design);
   return `<form data-form="style" class="form-stack">
     ${input('Brand color','color',design.color,'color')}
     ${input('Font size (pt)','font',design.font,'number','min="6" max="14" step="0.5"')}
@@ -33,7 +33,7 @@ function styleForm(design) {
     ${rowFill(design)}
     ${check('Alternate item rows','striped',design.striped)}${check('Table borders','borders',design.borders)}${check('Page numbers','pageNumbers',design.pageNumbers)}
     ${typographyControls('Page number','pageNumberStyle',design.pageNumberStyle,false,'any')}
-    <details><summary>Paper & margins</summary><div class="form-stack">${select('Paper size','paper',page.paper,['A4','A5','LETTER','LEGAL'].map(p=>[p,p]))}${select('Orientation','orientation',page.orientation,[['portrait','Portrait'],['landscape','Landscape']])}${['top','right','bottom','left'].map(side=>input(`${side[0].toUpperCase()+side.slice(1)} margin (px)`,`margin-${side}`,page.margins[side],'number','min="0" max="72"')).join('')}</div></details>
+    ${paperControls(design)}
     ${applyRow('Apply style')}
   </form>`;
 }

@@ -1,0 +1,178 @@
+{
+  "schema": "studio-special-media-actual-evidence-v1",
+  "baseSource": "b7bcf68799631887ace5b621d17c8e7acadbc7ec",
+  "scope": "Independently built paper-only snapshot from fixed base plus explicit paper overlays; not an immutable production or G8 profile",
+  "stats": {
+    "startTime": "2026-10-17T04:53:15.314Z",
+    "duration": 47260.545,
+    "expected": 36,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  },
+  "finitePresets": 10,
+  "customDimensionsMm": {
+    "min": 20,
+    "max": 1000
+  },
+  "actualPdfs": [
+    {
+      "title": "A4: no-code selection, measured preview, save/open, offline HTML and actual PDF",
+      "engine": "chromium",
+      "sha256": "ce8e1df2809d5fb530e8f7168deff9d434c86066bb07aa442343d94d8d0c44fa",
+      "bytes": 10984
+    },
+    {
+      "title": "A5: no-code selection, measured preview, save/open, offline HTML and actual PDF",
+      "engine": "chromium",
+      "sha256": "7f109bfec2eea2724eb924d4c2d57dbd643ec0f79b20a121f4d1031c37418bc1",
+      "bytes": 10982
+    },
+    {
+      "title": "LETTER: no-code selection, measured preview, save/open, offline HTML and actual PDF",
+      "engine": "chromium",
+      "sha256": "6b377dc64d7168e92e37de4d1a9276562faa4bf200e46a444bb1733c6c76431e",
+      "bytes": 10966
+    },
+    {
+      "title": "LEGAL: no-code selection, measured preview, save/open, offline HTML and actual PDF",
+      "engine": "chromium",
+      "sha256": "2877ee9ec39dcd56d68524b729d87dc98f2d5c75524b63fb0d4640945de6030d",
+      "bytes": 10969
+    },
+    {
+      "title": "RECEIPT_58: no-code selection, measured preview, save/open, offline HTML and actual PDF",
+      "engine": "chromium",
+      "sha256": "575a10fd99fa0475f41ba1076185059cf4c32340111fc874f2feda4d5d5912c0",
+      "bytes": 10987
+    },
+    {
+      "title": "RECEIPT_80: no-code selection, measured preview, save/open, offline HTML and actual PDF",
+      "engine": "chromium",
+      "sha256": "2821a497a1d9448615484cfebc694794f95bffeb9d5b5268b02b85cb6e7ebd4f",
+      "bytes": 10989
+    },
+    {
+      "title": "LABEL_100_70: no-code selection, measured preview, save/open, offline HTML and actual PDF",
+      "engine": "chromium",
+      "sha256": "d11ff4ffcac6fb97b6bacec876f599d38ba49f08ae5796014c12372ac84fd93a",
+      "bytes": 10971
+    },
+    {
+      "title": "LABEL_50_30: no-code selection, measured preview, save/open, offline HTML and actual PDF",
+      "engine": "chromium",
+      "sha256": "212cb5b86289fed450c73e39856ebdba8c493200aaa10cf5d970fe2827eef794",
+      "bytes": 10990
+    },
+    {
+      "title": "CONTINUOUS_210_140: no-code selection, measured preview, save/open, offline HTML and actual PDF",
+      "engine": "chromium",
+      "sha256": "db063d05cf6f87122ccbd445d1120a36bfd048201d0a9fe7641d5457257585b2",
+      "bytes": 10989
+    },
+    {
+      "title": "FANFOLD_210_280: no-code selection, measured preview, save/open, offline HTML and actual PDF",
+      "engine": "chromium",
+      "sha256": "c95bc82d0a07ecad27c2e823e93e52f9ba2f96a9a687268aef056b27ba5c0901",
+      "bytes": 10984
+    },
+    {
+      "title": "CUSTOM: no-code selection, measured preview, save/open, offline HTML and actual PDF",
+      "engine": "chromium",
+      "sha256": "a6ec87e1eae78a62cfe29fdf68d1f5b0c3bf3fd7899cb7d271d1d13fa8450af8",
+      "bytes": 10983
+    }
+  ],
+  "reportSha256": "035a9331750c1ac790916157f128cd8feea43db33678fab0d723dfacda3b42bc",
+  "independentNativeChrome": {
+    "version": "155.0.8059.84",
+    "sandbox": true,
+    "before": {
+      "paper": {
+        "width": 794,
+        "height": 1123,
+        "marginBottom": "0px"
+      },
+      "logical": {
+        "width": 794,
+        "height": 1099,
+        "marginBottom": "24px",
+        "inlineHeight": ""
+      },
+      "sourceToken": "MEDIA-001"
+    },
+    "after": {
+      "paper": {
+        "width": 794,
+        "height": 1123,
+        "marginBottom": "24px"
+      },
+      "logical": {
+        "width": 794,
+        "height": 1123,
+        "marginBottom": "0px"
+      },
+      "sourceToken": "MEDIA-001"
+    },
+    "pageErrors": [],
+    "modelCallsObserved": 0
+  },
+  "preservedFirstBrowserRun": {
+    "total": 66,
+    "pass": 30,
+    "fail": 36,
+    "geometryFailures": 30,
+    "nodeOnlyHtmlParserFailures": 6,
+    "reportSha256": "35d5f5d91e097b08bcd2234f9266d5c120eb4ce518930fd32a26e9dd6128c179"
+  },
+  "corrections": [
+    "Move24px screen separation from logical page into physical wrapper; keep declared paper/margins/fonts/source values unchanged.",
+    "Keep independent nominal mm/96dpi/72pt geometry and PDF oracle; no relaxed tolerances/retries/deadlines.",
+    "Use actual browser Open/exportedHTML/Save instead of unavailable NodeDOMParser; no parser stub."
+  ],
+  "physical": {
+    "status": "Blocked",
+    "actualReadOnlyCommand": "/usr/bin/lpstat -p -d",
+    "exitCode": 1,
+    "observed": [
+      "No destinations added.",
+      "no system default destination"
+    ],
+    "jobsSubmitted": 0,
+    "settingsChanged": false,
+    "profileDeclarationsAreCertification": false
+  },
+  "productionQualified": false,
+  "g8Qualified": false,
+  "paperOnlyBuild": {
+    "filesPassed": 246,
+    "filesSkipped": 1,
+    "testsPassed": 2832,
+    "testsSkipped": 9,
+    "contractExamplesPassed": 114
+  },
+  "runtimeSourceHashes": {
+    "src/printform/paper-sizes.js": "b5ee9846e7bfc5d2bf5c3ca28dcfd72f6ab63989be9d834b354699ee6586b7cd",
+    "src/printform/helpers.js": "1fddfeeed93776eb402b8765fec4d0f5e10aaeb49ed82f26a8abb47dd60182fe",
+    "studio-v3/paper-settings.js": "4fb52ae0f44583e0800ded3e6d0bd35e1155274c0374983c3f997e8d702b2ea6",
+    "studio-v3/paper-controls.js": "5a83f5c394a8f37217efd31ef61fd56e962c5703ad20d6efbf284639251b6269",
+    "studio-v3/design-authoring.js": "6067ec2f4c5423401e54c5cebe60b382286ef44860b7a335a762ece27f8857a7",
+    "studio-v3/design-validation.js": "47f3084f997101f3c14047163602c79358d4b7937fcc6e050b5049a87a74ceca",
+    "studio-v3/model.js": "19aad246faec5dd6b8281d2807c562d49ce9b9c89c98a4ec8bc1f1196c74e3b2",
+    "studio-v3/workspace-views.js": "c28b0c2d7b8744275076e94d918dabac643aed07cc564dbcf76291691c27e106",
+    "studio-v3/controller.js": "5e6ed2c97934a29c9afc9f7316baf7782ef3d5c6a522aeb23eb23346dff9b360",
+    "studio-v3/canvas-controls.js": "4190ae09e5fd78b82ef4b2734f0c26ad90cc1ee989510d632e9fc41f705f31ae",
+    "studio-v3/template.js": "94bbc9dd9e59e5fb91e6656e249d3781d6ce40a37ce753595cfd8d863eee2569",
+    "studio-v3/validation.js": "b4c2b3224c20a1dd47b664fc5b666be067e5ca73a2e795d95307e0fb615be2b1",
+    "studio-v3/form-drafts.js": "b70d15c6db09b1130250f8d19b9570f2669722339bf63f0871439a3e02383d14",
+    "studio-v3/agent-page-settings.js": "60368369400c5116d797e0632b49523e9a2d754e4e57cd040590869ba0a821b0",
+    "studio-v3/agent-operation-schemas.js": "6543941fc600ef7e3b1a0b8f4c751125046cf7a2be3de2bbc53262bf0382efb0",
+    "studio-v3/agent-contracts.js": "96c1ca691df4c755ea622d40ab85ac9b5afed6aa5fea0c05502781ac9fdcfe0e",
+    "studio-v3/agent-registry.js": "4370ddddbc64460387269f417ef8a1d1b9ac649c5bb7a7d5cff17ff31627fd2e",
+    "studio-v3/ai-authoring.js": "2e03f1e105f197b7352455dc84583285e525f6447751f805ee13e94356c698ef",
+    "studio-v3/ai-chat-protocol.js": "4e785e08d8beee296a38a77e8a65025b99365266b590839b590513b3d16e828a",
+    "studio-v3/agent-knowledge.js": "ec19c45d599c76c4d85bef95f5c82e755eee1dcae5b19ef6ebb7149a8227d7e6",
+    "studio-v3/observation-context.js": "a2160f8b9150f3d7972d668a113af06c9b577f9fc5e9a7253af4238feb652adc",
+    "studio-v3/app.js": "8a932ba0ca215366c29dce55e085ceb6e344ab9e89876189f703bd0542f400a6"
+  }
+}

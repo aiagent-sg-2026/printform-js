@@ -1,4 +1,5 @@
 /* eslint-disable no-console */
+import { PAPER_SIZES_MM } from "./paper-sizes.js";
 
 const TRUE_TOKENS = new Set(["y", "yes", "true", "1"]);
 const FALSE_TOKENS = new Set(["n", "no", "false", "0"]);
@@ -35,7 +36,7 @@ function normalizePaperSize(value) {
   const token = String(value || "").trim();
   if (!token) return "";
   const upper = token.toUpperCase();
-  if (upper === "A4" || upper === "A5" || upper === "LETTER" || upper === "LEGAL") {
+  if (Object.hasOwn(PAPER_SIZES_MM, upper)) {
     return upper;
   }
   if (upper === "US_LETTER" || upper === "USLETTER") return "LETTER";
@@ -50,12 +51,6 @@ function mmToPx(mm, dpi) {
   return Math.round((mmValue / 25.4) * dpiValue);
 }
 
-const PAPER_SIZES_MM = {
-  A4: { widthMm: 210, heightMm: 297 },
-  A5: { widthMm: 148, heightMm: 210 },
-  LETTER: { widthMm: 215.9, heightMm: 279.4 },
-  LEGAL: { widthMm: 215.9, heightMm: 355.6 }
-};
 
 export function resolvePaperDimensions(options) {
   const paperSize = normalizePaperSize(options && options.paperSize);

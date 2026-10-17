@@ -15,6 +15,14 @@ const fieldProperties = {label:Type.String({maxLength:100}),kind:choice(FIELD_KI
   width:Type.Number({minimum:1,maximum:400,description:'Only items columns (1..100 percent) or image fields (8..400 pixels). Omit on non-items static/bound fields; use section layout.columns.'}),
   assetId:Type.String({pattern:'^[a-z0-9-]{1,60}$'}),height:Type.Number({minimum:8,maximum:200}),fit:choice(['contain','cover'])};
 const operation = (type,properties) => object({type:Type.Literal(type),...properties});
+const customSizeMm = object({width:Type.Number({minimum:20,maximum:1000}),height:Type.Number({minimum:20,maximum:1000})});
+const printerProfile = Type.Union([Type.Null(),object({
+  version:Type.Literal(1),source:Type.Literal('user-supplied'),name:Type.String({minLength:1,maxLength:100}),
+  ...optional(Object.fromEntries(['minWidthMm','maxWidthMm','minHeightMm','maxHeightMm'].map(key=>[key,Type.Number({minimum:1,maximum:2000})]))),
+  orientations:Type.Optional(Type.Array(choice(ORIENTATIONS),{minItems:1,maxItems:2,uniqueItems:true})),
+  nonPrintableMm:Type.Optional(object(optional(Object.fromEntries(['top','right','bottom','left'].map(key=>[key,Type.Number({minimum:0,maximum:100})]))))),
+  dpi:Type.Optional(Type.Integer({minimum:72,maximum:9600})),cutter:Type.Optional(Type.Boolean())
+})]);
 // These transport schemas describe shapes/bounds. Dynamic binding, scope and final design invariants stay local.
 export const OPERATION_SCHEMAS = Object.freeze({
   set_element_style:operation('set_element_style',{target:choice(['header-title','page-number']),patch:typography}),
@@ -27,7 +35,7 @@ export const OPERATION_SCHEMAS = Object.freeze({
   set_section:operation('set_section',{target:section,patch:object(optional({enabled:Type.Boolean(),label:Type.String({maxLength:100}),
     layout:object(optional({columns:Type.Integer({minimum:1,maximum:4}),gap:Type.Number({minimum:0,maximum:48})})),breakBefore:Type.Boolean(),keepTogether:Type.Boolean()}))}),
   reorder_sections:operation('reorder_sections',{order:Type.Array(section,{minItems:5,maxItems:5,uniqueItems:true})}),
-  set_page:operation('set_page',{patch:object(optional({paper:choice(PAPERS),orientation:choice(ORIENTATIONS),margins:object(optional(Object.fromEntries(['top','right','bottom','left'].map(key=>[key,Type.Number({minimum:0,maximum:72})]))))}))}),
+  set_page:operation('set_page',{patch:object(optional({paper:choice(PAPERS),orientation:choice(ORIENTATIONS),customSizeMm,printerProfile,margins:object(optional(Object.fromEntries(['top','right','bottom','left'].map(key=>[key,Type.Number({minimum:0,maximum:72})]))))}))}),
   set_logo:operation('set_logo',{value:Type.Union([Type.Null(),object({assetId:fieldProperties.assetId,width:Type.Number({minimum:8,maximum:400}),height:fieldProperties.height,fit:Type.Optional(fieldProperties.fit)})])}),
   set_collection:operation('set_collection',{value:Type.String({minLength:1,maxLength:240})}),
   set_heading:operation('set_heading',{value:Type.String({maxLength:100,description:'Changes stored heading text only; does not enable header. A visible printed title also requires set_section target:"header" patch:{enabled:true}, only when scope permits. Preserve intentionally hidden headings.'})})

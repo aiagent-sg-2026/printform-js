@@ -6,6 +6,7 @@ export { validPointer } from './design-authoring.js';
 import { validPointer, fieldKind, pageDimensions, pageSettings } from './design-authoring.js';
 import { validateDesign } from './design-validation.js';
 import { assertProjectSchema, assertCollectionBinding } from './dataset-schema.js';
+import { printerStatus } from './paper-settings.js';
 
 export function bindingValidation(project) {
   const d = designOf(project);
@@ -51,11 +52,12 @@ function check(value, field, path, component, issue) {
 export function inspectProject(project, rendered = null) {
   const staticReport = validateProject(project);
   const bindings = bindingValidation(project);
-  const paper = rendered ? validatePaperReport(rendered,project) : null;
+  const paper = rendered && !bindings.errors.some(error=>error.code === 'INVALID_DESIGN') ? validatePaperReport(rendered,project) : null;
   const errors = [...staticReport.errors, ...bindings.errors, ...(paper?.validation?.errors || [])];
-  const warnings = [...staticReport.warnings, ...(rendered?.validation?.warnings || [])];
+  const physical = printerStatus(project.manifest.studioV3);
+  const warnings = [...staticReport.warnings, ...(rendered?.validation?.warnings || []),{code:'PHYSICAL_PRINTER_UNVERIFIED',message:physical.message,severity:'warning'}];
   const ready = paper?.status === 'ready' && !errors.length;
-  return { valid: !errors.length, ready, errors, warnings, metrics: rendered?.metrics || {}, bindingErrors: bindings.errorCount };
+  return { valid: !errors.length, ready, errors, warnings, physical, metrics: rendered?.metrics || {}, bindingErrors: bindings.errorCount };
 }
 
 export function validatePaperReport(report, projectOrDesign = null) {

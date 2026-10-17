@@ -24,7 +24,7 @@ Origins:66 historical rows,13 reconciliation rows and5 bounded source-workspace 
 
 Decision recorded: the `validate-all` action is the existing `printform.validation.matrix` row, so it is not duplicated. `rename` and `data.rows-page` / `data.draft-apply` stay as separate rows for stable, individually testable IDs even though they overlap broader rows.
 
-The agent reads this ledger at runtime through the generated `studio-v3/agent-workflows.js` and the `product-workflows` guide. After editing the CSV, run `node scripts/generate-studio-v3-workflows.mjs`; a test fails while the module is stale.
+The agent reads this ledger at runtime through the generated `studio-v3/agent-workflows.js` and the `product-workflows` guide. After editing the CSV, run `node scripts/generate-studio-v3-workflows.mjs`. Catalog/text equality is not consumer behavior coverage; use the relevant workflow and browser checks.
 
 ## Disposition rules used
 
@@ -42,7 +42,7 @@ Data10, Project5, Observation4, Authoring4, References3 remain the26 eligible ga
 
 ## UI entry mapping
 
-The CSV column `ui_entries` links UI entry points to rows. Bare IDs are `data-action` / database action IDs. `attr:value` entries are delegated workflow selectors (for example `mode:data`, `template:blank`, `ai:models`, `form:locale`); `attr:*` covers a selector whose values are generated at runtime (samples, datasets, issues, tree paths). Tests fail when a UI entry exists without a row, or a row names an entry that no longer exists. Preview internals (`data-v3-*`), element identity (`data-ai-tag-id`) and validation markers are not workflows and are excluded.
+The CSV column `ui_entries` links UI entry points to rows. Bare IDs are `data-action` / database action IDs. `attr:value` entries are delegated workflow selectors (for example `mode:data`, `template:blank`, `ai:models`, `form:locale`); `attr:*` covers a selector whose values are generated at runtime (samples, datasets, issues, tree paths). These are navigation metadata, not proof of runtime coverage. Preview internals (`data-v3-*`), element identity (`data-ai-tag-id`) and validation markers are not workflows and are excluded.
 
 ## Task families (CA-09 corpus)
 
