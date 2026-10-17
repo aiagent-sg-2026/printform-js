@@ -115,3 +115,5 @@ e385公开版本接受自然语言改纸/先预览后人工Apply任务，原demo
 继续开放：任意ERP/raw格式/法定本地化、原生XLSX/未知连接器、join/会计/税/FX/工资推算、GS1/真实扫码/打印、固定上游与DPA、完整同profile G8/G6/G9。当前是有界通用Studio，不是通用任意代码执行或Production Ready。
 
 后续完整来源构建266文件/3238项通过、9opt-in跳过，原127契约实例与39审查通过。旧729场景623/106保留；发现的raw模块404、旧入口/隐藏结构、终止文案/原生File.text假设分开修复，不把Node SDK本身当浏览器集成证明。原生55000字符长描述实际合法34页且逐字完整；错误按semantic ID只取两段的3167字符观察也保留，改读真实续页单元格而不是宣称数据丢失。原子页尾则保留所有纸张/字体/原文，仅明确keepTogether并实际阻断。[完整范围](acceptance/STUDIO_V3_GENERAL_CAPABILITIES_20261017.md)。
+
+[PR95/main c89d85bd](https://github.com/yapweijun1996/printform-js/pull/95)构建发布成功；单次原精确公开纸张任务真实Preview/显式验收驱动Apply/实际Save深比较Pass，6HTTP200/19.793秒，全部其他属性守恒、3canary未出站、0pageerrors。与旧三个Fail分别保留，不把一次独立Pass或已修复宿主误完成当作完整AI生产资格。[证据](STUDIO_V3_AI_DRAFT_OUTCOME.zh-CN.md)。

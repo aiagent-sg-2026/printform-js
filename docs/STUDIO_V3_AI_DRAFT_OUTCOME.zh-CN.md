@@ -83,3 +83,13 @@ PR94/main `0c02e1bc20b8b94bcf43f3c8d0ee109afafad78f` 部署后，主代理以原
 - 现有固定`@earendil-works/pi-agent-core`／`pi-ai`0.85.1及[包声明仓库](https://github.com/earendil-works/pi)继续使用，没有替换provider或Harness预算。
 - 已读取KB的`news-digest:golden-evaluator`1.0.0（skill ref `270d896a-12b0-40b4-856f-f6274d872c95:00f0459c-5a2b-477e-aeb0-74b058f20f1f`）；仅复用冻结评估、保留失败、把真实执行与确定性测试分开的原则，不套用新闻业务阈值。
 - 本轮另读取KB `agent:autonomous-delivery-verification-loop`1.1.0、`ui:ux-quality-auditor`1.0.3、`codex:orchestrated-implementation-worker`1.5.0的完整定义；使用独立后置结果、实际界面／下载与保留失败原则，不以agent声明或测试数量认证模型／生产资格。
+
+## PR95发布后：同输入独立任务首次通过
+
+[PR95](https://github.com/yapweijun1996/printform-js/pull/95)源提交`18e9640d3f88`合并main `c89d85bd5d153da81e46c0af9dd426f51b1a2691`，[Pages39039021333](https://github.com/yapweijun1996/printform-js/actions/runs/39039021333)构建/发布成功；原生Chrome155实际meta精确匹配。唯一实际run保持原提示词、fixture SHA`6f59d0785a9ecacabac192ac329da225ff5da9281e858bf11fdc1d7b6bc94c66`、demo-auto、whole、steps、text/pixels关闭及所有原预算。
+
+结果**独立用户任务Pass，不是正式G8**：6个HTTP200、19.793秒，UI报告121014tokens；真正纸上预览CUSTOM188.5×244.2mm portrait且仍r1，未自动Apply。验收驱动随后显式点击UI Apply，真实Save r2与“原项目只改纸张三字段及revision+1”的独立expected深比较完全一致，所有来源、字体、绑定、页边距及原printer profile均保留。Apply是授权虚构验收驱动操作，不伪称最终用户亲自确认。
+
+实际Save前5242字节SHA`6c1322300cb1446bf9e9f011a60ad39ac10ff22ffc0a1fb8c3d1671db29c4441`，后5343字节SHA`188c6f05c194c9ce5efa75b20c0a7b622074a27bc3392f7f756f6a56163a994b`；3canary均未进任何模型请求，pageerror0，截图已审阅。第一次驱动缺`--enable-automation`导致命令行诊断前置失败，0run/0请求，记录保留；仅补该诊断旗标，sandbox仍true，没有补模型请求刷绿。
+
+旧e385/ed816/0c02失败全部保留；本次不覆盖或合并profile，正式G8零新增attempt。resolved upstream仍unavailable，固定上游/DPA、完整G8/G6/G9与实体打印扫码缺口不变，**AI仍Pilot，不是Production Ready**。私有wire只保留owner0600，不读取、转录或入KB。
