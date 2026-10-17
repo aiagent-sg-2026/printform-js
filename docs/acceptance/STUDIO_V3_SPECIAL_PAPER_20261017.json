@@ -1,0 +1,181 @@
+{
+  "schemaVersion": 1,
+  "scope": "General printform-js Studio finite-paper audit; not hardware certification",
+  "observedDate": "2026-10-17",
+  "sanitization": "No device names, queue names, device URIs, hostnames, serials, UUIDs, bus identifiers or user paths retained. Protocol names and aggregate counts only.",
+  "queueEvidence": {
+    "command": "lpstat -p -d",
+    "provenance": "Parent-supplied actual output; accepted as ground truth; not rerun by audit worker",
+    "exitCode": 1,
+    "stdoutOrStderr": [
+      "lpstat: No destinations added.",
+      "no system default destination"
+    ],
+    "conclusion": "No configured destination or system default; does not prove no connected physical printer"
+  },
+  "nativeObservations": [
+    {
+      "command": "lpinfo -v",
+      "exitCode": 0,
+      "protocolEntries": [
+        "ipp",
+        "http",
+        "ipps",
+        "https",
+        "lpd",
+        "smb",
+        "socket"
+      ],
+      "concreteDeviceUriCount": 0,
+      "conclusion": "Only generic network transport entries returned; no concrete printer endpoint discovered"
+    },
+    {
+      "command": "system_profiler SPPrintersDataType SPUSBDataType -json",
+      "exitCode": 0,
+      "printerStatus": "no_info_found",
+      "cupsVersion": "CUPS/2.3.4 (macOS 27.0.1; arm64) IPP/2.0",
+      "legacyUsbCategoryEmpty": true,
+      "limitation": "SPUSBDataType is not advertised by this host; empty legacy category is not USB absence evidence"
+    },
+    {
+      "command": "system_profiler -listDataTypes",
+      "exitCode": 0,
+      "relevantSupportedCategories": [
+        "SPPrintersDataType",
+        "SPUSBHostDataType",
+        "SPThunderboltDataType"
+      ],
+      "legacyUsbCategoryAdvertised": false
+    },
+    {
+      "command": "system_profiler SPUSBHostDataType SPThunderboltDataType -json",
+      "exitCode": 0,
+      "usbHostBusCount": 2,
+      "usbAttachedChildDeviceCount": 0,
+      "thunderboltBusCount": 2,
+      "thunderboltReceptaclesReportingNoDevices": 2,
+      "conclusion": "Supported inventory reports built-in USB host buses only and no attached Thunderbolt devices; no physical printer identified on those buses"
+    },
+    {
+      "command": "ippfind -T 5",
+      "exitCode": 1,
+      "outputEmpty": true,
+      "conclusion": "No matching advertised IPP service returned in the bounded discovery window",
+      "limitation": "Does not exclude sleeping, unadvertised, remote-subnet, Bluetooth, serial or otherwise inaccessible printers"
+    }
+  ],
+  "physicalPrint": {
+    "status": "blocked",
+    "jobsSubmitted": 0,
+    "prerequisite": "An operator-accessible physical printer with supported media, a reachable configured destination and recorded driver/IPP capabilities; permission and an operator to inspect and measure actual output",
+    "physicalDeviceIdentified": false,
+    "noHardwareAnywhereClaim": false,
+    "settingsChanged": false,
+    "driversInstalled": false,
+    "queuesConfigured": false,
+    "virtualPdfCountsAsHardware": false
+  },
+  "currentSourceExecution": {
+    "owner": "Parent integration agent",
+    "executedAt": "2026-10-17T00:36:41.657Z",
+    "sourceSnapshot": "f6e5f8a430b4b5244cb297966f3bef735f277a42 plus task2 owned integration overlay; isolated git-archive snapshot, not an already deployed commit",
+    "command": "Node24 npm run build:site; playwright test --config verification.config.mjs (workers1, retries0, timeout45000)",
+    "build": {
+      "testFilesPassed": 244,
+      "testsPassed": 2778,
+      "testsSkipped": 9
+    },
+    "paperResults": [
+      {
+        "spec": "additional-paper-matrix.spec.js",
+        "tests": 36,
+        "passed": 36,
+        "retries": 0,
+        "pdfs": 12
+      },
+      {
+        "spec": "letter-legal-paper-matrix.spec.js",
+        "tests": 48,
+        "passed": 48,
+        "retries": 0,
+        "pdfs": 16
+      },
+      {
+        "spec": "special-paper-matrix.spec.js",
+        "tests": 24,
+        "passed": 24,
+        "retries": 0,
+        "pdfs": 8
+      }
+    ],
+    "browserCasesPassed": 108,
+    "browserCasesSkipped": 0,
+    "retries": 0,
+    "chromiumPdfArtifacts": 36,
+    "pdfArtifacts": [
+      {"spec":"additional-paper-matrix.spec.js","project":"chromium","name":"a5wide-one-row-direct.pdf","bytes":36273,"sha256":"4ac378f4ecc369eb2aa27140b1d5a005287d05dfd68df3431c0e283bd2290c7f"},
+      {"spec":"additional-paper-matrix.spec.js","project":"chromium","name":"a5wide-one-row-standalone.pdf","bytes":36375,"sha256":"6a56dd74c5516e4d3a795e684690730ed478bb78d7018f8de5021d6f59449c55"},
+      {"spec":"additional-paper-matrix.spec.js","project":"chromium","name":"a5wide-multi-row-direct.pdf","bytes":88229,"sha256":"c0160427005984f0919942ea00076170c8cbe8a91f4ab5fb294527ecdaab64c3"},
+      {"spec":"additional-paper-matrix.spec.js","project":"chromium","name":"a5wide-multi-row-standalone.pdf","bytes":88331,"sha256":"f5fde70ccb80a1287f43a009d811d4120a53918ec6467bc21558a81d91fd2fd6"},
+      {"spec":"additional-paper-matrix.spec.js","project":"chromium","name":"label50-one-row-direct.pdf","bytes":34864,"sha256":"f227d926fef3138568fce20194a98739beca705837b616d306d08a27807fde54"},
+      {"spec":"additional-paper-matrix.spec.js","project":"chromium","name":"label50-one-row-standalone.pdf","bytes":34973,"sha256":"d7861d20870784e476ef2fe019b272ee4a02b249ee361b611af035848287d190"},
+      {"spec":"additional-paper-matrix.spec.js","project":"chromium","name":"label50-multi-row-direct.pdf","bytes":37329,"sha256":"ae9ce5ef8f5c11ede7bc4edd586467212dfad0caf1a50a9042dd95967ea0ae21"},
+      {"spec":"additional-paper-matrix.spec.js","project":"chromium","name":"label50-multi-row-standalone.pdf","bytes":37438,"sha256":"ddee247720d5c61de345e7cde36afc301c7fc162d12905cde481e8af07e0dba7"},
+      {"spec":"additional-paper-matrix.spec.js","project":"chromium","name":"fanfold280-one-row-direct.pdf","bytes":36719,"sha256":"74cc98649c7e539ba19c8b2d20ef46ddfe42879bb6cb2f93684c8812e1a18631"},
+      {"spec":"additional-paper-matrix.spec.js","project":"chromium","name":"fanfold280-one-row-standalone.pdf","bytes":36853,"sha256":"f7176099df31f9f5a1cef09499a4e1f43f3dbc9e576d9a07443446bbff97af28"},
+      {"spec":"additional-paper-matrix.spec.js","project":"chromium","name":"fanfold280-multi-row-direct.pdf","bytes":95809,"sha256":"f2832ae5018400618de8a2b64ced654c5db5b9382ea1f91e282fb63a2465dc7f"},
+      {"spec":"additional-paper-matrix.spec.js","project":"chromium","name":"fanfold280-multi-row-standalone.pdf","bytes":95943,"sha256":"7b44a3488608cf1476c088f93056b1bfa7f92bdba8f3d5294b54f896f62d05fb"},
+      {"spec":"letter-legal-paper-matrix.spec.js","project":"chromium","name":"letterportrait-one-row-direct.pdf","bytes":45983,"sha256":"07137b09d121dc0d9f54deb24cd0b6f79ad3b104c1f54501fc6f477898ed852a"},
+      {"spec":"letter-legal-paper-matrix.spec.js","project":"chromium","name":"letterportrait-one-row-standalone.pdf","bytes":46088,"sha256":"bc69ca1dec21c6933bb7ae4e4e4715db1cffe95c1f712bc3500756ed0de43538"},
+      {"spec":"letter-legal-paper-matrix.spec.js","project":"chromium","name":"letterportrait-multi-row-direct.pdf","bytes":101747,"sha256":"31a54933303ce7215a8aeabdb2f40a853933401f17a5cade8dc9c86e0a2add01"},
+      {"spec":"letter-legal-paper-matrix.spec.js","project":"chromium","name":"letterportrait-multi-row-standalone.pdf","bytes":101853,"sha256":"022e230151f0d353848c4001cc9c2f074bee676379ce61f13b27a367a5713a6f"},
+      {"spec":"letter-legal-paper-matrix.spec.js","project":"chromium","name":"letterlandscape-one-row-direct.pdf","bytes":46889,"sha256":"ff8dbc566c0e1eb49507b9200daae167b3ff17dea11e0cada66e6c90a385c69a"},
+      {"spec":"letter-legal-paper-matrix.spec.js","project":"chromium","name":"letterlandscape-one-row-standalone.pdf","bytes":46995,"sha256":"65bae78d20342ab9f8956309d8462764a555327cdacf6dfdcd8a58235dc4dd76"},
+      {"spec":"letter-legal-paper-matrix.spec.js","project":"chromium","name":"letterlandscape-multi-row-direct.pdf","bytes":102293,"sha256":"eca070301398789723e1e81d590b6771e165cb7189284e24c87ceaceb71fe9ec"},
+      {"spec":"letter-legal-paper-matrix.spec.js","project":"chromium","name":"letterlandscape-multi-row-standalone.pdf","bytes":102399,"sha256":"530e83ad0cf7be1934fc68c91bf36ef47dcd0f067b8cfc6554f109bad3f31e44"},
+      {"spec":"letter-legal-paper-matrix.spec.js","project":"chromium","name":"legalportrait-one-row-direct.pdf","bytes":46334,"sha256":"0f38e94583265fb9c4fb26c13b3244101207c785908db715319c471b6b0791c1"},
+      {"spec":"letter-legal-paper-matrix.spec.js","project":"chromium","name":"legalportrait-one-row-standalone.pdf","bytes":46438,"sha256":"57117e417ed34a49727454311d9d7f49338987c7351d71930d4e287390612b02"},
+      {"spec":"letter-legal-paper-matrix.spec.js","project":"chromium","name":"legalportrait-multi-row-direct.pdf","bytes":102534,"sha256":"c2e889d87d49f94f761a75d004264a99a784aaa85d04e1887bfccee6fae175cd"},
+      {"spec":"letter-legal-paper-matrix.spec.js","project":"chromium","name":"legalportrait-multi-row-standalone.pdf","bytes":102638,"sha256":"36cc24f5eab483930f737099d7fa2e17124b5bc87be1cf71f3ff85f1dea43502"},
+      {"spec":"letter-legal-paper-matrix.spec.js","project":"chromium","name":"legallandscape-one-row-direct.pdf","bytes":47118,"sha256":"2b73d7124431f8344c6dbc7330896c653e13da0db29a14ea61efc9a6d81de5b6"},
+      {"spec":"letter-legal-paper-matrix.spec.js","project":"chromium","name":"legallandscape-one-row-standalone.pdf","bytes":47223,"sha256":"c429f1708c5e2f1b13abdbbce39c66087307873f6f55d667b0bd05910274eb95"},
+      {"spec":"letter-legal-paper-matrix.spec.js","project":"chromium","name":"legallandscape-multi-row-direct.pdf","bytes":103651,"sha256":"95ff11ccb361bf5e8e0888e226fe7369f891b112e56e3e5d4c71f7f1adad0e30"},
+      {"spec":"letter-legal-paper-matrix.spec.js","project":"chromium","name":"legallandscape-multi-row-standalone.pdf","bytes":103756,"sha256":"b1df7d475827bbfe09252df86d5dc8b3424496db15e5bb5285624d61b11883e4"},
+      {"spec":"special-paper-matrix.spec.js","project":"chromium","name":"thermal58-direct.pdf","bytes":81126,"sha256":"5b9d03c71d6ea192645cf7eac6c8ca587cab30180b8db2a9f1e21170516b7f4f"},
+      {"spec":"special-paper-matrix.spec.js","project":"chromium","name":"thermal58-standalone.pdf","bytes":81236,"sha256":"c2dda401cc2443d773132fbcaeaa8b45253464601165fd042eca44de08a3330d"},
+      {"spec":"special-paper-matrix.spec.js","project":"chromium","name":"thermal80-direct.pdf","bytes":82156,"sha256":"7493afcd441bef767572e6382ef52a2c2cfccb6e0c06344bbee426a7c4ce4bad"},
+      {"spec":"special-paper-matrix.spec.js","project":"chromium","name":"thermal80-standalone.pdf","bytes":82266,"sha256":"42efc4418d55b06d7ce0724fd68eb00518e517942b0f4323f837da1fc8f87a5c"},
+      {"spec":"special-paper-matrix.spec.js","project":"chromium","name":"label-direct.pdf","bytes":79395,"sha256":"ad1f54661145607248ab885fb9d5f0322b822f150f71d8db7fa6ced0a79fa0fd"},
+      {"spec":"special-paper-matrix.spec.js","project":"chromium","name":"label-standalone.pdf","bytes":79509,"sha256":"5faeff7d595cf1b0f1ef21f4384e20107d982888dc7ea83b922aeee2180e8b7e"},
+      {"spec":"special-paper-matrix.spec.js","project":"chromium","name":"continuous-direct.pdf","bytes":88588,"sha256":"d90ed984c8527d7f18b1730c6cb2119a728d4b9c957a9196ae4de5674a6ce90b"},
+      {"spec":"special-paper-matrix.spec.js","project":"chromium","name":"continuous-standalone.pdf","bytes":88719,"sha256":"4f659c7db01f4288850ea65b9fc8bdb6027a418d07c1ec3f0bace7dd3d71448c"}
+    ],
+    "report": "/tmp/printform-industry-task-20261017/report-font-context.json",
+    "reportSha256": "a4335ff143ca958330662105d479bea6a4a3a99e01e356ab9e437a17acf42360",
+    "runtimeSha256": "e03c592a250e973bee4ddc1be71dfd3cf5ff19997ad20d18ee801008d9501fcf",
+    "wholeReport": {
+      "passed": 121,
+      "failed": 2,
+      "notes": "Both failures are business HTML-reopen Firefox lifecycle cases, retained separately; not counted as paper passes."
+    },
+    "physicalOutput": "Blocked: no accessible configured/discovered physical printer, stock or measurement operator; zero jobs submitted",
+    "subsequentBusinessVerification": {
+      "passed": 15,
+      "failed": 0,
+      "skipped": 0,
+      "retries": 0,
+      "actualChromiumPdfs": 5,
+      "report": "/tmp/printform-industry-task-20261017/report-business-live-dom.json",
+      "reportSha256": "d9dd11163041f1ed3b3d773e5c574d4cbd37062cf75bd4ed16856623c2d0c647",
+      "scope": "Same runtime; all-engine current live main-world DOM consumer. Original source/geometry/PDF expectations,45s deadline and no-retry policy preserved; previous failures retained."
+    }
+  },
+  "sourceFindings": {
+    "existingFiniteProfiles": 11,
+    "productionOrSpecEdits": false,
+    "concreteRuntimeDefectDemonstrated": false,
+    "variableLengthRollLimit": "Existing thermal profiles have fixed finite heights; content-dependent roll length and arbitrary alternate heights have no dedicated consumer in these three matrices",
+    "boundaryPolicy": "No new profile, redundant test, silent scale, overflow suppression or hardware fallback introduced",
+    "scope": "Paper audit worker and existing paper profiles only; integrated Studio runtime separately contains the actual task2 CJK font-mapping fix."
+  }
+}
