@@ -83,6 +83,8 @@ npm run studio:coding-runner -- --origin https://studio.example.com
 
 同日后续：browser-only ab9 profile 的T-qa-01三次真实执行均Fail，正式CSV已有3条实际记录，见[基线证据](acceptance/STUDIO_V3_G8_READONLY_20261017.md)。本任务没有执行source runner，不能补源码测试进程receipt或G6；源码历史结果不与只读profile混算。
 
+修复版公开8c同原题3/3真实Pass，旧ab9三Fail保留；正式CSV共6条但按两个profile分别计3/180。本证据只覆盖浏览器只读问答，source runner仍未执行；不能把UI独立回执或单题成功改称源码进程／完整G6/G8/G9资格。
+
 
 ## 官方研究
 

@@ -190,7 +190,7 @@ PCAR 历史截止、CCAR 重复来源记录、同发票拆分 Payment/Receipt、
 | 真实业务数据处理 | 当前 route 是 Demo；未找到可验证的具体服务训练/保留/地区/分包处理约定，不能授权机密数据。KB 的公开 Demo 目标只证明短期浏览器 session 和服务端成本/滥用控制的设计意图 |
 | 底层模型身份 | `demo-auto` 未提供固定 upstream model/version；只能记录 route-level 行为，不能归因模型或承诺跨版本等价 |
 | 任意源代码代理 G6 | 现有配对Node24 sandbox已完成一个实际公开模型的源码→JSON制品→候选→人工Apply任务；任意仓库/依赖、托管多租户、跨平台与完整G6仍未qualified |
-| 全任务资格 G8 | 原标准仍60 tasks×3=180 attempts/profile；60冻结输入、20holdout与六essential已实际校验。公开ab9的T-qa-01三次真实执行均Fail：宿主破坏JSON或无效receipt ID阻断，见[逐次证据](acceptance/STUDIO_V3_G8_READONLY_20261017.md)。12不可用请求只能Blocked；完整G8未合格，未混算版本或改oracle |
+| 全任务资格 G8 | 仍60tasks×3=180attempts/profile；60冻结输入／20holdout已校验。ab9原题三次Fail保留，8c同题三次Pass，各profile仅3/180；[实际证据](acceptance/STUDIO_V3_G8_READONLY_20261017.md)。12不可用请求仍Blocked；其他任务及G8未完成，不混算版本或改oracle |
 | 运行发布 G9 | 未证明具体生产 tenant 身份、服务 SLO、容量/费用治理、审计及事故恢复；真实打印机和真实辅助技术验收也不能从浏览器测试推出 |
 
 不把这些项目标为完成，不删除门禁，不把“像 coding agent 一样工作”偷换成无限制执行代码或获得全部生产权限。
@@ -231,3 +231,5 @@ G8仍**0/60任务、0/180正式尝试**。G6/G9、DPA、真实数据许可、跨
 独立预检还复现显式“只读…不要修改”被误判可写、并接受修改proposal；现优先识别前导只读约束，实际API已拒绝该修改。没有调整原JSON任务/字体formatter来凑通过，[前后原始结论](acceptance/STUDIO_V3_READONLY_PREFIX_20261017.json)与真实模型验收分开。
 
 2026-10-17真实基线补充：正式CSV从语料提交时0条推进为3条实际Fail；模型三次都生成正确JSON，但实际宿主交付失败，必须按最终用户结果评分。表单／数据／schema／document ID及r0不变，无critical authority violation。签名原始wire与真实Save保留于宿主私有证据，不发布reasoning载荷或私钥；unknown upstream仍仅route-level，不能据此标Production Ready。
+
+2026-10-17修复版补充：8c公开版本原冻结T-qa-01真实3/3通过，实际completion使用observationId:null，用户正文与模型JSON字节一致，旧三Fail不覆盖。另一次非G8真实模型检查证明独立回执在1440px与375px可见、完整换行且r0不变。最终独立构建244文件／2786项、9 opt-in跳过；这些不填补其余任务、固定upstream、DPA或G6/G9。[修复版逐次结果](acceptance/STUDIO_V3_G8_CORRECTED_20261017.json)。

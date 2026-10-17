@@ -1,6 +1,6 @@
 # Studio v3 Real-Task Register
 
-2026-10-17：已冻结60个真实虚构输入（十类各六个）、20个holdout及六个essential；CLI实际返回 errors=[]。公开ab9版本已执行T-qa-01三次，原始提示／oracle不变，均Fail并写入[实际证据](acceptance/STUDIO_V3_G8_READONLY_20261017.md)；不是冻结即通过，G8仍未合格。原门槛由[验收标准](STUDIO_V3_CODING_AGENT_ACCEPTANCE.md)拥有。
+2026-10-17：已冻结60个虚构输入、20个holdout及六essential；实际CLI errors=[]。正式CSV共6条真实执行：ab9旧profile三次Fail永久保留，8c修复profile原题三次Pass；各profile仅3/180，不能混算为同版6次或全面合格。[逐次证据](acceptance/STUDIO_V3_G8_READONLY_20261017.md)。原提示／oracle／模型路由／预算及[验收门槛](STUDIO_V3_CODING_AGENT_ACCEPTANCE.md)不变。
 
 Files:
 

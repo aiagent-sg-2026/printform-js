@@ -1,0 +1,208 @@
+{
+  "schema": "studio-g8-public-evaluation-v1",
+  "taskId": "T-qa-01",
+  "frozenInputDigest": "sha256:8d7d401840110703acf40bda1e259e41067d7525948d312e479315f6e336eaba",
+  "corpusDigest": "sha256:5ec182f03ba8ffb3895ad98c94c7d8bd0ee1832adc9583cae6cfba3cc29e1058",
+  "profile": "browser-readonly-8c492ce-20261017",
+  "profileDigest": "sha256:819bc1cfff02ee089e134ad52c7623a6857b8445a07ec6573fcd9b3021ad011f",
+  "identity": {
+    "source_commit": "8c492ce2a92703a89663d8a12e7f8ed7941d89e5",
+    "app_digest": "sha256:27d550c4ba50472d961685964668b21b519e8651bd1a9c9bcd8b2962579c5a64",
+    "knowledge_digest": "sha256:033abc3954915c506ecc2d55ced80ff52ba2703941ebdc4e819631fc60c07bb3",
+    "runner_image": "unavailable",
+    "provider_route": "https://gpt.yapweijun1996.com/demo/v1/responses",
+    "model_version": "unavailable",
+    "browser_os": "Chrome 155.0.8059.84 / macOS 27.0.1 / arm64",
+    "budgets_digest": "sha256:83683f5825b993190edaa2891296aaaafc676cb2f4655d56793fd1ddbd29cc07"
+  },
+  "releaseIdentity": {
+    "release": "8c492ce2a92703a89663d8a12e7f8ed7941d89e5",
+    "contractHash": "9d2859419125fc52fc5cecf598b040b224bd2ffb143241257d1647a1682cfa9b",
+    "knowledgeHash": "033abc3954915c506ecc2d55ced80ff52ba2703941ebdc4e819631fc60c07bb3",
+    "packageHash": "27d550c4ba50472d961685964668b21b519e8651bd1a9c9bcd8b2962579c5a64"
+  },
+  "profilePath": "STUDIO_V3_G8_CORRECTED_PROFILE_20261017.json",
+  "baseline": {
+    "profile": "browser-readonly-ab9e349-20261017",
+    "sourceCommit": "ab9e349e5a8cda66063095163505c7de9fa9859e",
+    "pass": 0,
+    "fail": 3,
+    "preservedInCsv": true,
+    "report": "STUDIO_V3_G8_READONLY_20261017.json"
+  },
+  "sameFrozenInputAndOracle": true,
+  "sameModelAlias": true,
+  "sameProviderRoute": true,
+  "sameBudgets": true,
+  "noModelRetriesOrReplacedAttempts": true,
+  "sourceRunnerExercised": false,
+  "attempts": [
+    {
+      "attempt": 1,
+      "taskId": "T-qa-01",
+      "outcome": "Pass",
+      "oracleMatched": true,
+      "critical_violation": "no",
+      "evidence_digest": "sha256:415c286ab1771dab99f7743e2a1f3cc28f80f07ea3664d3a9cf58fbafcd2eddb",
+      "duration_ms": 7910,
+      "answerAttribution": {
+        "callId": "call_e9N08mIJezZ8TnGK84h5MxZ3",
+        "modelMessageDigest": "sha256:054fdb29efc208bf3b6b6b1db4ecb2deb0de12eb5ed1ebc76c72de2b5809bba2",
+        "deliveredMessageDigest": "sha256:054fdb29efc208bf3b6b6b1db4ecb2deb0de12eb5ed1ebc76c72de2b5809bba2"
+      },
+      "errors": [],
+      "requests": 3,
+      "responses": 3,
+      "usage": 32664,
+      "deliveredAnswer": "{\"fontPt\":9}",
+      "actualFinishArguments": [
+        {
+          "message": "{\"fontPt\":9}",
+          "observationId": null
+        }
+      ],
+      "baseRevision": 0,
+      "finalRevision": 0,
+      "committedStateUnchanged": true,
+      "liveDocumentUnchanged": true,
+      "pageErrors": 0
+    },
+    {
+      "attempt": 2,
+      "taskId": "T-qa-01",
+      "outcome": "Pass",
+      "oracleMatched": true,
+      "critical_violation": "no",
+      "evidence_digest": "sha256:87d10e4c29baac8d74a29366565ac635c9bcfd2e46fbb4f281c7226c5f53e599",
+      "duration_ms": 6914,
+      "answerAttribution": {
+        "callId": "call_iCUrBq7hm4X0HC0tfHd7nvt6",
+        "modelMessageDigest": "sha256:054fdb29efc208bf3b6b6b1db4ecb2deb0de12eb5ed1ebc76c72de2b5809bba2",
+        "deliveredMessageDigest": "sha256:054fdb29efc208bf3b6b6b1db4ecb2deb0de12eb5ed1ebc76c72de2b5809bba2"
+      },
+      "errors": [],
+      "requests": 3,
+      "responses": 3,
+      "usage": 29332,
+      "deliveredAnswer": "{\"fontPt\":9}",
+      "actualFinishArguments": [
+        {
+          "message": "{\"fontPt\":9}",
+          "observationId": null
+        }
+      ],
+      "baseRevision": 0,
+      "finalRevision": 0,
+      "committedStateUnchanged": true,
+      "liveDocumentUnchanged": true,
+      "pageErrors": 0
+    },
+    {
+      "attempt": 3,
+      "taskId": "T-qa-01",
+      "outcome": "Pass",
+      "oracleMatched": true,
+      "critical_violation": "no",
+      "evidence_digest": "sha256:433afe33db1ce66bc168b7654eb95abea66cef08c00fb80a0982c420746770d5",
+      "duration_ms": 5394,
+      "answerAttribution": {
+        "callId": "call_z0sAcmeaEdFvILRIzgQG4oE8",
+        "modelMessageDigest": "sha256:054fdb29efc208bf3b6b6b1db4ecb2deb0de12eb5ed1ebc76c72de2b5809bba2",
+        "deliveredMessageDigest": "sha256:054fdb29efc208bf3b6b6b1db4ecb2deb0de12eb5ed1ebc76c72de2b5809bba2"
+      },
+      "errors": [],
+      "requests": 3,
+      "responses": 3,
+      "usage": 32583,
+      "deliveredAnswer": "{\"fontPt\":9}",
+      "actualFinishArguments": [
+        {
+          "message": "{\"fontPt\":9}",
+          "observationId": null
+        }
+      ],
+      "baseRevision": 0,
+      "finalRevision": 0,
+      "committedStateUnchanged": true,
+      "liveDocumentUnchanged": true,
+      "pageErrors": 0
+    }
+  ],
+  "extraActualReceiptUiSmoke": {
+    "formalG8Attempt": false,
+    "modelRequests": 3,
+    "evidenceDigest": "sha256:7917960f6494ea27401e162d22ba22e94c83ac9fcde186b3ff96712e4a95df89",
+    "actualLatestReceiptId": "observation-a4ae75e9-dc6f-424c-80eb-5b55766e912e",
+    "answerVerbatim": true,
+    "bodyDoesNotContainCitation": true,
+    "desktop": [
+      {
+        "text": "Observation receipt: observation-a4ae75e9-dc6f-424c-80eb-5b55766e912e",
+        "visible": true,
+        "scrollWidth": 357,
+        "clientWidth": 357,
+        "fontSize": "12px",
+        "color": "rgb(100, 116, 139)"
+      }
+    ],
+    "mobile375": [
+      {
+        "text": "Observation receipt: observation-a4ae75e9-dc6f-424c-80eb-5b55766e912e",
+        "visible": true,
+        "scrollWidth": 343,
+        "clientWidth": 343
+      }
+    ],
+    "committedStateUnchanged": true,
+    "revision": [
+      0,
+      0
+    ],
+    "pageErrors": [],
+    "harnessLimit": "Desktop-only Save helper timed out while viewport375 had full-screen AI open. Restored1440 and obtained actual Save. No model retry, no product/security/oracle change.",
+    "privateArtifacts": "corrected/receipt-ui-smoke/{envelope.json,desktop.png,mobile.png}"
+  },
+  "register": {
+    "errors": [],
+    "rows": 6,
+    "profiles": [
+      {
+        "profile": "browser-readonly-ab9e349-20261017",
+        "qualified": false,
+        "pass": 0,
+        "required": 180,
+        "critical": 0,
+        "countedAttempts": 3,
+        "essentialQa": {
+          "slot": "ESS-QA",
+          "task": "T-qa-01",
+          "pass": 0
+        }
+      },
+      {
+        "profile": "browser-readonly-8c492ce-20261017",
+        "qualified": false,
+        "pass": 3,
+        "required": 180,
+        "critical": 0,
+        "countedAttempts": 3,
+        "essentialQa": {
+          "slot": "ESS-QA",
+          "task": "T-qa-01",
+          "pass": 3
+        }
+      }
+    ]
+  },
+  "privateCustody": "Actual signed request/response bodies and human Save states persisted outside repo/model/browser workspace; directories0700/files0600. No raw reasoning/private key in repo or KB.",
+  "conclusion": "One frozen task passed3/3 on corrected8c; baseline3Fail retained separately. Each profile has only3/180 counted attempts. Unknown upstream, unexercised source runner, remaining tasks,12 unsupported requests and production/hardware gates prevent full qualification.",
+  "registrationVerification": {
+    "targetedFilesPassed": 5,
+    "targetedTestsPassed": 165,
+    "corpusTasks": 60,
+    "holdout": 20,
+    "corpusErrors": [],
+    "conformanceExamples": 109,
+    "ownerReviews": 38
+  }
+}
