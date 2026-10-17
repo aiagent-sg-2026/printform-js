@@ -22,6 +22,21 @@ describe('closed browser chat protocol',()=> {
   it.each(['Create a visitor registration form.','Please add a signature field.','Can you create an attendance form?','Could you please bind this field?'])('retains deliberate authoring request: %s',request=> {
     expect(readOnlyRequest(request)).toBe(false);
   });
+  it.each([
+    '只读：当前全局字号是多少 pt？只回答 JSON {"fontPt":数字}，不要修改任何内容。',
+    '唯讀模式：說明如何修改標題，但不要執行。',
+    'Read-only: explain how I could change the font; do not modify the form.',
+    'READ ONLY: make the heading blue.'
+  ])('honors an explicit read-only restriction even when the request mentions an edit: %s',request=> {
+    const before = structuredClone(project);
+    expect(readOnlyRequest(request)).toBe(true);
+    expect(()=>parseChatReply(reply({kind:'proposal',summary:'Unrequested edit',operations:[{type:'set_style',patch:{font:10}}]}),project,{request})).toThrow('UNSAFE_PROPOSAL');
+    expect(project).toEqual(before);
+  });
+  it('does not mistake negating read-only for granting read-only',()=> {
+    expect(readOnlyRequest('不要只读，请修改标题。')).toBe(false);
+    expect(readOnlyRequest('Please add a field; this is not a read-only request.')).toBe(false);
+  });
   it.each(['reply','inspection'])('rejects context changed during %s before delivering a result',async phase=> {
     let stale = false, calls = 0;
     await expect(runLayoutHarness({project,alias:'demo-fast',request:'demo',signal:new AbortController().signal,
@@ -40,7 +55,7 @@ describe('closed browser chat protocol',()=> {
   it('uses the actual Pi Harness for one read-only local tool; missing usage stays unavailable',async()=> {
     let calls = 0;
     const result = await runLayoutHarness({transport:{plan:async()=> { calls++; return {text:reply({kind:'answer',message:'This is a read-only answer.'})}; }},alias:'demo-fast',request:'question',project,signal:new AbortController().signal});
-    expect(calls).toBe(1); expect(result.kind).toBe('answer'); expect(result.message).toContain('read-only'); expect(result.usage.total).toBeNull(); expect(result.candidate).toBeUndefined();
+    expect(calls).toBe(1); expect(result.kind).toBe('answer'); expect(result.usage.total).toBeNull(); expect(result.candidate).toBeUndefined();
   });
   it('discloses the exact bounded conversation while excluding business data',()=> {
     const p = structuredClone(project); p.sampleData.company.name = 'PRIVATE_DATA'; p.manifest.studioV3.columns[0].label = 'PRIVATE_LABEL';

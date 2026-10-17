@@ -79,6 +79,8 @@ npm run studio:coding-runner -- --origin https://studio.example.com
 
 浏览器本次没有独立留存测试进程的exit receipt，因此不将模型“tests passed”口述当作独立oracle；成功构建与制品lineage由真实host导入校验。这是一个有界部署任务的完整成果/人工提交证明，不是任意源码、跨平台、真实数据或G6/G8/G9全部资格。[实际脱敏证据](acceptance/STUDIO_V3_SOURCE_LIVE_20261016.json)。此前失败全部保留；正式G8仍0/60、0/180。
 
+2026-10-17更新：上述0/60、0/180为历史检查点。现有[冻结语料](STUDIO_V3_G8_CORPUS.zh-CN.md)包含60个实际输入、20个holdout及独立字节/进程/制品消费者；冻结不等于执行。本次语料提交尚无正式attempt，源码进程receipt必须另行实际留存，不能拿先前口述补位；G6/G9与真实资料许可不变。
+
 
 ## 官方研究
 

@@ -15,6 +15,14 @@ who don't need the diary.
 
 ## [Unreleased]
 
+### Frozen task evidence and profile consistency — 2026-10-17
+
+- Bind60 actual fictional G8 inputs,20 held-out cases and six essential slots to exact input/oracle digests; no synthetic execution rows or weakened thresholds.
+- Add an offline independent consumer for actual state, per-cell/geometry, file/history, process/test/build and artifact evidence. Signed collector custody is separate from semantic correctness; no second agent loop or automatic Pass.
+- Reject mixed source/app/knowledge/runner/route/model/browser/budget identities within one profile. Preserve independent profiles, unavailable upstream/usage and per-attempt timings.
+- Honor explicit leading read-only/只读/唯读 restrictions before negated change vocabulary. Close an actual accepted edit proposal for a read-only question without changing its prompt, typography formatter or independent JSON oracle.
+- Keep unsupported requests Blocked, original model/routes/budgets and every historical failure; freezing a corpus is not full production qualification.
+
 ### Explicit industry facts and composite-source protection — 2026-10-16
 
 - Extend the existing bounded supplied-business profile with optional stock lot/serial/expiry and location provenance; preserve serial order independently of quantity and require real source dates.
