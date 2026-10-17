@@ -21,6 +21,10 @@ export function renderConversation(panel) {
     const outcome = message.status === 'error' ? ' · request failed' : message.status === 'cancelled' ? ' · stopped' : '';
     article.append(node('div','ai-message-label',message.role === 'user' ? 'You' : `AI assistant${outcome}`));
     article.append(node('div','ai-message-text',message.text));
+    if (message.observation) {
+      const citation = node('div','ai-observation-receipt',`Observation receipt: ${message.observation.id}`);
+      citation.setAttribute('aria-label','Answer observation receipt'); article.append(citation);
+    }
     if (message.diff) {
       const active = panel.proposal?.cardId === message.id;
       const card = node('section','ai-change-card'); card.setAttribute('aria-label','AI layout changes');

@@ -31,6 +31,7 @@ who don't need the diary.
 - Reject mixed source/app/knowledge/runner/route/model/browser/budget identities within one profile. Preserve independent profiles, unavailable upstream/usage and per-attempt timings.
 - Honor explicit leading read-only/只读/唯读 restrictions before negated change vocabulary. Close an actual accepted edit proposal for a read-only question without changing its prompt, typography formatter or independent JSON oracle.
 - Keep unsupported requests Blocked, original model/routes/budgets and every historical failure; freezing a corpus is not full production qualification.
+- Retain three actual deployed ab9 readonly failures in the formal CSV. The model produced correct JSON, but host citation text or invalid receipt-ID handoff broke delivery; no prompt/oracle/model/route/budget changes or state mutation. Fix exact-answer preservation and nullable receipt absence under a separately released profile.
 
 ### Explicit industry facts and composite-source protection — 2026-10-16
 

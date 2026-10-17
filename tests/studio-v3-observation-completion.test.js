@@ -3,6 +3,7 @@ import {createAgentTools} from '../studio-v3/agent-tools.js';
 import {createDraft} from '../studio-v3/agent-draft.js';
 import {staticProject,pixelRun} from './support/pixel-observation.js';
 import {Conversation} from '../studio-v3/ai-conversation.js';
+import {renderConversation} from '../studio-v3/ai-chat-view.js';
 
 function setup({finalizeAnswer}={}) {
   const project=staticProject(),draft=createDraft(project),outcome={},state={revision:4};
@@ -14,13 +15,28 @@ function setup({finalizeAnswer}={}) {
   return {project,draft,outcome,state,execute,inspect};
 }
 describe('OBS-05 latest observation at the actual completion owner',()=> {
-  it('host-authors the latest citation and receipt rather than trusting an omitted model citation',async()=> {
-    const run=setup(),old=await run.inspect(),latest=await run.inspect();await run.execute('finish_answer',{message:'Fictional comparison.'});
+  it('preserves exact JSON while separately rendering and recovering the latest safe receipt identity',async()=> {
+    const run=setup(),old=await run.inspect(),latest=await run.inspect(),message='{"fontPt":9}';
+    await run.execute('finish_answer',{message});
     expect(run.outcome.answer.observation).toEqual(latest);
-    expect(run.outcome.answer.message).toBe(`Fictional comparison.\n\nObservation receipt: ${latest.id}`);
-    expect(run.outcome.answer.message).not.toContain(old.id);
-    const conversation=new Conversation();const card=conversation.add('assistant',run.outcome.answer.message);
-    expect(card.text).toContain(latest.id);expect(conversation.snapshot()[0].text).toContain(latest.id);
+    expect(run.outcome.answer.message).toBe(message);expect(JSON.parse(run.outcome.answer.message)).toEqual({fontPt:9});
+    const conversation=new Conversation(),documentKey=run.project.manifest.documentId;
+    const card=conversation.add('assistant',run.outcome.answer.message,'answer',{documentKey,observation:{...latest,pixels:'private pixels',sourceValues:'private values'}});
+    expect(card.observation).toEqual({id:latest.id});expect(card.text).toBe(message);
+    const saved=conversation.snapshot();expect(saved[0].observation).toEqual({id:latest.id});
+    expect(JSON.stringify(saved)).not.toContain(old.id);expect(JSON.stringify(saved)).not.toContain('private');
+    conversation.restore(saved,documentKey);
+    expect(conversation.context(documentKey)).toEqual([{role:'assistant',content:message}]);
+    const log=document.createElement('div'),scroll=document.createElement('div');
+    renderConversation({conversation,node:selector=>selector==='[data-ai-log]'?log:selector==='.ai-conversation-scroll'?scroll:null});
+    expect(log.querySelector('.ai-message-text').textContent).toBe(message);
+    expect(log.querySelector('.ai-observation-receipt').textContent).toContain(latest.id);
+    conversation.messages[0].observationProtected=true;
+    conversation.restore(conversation.snapshot(),documentKey);expect(conversation.context(documentKey)).toEqual([]);
+  });
+  it.each([null,{id:'latest'},{id:'observation-'+ 'x'.repeat(4000)}])('rejects unsafe recovered receipt identity %j',observation=> {
+    const conversation=new Conversation();
+    expect(()=>conversation.restore([{role:'assistant',text:'Answer',time:1,observation}])).toThrow('INVALID_CHAT_RECOVERY');
   });
   it.each(['old','foreign','invented'])('rejects a %s supplied receipt and recovers with the actual latest',async kind=> {
     const run=setup(),old=await run.inspect(),latest=await run.inspect();
@@ -55,13 +71,17 @@ describe('OBS-05 latest observation at the actual completion owner',()=> {
   it('cites the actual latest pixel receipt and rejects its older source receipt',async()=> {
     const run=await pixelRun(),old=await run.inspect(),latest=await run.retrieve(old.id);
     await expect(run.execute('finish_answer',{message:'Old page.',observationId:old.id})).rejects.toMatchObject({code:'EVIDENCE_STALE'});
-    const reply=await run.execute('finish_answer',{message:'Latest page.',observationId:latest.observation.id});
-    expect(reply.content[0].text).toContain(latest.observation.id);
+    await run.execute('finish_answer',{message:'Latest page.',observationId:latest.observation.id});
+    expect(run.outcome.answer.observation).toEqual(latest.observation);
   });
-  it('rechecks finalizer changes and rejects rather than silently truncating a citation',async()=> {
+  it('rechecks finalizer changes and bounds only the verbatim answer without truncation',async()=> {
     let run;run=setup({finalizeAnswer:()=> {run.project.sampleData.changed=true;return 'Changed.';}});await run.inspect();
     await expect(run.execute('finish_answer',{message:'Compare.'})).rejects.toMatchObject({code:'EVIDENCE_STALE'});expect(run.outcome.answer).toBeUndefined();
-    const long=setup(),latest=await long.inspect();await expect(long.execute('finish_answer',{message:'x'.repeat(4000)})).rejects.toMatchObject({code:'AGENT_ANSWER_LIMIT'});
-    await long.execute('finish_answer',{message:'Shortened.'});expect(long.outcome.answer.message).toContain(latest.id);
+    const expanded=setup({finalizeAnswer:()=> 'x'.repeat(4001)});await expanded.inspect();
+    await expect(expanded.execute('finish_answer',{message:'Bounded model answer.'})).rejects.toMatchObject({code:'AGENT_ANSWER_LIMIT'});
+    expect(expanded.outcome.answer).toBeUndefined();
+    const long=setup(),latest=await long.inspect();
+    await long.execute('finish_answer',{message:'x'.repeat(4000)});expect(long.outcome.answer.message).toBe('x'.repeat(4000));
+    expect(long.outcome.answer.observation).toEqual(latest);
   });
 });

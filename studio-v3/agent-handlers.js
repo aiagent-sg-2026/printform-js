@@ -88,12 +88,11 @@ export const TOOL_HANDLERS = Object.freeze({
     const observed = run.observations.current();
     if (observationId && observationId !== observed?.receipt.id) throw fail('EVIDENCE_STALE');
     const text = run.finalizeAnswer ? run.finalizeAnswer(message) : message;
-    // Host-authored citations survive the UI/history limit; a model cannot nominate older evidence.
-    const citation = observed ? `\n\nObservation receipt: ${observed.receipt.id}` : '';
-    if (typeof text !== 'string' || text.length + citation.length > ANSWER_MAX) throw fail('AGENT_ANSWER_LIMIT');
+    // Presentation metadata must never alter the finalized answer (including exact JSON).
+    if (typeof text !== 'string' || text.length > ANSWER_MAX) throw fail('AGENT_ANSWER_LIMIT');
     if (observed) run.observations.requireLatest(observed.receipt.id);
-    run.outcome.answer = {message:text + citation,identity:run.identity,...(observed ? {observation:observed.receipt} : {})};
-    return reply(`Done. The answer is shown to the person.${citation}`,{terminate:true});
+    run.outcome.answer = {message:text,identity:run.identity,...(observed ? {observation:observed.receipt} : {})};
+    return reply('Done. The answer is shown to the person.',{terminate:true});
   },
   report_blocked:async ({reason},run) => { run.outcome.blocked = {code:'AGENT_BLOCKED',reason}; return reply('Reported.',{terminate:true}); }
 });

@@ -65,13 +65,17 @@ export const TOOL_CONTRACTS = Object.freeze({
       {args:{summary:'Nothing'},error:'NO_CHANGES'},{args:{summary:'Blocked'},setup:prepared,inspection:'blocked',error:'AGENT_INSPECTION_BLOCKED'},
       {args:{summary:'Reverted'},setup:[...prepared,['apply_operations',{summary:'Red accents',operations:[{type:'set_style',patch:{color:'#a82938'}}]}],['undo_step',{}]],error:'AGENT_INSPECTION_REQUIRED'},
       {args:{summary:'Navy accents'},grant:'read-only',error:'GRANT_DENIED'}]},
-  finish_answer:{contractVersion:'1.1.0',outputSchema:text,errors:[ARGS,'AGENT_EVIDENCE_REQUIRED','EVIDENCE_STALE','AGENT_ANSWER_LIMIT'],limits:{maxAnswerChars:ANSWER_MAX},
+  finish_answer:{contractVersion:'1.2.0',outputSchema:text,errors:[ARGS,'AGENT_EVIDENCE_REQUIRED','EVIDENCE_STALE','AGENT_ANSWER_LIMIT'],limits:{maxAnswerChars:ANSWER_MAX},
     examples:[{args:{message:'The guide lists the tools for this release.'},setup:[['read_skill',{id:'form-authoring'}]],grant:'read-only'},
+      {args:{message:'The guide lists the tools for this release.',observationId:null},setup:[['read_skill',{id:'form-authoring'}]],grant:'read-only'},
+      {args:{message:'Current inspection.',observationId:null},fixture:'static',setup:[['inspect_draft',{}]],grant:'read-only'},
       {args:{message:'Current inspection.',observationId:'$latest'},fixture:'static',latestObservation:true,setup:[['inspect_draft',{}]],grant:'read-only'}],
-    invalid:[{args:{message:'It is fine.'},error:'AGENT_EVIDENCE_REQUIRED'},{args:{message:''},error:ARGS},
+    invalid:[{args:{message:'It is fine.',observationId:null},error:'AGENT_EVIDENCE_REQUIRED'},{args:{message:''},error:ARGS},
       {args:{message:'Wrong receipt.',observationId:'foreign'},fixture:'static',setup:[['inspect_draft',{}]],error:'EVIDENCE_STALE'},
-      {args:{message:'Stale receipt.'},fixture:'static',setup:[['inspect_draft',{}],...prepared.slice(0,1)],error:'EVIDENCE_STALE'},
-      {args:{message:'x'.repeat(ANSWER_MAX)},fixture:'static',setup:[['inspect_draft',{}]],error:'AGENT_ANSWER_LIMIT'}]},
+      {args:{message:'Use a real receipt.',observationId:'latest'},setup:[['get_context',{}]],error:'EVIDENCE_STALE'},
+      {args:{message:'Stale receipt.',observationId:null},fixture:'static',setup:[['inspect_draft',{}],...prepared.slice(0,1)],error:'EVIDENCE_STALE'},
+      {args:{message:'No empty receipt.',observationId:''},error:ARGS},
+      {args:{message:'x'.repeat(ANSWER_MAX + 1)},error:ARGS}]},
   report_blocked:{outputSchema:text,errors:[ARGS],examples:[{args:{reason:'Asset import is not a tool in this release.'}}],invalid:[{args:{reason:''},error:ARGS}]}
 });
 

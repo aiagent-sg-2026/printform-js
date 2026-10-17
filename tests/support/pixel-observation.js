@@ -10,12 +10,12 @@ export const unitImage = (region={})=>({dataUrl:`data:image/png;base64,${UNIT_PN
 export async function pixelRun({text=true,pixels=true,now,policy=null,mutate=()=>{},capture=async(_candidate,region)=>unitImage(region)}={}) {
   const project=staticProject(); mutate(project);
   const state={project,baseRevision:7,runId:crypto.randomUUID(),selectedTargets:['header-title'],dataPolicy:typeof policy==='function' ? policy(project.manifest.documentId) : policy};
-  const authorization=await authorizeObservation(state,{text,pixels,...(now ? {now} : {})}), memory=createAgentMemory(), draft=createDraft(project), controller=new AbortController();
+  const authorization=await authorizeObservation(state,{text,pixels,...(now ? {now} : {})}), memory=createAgentMemory(), draft=createDraft(project), controller=new AbortController(), outcome={};
   const tools=createAgentTools({draft,memory,context:()=>'',inspect:async()=>({report:{status:'ready',metrics:{logicalPages:1},pageGeometry:[{width:1,height:1}]}}),
-    signal:controller.signal,outcome:{},identity:{release:'test',packageHash:'a'.repeat(64)},limits:{maxTurns:1000,maxRepeatedFailures:10},
+    signal:controller.signal,outcome,identity:{release:'test',packageHash:'a'.repeat(64)},limits:{maxTurns:1000,maxRepeatedFailures:10},
     runId:state.runId,baseRevision:7,observationAuthorization:authorization,readObservationHost:()=>state,capturePixels:capture});
   const execute=async(name,args={},id='unit-call')=> { const tool=tools.find(t=>t.name===name); tool.prepareArguments(args); return tool.execute(id,args); };
   const inspect=async()=>JSON.parse((await execute('inspect_draft')).content[0].text).observation;
   const retrieve=async(id,region={pageIndex:0},callId='pixel-call')=>JSON.parse((await execute('retrieve_page',{observationId:id,...region},callId)).content[0].text);
-  return {state,authorization,memory,draft,controller,tools,execute,inspect,retrieve,capture};
+  return {state,authorization,memory,draft,controller,tools,execute,inspect,retrieve,capture,outcome};
 }

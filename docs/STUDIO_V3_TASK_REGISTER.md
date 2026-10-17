@@ -1,6 +1,6 @@
 # Studio v3 Real-Task Register
 
-2026-10-17：已冻结60个真实虚构输入（十类各六个）、20个holdout及六个essential；`node scripts/studio-v3-g8.mjs validate` 实际返回 errors=[]。执行结果与冻结任务分开：本次语料提交尚无正式attempt，G8仍未合格。原门槛由[验收标准](STUDIO_V3_CODING_AGENT_ACCEPTANCE.md)拥有。
+2026-10-17：已冻结60个真实虚构输入（十类各六个）、20个holdout及六个essential；CLI实际返回 errors=[]。公开ab9版本已执行T-qa-01三次，原始提示／oracle不变，均Fail并写入[实际证据](acceptance/STUDIO_V3_G8_READONLY_20261017.md)；不是冻结即通过，G8仍未合格。原门槛由[验收标准](STUDIO_V3_CODING_AGENT_ACCEPTANCE.md)拥有。
 
 Files:
 

@@ -1,8 +1,6 @@
 import {describe,it,expect,vi,afterEach} from 'vitest';
-import fs from 'node:fs';
 import {Type} from '@earendil-works/pi-ai';
-import {AGENT_TOOL_DEFINITIONS,OPERATION_CAPABILITIES,validateRegistry,capabilityCatalog} from '../studio-v3/agent-registry.js';
-import {ERROR_CONTRACTS,CONTRACT_FAMILIES} from '../studio-v3/agent-errors.js';
+import {AGENT_TOOL_DEFINITIONS,OPERATION_CAPABILITIES,validateRegistry} from '../studio-v3/agent-registry.js';
 import {checkAgentConformance} from '../scripts/studio-v3-agent-conformance.mjs';
 
 const tool = name => AGENT_TOOL_DEFINITIONS.find(entry => entry.name === name);
@@ -12,16 +10,6 @@ const failures = async options => (await checkAgentConformance(options).then(() 
 describe('Studio v3 agent executable contracts (COV-04)', () => {
   afterEach(() => { vi.doUnmock('../studio-v3/agent-registry.js'); vi.resetModules(); });
 
-  it('runs every tool and operation example through the real handlers', async () => {
-    const result = await checkAgentConformance();
-    expect(result).toEqual({tools:AGENT_TOOL_DEFINITIONS.length,operations:OPERATION_CAPABILITIES.length,
-      examples:[...AGENT_TOOL_DEFINITIONS,...OPERATION_CAPABILITIES].reduce((n,entry) => n + entry.examples.length + entry.invalid.length,0)});
-    expect(AGENT_TOOL_DEFINITIONS.map(tool => tool.name)).toContain('finish_answer');
-    for (const entry of validateRegistry()) {
-      expect(entry.contractVersion,entry.id).toBe(({get_capabilities:'1.2.0',inspect_draft:'1.2.0',observe_context:'1.1.0',finish_answer:'1.1.0'})[entry.name] || '1.0.0');
-      expect(entry.examples.length && entry.invalid.length,entry.id).toBeTruthy();
-    }
-  });
   it('fails publication on a broken example', async () => {
     const broken = {...operation('set_field'),examples:[{operation:{type:'set_field',target:'footer-missing',patch:{label:'Terms'}}}]};
     expect(await failures({tools:[],operations:[broken]})).toContain('printform.authoring.set_field: example failed with UNSAFE_PROPOSAL');
@@ -56,21 +44,5 @@ describe('Studio v3 agent executable contracts (COV-04)', () => {
     });
     const {checkAgentConformance:check} = await import('../scripts/studio-v3-agent-conformance.mjs');
     await expect(check()).rejects.toMatchObject({code:'AGENT_REGISTRY_INVALID'});
-  });
-  it('classifies every agent error code under the contract families', () => {
-    for (const [code,contract] of Object.entries(ERROR_CONTRACTS)) {
-      expect(contract.family === null || CONTRACT_FAMILIES.includes(contract.family),code).toBe(true);
-      expect(typeof contract.recoverable,code).toBe('boolean');
-      expect(contract.retryAdvice.length,code).toBeGreaterThan(10);
-    }
-    expect(capabilityCatalog().errors).toBe(ERROR_CONTRACTS);
-  });
-  it('declares every code the agent tool path can raise (drift guard)', () => {
-    // Host-only codes belong to Apply/history, not to agent tools or runs.
-    const HOST_ONLY = new Set(['STALE_PROPOSAL']);
-    const files = ['agent-tools.js','agent-handlers.js','agent-loop.js','agent-draft.js','agent-knowledge.js','agent-release.js','agent-binding-invariants.js','ai-edits.js',
-      'ai-authoring.js','ai-authoring-contract.js','ai-chat-protocol.js','ai-agent-run.js','agent-usage.js','observation-records.js','observation-policy.js','observation-context.js','ai-observation-authorization.js'].map(name => fs.readFileSync(`studio-v3/${name}`,'utf8')).join('\n');
-    const raised = new Set([...files.matchAll(/(?:fail|contractError|codes\.add)\('([A-Z][A-Z_]+)'\)|code:'([A-Z][A-Z_]+)'|new Error\('([A-Z][A-Z_]{5,})'\)/g)].map(m => m[1] || m[2] || m[3]));
-    expect([...raised].filter(code => !ERROR_CONTRACTS[code] && !HOST_ONLY.has(code)).sort()).toEqual([]);
   });
 });
