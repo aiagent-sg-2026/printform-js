@@ -158,6 +158,8 @@ node scripts/studio-v3-g8.mjs validate
 
 随后公开ab9版本已真实运行冻结T-qa-01三次，全部Fail并登记；模型正确JSON与宿主实际交付的差异由配对wire、真实Save及最终UI共同证明。[基线报告](acceptance/STUDIO_V3_G8_READONLY_20261017.md)。这些失败不覆盖、不换问题、不改oracle；修复发布必须另冻profile。
 
+修复版8c已用相同输入／oracle／alias／route／budget真实3/3 Pass；旧ab9三Fail不覆盖，两个profile各3/180而非混算6/180。另一个独立回执UI smoke是非G8操作，不写入此CSV。[修复版公钥档案](acceptance/STUDIO_V3_G8_CORRECTED_PROFILE_20261017.json)与[逐次结果](acceptance/STUDIO_V3_G8_CORRECTED_20261017.json)固定实际已测release；之后文档提交不会自动继承该profile资格。
+
 ## 已读依据
 
 - [本仓库 Gate G8 与证据规则](STUDIO_V3_CODING_AGENT_ACCEPTANCE.md#gate-g8-real-model-task-qualification)：固定60×3、原门槛、保留全部失败、独立输出证据。

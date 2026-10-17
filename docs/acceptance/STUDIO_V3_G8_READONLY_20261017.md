@@ -30,7 +30,7 @@
 
 Ed25519 私钥只在宿主独立目录内，目录0700／私钥0600，不在浏览器、仓库或模型可写工作区。原始实际网络正文、UI Save 前后状态和签名 envelope 私下保留；没有把加密 reasoning continuation、凭据或原始载荷发布到仓库／KB。公钥签名只证明观察字节归属，不能代替语义核验或外部认证。
 
-CSV 现在是60个冻结任务、3条真实 Fail；不是3个通过任务。原180次／每类16/18／essential3/3／零critical门槛不变，`qualified:false`。12项不可用请求仍只能Blocked；DPA、固定模型、G6/G9与物理打印机均未由这些尝试补齐。
+基线执行当时CSV为60个冻结任务、3条真实Fail；后续修复版三Pass见下节，总计六行仍按版本分开。原180次／每类16/18／essential3/3／零critical门槛不变，两个profile均`qualified:false`。12项不可用请求仍只能Blocked；DPA、固定模型、G6/G9与物理打印机未由这些尝试补齐。
 
 ## 根因与修复约束
 
@@ -49,3 +49,25 @@ CSV 现在是60个冻结任务、3条真实 Fail；不是3个通过任务。原1
 修复集成的首次完整单元运行有2785通过／1失败／9 opt-in跳过：新增边界用例把4001原始参数送入schema，却错误期待宿主finalizer的错误。schema先拒绝是正确行为；改为有效模型参数，仅让真实finalizer扩展至4001来验证真正宿主边界，没有重钉错误码或扩大限制。重验结果单列，不能覆盖此记录。
 
 第二次完整运行同为2785通过／1失败／9跳过：迁移后的像素消费者假定旧fixture已经暴露outcome；现把真实共享outcome作为夹具状态返回，未改生产guard。随后5文件／74项针对消费者通过；最终隔离Node24 `npm run build:site` 为244文件／2786项通过、9 opt-in跳过并生成站点，实际发布conformance检查22tools／13operations／3skills／109examples及38处review通过。尚未把这些单元／构建结果当作修复版真实模型Pass；必须新版本另行冻结执行。
+
+## 修复后：独立8c发布身份的原题执行
+
+PR87合并并真实部署后，冻结新profile `browser-readonly-8c492ce-20261017`；原提示、input/oracle摘要、demo-auto、route与预算完全不变。三个全新Chrome155 context原样执行，没有模型重试、替换attempt或调宽标准。
+
+| 尝试 | 独立判断 | 实际模型请求 | 耗时 ms | 实际 usage tokens |
+| --- | --- | --- | --- | --- |
+| 1 | Pass | 3 | 7910 | 32664 |
+| 2 | Pass | 3 | 6914 | 29332 |
+| 3 | Pass | 3 | 5394 | 32583 |
+
+实际completion三次均为`message:"{\"fontPt\":9}", observationId:null`；最终用户正文与模型消息SHA完全一致。真实get_capabilities/get_context配对读取、source/app/knowledge/route/budget身份与Save前后状态均匹配；r0／design／data／schema／locale／currency／document ID不变，零页面错误与critical violation。
+
+[修复版冻结档案](STUDIO_V3_G8_CORRECTED_PROFILE_20261017.json) · [逐次独立判断](STUDIO_V3_G8_CORRECTED_20261017.json)。原ab9三Fail永久保留，正式CSV共6行；两个profile分别仅3/180，不是同版本6/180，更不是完整G8通过。新profile仅ESS-QA达到3/3，其余任务、五essential及12不可用请求的限制不变；未知upstream／未执行runner／DPA／G6/G9／硬件边界保持开放。
+
+### 额外真实回执UI smoke，不计G8
+
+另一个真实模型请求要求先inspect_draft再说明打印质量，实际3次provider请求完成；不是冻结T-qa-01，不占资格attempt。用户正文原样等于实际finish_answer.message，当前真实inspection ID在独立元数据区可见：桌面1440px、手机375px均无横向溢出，字体12px，无截断或隐藏；Save前后仍r0与原数据。模型正文不再被拼入`Observation receipt`。
+
+这次UI烟测的桌面Save助手在375px全屏AI界面中实际等待download超时；恢复1440px后取得真实Save末态，没有重放模型、改产品权限或伪造下载。该工具操作限制保留于脱敏JSON，不能声称手机原生保存已验收。原始签名envelope与桌面／手机截图已持久保存到仓库外私有证据目录，目录0700／文件0600；不公开raw reasoning、凭据或私钥。
+
+上述资格只绑定实际测过的8c完整身份。后续即使仅更新文档、current main SHA改变，也不能自动声称新app_digest获得同一profile的资格；保留已测版本与最终文档版本的区分。

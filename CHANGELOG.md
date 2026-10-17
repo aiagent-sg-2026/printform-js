@@ -32,6 +32,7 @@ who don't need the diary.
 - Honor explicit leading read-only/只读/唯读 restrictions before negated change vocabulary. Close an actual accepted edit proposal for a read-only question without changing its prompt, typography formatter or independent JSON oracle.
 - Keep unsupported requests Blocked, original model/routes/budgets and every historical failure; freezing a corpus is not full production qualification.
 - Retain three actual deployed ab9 readonly failures in the formal CSV. The model produced correct JSON, but host citation text or invalid receipt-ID handoff broke delivery; no prompt/oracle/model/route/budget changes or state mutation. Fix exact-answer preservation and nullable receipt absence under a separately released profile.
+- Corrected public8c runs the unchanged frozen question3/3 Pass with actual nullable receipt arguments and byte-identical JSON; retain old3Fail in their original profile. Add real desktop/375px receipt UI proof separately, not as a formal G8 attempt. Each profile remains3/180 and unqualified.
 
 ### Explicit industry facts and composite-source protection — 2026-10-16
 

@@ -1,0 +1,60 @@
+{
+  "schema": "studio-g8-profile-v1",
+  "profile": "browser-readonly-8c492ce-20261017",
+  "modelAlias": "demo-auto",
+  "identity": {
+    "source_commit": "8c492ce2a92703a89663d8a12e7f8ed7941d89e5",
+    "app_digest": "sha256:27d550c4ba50472d961685964668b21b519e8651bd1a9c9bcd8b2962579c5a64",
+    "knowledge_digest": "sha256:033abc3954915c506ecc2d55ced80ff52ba2703941ebdc4e819631fc60c07bb3",
+    "runner_image": "unavailable",
+    "provider_route": "https://gpt.yapweijun1996.com/demo/v1/responses",
+    "model_version": "unavailable",
+    "browser_os": "Chrome 155.0.8059.84 / macOS 27.0.1 / arm64",
+    "budgets_digest": "sha256:83683f5825b993190edaa2891296aaaafc676cb2f4655d56793fd1ddbd29cc07"
+  },
+  "releaseIdentity": {
+    "release": "8c492ce2a92703a89663d8a12e7f8ed7941d89e5",
+    "contractHash": "9d2859419125fc52fc5cecf598b040b224bd2ffb143241257d1647a1682cfa9b",
+    "knowledgeHash": "033abc3954915c506ecc2d55ced80ff52ba2703941ebdc4e819631fc60c07bb3",
+    "packageHash": "27d550c4ba50472d961685964668b21b519e8651bd1a9c9bcd8b2962579c5a64"
+  },
+  "budgets": {
+    "sessionTtlSeconds": 900,
+    "sessionRefreshSkewMs": 30000,
+    "discoverTimeoutMs": 15000,
+    "modelTimeoutMs": 60000,
+    "maxModelRequests": 3,
+    "inspectionAllowanceMs": 10000,
+    "sendTimeoutMs": 225000,
+    "agent": {
+      "maxTurns": 1000,
+      "maxRepeatedFailures": 5,
+      "maxRunMs": 3600000,
+      "sessionRequests": 15,
+      "keepToolResults": 6,
+      "maxRunTokens": 2000000,
+      "maxContextChars": 400000,
+      "keepTurns": 4,
+      "maxNoteChars": 2000,
+      "imageTurns": 4
+    },
+    "maxAliases": 8,
+    "responseLimitChars": 64000,
+    "stream": {
+      "text": true,
+      "images": false,
+      "limitChars": 256000,
+      "progressIntervalMs": 500
+    },
+    "maxBodyBytes": 12582912,
+    "errorBodyLimitChars": 8192,
+    "image": {
+      "maxCount": 4,
+      "maxBytes": 4194304,
+      "maxTotalBytes": 8388608,
+      "maxUrlChars": 5592508
+    }
+  },
+  "corpusDigest": "sha256:5ec182f03ba8ffb3895ad98c94c7d8bd0ee1832adc9583cae6cfba3cc29e1058",
+  "collectorPublicKey": "-----BEGIN PUBLIC KEY-----\nMCowBQYDK2VwAyEAqr9DmWOrlBkL1xuOq+8+arCCHYRD5cRymTliYytnDV8=\n-----END PUBLIC KEY-----\n"
+}
