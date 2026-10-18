@@ -3,6 +3,7 @@ import path from 'node:path';
 import {createHash} from 'node:crypto';
 import {digest} from './studio-v3-g8-corpus.mjs';
 import {evaluateEvidence,IDENTITY,profileErrors} from './studio-v3-g8-evaluator.mjs';
+import {readUpstreamArtifacts,readUpstreamFile} from './studio-v3-upstream-evidence.mjs';
 
 // Explicit paths only: never scan a workspace, private evidence directory or holdout input.
 export function readInventory(indexPath) {
@@ -35,11 +36,14 @@ export function readInventory(indexPath) {
     if (typeof ref?.id!=='string' || typeof ref?.path!=='string' || !/^sha256:[a-f0-9]{64}$/.test(ref?.digest || '')) item.errors.push('id/path/exact byte digest required');
     else {
       try {
-        const bytes=fs.readFileSync(path.resolve(base,ref.path));
+        const bytes=ref.id==='fixed-upstream'?readUpstreamFile(base,ref.path):fs.readFileSync(path.resolve(base,ref.path));
         if (`sha256:${createHash('sha256').update(bytes).digest('hex')}`!==ref.digest) item.errors.push('prerequisite bytes/digest mismatch');
         // These are review inputs, not a newly invented machine authority for G6/G9/DPA.
-        else { item.status='supplied-for-independent-review'; item.digest=ref.digest; }
-      } catch (error) { item.errors.push(`prerequisite unreadable: ${error.code || 'read failed'}`); }
+        else {
+          item.status='supplied-for-independent-review'; item.digest=ref.digest;
+          if (item.id==='fixed-upstream') Object.defineProperty(item,'upstream',{value:readUpstreamArtifacts(bytes,path.dirname(path.resolve(base,ref.path)))});
+        }
+      } catch (error) { item.status='invalid';item.errors.push(`prerequisite unreadable: ${error.code || 'invalid JSON/read failed'}`); }
     }
     inventory.prerequisites.push(item);
   }

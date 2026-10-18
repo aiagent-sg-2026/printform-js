@@ -2,6 +2,7 @@ import {digest,validateCorpus} from './studio-v3-g8-corpus.mjs';
 import {profileErrors,IDENTITY} from './studio-v3-g8-evaluator.mjs';
 import {FAMILIES,TARGET,qualification} from './studio-v3-task-register.mjs';
 import {inspectEvidence} from './studio-v3-g8-inventory.mjs';
+import {verifyUpstream} from './studio-v3-upstream-evidence.mjs';
 
 const REQUIREMENTS=Object.freeze([
   {id:'source-runner',scope:'original-source-slots',requirement:'Paired same-release Node24 Docker runner; immutable image digest, source lease, complete independent process/tree/build/artifact receipts.'},
@@ -12,13 +13,16 @@ const REQUIREMENTS=Object.freeze([
   {id:'live-release',scope:'profile-reuse',requirement:'Independent live app/knowledge/contract release identity must equal the frozen profile; do not transfer old Pass to a newer build.'}
 ]);
 
-function dependencies(profile,inventory) {
+function dependencies(profile,inventory,evidence,profileValidation) {
   return REQUIREMENTS.map(requirement=>{
     const refs=inventory.prerequisites.filter(item=>item.id===requirement.id);
     const supplied=refs.filter(ref=>ref.status==='supplied-for-independent-review');
     let observed='not evidenced';
     if (requirement.id==='source-runner') observed=/^sha256:[a-f0-9]{64}$/.test(profile?.identity?.runner_image || '')?'profile records immutable image; current broker availability, same-release lease and receipts still require observation':`profile runner_image=${profile?.identity?.runner_image ?? 'missing'}; source execution image unavailable`;
-    if (requirement.id==='fixed-upstream') observed=profile?.identity?.model_version==='unavailable'?'upstream unavailable; route-level evidence only':'profile model_version recorded; service-owner pinning/dispatch custody still requires independent review';
+    if (requirement.id==='fixed-upstream') {
+      const verification=verifyUpstream({profile,inventory,checked:evidence,profileValidation});
+      return {...requirement,observed:verification.verified?'Owner signature, pinned source documents and every indexed request attribution verified; independent review still required':verification.errors.join('; '),status:verification.status,references:refs,verification};
+    }
     return {...requirement,observed,status:supplied.length?'supplied-for-independent-review':'missing',references:refs};
   });
 }
@@ -75,7 +79,7 @@ export function preflight({corpus,register,profile,inventory={profiles:[],envelo
     const checked=evidence.results.filter(result=>result.profile===name && result.evaluation && result.errors.length===0);
     return {profile:name,selected:name===profile.profile,registered:rows.length,required:q.required,recordedSlots,missingSlots:q.required-recordedSlots,pass:q.pass,critical:q.critical,extraAttempts:q.extraAttempts,recordedQualified:q.qualified,checkedEnvelopes:checked.length,checkedPass:checked.filter(result=>result.evaluation.outcome==='Pass').length,identityVariants:identities.length};
   });
-  const prerequisites=dependencies(profile,inventory);
+  const prerequisites=dependencies(profile,inventory,evidence,validation.profile);
   const liveRelease=releaseComparison(profile,inventory);
   const blockers=[];
   for (const [type,errors] of Object.entries(validation)) for (const error of errors) blockers.push({code:`invalid-${type}`,detail:error});
