@@ -15,6 +15,12 @@ who don't need the diary.
 
 ## [Unreleased]
 
+### Fixed-upstream evidence consumer — 2026-10-18
+
+- Verify bounded explicit source artifacts, collector and service-owner signatures, frozen route/snapshot identity, and every indexed request/response attribution without model calls or register writes.
+- Reject unsafe paths, symlinks, oversized/ambiguous JSON, stale identity and missing custody. Successful verification still requires independent review; it never grants production qualification or replaces DPA, G8 or G9.
+- Preserve the first two invalid synthetic-fixture failures; after adding the existing required oracle record, the affected consumer suite passed17/17. The actual unchanged profile remains missing upstream evidence and preflight remains unqualified with31 blockers.
+
 ### General source tables, offline barcodes and recoverable sharing — 2026-10-17
 
 - Add up to4 independent source tables, fixed-size offline CODE128/EAN13,16 primary display currencies and supplied manufacturing/timesheet starters; existing foreign-currency facts and core formatting remain supported. No joins, FX, payroll or ERP posting are inferred.
