@@ -23,7 +23,7 @@ const unchanged=(a,b)=>identity(a,b) && a.size===b.size && a.mtimeNs===b.mtimeNs
 
 // Bound before allocating/reading. Check every component and the opened inode before
 // consuming bytes, then recheck custody after reading; never follow the leaf symlink.
-export function readUpstreamFile(base,relative) {
+export function readUpstreamFile(base,relative,chargeBytes) {
   if (typeof relative!=='string' || relative.length>240 || !relative.split('/').every(part=>/^[A-Za-z0-9][A-Za-z0-9._-]*$/.test(part) && part!=='.' && part!=='..')) fail('ARTIFACT_PATH');
   const baseStat=fs.lstatSync(base,{bigint:true});
   if (baseStat.isSymbolicLink()) fail('ARTIFACT_SYMLINK');
@@ -45,6 +45,7 @@ export function readUpstreamFile(base,relative) {
       if (stat.isSymbolicLink() || !identity(entry.stat,stat)) fail('ARTIFACT_PATH_CHANGED');
     }
   };
+  if (chargeBytes) chargeBytes(Number(expected.size));
   const fd=fs.openSync(file,fs.constants.O_RDONLY | fs.constants.O_NOFOLLOW | fs.constants.O_NONBLOCK);
   try {
     const before=fs.fstatSync(fd,{bigint:true});
@@ -68,7 +69,7 @@ function parseUpstreamJson(bytes) {
 }
 
 // Explicit indexed paths only; neither files nor embedded contents are returned in reports.
-export function readUpstreamArtifacts(bytes,base) {
+export function readUpstreamArtifacts(bytes,base,readFile=readUpstreamFile) {
   const envelope=parseUpstreamJson(bytes),artifacts=[];
   if ((envelope?.evidence?.statement?.artifacts?.length || 0)>3) fail('ARTIFACT_COUNT_LIMIT');
   for (const ref of Array.isArray(envelope?.evidence?.statement?.artifacts)?envelope.evidence.statement.artifacts:[]) {
@@ -76,7 +77,7 @@ export function readUpstreamArtifacts(bytes,base) {
     if (typeof ref?.path!=='string' || !ref.path.trim() || !/^sha256:[a-f0-9]{64}$/.test(ref?.digest || '')) item.errors.push('explicit artifact path/byte digest required');
     else {
       try {
-        const content=readUpstreamFile(base,ref.path);
+        const content=readFile(base,ref.path);
         if (sha(content)!==ref.digest) item.errors.push('artifact bytes/digest mismatch');
         else item.value=parseUpstreamJson(content);
       } catch (error) { item.errors.push(`artifact unreadable: ${error.code || 'invalid JSON'}`); }
@@ -171,3 +172,6 @@ export function verifyUpstream({profile,inventory,checked,profileValidation=[],n
   summary.status=summary.verified?'verified-for-independent-review':'invalid';
   return summary;
 }
+
+// Shared offline custody primitives; callers retain their own evidence schema and authority.
+export {parseUpstreamJson,signed as verifyUpstreamSignature};

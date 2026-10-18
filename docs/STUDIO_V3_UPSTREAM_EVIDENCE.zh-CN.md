@@ -36,7 +36,7 @@ node scripts/studio-v3-g8.mjs preflight PROFILE_JSON [EVIDENCE_INDEX_JSON]
 
 两个命令调用同一个消费者。`upstream` 只输出 fixed-upstream 的脱敏报告；签名、原件和所有已索引请求归属验真成功才退出 0。该退出码只表示**证据完整性/身份/归属校验**，不表示任务成功、180 次执行、当前生产流量、DPA 或 G9 已通过。
 
-`preflight` 无论该项验真成功与否，仍保留 `prerequisite-fixed-upstream` 的独立审查 blocker；成功状态叫 `verified-for-independent-review`，不是 approved。其它 prerequisite 文档仍沿用 `supplied-for-independent-review`。本切片不会凭 JSON 关闭生产 gate。
+`preflight` 无论该项验真成功与否，仍保留 `prerequisite-fixed-upstream` 的独立审查 blocker；成功状态叫 `verified-for-independent-review`，不是 approved。`data-governance` 现由[治理材料消费者](STUDIO_V3_GOVERNANCE_EVIDENCE.zh-CN.md)核对 scope／原件／逐字段引文，成功也只供独立审查；其它普通 prerequisite 文档仍沿用 `supplied-for-independent-review`。本切片不会凭 JSON 关闭生产 gate。
 
 ## 索引和签名格式
 

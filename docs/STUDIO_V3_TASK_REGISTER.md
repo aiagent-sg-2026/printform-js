@@ -11,6 +11,7 @@ Files:
 - [完整180槽离线预检](STUDIO_V3_G8_PREFLIGHT.zh-CN.md)：逐profile重验既有签名、CSV、独立oracle和实际清单；当前实际六份均与历史判断一致，修复profile仍仅3/180。原版144/180理论上限与四家族不可达门槛先行阻止错误资格宣称；不执行模型、不补造attempt。[脱敏实际结果](acceptance/STUDIO_V3_G8_PREFLIGHT_20261017.json)。
 - [固定上游原件与逐请求归属](STUDIO_V3_UPSTREAM_EVIDENCE.zh-CN.md)：新增离线双签名消费者；原profile实际仍missing／31 blockers，零模型调用／正式attempt；完整性验真不是独立批准。
 - [实体打印与WebKit离线边界](STUDIO_V3_PHYSICAL_OFFLINE_ACCEPTANCE.zh-CN.md)：实际设备为空；结构一致性和合成测试都不能填充硬件Pass或正式G8记录。
+- [资料治理原件与适用范围](STUDIO_V3_GOVERNANCE_EVIDENCE.zh-CN.md)：离线核对operator／tenant／route、来源引文及保留／删除等控制；208项相关回归通过不代表实际DPA或生产资格，正式登记零新增。
 
 ## Families and targets
 

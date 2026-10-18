@@ -15,6 +15,12 @@ who don't need the diary.
 
 ## [Unreleased]
 
+### Source-backed governance dossiers and bounded evidence inventory — 2026-10-19
+
+- Add collector-signed, source-quoted operator/tenant/route privacy dossier checks; all successful structures remain independent-review-only with authority and production qualification false.
+- Fix indexed path traversal; reuse bounded strict readers for all indexed artifacts with pre-open count/aggregate-byte admission. Preserve legitimate shared dossiers across distinct requirements and original G8 gates.
+- Seven related suites passed208 tests after fixing the initial shared-dossier regression. Actual governance evidence remains missing and original preflight retains31 blockers; no model calls or formal register writes.
+
 ### General purchase requisition and maintenance forms — 2026-10-18
 
 - Add two source-preserving no-code starters, bringing supplied-business-v1 to11 kinds. Retain exact quantity strings, original status/provenance, absent optional facts and AI source-binding protection without procurement, approvals or execution.

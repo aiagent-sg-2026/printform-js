@@ -1,47 +1,69 @@
-import fs from 'node:fs';
 import path from 'node:path';
 import {createHash} from 'node:crypto';
 import {digest} from './studio-v3-g8-corpus.mjs';
 import {evaluateEvidence,IDENTITY,profileErrors} from './studio-v3-g8-evaluator.mjs';
-import {readUpstreamArtifacts,readUpstreamFile} from './studio-v3-upstream-evidence.mjs';
+import {readUpstreamArtifacts,readUpstreamFile,parseUpstreamJson} from './studio-v3-upstream-evidence.mjs';
+import {readGovernanceArtifacts} from './studio-v3-governance-evidence.mjs';
+import {JSON_DATA_LIMITS} from '../studio-v3/json-safety.js';
+import {FAMILIES,TARGET} from './studio-v3-task-register.mjs';
+
+export const INVENTORY_LIMITS=Object.freeze({profiles:8,envelopes:8*FAMILIES.length*TARGET.perFamily*TARGET.repetitions,prerequisites:24,maxBytes:256*JSON_DATA_LIMITS.maxBytes});
+export function createInventoryByteBudget() {
+  let used=0;
+  return bytes=>{
+    if (!Number.isSafeInteger(bytes) || bytes<0 || bytes>INVENTORY_LIMITS.maxBytes-used) throw Object.assign(new Error('INVENTORY_BYTE_LIMIT'),{code:'INVENTORY_BYTE_LIMIT'});
+    used+=bytes;
+  };
+}
 
 // Explicit paths only: never scan a workspace, private evidence directory or holdout input.
 export function readInventory(indexPath) {
   const inventory={profiles:[],envelopes:[],prerequisites:[],errors:[],liveRelease:null};
   if (!indexPath) return inventory;
   const base=path.dirname(path.resolve(indexPath));
+  const chargeBytes=createInventoryByteBudget(),readFile=(root,file)=>readUpstreamFile(root,file,chargeBytes);
   let index;
-  try { index=JSON.parse(fs.readFileSync(indexPath,'utf8')); }
+  try { index=parseUpstreamJson(readFile(base,path.basename(indexPath))); }
   catch (error) { inventory.errors.push(`index unreadable: ${error.code || 'invalid JSON'}`); return inventory; }
   if (index?.schema!=='studio-g8-preflight-index-v1') {
     inventory.errors.push('index schema must be studio-g8-preflight-index-v1'); return inventory;
   }
+  // Admit bounded collections before opening any referenced target; never truncate.
+  for (const kind of ['profiles','envelopes','prerequisites']) {
+    const refs=index[kind];
+    if (refs===undefined) continue;
+    if (!Array.isArray(refs) || refs.length>INVENTORY_LIMITS[kind]) { inventory.errors.push(`${kind}: array limit ${INVENTORY_LIMITS[kind]} exceeded or invalid collection`);continue; }
+    const paths=refs.map(ref=>kind==='prerequisites'?ref?.path:ref);
+    if (kind!=='prerequisites' && new Set(paths).size!==paths.length) inventory.errors.push(`${kind}: duplicate indexed path`);
+    if (kind==='prerequisites' && new Set(refs.map(ref=>ref?.id)).size!==refs.length) inventory.errors.push('prerequisites: duplicate requirement ID');
+  }
+  if (inventory.errors.length) return inventory;
+  Object.defineProperty(inventory,'governanceScope',{value:index.governanceScope});
   for (const kind of ['profiles','envelopes']) {
-    if (index[kind]!==undefined && !Array.isArray(index[kind])) { inventory.errors.push(`${kind} must be an array`); continue; }
     for (const file of index[kind] || []) {
       if (typeof file!=='string' || !file.trim()) { inventory.errors.push(`${kind}: explicit path required`); continue; }
-      try { inventory[kind].push({path:file,value:JSON.parse(fs.readFileSync(path.resolve(base,file),'utf8'))}); }
+      try { inventory[kind].push({path:file,value:parseUpstreamJson(readFile(base,file))}); }
       catch (error) { inventory.errors.push(`${kind} ${file}: ${error.code || 'invalid JSON'}`); }
     }
   }
   if (index.liveRelease!==undefined) {
     try {
       if (typeof index.liveRelease!=='string') throw new Error();
-      inventory.liveRelease=JSON.parse(fs.readFileSync(path.resolve(base,index.liveRelease),'utf8'));
+      inventory.liveRelease=parseUpstreamJson(readFile(base,index.liveRelease));
     } catch (error) { inventory.errors.push(`live release unreadable: ${error.code || 'invalid path/JSON'}`); }
   }
-  if (index.prerequisites!==undefined && !Array.isArray(index.prerequisites)) inventory.errors.push('prerequisites must be an array');
-  for (const ref of Array.isArray(index.prerequisites)?index.prerequisites:[]) {
+  for (const ref of index.prerequisites || []) {
     const item={id:ref?.id,path:ref?.path,status:'invalid',errors:[]};
     if (typeof ref?.id!=='string' || typeof ref?.path!=='string' || !/^sha256:[a-f0-9]{64}$/.test(ref?.digest || '')) item.errors.push('id/path/exact byte digest required');
     else {
       try {
-        const bytes=ref.id==='fixed-upstream'?readUpstreamFile(base,ref.path):fs.readFileSync(path.resolve(base,ref.path));
+        const bytes=readFile(base,ref.path);
         if (`sha256:${createHash('sha256').update(bytes).digest('hex')}`!==ref.digest) item.errors.push('prerequisite bytes/digest mismatch');
         // These are review inputs, not a newly invented machine authority for G6/G9/DPA.
         else {
           item.status='supplied-for-independent-review'; item.digest=ref.digest;
-          if (item.id==='fixed-upstream') Object.defineProperty(item,'upstream',{value:readUpstreamArtifacts(bytes,path.dirname(path.resolve(base,ref.path)))});
+          if (item.id==='fixed-upstream') Object.defineProperty(item,'upstream',{value:readUpstreamArtifacts(bytes,path.dirname(path.resolve(base,ref.path)),readFile)});
+          if (item.id==='data-governance') Object.defineProperty(item,'governance',{value:readGovernanceArtifacts(bytes,path.dirname(path.resolve(base,ref.path)),readFile)});
         }
       } catch (error) { item.status='invalid';item.errors.push(`prerequisite unreadable: ${error.code || 'invalid JSON/read failed'}`); }
     }
