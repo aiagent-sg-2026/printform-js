@@ -35,7 +35,7 @@ stdout 是完整 JSON。未 qualified 时退出码 **1** 是真实拒绝，不�
 
 ### 私有索引
 
-下面是**索引格式说明**，不是实际证据；路径须由独立操作者指向已存在的真实档案。所有相对路径相对于索引文件，CLI 不扫描任何目录。
+下面是**索引格式说明**，不是实际证据；路径须由独立操作者指向已存在的真实档案。CLI 顶层 profile/index 可用显式绝对路径；索引内部引用只允许索引目录内安全相对路径，拒绝绝对路径／遍历／symlink／多硬链接／超限文件，并使用有界严格 JSON；CLI 不扫描目录。治理原件另相对声明 envelope 目录，详见[治理消费者](STUDIO_V3_GOVERNANCE_EVIDENCE.zh-CN.md)。
 
 ```json
 {
@@ -54,7 +54,7 @@ stdout 是完整 JSON。未 qualified 时退出码 **1** 是真实拒绝，不�
 
 `liveRelease` 是独立操作者从实际页面对应发布读取的 agent manifest JSON。消费者对比 release/contractHash/knowledgeHash/packageHash；不同则报告 `live-release-mismatch`。该离线文件不等同于在线认证或 G9 审批；省略时明确缺证，不能从 git HEAD 推定公开版本。
 
-可选 `prerequisites` 项格式为 `{id,path,digest}`，digest 为文件**原始 bytes**的 `sha256:` + 64hex，支持的需求 ID 是 `source-runner`、`fixed-upstream`、`g6-g7`、`data-governance`、`g9`、`live-release`。字节一致也只标 `supplied-for-independent-review`：不存在用任意 `{qualified:true}` 文件关闭合同/G6/G9 的新后门。预检负责清点、完整性和缺失报告，既有独立 gate 与 maintainer 的审查权不变。
+可选 `prerequisites` 项格式为 `{id,path,digest}`，digest 为文件**原始 bytes**的 `sha256:` + 64hex，支持的需求 ID 是 `source-runner`、`fixed-upstream`、`g6-g7`、`data-governance`、`g9`、`live-release`。普通文档字节一致只标 `supplied-for-independent-review`；`fixed-upstream` 由[服务方原件消费者](STUDIO_V3_UPSTREAM_EVIDENCE.zh-CN.md)核验，`data-governance` 由[适用范围／原件／逐字段引文消费者](STUDIO_V3_GOVERNANCE_EVIDENCE.zh-CN.md)核验。两者成功仍仅供独立审查并保留 prerequisite blocker：不存在用任意 `{qualified:true}` 文件关闭合同/G6/G9 的新后门。既有独立 gate 与 maintainer 的审查权不变。
 
 ## 当前完整资格前置条件
 

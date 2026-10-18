@@ -3,6 +3,7 @@ import {profileErrors,IDENTITY} from './studio-v3-g8-evaluator.mjs';
 import {FAMILIES,TARGET,qualification} from './studio-v3-task-register.mjs';
 import {inspectEvidence} from './studio-v3-g8-inventory.mjs';
 import {verifyUpstream} from './studio-v3-upstream-evidence.mjs';
+import {verifyGovernance} from './studio-v3-governance-evidence.mjs';
 
 const REQUIREMENTS=Object.freeze([
   {id:'source-runner',scope:'original-source-slots',requirement:'Paired same-release Node24 Docker runner; immutable image digest, source lease, complete independent process/tree/build/artifact receipts.'},
@@ -22,6 +23,10 @@ function dependencies(profile,inventory,evidence,profileValidation) {
     if (requirement.id==='fixed-upstream') {
       const verification=verifyUpstream({profile,inventory,checked:evidence,profileValidation});
       return {...requirement,observed:verification.verified?'Owner signature, pinned source documents and every indexed request attribution verified; independent review still required':verification.errors.join('; '),status:verification.status,references:refs,verification};
+    }
+    if (requirement.id==='data-governance') {
+      const verification=verifyGovernance({profile,inventory,profileValidation});
+      return {...requirement,observed:verification.reviewable?'Signed scope, source bytes and claim citations checked; DPA applicability and disclosure authority still require independent review':verification.errors.join('; '),status:verification.status,references:refs,verification};
     }
     return {...requirement,observed,status:supplied.length?'supplied-for-independent-review':'missing',references:refs};
   });
