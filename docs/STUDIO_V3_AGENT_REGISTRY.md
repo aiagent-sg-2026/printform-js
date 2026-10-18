@@ -196,3 +196,9 @@ The current `supplied-business-v1` contract has11 kinds, adding PurchaseRequisit
 
 Fixed-upstream provenance and physical evidence are read-only qualification consumers, not newly granted browser/agent tools. [Upstream verification](STUDIO_V3_UPSTREAM_EVIDENCE.zh-CN.md) retains independent review and production blockers; [physical acceptance](STUDIO_V3_PHYSICAL_OFFLINE_ACCEPTANCE.zh-CN.md) always refuses self-certification. No new model execution or formal G8 attempt is supplied by these checks.
 
+## Vendor snapshot and governance scope — 2026-10-19
+
+[Pinned Odoo17 maintenance.request SDK](ODOO_MAINTENANCE_REQUEST.zh-CN.md) is repository/Node integration only, reusing MaintenanceWorkOrder without new kinds or tools. Native evidence remains unprinted live data; raw RPC import, inferred quantities/approvals and server-authentication claims remain unavailable. The guide fingerprints include the actual fixture loader and JSON input.
+
+[Source-backed governance dossiers](STUDIO_V3_GOVERNANCE_EVIDENCE.zh-CN.md) validate bounded applicable review inputs, never actual legal authority or production permission. Original gates, model/route/budgets and all frozen G8 histories remain unchanged.
+

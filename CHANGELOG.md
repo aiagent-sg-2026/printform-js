@@ -15,6 +15,12 @@ who don't need the diary.
 
 ## [Unreleased]
 
+### Optional Odoo maintenance snapshot integration — 2026-10-19
+
+- Map a pinned authorized Odoo17 read export to existing general MaintenanceWorkOrder, preserving native relation identities, exact snapshot text and absent optional facts without quantities, HTML/timezone conversion or execution inference.
+- Reject duplicate native identity keys before typed JSON parsing. Keep all unprinted native evidence in Save/HTML/share and document that source-version declarations do not authenticate a server.
+- Isolated original build passed3412 tests/9 opt-in skips; after cross-runner fixture repair,51 SDK cases,127 contract examples/39 reviews and39 zero-retry three-engine consumers passed. Initial fixture and zero-scenario loader failures remain recorded.
+
 ### Source-backed governance dossiers and bounded evidence inventory — 2026-10-19
 
 - Add collector-signed, source-quoted operator/tenant/route privacy dossier checks; all successful structures remain independent-review-only with authority and production qualification false.

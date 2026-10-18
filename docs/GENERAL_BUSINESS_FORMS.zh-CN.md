@@ -126,5 +126,9 @@ supplied-facts creator使用封闭的 `supplied-facts` 预设；原商业单据�
 - [GOV.UK Payslips](https://www.gov.uk/payslips)：官方资料区分扣减前后收入、变动扣减及与工时相关的报酬披露。这里只据此区分来源字段；不把英国要求套用于MYR样张，不宣称满足任一司法辖区全部工资法规。
 - 已在真实浏览器读取 [GS1 AI10 lot](https://ref.gs1.org/ai/10)、[AI21 serial](https://ref.gs1.org/ai/21)、[AI17 expiry](https://ref.gs1.org/ai/17) 的官方定义。当前只借鉴明确区分的事实语义；canonical expiryDate 使用 `YYYY-MM-DD`，不是 AI17 的 YYMMDD 编码；不解析/生成 GS1 条码，不宣称 GS1 一致性或完整追溯认证。
 
-五个canonical类型仍是有限、明确声明的输入契约；任意ERP raw JSON、所有本地法定格式与其他行业文档仍须显式映射及业务审核。通用Studio不依赖ERPNext，增加样张不等于全球事务/法规认证。
+上述2026-10-16研究对应当时五类输入；当前supplied-business-v1为11类有限显式契约，不代表任意ERP raw JSON或所有法定格式。通用Studio不依赖ERPNext或Odoo；增加样张不是全球事务／法规认证。
+
+## 可选厂商来源：复用通用契约
+
+[Odoo17维护请求SDK](ODOO_MAINTENANCE_REQUEST.zh-CN.md)通过授权快照与明确数据库／请求／源码版本、关联设备／公司／stage事实，生成既有MaintenanceWorkOrder。它不连接ERP、不增加canonical类型，不推断数量、审批或完成，也不是Data文件选择器接受任意Odoo RPC JSON。原生HTML和Datetime保留为未打印证据，不猜文本转换或时区；完整快照在分享副本中仍存在。
 
