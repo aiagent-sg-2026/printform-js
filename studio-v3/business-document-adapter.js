@@ -3,27 +3,28 @@ import { normalizeService, normalizePacking } from './business-service-logistics
 import { normalizeInspection, normalizeHandover } from './business-inspection-handover.js';
 import { CURRENCY_CODES } from './currency-catalog.js';
 import { normalizeManufacturing, normalizeTimesheet } from './business-manufacturing-timesheet.js';
+import { normalizeRequisition, normalizeMaintenance } from './business-requisition-maintenance.js';
 
 export const BUSINESS_DOCUMENT_PROFILE = 'supplied-business-v1';
-export const BUSINESS_DOCUMENT_KINDS = Object.freeze(['AccountStatement', 'StockMovement', 'PayrollSlip', 'ServiceReport', 'PackingList', 'InspectionReport', 'AssetHandover', 'ManufacturingOrder', 'Timesheet']);
+export const BUSINESS_DOCUMENT_KINDS = Object.freeze(['AccountStatement', 'StockMovement', 'PayrollSlip', 'ServiceReport', 'PackingList', 'InspectionReport', 'AssetHandover', 'ManufacturingOrder', 'Timesheet', 'PurchaseRequisition', 'MaintenanceWorkOrder']);
 
 export function normalizeBusinessDocument(input) {
   safe(input);
-  object(input, 'input', ['profile', 'source', 'document', 'company', 'statement', 'stock', 'payroll', 'service', 'packing', 'inspection', 'handover', 'manufacturing', 'timesheet', 'notes']);
+  object(input, 'input', ['profile', 'source', 'document', 'company', 'statement', 'stock', 'payroll', 'service', 'packing', 'inspection', 'handover', 'manufacturing', 'timesheet', 'requisition', 'maintenance', 'notes']);
   if (input.profile !== BUSINESS_DOCUMENT_PROFILE) fail('PROFILE', 'profile', `Expected ${BUSINESS_DOCUMENT_PROFILE}.`);
   const source = reference(input.source, 'source');
   const company = metadata(input.company, 'company', ['id', 'name', 'address'], ['id', 'name']);
   object(input.document, 'document', ['kind', 'number', 'date', 'currency', 'status']);
   const kind = choice(input.document.kind, BUSINESS_DOCUMENT_KINDS, 'document.kind');
   const document = { kind, number: text(input.document.number, 'document.number'), date: date(input.document.date, 'document.date') };
-  const nonfinancial = ['ServiceReport', 'PackingList', 'InspectionReport', 'AssetHandover', 'ManufacturingOrder', 'Timesheet'].includes(kind);
+  const nonfinancial = ['ServiceReport', 'PackingList', 'InspectionReport', 'AssetHandover', 'ManufacturingOrder', 'Timesheet', 'PurchaseRequisition', 'MaintenanceWorkOrder'].includes(kind);
   if (nonfinancial && has(input.document, 'currency')) fail('FIELD', 'document.currency', 'These supplied facts are nonfinancial.');
   if (nonfinancial && has(source, 'currency')) fail('FIELD', 'source.currency', 'These supplied facts are nonfinancial.');
   if (nonfinancial && has(input.document, 'status')) fail('FIELD', 'document.status', 'Supply branch status with its source provenance instead.');
   if (!nonfinancial && (kind !== 'StockMovement' || has(input.document, 'currency'))) document.currency = choice(input.document.currency, CURRENCY_CODES, 'document.currency');
   if (has(input.document, 'status')) document.status = text(input.document.status, 'document.status');
-  const branch = { AccountStatement: 'statement', StockMovement: 'stock', PayrollSlip: 'payroll', ServiceReport: 'service', PackingList: 'packing', InspectionReport: 'inspection', AssetHandover: 'handover', ManufacturingOrder: 'manufacturing', Timesheet: 'timesheet' }[kind];
-  for (const key of ['statement', 'stock', 'payroll', 'service', 'packing', 'inspection', 'handover', 'manufacturing', 'timesheet']) if (key !== branch && has(input, key)) fail('FIELD', key, `Only ${branch} facts belong to ${kind}.`);
+  const branch = { AccountStatement: 'statement', StockMovement: 'stock', PayrollSlip: 'payroll', ServiceReport: 'service', PackingList: 'packing', InspectionReport: 'inspection', AssetHandover: 'handover', ManufacturingOrder: 'manufacturing', Timesheet: 'timesheet', PurchaseRequisition: 'requisition', MaintenanceWorkOrder: 'maintenance' }[kind];
+  for (const key of ['statement', 'stock', 'payroll', 'service', 'packing', 'inspection', 'handover', 'manufacturing', 'timesheet', 'requisition', 'maintenance']) if (key !== branch && has(input, key)) fail('FIELD', key, `Only ${branch} facts belong to ${kind}.`);
   const result = { profile: input.profile, source, document, company }, printRows = [], unique = identitySet();
   const add = (id, section, description, amount, direction, trace) => printRows.push({ id, no: printRows.length + 1, section, description, amount, direction, trace });
   const traceMoney = amount => `${amount.provenance.sourcePath}: ${amount.provenance.meaning}; precision=${amount.minorUnitDigits}`;
@@ -117,6 +118,8 @@ export function normalizeBusinessDocument(input) {
   if (kind === 'AssetHandover') result.handover = normalizeHandover(input.handover, add, unique);
   if (kind === 'ManufacturingOrder') result.manufacturing = normalizeManufacturing(input.manufacturing, add, unique);
   if (kind === 'Timesheet') result.timesheet = normalizeTimesheet(input.timesheet, add, unique);
+  if (kind === 'PurchaseRequisition') result.requisition = normalizeRequisition(input.requisition, add, unique);
+  if (kind === 'MaintenanceWorkOrder') result.maintenance = normalizeMaintenance(input.maintenance, add, unique);
   if (has(input, 'notes')) result.notes = text(input.notes, 'notes');
   result.printRows = printRows;
   return result;

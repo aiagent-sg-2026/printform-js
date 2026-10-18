@@ -9,7 +9,7 @@ const fixedSource = (design,block,field) => {
   if (design.collection !== '/printRows') return false;
   if (block === 'items') return suppliedFacts.includes(field.id);
   if (tableOf(design,block)) return true;
-  return /^\/(?:service|packing|inspection|handover|manufacturing|timesheet)\//.test(field.pointer);
+  return /^\/(?:service|packing|inspection|handover|manufacturing|timesheet|requisition|maintenance)\//.test(field.pointer);
 };
 export function protectedBindings(design) {
   const bindings = [...BLOCKS,...(design.additionalTables || []).map(table=>table.id)].flatMap(block=>fieldRows(design,block)

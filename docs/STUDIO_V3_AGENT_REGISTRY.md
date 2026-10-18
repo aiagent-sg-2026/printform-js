@@ -189,3 +189,10 @@ CA-04 Firefox recheck (2026-10-13): [current evidence](acceptance/STUDIO_V3_CA04
 Human CSV/JSON mapping and the New picker’s seven supplied-business starters are not newly callable data/New tools. Imported complete source receipts never enter the default authoring context. Real source schema, original financial/source bindings, scopes, inspection, Preview/Apply and Undo remain authoritative. Registry totals stay22 tools/13 operations/3guides;114 executable contract examples and38 digest-bound reviews pass without advancinga99c932.
 
 The full75 browser scenarios and2873-test/9-skip integration are feature evidence, not G8 qualification. The read-only180-slot preflight proves the original frozen refusal set has144/180 maximum and missing family minima; no model runs are manufactured. [General feature evidence](acceptance/STUDIO_V3_GENERAL_IMPORT_MEDIA_20261017.md) · [G8 preflight](STUDIO_V3_G8_PREFLIGHT.zh-CN.md).
+
+## General supplied sources and independent prerequisites — 2026-10-18
+
+The current `supplied-business-v1` contract has11 kinds, adding PurchaseRequisition and MaintenanceWorkOrder without inferred procurement, approval or execution. Their source-bound context remains protected through private-draft edits and Undo. [Canonical contract and optional fixed-version Node SDK](GENERAL_REQUISITION_MAINTENANCE.zh-CN.md).
+
+Fixed-upstream provenance and physical evidence are read-only qualification consumers, not newly granted browser/agent tools. [Upstream verification](STUDIO_V3_UPSTREAM_EVIDENCE.zh-CN.md) retains independent review and production blockers; [physical acceptance](STUDIO_V3_PHYSICAL_OFFLINE_ACCEPTANCE.zh-CN.md) always refuses self-certification. No new model execution or formal G8 attempt is supplied by these checks.
+

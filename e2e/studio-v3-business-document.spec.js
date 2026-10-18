@@ -33,12 +33,14 @@ function sourceValues(input) {
   if (input.handover) return input.handover.assets.map(row => row.quantity ? `${row.quantity.amount} ${row.quantity.uom}` : '');
   if (input.manufacturing) return [input.manufacturing.quantity, ...input.manufacturing.lines.map(row => row.quantity)].map(fact => `${fact.amount} ${fact.uom}`);
   if (input.timesheet) return input.timesheet.entries.map(row => `${row.hours.amount} ${row.hours.uom}`);
+  if (input.requisition) return input.requisition.lines.map(row => `${row.quantity.amount} ${row.quantity.uom}`);
+  if (input.maintenance) return input.maintenance.tasks.map(row => row.quantity ? `${row.quantity.amount} ${row.quantity.uom}` : '');
   throw new Error(`Unsupported supplied business kind: ${input.document.kind}`);
 }
 function sourceContext(input) {
-  const branch = ['service', 'packing', 'inspection', 'handover', 'manufacturing', 'timesheet'].find(key => input[key]);
+  const branch = ['service', 'packing', 'inspection', 'handover', 'manufacturing', 'timesheet', 'requisition', 'maintenance'].find(key => input[key]);
   if (!branch) return [];
-  const keys = {service:['job','customer','asset','status'],packing:['shipment','from','to','status'],inspection:['reference','subject','status'],handover:['record','from','to','status'],manufacturing:['order','product','status'],timesheet:['employee','period','status']}[branch];
+  const keys = {service:['job','customer','asset','status'],packing:['shipment','from','to','status'],inspection:['reference','subject','status'],handover:['record','from','to','status'],manufacturing:['order','product','status'],timesheet:['employee','period','status'],requisition:['request','purpose','requester','status'],maintenance:['order','asset','status']}[branch];
   return keys.filter(key => input[branch][key]).flatMap(key => Object.entries(input[branch][key]).flatMap(([name, value]) =>
     name === 'provenance' ? [['source', value.sourcePath], ['meaning', value.meaning]].map(([suffix, text]) => [`${branch}-${key}-${suffix}`, text]) : [[`${branch}-${key}-${name.replace(/[A-Z]/g, letter => `-${letter.toLowerCase()}`)}`, value]]));
 }
@@ -156,6 +158,14 @@ for (const entry of BUSINESS_DEMO_TEMPLATES) test(`${entry.documentKind}: no-cod
   if (input.timesheet) {
     input.timesheet.entries[0].hours.amount = '+0011.125';
     input.timesheet.entries[0].status.value = 'Recorded / 未批准';
+  }
+  if (input.requisition) {
+    input.requisition.lines[0].quantity.amount = '+0011.125';
+    input.requisition.status.value = 'Source review pending / 未批准';
+  }
+  if (input.maintenance) {
+    input.maintenance.tasks[1].quantity.amount = '-0000.000';
+    input.maintenance.asset.serialNumber = 'EXACT-0000-SERIAL';
   }
   const project = createBusinessDocumentProject(input);
   paper = await changeDocument(page, () => page.locator('#open-file').setInputFiles({ name: `${entry.documentKind}.printform.json`, mimeType: 'application/json', buffer: Buffer.from(saveProject(project)) }));

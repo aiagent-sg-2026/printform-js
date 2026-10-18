@@ -15,6 +15,12 @@ who don't need the diary.
 
 ## [Unreleased]
 
+### General purchase requisition and maintenance forms — 2026-10-18
+
+- Add two source-preserving no-code starters, bringing supplied-business-v1 to11 kinds. Retain exact quantity strings, original status/provenance, absent optional facts and AI source-binding protection without procurement, approvals or execution.
+- Add an optional pinned ERPNext v15.0.0 Purchase Material Request Node SDK requiring an independently supplied exact quantity overlay; generic Studio remains ERP-independent, and raw REST JSON alone is not sufficient.
+- Isolated original site build passed3302 tests with9 opt-in skips; three-engine actual New/save/reopen/HTML/PDF consumers passed36/36 with zero retries. Retain first fixture/driver failures and the separate native-frame smoke limit; no production AI or physical certification is claimed.
+
 ### Read-only physical evidence and offline boundary — 2026-10-18
 
 - Add bounded, explicit physical-print/scan evidence checks, raw source/scan byte matching, independent measurement linkage and read-only CUPS/USB inventory. Synthetic fixtures and structurally valid bundles never certify hardware.
