@@ -292,3 +292,5 @@ PR93/main`ed816282`公开同精确请求1run/5HTTP200仍无候选，`draft-not-p
 
 [治理消费者](STUDIO_V3_GOVERNANCE_EVIDENCE.zh-CN.md)已合并[PR100](https://github.com/yapweijun1996/printform-js/pull/100)，208项相关回归及真实CLI已运行。原profile仍31 blockers，真实治理原件missing，结构完整也不授予authority或production资格；无新正式G8／模型调用。旧模型Pass不转移到本轮源码。
 
+[打印兼容性实证](STUDIO_V3_PRINT_COMPATIBILITY.zh-CN.md)：最终构建三引擎12场景／8份PDF，实际Chromium sandbox启用；默认PDF纸张会将大页9pt文字缩到约6.985pt，CSS优先保持纸型。真实硬件仍队列0／USB候选0，事件／PDF／数字几何都不是实体通过；原WebKit冷offline file限制保留。
+

@@ -15,6 +15,12 @@ who don't need the diary.
 
 ## [Unreleased]
 
+### Custom paper and PDF precedence investigation — 2026-10-19
+
+- Run12 three-engine digital scenarios and8 Chromium PDFs against the final built runtime with explicit Chromium sandbox and command-line verification; preserve asymmetric author insets, source tokens and custom orientation.
+- Show that scale1 with default PDF paper still shifts small pages and shrinks large-page9pt text to about6.985pt; CSS-page-size priority preserves intended size. This establishes a calling-option boundary, not a product defect or physical certification.
+- Preserve the initial default-launch study and zero-case automation-diagnostic failure separately. Actual hardware inventory remains zero queues/USB candidates; no print jobs or original cold-offline WebKit recheck.
+
 ### Optional Odoo maintenance snapshot integration — 2026-10-19
 
 - Map a pinned authorized Odoo17 read export to existing general MaintenanceWorkOrder, preserving native relation identities, exact snapshot text and absent optional facts without quantities, HTML/timezone conversion or execution inference.
