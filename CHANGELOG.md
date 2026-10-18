@@ -15,6 +15,12 @@ who don't need the diary.
 
 ## [Unreleased]
 
+### Read-only physical evidence and offline boundary — 2026-10-18
+
+- Add bounded, explicit physical-print/scan evidence checks, raw source/scan byte matching, independent measurement linkage and read-only CUPS/USB inventory. Synthetic fixtures and structurally valid bundles never certify hardware.
+- The actual workstation has zero configured print queues and zero USB candidates; both missing-evidence CLI runs exit2 with physical qualification missing. Preserve the original WebKit cold offline file failure; the merged upstream Service Worker fix is not a file-navigation pass.
+- Document strict file/JSON/race checks and the remaining non-atomic Node filesystem limitation; do not print, scan, mutate devices or upload device identities.
+
 ### Fixed-upstream evidence consumer — 2026-10-18
 
 - Verify bounded explicit source artifacts, collector and service-owner signatures, frozen route/snapshot identity, and every indexed request/response attribution without model calls or register writes.
