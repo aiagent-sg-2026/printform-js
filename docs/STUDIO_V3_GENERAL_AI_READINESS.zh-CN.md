@@ -1,6 +1,6 @@
 # 通用 PrintForm AI：能力与生产发布证据
 
-更新：2026-10-18。定位是浏览器优先、面向不会编程用户的通用 Printform Studio；ERPNext只是可选适配器，不是产品边界。历史发布、源代码profile及实际验证按下方各次记录隔离。
+更新：2026-10-19。定位是浏览器优先、面向不会编程用户的通用 Printform Studio；ERPNext／Odoo都只是可选适配器，不是产品边界。历史发布、源代码profile及实际验证按下方各次记录隔离。
 
 ## 决策
 
@@ -285,4 +285,10 @@ PR93/main`ed816282`公开同精确请求1run/5HTTP200仍无候选，`draft-not-p
 新增采购申请、维护工单，使当前 supplied-business-v1 达到11类；数量精确字符串、缺失状态／数量、原始出处及受保护绑定不由模型补造。ERPNext v15.0.0 Purchase Material Request 仅为可选仓库／Node SDK，必须另有可信精确数量导出，不承诺静态站点原始模块 import 或任意 REST JSON 自动识别。[完整契约与入口](GENERAL_REQUISITION_MAINTENANCE.zh-CN.md)。
 
 [上游归属消费者](STUDIO_V3_UPSTREAM_EVIDENCE.zh-CN.md)已经独立提交合并[PR97](https://github.com/yapweijun1996/printform-js/pull/97)：双签名、实际原件、逐请求归属只提供独立审查输入，不签发生产资格；实际原 profile 预检仍31 blockers、无新模型调用／正式attempt。[实体消费者及WebKit研究](STUDIO_V3_PHYSICAL_OFFLINE_ACCEPTANCE.zh-CN.md)已经独立提交合并[PR98](https://github.com/yapweijun1996/printform-js/pull/98)：实际打印队列0／USB候选0，physical gate missing；保留原cold-offline file失败。完整AI生产资格仍为false，历史c89独立模型Pass不转移为当前新源码的Pass。
+
+## 2026-10-19：厂商快照与治理审查边界
+
+[Odoo17只读SDK](ODOO_MAINTENANCE_REQUEST.zh-CN.md)复用既有维护工单，不增加canonical类型或工具。原生快照重复身份键已实际修复，未提供的数量／状态不补造；原文仍是分享副本中的live data。隔离全量3412项／9 opt-in跳过，最终夹具51项、127契约／39审查及三引擎39/39通过；失败历史不覆盖。
+
+[治理消费者](STUDIO_V3_GOVERNANCE_EVIDENCE.zh-CN.md)已合并[PR100](https://github.com/yapweijun1996/printform-js/pull/100)，208项相关回归及真实CLI已运行。原profile仍31 blockers，真实治理原件missing，结构完整也不授予authority或production资格；无新正式G8／模型调用。旧模型Pass不转移到本轮源码。
 

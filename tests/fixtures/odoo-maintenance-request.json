@@ -1,0 +1,61 @@
+{
+  "database": "fictional-workshop-db",
+  "document": {
+    "model": "maintenance.request",
+    "record": {
+      "id": 417,
+      "name": "Fictional pump — inspect vibration <img src=x onerror=\"globalThis.odooHostile=1\"> & report",
+      "company_id": [9, "Fictional Workshop display label"],
+      "equipment_id": [63, "Fictional circulation pump/F-PUMP-0063"],
+      "stage_id": [4, "Fictional review display label"],
+      "request_date": "2026-10-23",
+      "schedule_date": "2026-10-24 23:30:00",
+      "close_date": false,
+      "description": "<p>PRIVATE-NATIVE-HTML: inspect <b>bearing</b>.</p><script>globalThis.odooHostile=2</script>",
+      "instruction_type": "text",
+      "instruction_text": "<p>PRIVATE-NATIVE-INSTRUCTION: disconnect only with authorization.</p>",
+      "duration": 0,
+      "priority": "3",
+      "maintenance_type": "corrective",
+      "kanban_state": "done",
+      "archive": false,
+      "done": false,
+      "maintenance_team_id": [2, "Fictional maintenance team"],
+      "owner_user_id": [11, "Fictional requester"],
+      "user_id": false
+    }
+  },
+  "equipment": {
+    "model": "maintenance.equipment",
+    "record": {
+      "id": 63,
+      "name": "Fictional circulation pump",
+      "company_id": [9, "Fictional Workshop display label"],
+      "serial_no": "F-PUMP-0063",
+      "location": "Fictional bay B",
+      "model": "F-MODEL-7",
+      "cost": 0,
+      "note": "<p>PRIVATE-EQUIPMENT-NOTE</p>",
+      "active": true
+    }
+  },
+  "company": {
+    "model": "res.company",
+    "record": {
+      "id": 9,
+      "name": "Fictional Workshop",
+      "email": "private-fictional@example.invalid",
+      "report_footer": "<p>PRIVATE-COMPANY-FOOTER</p>"
+    }
+  },
+  "stage": {
+    "model": "maintenance.stage",
+    "record": {
+      "id": 4,
+      "name": "Fictional technician review",
+      "sequence": 20,
+      "fold": true,
+      "done": false
+    }
+  }
+}
