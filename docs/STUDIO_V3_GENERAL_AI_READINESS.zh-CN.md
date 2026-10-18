@@ -1,6 +1,6 @@
 # 通用 PrintForm AI：能力与生产发布证据
 
-更新：2026-10-17。定位是浏览器优先、面向不会编程用户的通用 Printform Studio；ERPNext只是可选适配器，不是产品边界。历史发布、源代码profile及实际验证按下方各次记录隔离。
+更新：2026-10-18。定位是浏览器优先、面向不会编程用户的通用 Printform Studio；ERPNext只是可选适配器，不是产品边界。历史发布、源代码profile及实际验证按下方各次记录隔离。
 
 ## 决策
 
@@ -279,3 +279,10 @@ PR93/main`ed816282`公开同精确请求1run/5HTTP200仍无候选，`draft-not-p
 最终来源完整构建3244项通过/9opt-in跳过；最终通用spec三引擎30/30通过，原126子集124通过/2失败不覆盖。WebKit transport-offline本地file导航在无项目代码的114字节基线上也失败，仍是明确浏览器验收Blocker；同一真实下载字节的冷offline内容执行和独立解码另证，不冒充file导航通过。AI正式生产门禁不变。
 
 [PR95](https://github.com/yapweijun1996/printform-js/pull/95)已合并main`c89d85bd5d153da81e46c0af9dd426f51b1a2691`，[Pages39039021333成功](https://github.com/yapweijun1996/printform-js/actions/runs/39039021333)。原生Chrome155新源单次原精确任务真实Pass：6HTTP200/19.793秒，正确纸上Preview仍r1，验收驱动显式UIApply后实际Save r2只改188.5×244.2mm纵向自定义纸张与revision，其他字段深比较原样；3canary未出站、pageerror0。先前0请求驱动诊断前置失败亦保留。[完整记录](STUDIO_V3_AI_DRAFT_OUTCOME.zh-CN.md)。不把一次独立Pass冒充完整生产资格或新增正式G8。
+
+## 2026-10-18：通用来源扩展与外部证据边界
+
+新增采购申请、维护工单，使当前 supplied-business-v1 达到11类；数量精确字符串、缺失状态／数量、原始出处及受保护绑定不由模型补造。ERPNext v15.0.0 Purchase Material Request 仅为可选仓库／Node SDK，必须另有可信精确数量导出，不承诺静态站点原始模块 import 或任意 REST JSON 自动识别。[完整契约与入口](GENERAL_REQUISITION_MAINTENANCE.zh-CN.md)。
+
+[上游归属消费者](STUDIO_V3_UPSTREAM_EVIDENCE.zh-CN.md)已经独立提交合并[PR97](https://github.com/yapweijun1996/printform-js/pull/97)：双签名、实际原件、逐请求归属只提供独立审查输入，不签发生产资格；实际原 profile 预检仍31 blockers、无新模型调用／正式attempt。[实体消费者及WebKit研究](STUDIO_V3_PHYSICAL_OFFLINE_ACCEPTANCE.zh-CN.md)已经独立提交合并[PR98](https://github.com/yapweijun1996/printform-js/pull/98)：实际打印队列0／USB候选0，physical gate missing；保留原cold-offline file失败。完整AI生产资格仍为false，历史c89独立模型Pass不转移为当前新源码的Pass。
+

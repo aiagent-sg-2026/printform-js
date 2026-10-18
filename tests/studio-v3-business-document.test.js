@@ -88,7 +88,7 @@ describe('supplied business documents consumed by the actual Studio lifecycle', 
   });
   it.each(BUSINESS_DOCUMENT_KINDS)('%s retains optional supplied metadata and multiline notes after portable reopen', kind => {
     const input = businessDemoInput(kind);
-    const branch = ['service','packing','inspection','handover','manufacturing','timesheet'].find(key=>input[key]);
+    const branch = ['service','packing','inspection','handover','manufacturing','timesheet','requisition','maintenance'].find(key=>input[key]);
     if (branch) input[branch].status.value = 'Source status only · 来源状态';
     else input.document.status = 'Source status only · 未核销';
     input.company.address = 'Fictional office, floor 1\nFictional Demo Street · 非真实地址';

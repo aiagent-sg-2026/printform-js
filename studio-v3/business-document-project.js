@@ -5,15 +5,16 @@ import { bindingValidation } from './validation.js';
 import { serviceLogisticsFields } from './business-service-logistics.js';
 import { inspectionHandoverFields } from './business-inspection-handover.js';
 import { manufacturingTimesheetFields } from './business-manufacturing-timesheet.js';
+import { requisitionMaintenanceFields } from './business-requisition-maintenance.js';
 
-const titles = { AccountStatement: 'ACCOUNT STATEMENT', StockMovement: 'STOCK MOVEMENT', PayrollSlip: 'PAYROLL SLIP', ServiceReport: 'SERVICE REPORT', PackingList: 'PACKING LIST', InspectionReport: 'INSPECTION REPORT', AssetHandover: 'ASSET HANDOVER', ManufacturingOrder: 'MANUFACTURING ORDER', Timesheet: 'TIMESHEET' };
+const titles = { AccountStatement: 'ACCOUNT STATEMENT', StockMovement: 'STOCK MOVEMENT', PayrollSlip: 'PAYROLL SLIP', ServiceReport: 'SERVICE REPORT', PackingList: 'PACKING LIST', InspectionReport: 'INSPECTION REPORT', AssetHandover: 'ASSET HANDOVER', ManufacturingOrder: 'MANUFACTURING ORDER', Timesheet: 'TIMESHEET', PurchaseRequisition: 'PURCHASE REQUISITION', MaintenanceWorkOrder: 'MAINTENANCE WORK ORDER' };
 const field = (id, label, pointer) => ({ id, label, pointer, format: '' });
 const optional = (fields, data, base, names, prefix = '') => {
   for (const [key, label] of Object.entries(names)) if (Object.hasOwn(data, key)) fields.push(field(`${prefix}${key.replace(/[A-Z]/g, letter => `-${letter.toLowerCase()}`)}`, label, `${base}/${key}`));
 };
 export function createBusinessDocumentProject(input) {
   const data = normalizeBusinessDocument(input), kind = data.document.kind;
-  const nonfinancial = ['ServiceReport', 'PackingList', 'InspectionReport', 'AssetHandover', 'ManufacturingOrder', 'Timesheet'].includes(kind);
+  const nonfinancial = ['ServiceReport', 'PackingList', 'InspectionReport', 'AssetHandover', 'ManufacturingOrder', 'Timesheet', 'PurchaseRequisition', 'MaintenanceWorkOrder'].includes(kind);
   const project = newProject(kind === 'StockMovement' || nonfinancial ? 'delivery' : 'invoice'), design = designOf(project);
   project.manifest.title = `${titles[kind]} · Supplied facts`;
   project.manifest.sampleDataTitle = `${data.document.number} · supplied facts`.slice(0, 100);
@@ -65,7 +66,7 @@ export function createBusinessDocumentProject(input) {
     optional(design.customer, data.payroll.employee, '/payroll/employee', { department: 'Department', jobTitle: 'Job title' });
     optional(design.customer, data.payroll, '/payroll', { payDate: 'Supplied pay date (not proof of payment)' });
   }
-  if (nonfinancial) design.customer = [...serviceLogisticsFields(data, field), ...inspectionHandoverFields(data, field), ...manufacturingTimesheetFields(data, field)];
+  if (nonfinancial) design.customer = [...serviceLogisticsFields(data, field), ...inspectionHandoverFields(data, field), ...manufacturingTimesheetFields(data, field), ...requisitionMaintenanceFields(data, field)];
   design.collection = '/printRows';
   design.columns = [
     { ...field('no', '#', './no'), width: 3 }, { ...field('section', 'Business fact', './section'), width: 9 },

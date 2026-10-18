@@ -51,7 +51,7 @@ export const LEDGER_WORKFLOWS = Object.freeze([
   ["printform.source.pairing","Pair or revoke an owned local companion","human-mediated","AI settings > Isolated source workspace > Pair or Disconnect"],
   ["printform.source.disclosure","Authorize fictional source for one run","human-mediated","Sharing permissions > Use isolated source for one request"],
   ["printform.table.additional","Create and configure independent source tables","human-mediated","Template structure > Add independent source table; Properties > Apply source table"],
-  ["printform.business.supplied","Use nine supplied-business source contracts","human-mediated","New > listed fictional starter; real facts use external normalization/project SDK then Studio Open; no mounted SDK tool"],
+  ["printform.business.supplied","Use supplied-business source contracts","human-mediated","New > listed fictional starter; real facts use external normalization/project SDK then Studio Open; optional pinned Purchase Material Request envelope is not raw UI import"],
   ["printform.schema.normalization","Normalize explicit source profiles through SDK adapters","human-mediated","Use external documented adapter/SDK then Studio Open; no mounted SDK tool; Data > Import CSV / JSON is separate human mapping"],
   ["printform.project.share-copy","Download editable or standalone share copy without original import receipt","human-mediated","Share copy > review remaining data > choose editable copy or HTML"],
 ].map(row=>Object.freeze(row)));

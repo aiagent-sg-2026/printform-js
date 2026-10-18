@@ -2,6 +2,7 @@ import { BUSINESS_DOCUMENT_PROFILE } from './business-document-adapter.js';
 import { serviceDemo, packingDemo } from './business-service-logistics-demos.js';
 import { inspectionDemo, handoverDemo } from './business-inspection-handover-demos.js';
 import { manufacturingDemo, timesheetDemo } from './business-manufacturing-timesheet-demos.js';
+import { requisitionDemo, maintenanceDemo } from './business-requisition-maintenance-demos.js';
 
 export const BUSINESS_DEMO_TEMPLATES = Object.freeze([
   { documentKind: 'AccountStatement', label: 'Account statement · 对账单', baseType: 'invoice', description: 'Explicit references/due dates, debit/credit meanings and supplied balances; no aging or reconciliation.' },
@@ -12,7 +13,9 @@ export const BUSINESS_DEMO_TEMPLATES = Object.freeze([
   { documentKind: 'InspectionReport', label: 'Inspection report · 检验报告', baseType: 'delivery', description: 'Supplied observations, independent measurements and source result labels; no inferred conformance or certification.' },
   { documentKind: 'AssetHandover', label: 'Asset handover · 资产交接', baseType: 'delivery', description: 'Supplied asset identities, condition, quantities and source parties; no signature, receipt or ownership inference.' },
   { documentKind: 'ManufacturingOrder', label: 'Manufacturing order · 生产工单', baseType: 'delivery', description: 'Supplied order, product and independent material/production quantities with provenance; no BOM expansion or stock posting.' },
-  { documentKind: 'Timesheet', label: 'Timesheet · 工时表', baseType: 'delivery', description: 'Supplied employee, project/task, hours and exact source status with provenance; no wages, duration calculation or approval inference.' }
+  { documentKind: 'Timesheet', label: 'Timesheet · 工时表', baseType: 'delivery', description: 'Supplied employee, project/task, hours and exact source status with provenance; no wages, duration calculation or approval inference.' },
+  { documentKind: 'PurchaseRequisition', label: 'Purchase requisition · 采购申请', baseType: 'delivery', description: 'Supplied requested items, quantities, required dates and provenance; no authorization, purchasing or accounting inference.' },
+  { documentKind: 'MaintenanceWorkOrder', label: 'Maintenance work order · 维护工单', baseType: 'delivery', description: 'Supplied asset, task instructions, quantities and source status; no work execution, completion or approval inference.' }
 ].map(entry => Object.freeze({ ...entry, status: 'ready', scenarioCount: 1 })));
 const provenance = (sourcePath, meaning) => ({ sourcePath, meaning });
 const money = (amount, sourcePath, meaning, minorUnitDigits = 3) => ({ amount, currency: 'SGD', minorUnitDigits, provenance: provenance(sourcePath, meaning) });
@@ -77,7 +80,8 @@ function payroll() {
 }
 export function businessDemoInput(kind) {
   const factories = { AccountStatement: statement, StockMovement: stock, PayrollSlip: payroll, ServiceReport: () => serviceDemo(common), PackingList: () => packingDemo(common),
-    InspectionReport: () => inspectionDemo(common), AssetHandover: () => handoverDemo(common), ManufacturingOrder: () => manufacturingDemo(common), Timesheet: () => timesheetDemo(common) };
+    InspectionReport: () => inspectionDemo(common), AssetHandover: () => handoverDemo(common), ManufacturingOrder: () => manufacturingDemo(common), Timesheet: () => timesheetDemo(common),
+    PurchaseRequisition: () => requisitionDemo(common), MaintenanceWorkOrder: () => maintenanceDemo(common) };
   if (!Object.hasOwn(factories, kind)) throw new Error(`Unknown supplied business demo: ${kind}`);
   return factories[kind]();
 }
