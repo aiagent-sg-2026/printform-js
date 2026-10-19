@@ -70,12 +70,12 @@ export class DockerBroker {
   }
   async cleanupExpired() {
     for (const kind of ['container', 'volume']) {
-      const names = await success([kind, 'ls', ...(kind === 'container' ? ['--all'] : []), '--quiet', '--filter', `label=${LABEL}.managed=true`]);
+      const names = await success([kind, 'ls', ...(kind === 'container' ? ['--all'] : []), '--quiet', '--filter', `label=${LABEL}.managed=true`, '--filter', `label=${LABEL}.owner=${this.owner}`]);
       for (const name of names.split('\n').filter(Boolean)) {
         const resource = await this.inspect(kind, name); const labels = kind === 'volume' ? resource?.Labels : resource?.Config?.Labels;
-        if (labels?.[`${LABEL}.managed`] !== 'true' || !/^[0-9]+$/.test(labels[`${LABEL}.expires`] ?? '') || Number(labels[`${LABEL}.expires`]) >= Date.now()) continue;
+        if (labels?.[`${LABEL}.managed`] !== 'true' || labels[`${LABEL}.owner`] !== this.owner || !/^[0-9]+$/.test(labels[`${LABEL}.expires`] ?? '') || Number(labels[`${LABEL}.expires`]) >= Date.now()) continue;
         check(/^[0-9a-f-]{36}$/.test(labels[`${LABEL}.owner`] ?? '') && /^[0-9a-f-]{36}$/.test(labels[`${LABEL}.workspace`] ?? ''), 'RESOURCE_OWNERSHIP', 403);
-        await success(kind === 'volume' ? ['volume', 'rm', name] : ['container', 'rm', '--force', name]);
+        await this.remove(kind, name);
       }
     }
   }

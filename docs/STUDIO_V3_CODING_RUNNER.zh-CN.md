@@ -86,6 +86,14 @@ npm run studio:coding-runner -- --origin https://studio.example.com
 修复版公开8c同原题3/3真实Pass，旧ab9三Fail保留；正式CSV共6条但按两个profile分别计3/180。本证据只覆盖浏览器只读问答，source runner仍未执行；不能把UI独立回执或单题成功改称源码进程／完整G6/G8/G9资格。
 
 
+## 2026-10-19：当前owner与严格制品边界
+
+实际方法的受控Docker命令夹具先复现向其他owner发出的2次删除；修复后只清理当前broker owner、移除前再次inspect。资源存留及owner替换竞态2项通过；不把管理标签／过期时间当作跨broker删除授权，也不清理旧owner崩溃遗留物。
+
+在新建唯一镜像上，既有9项opt-in真实Docker／本地Origin浏览器协议消费者实际通过；没有启动、重启或停止用户4317服务。原始制品重复键即使SHA正确仍会last-key-wins，现先严格预检再保留native数字；相关74项制品／检验来源回归通过。首轮5项夹具变量名错误保留，修正后通过；不是产品异常。
+
+完整身份、lease、真实run回执、重新获取制品、私有draft／inspection／人工Apply及清理边界见[源码制品生命周期](STUDIO_V3_SOURCE_ARTIFACT_LIFECYCLE.zh-CN.md)。真实本地执行、单元状态机、公开部署AI和完整G8资格必须分开记录，不移植旧模型Pass。
+
 ## 官方研究
 
 - [Docker run约束](https://docs.docker.com/engine/containers/run/)与[默认seccomp](https://docs.docker.com/engine/security/seccomp/)：约束及默认过滤不等于完美隔离。

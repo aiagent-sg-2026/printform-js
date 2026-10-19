@@ -15,6 +15,10 @@ who don't need the diary.
 
 ## [Unreleased]
 
+### Source artifact custody and broker ownership — 2026-10-19
+- Reject duplicate decoded JSON keys before native operation parsing while preserving numeric types and existing inspection/human-Apply gates.
+- Restrict expired-resource cleanup to the exact broker owner and recheck ownership before removal; do not delete another broker's crash leftovers.
+
 ### Optional pinned quality-inspection source — 2026-10-19
 - Map authorized ERPNext v15.0.0 Quality Inspection snapshots to existing InspectionReport, retaining native Data readings, exact Float overlays and raw live evidence without recalculating acceptance.
 
