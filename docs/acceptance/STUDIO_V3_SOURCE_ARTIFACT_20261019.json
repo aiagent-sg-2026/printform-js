@@ -1,0 +1,154 @@
+{
+  "purpose": "Actual local source/strict artifact bridge and separately identified controlled/unit evidence; not a model or native AIPanel UI task",
+  "baseline": "e0924ebaeee594cbabeae14b161bac563de13ca0",
+  "sourceRunnerHash": "7d0b4b0aae1b8b065e7fab980585f89e13f408763df058c7359e0b38bbcdaac6",
+  "imageDigest": "sha256:deaa86d5b0a85fe8f71b07752e5aededd8c5eda0ad7a32b9e638da0ab17ada6d",
+  "ownershipControlledBefore": {
+    "foreignDeleteCommands": 2,
+    "realDockerCalls": 0
+  },
+  "ownershipControlledAfter": {
+    "foreignDeleteCommands": 0,
+    "ownExpiredDeleteCommands": 2,
+    "realDockerCalls": 0
+  },
+  "ownershipRegressionsPassed": 2,
+  "actualDockerBrowserProtocolTestsPassed": 9,
+  "artifactConsumersPassed": 17,
+  "actualSourceBridge": {
+    "identity": {
+      "release": "local",
+      "contractHash": "183f2cd991d5aee03095828dc818ecc8c77638d28bf58f003c176fb635fb2480",
+      "knowledgeHash": "03d90e9d9c67b01b53b27bec7f30300ceebe55ae15b14648ef49c692e17468d2",
+      "packageHash": "ab48143477c977527e50b6232b33e6cce6df23b5d97d789a64cffd8182775a72",
+      "sourceRunnerHash": "7d0b4b0aae1b8b065e7fab980585f89e13f408763df058c7359e0b38bbcdaac6"
+    },
+    "receiptSha256": "172e6d5f9c99e8b63e62c617677353abbfb361e94be897d5fbad26027233afda",
+    "commands": [
+      {
+        "callId": "55218649-fe21-4aa9-80c8-28d6e8c909d3",
+        "exitCode": 1,
+        "beforeRevision": 1,
+        "afterRevision": 1,
+        "beforeDigest": "1197c4a3ced31f4f3e887a1ee16d37bacbf344d216add56f177c2aa307c0ba75",
+        "afterDigest": "1197c4a3ced31f4f3e887a1ee16d37bacbf344d216add56f177c2aa307c0ba75",
+        "imageDigest": "sha256:deaa86d5b0a85fe8f71b07752e5aededd8c5eda0ad7a32b9e638da0ab17ada6d"
+      },
+      {
+        "callId": "e00335a8-104f-46be-91e8-46ad28bfca94",
+        "exitCode": 0,
+        "beforeRevision": 2,
+        "afterRevision": 2,
+        "beforeDigest": "1b88000f55fcbd288209350ac0c3ce5044f517032544951d464d6b8d83f43851",
+        "afterDigest": "1b88000f55fcbd288209350ac0c3ce5044f517032544951d464d6b8d83f43851",
+        "imageDigest": "sha256:deaa86d5b0a85fe8f71b07752e5aededd8c5eda0ad7a32b9e638da0ab17ada6d"
+      },
+      {
+        "callId": "38703eb8-1d54-4629-8116-7ce14879a0eb",
+        "exitCode": 0,
+        "beforeRevision": 2,
+        "afterRevision": 3,
+        "beforeDigest": "1b88000f55fcbd288209350ac0c3ce5044f517032544951d464d6b8d83f43851",
+        "afterDigest": "a30ce855cdd1791ddbbf1ab9f02856c4713886d628b04b2507fe8f4d1460ea8c",
+        "imageDigest": "sha256:deaa86d5b0a85fe8f71b07752e5aededd8c5eda0ad7a32b9e638da0ab17ada6d"
+      }
+    ],
+    "artifact": {
+      "id": "artifact-1b3862f90dce5e74336ec9fd9db371e8ec22075d0d1f615f9eb4361083fe9a35",
+      "mediaType": "application/json",
+      "bytes": 580,
+      "contentDigest": "bd24407bacbb95b221b3224299b72d7f1d4ce767e7499a398ca27e0ead07bad2",
+      "workspaceId": "57815277-67c1-4c13-82dc-2405a2f2a90f",
+      "sourceRevision": 3,
+      "buildCallId": "38703eb8-1d54-4629-8116-7ce14879a0eb",
+      "treeDigest": "a30ce855cdd1791ddbbf1ab9f02856c4713886d628b04b2507fe8f4d1460ea8c",
+      "imageDigest": "sha256:deaa86d5b0a85fe8f71b07752e5aededd8c5eda0ad7a32b9e638da0ab17ada6d",
+      "releaseIdentity": {
+        "release": "local",
+        "contractHash": "183f2cd991d5aee03095828dc818ecc8c77638d28bf58f003c176fb635fb2480",
+        "knowledgeHash": "03d90e9d9c67b01b53b27bec7f30300ceebe55ae15b14648ef49c692e17468d2",
+        "packageHash": "ab48143477c977527e50b6232b33e6cce6df23b5d97d789a64cffd8182775a72"
+      },
+      "documentId": "v3-ef272831-598c-4dc4-bfc2-b5614f94eefe",
+      "baseRevision": 0,
+      "runId": "ee497041-623b-4393-b6e1-799ec6c2bc95"
+    },
+    "render": {
+      "status": "ready",
+      "qualityReady": true,
+      "metrics": {
+        "logicalPages": 1,
+        "overflowElements": 0,
+        "barcodeContentOverflows": 0,
+        "verticalOverflowPages": 0,
+        "contrastFailures": 0,
+        "renderedRows": 0,
+        "renderedRowFragments": 0,
+        "rowTooTall": 0,
+        "activeTableHeaderErrors": 0,
+        "blankPages": 0,
+        "keepTogetherFailures": 0,
+        "pageHeight": 922.9606299212597,
+        "expectedRows": 0,
+        "rows": 0,
+        "durationMs": 22.700000047683716
+      },
+      "pageErrors": [],
+      "httpRequests": 0,
+      "htmlSha256": "ff0b30fa9eb78aaf8c13b8243d8388789210ceb387f36285b6b9335fdd1a2787"
+    },
+    "privateCandidate": {
+      "liveRevision": 0,
+      "sourceDigest": "bd24407bacbb95b221b3224299b72d7f1d4ce767e7499a398ca27e0ead07bad2",
+      "inspectionReady": true
+    },
+    "hostCommit": {
+      "revision": 1,
+      "dataUnchanged": true,
+      "schemaUnchanged": true,
+      "title": "SOURCE ARTIFACT VERIFIED",
+      "customSizeMm": {
+        "width": 188.5,
+        "height": 244.2
+      }
+    },
+    "cleanup": {
+      "workspaceClosed": true,
+      "connectionRevoked": true,
+      "serverClosed": true,
+      "renderContextClosed": true,
+      "protocolClosed": true,
+      "browserClosed": true
+    },
+    "nativeAIPanelUIExercised": false
+  },
+  "priorImageUnavailableRetained": true,
+  "priorImageUnavailableRootCause": "Unproven; later independent full/restricted-environment image reads observed the same tag and digest without changing Docker context or product code.",
+  "existingManagedResourcesBefore": {
+    "container": 0,
+    "volume": 0
+  },
+  "existingManagedResourcesAfter": {
+    "container": 0,
+    "volume": 0
+  },
+  "verificationHistory": {
+    "initialFullUnit": {
+      "passed": 3504,
+      "failed": 1,
+      "optInSkipped": 9
+    },
+    "initialFailure": "Stale generated human workflow after CSV update; no runtime product failure asserted.",
+    "correctedDiscoveryKnowledgeTestsPassed": 12,
+    "packageContractExamples": 127,
+    "originalBaselineChangesReviewed": 39,
+    "buildAssetsAndSite": "passed",
+    "fullFinalUnit": "Use commit-linked CI evidence; not inferred from the initial mixed local run.",
+    "initialArtifactFixtureFailures": 5,
+    "firstDiscoveryCleanupFailure": "Residual source-text assertion referenced removed fs import; removed incidental source-text assertions, retained three meaningful discovery tests."
+  },
+  "modelRequests": 0,
+  "newFormalG8Attempts": 0,
+  "productionQualified": false,
+  "physicalQualified": false
+}

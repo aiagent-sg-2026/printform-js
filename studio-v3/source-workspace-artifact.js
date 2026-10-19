@@ -1,5 +1,6 @@
 import { sourceFailure as fail } from './source-workspace-errors.js';
 import { MAX_AUTHORING_OPERATIONS } from './ai-authoring-contract.js';
+import { parseLosslessRecords } from './structured-import-parser.js';
 
 const rejected = () => { throw fail('ARTIFACT_REJECTED'); };
 const sameIdentity = (actual,expected) => actual && Object.keys(actual).length === 4 &&
@@ -17,7 +18,13 @@ export async function verifySourceArtifact(artifact,expected) {
   const digest = [...new Uint8Array(await crypto.subtle.digest('SHA-256',bytes))].map(value=>value.toString(16).padStart(2,'0')).join('');
   if (digest !== artifact.contentDigest) rejected();
   let value;
-  try { value = JSON.parse(artifact.content.replace(/^\uFEFF/, ''),(key,item)=> { if (['__proto__','prototype','constructor'].includes(key)) rejected(); return item; }); }
+  try {
+    const source = artifact.content.replace(/^\uFEFF/, '');
+    // Validate decoded keys and bounded structure before native parsing erases ambiguity.
+    // Keep native number types for the existing typed draft validator.
+    parseLosslessRecords(source);
+    value = JSON.parse(source);
+  }
   catch { rejected(); }
   if (!value || typeof value !== 'object' || Array.isArray(value) || Object.keys(value).some(key=>!['format','version','summary','operations'].includes(key)) ||
     value.format !== 'printform-operation-artifact' || value.version !== 1 || typeof value.summary !== 'string' || !value.summary.trim() || value.summary.length > 500 ||
