@@ -1,0 +1,51 @@
+{
+  "site": "fictional-quality.invalid",
+  "document": {
+    "doctype": "Quality Inspection",
+    "name": "F-QI-2026-001",
+    "report_date": "2026-10-19",
+    "docstatus": 1,
+    "inspection_type": "Incoming",
+    "reference_type": "Purchase Receipt",
+    "reference_name": "F-PR-2026-019",
+    "item_code": "F-BRACKET",
+    "item_name": "Fictional bracket · 虚构支架",
+    "batch_no": "000-LOT-F",
+    "item_serial_no": "000-SERIAL-F",
+    "sample_size": 2.5,
+    "status": "Rejected",
+    "manual_inspection": 1,
+    "inspected_by": "fictional-inspector@example.invalid",
+    "verified_by": "UNPRINTED-VERIFIER-F",
+    "remarks": "UNPRINTED-RAW-QI </script><script>globalThis.qualityRawExecuted=true</script>",
+    "readings": [
+      {
+        "doctype": "Quality Inspection Reading", "name": "F-QIR-SURFACE",
+        "parent": "F-QI-2026-001", "parenttype": "Quality Inspection", "parentfield": "readings", "idx": 1,
+        "specification": "Surface · 表面", "numeric": 0, "manual_inspection": 1, "formula_based_criteria": 0,
+        "value": "Smooth", "reading_value": "Visible source scratch <not markup>", "status": "Accepted"
+      },
+      {
+        "doctype": "Quality Inspection Reading", "name": "F-QIR-OFFSET",
+        "parent": "F-QI-2026-001", "parenttype": "Quality Inspection", "parentfield": "readings", "idx": 2,
+        "specification": "Recorded offset · 偏差", "numeric": 1, "manual_inspection": 1, "formula_based_criteria": 0,
+        "min_value": -0.2, "max_value": 0.2,
+        "reading_1": "-0000.1250", "reading_2": "+0000.0000", "reading_3": "1.234,50", "reading_10": "  0.1000  ",
+        "status": "Rejected"
+      },
+      {
+        "doctype": "Quality Inspection Reading", "name": "F-QIR-FORMULA",
+        "parent": "F-QI-2026-001", "parenttype": "Quality Inspection", "parentfield": "readings", "idx": 3,
+        "specification": "Source formula observation", "numeric": 0, "manual_inspection": 1, "formula_based_criteria": 1,
+        "acceptance_formula": "reading_value in ('A', 'B')", "reading_value": "C", "status": "Accepted"
+      }
+    ]
+  },
+  "reference": {
+    "doctype": "Purchase Receipt", "name": "F-PR-2026-019", "docstatus": 1, "company": "F-COMPANY",
+    "items": [{ "doctype": "Purchase Receipt Item", "name": "F-PR-ITEM-1", "parent": "F-PR-2026-019", "parenttype": "Purchase Receipt", "parentfield": "items", "idx": 1,
+      "item_code": "F-BRACKET", "batch_no": "000-LOT-F", "serial_no": "000-SERIAL-F", "quality_inspection": "F-QI-2026-001", "qty": 999.999, "uom": "Each" }]
+  },
+  "company": { "doctype": "Company", "name": "F-COMPANY", "company_name": "Fictional Workshop · 虚构工坊" },
+  "item": { "doctype": "Item", "name": "F-BRACKET", "item_name": "Fictional bracket · 虚构支架", "stock_uom": "Each" }
+}

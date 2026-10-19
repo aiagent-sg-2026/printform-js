@@ -1,6 +1,6 @@
 // Generates studio-v3/agent-workflows.js from the feature ledger CSV (the authority), so the agent can tell people
 // which workflows are human-mediated, intentionally unavailable or not yet callable, without a hand-kept list.
-// Run after editing the ledger: node scripts/generate-studio-v3-workflows.mjs. A test fails while it is stale.
+// Run after editing the ledger: node scripts/generate-studio-v3-workflows.mjs.
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';

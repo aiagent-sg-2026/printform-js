@@ -132,3 +132,5 @@ supplied-facts creator使用封闭的 `supplied-facts` 预设；原商业单据�
 
 [Odoo17维护请求SDK](ODOO_MAINTENANCE_REQUEST.zh-CN.md)通过授权快照与明确数据库／请求／源码版本、关联设备／公司／stage事实，生成既有MaintenanceWorkOrder。它不连接ERP、不增加canonical类型，不推断数量、审批或完成，也不是Data文件选择器接受任意Odoo RPC JSON。原生HTML和Datetime保留为未打印证据，不猜文本转换或时区；完整快照在分享副本中仍存在。
 
+[ERPNext v15.0.0 Quality Inspection SDK](ERPNEXT_QUALITY_INSPECTION_ADAPTER.zh-CN.md)复用既有InspectionReport；定性与numeric Data读数按原字符串保存，Float限值只有另行授权的精确amount／precision／UOM／provenance才可打印。显式检查site／QI与参考单据／公司／Item／子行身份，不计算公式、平均、接收判定或合规；原始快照在分享中仍是live data，不新增connector、raw导入入口、类型或工具。
+

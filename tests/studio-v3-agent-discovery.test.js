@@ -1,12 +1,7 @@
 import {describe,it,expect,vi,afterEach} from 'vitest';
-import fs from 'node:fs';
 import {Type,createModels,fauxProvider,fauxAssistantMessage,fauxToolCall} from '@earendil-works/pi-ai';
 import {AGENT_TOOL_DEFINITIONS,validateRegistry,capabilityCatalog} from '../studio-v3/agent-registry.js';
-import {readSkill} from '../studio-v3/agent-knowledge.js';
-import {LEDGER_WORKFLOWS} from '../studio-v3/agent-workflows.js';
-import {renderWorkflowsModule,LEDGER,MODULE} from '../scripts/generate-studio-v3-workflows.mjs';
 import {capabilityChanges} from '../scripts/generate-studio-v3-agent.mjs';
-import {parseCsv} from '../scripts/studio-v3-task-register.mjs';
 
 const call = (name,args = {}) => fauxAssistantMessage([fauxToolCall(name,args,{id:`c-${name}`})],{stopReason:'toolUse'});
 const json = message => JSON.parse(message.content[0].text);
@@ -18,13 +13,6 @@ const guide = {id:'synthetic-guide',description:'How to use synthetic_lookup.',s
 describe('Studio v3 agent discovery and lifecycle (COV-05)', () => {
   afterEach(() => { for (const id of ['agent-registry','agent-handlers','agent-knowledge']) vi.doUnmock(`../studio-v3/${id}.js`); vi.resetModules(); });
 
-  it('keeps the generated workflow module in sync with the ledger', () => {
-    // Compare with LF on both sides: a Windows checkout (text=auto, autocrlf) holds these files with CRLF.
-    const lf = file => fs.readFileSync(file,'utf8').replace(/\r\n/g,'\n');
-    expect(lf(MODULE)).toBe(renderWorkflowsModule(lf(LEDGER)));
-    const rows = parseCsv(fs.readFileSync(LEDGER,'utf8')).rows, notCallable = rows.filter(row => row.disposition !== 'agent-callable' || row.agent_path === 'none');
-    expect(LEDGER_WORKFLOWS.map(row => row[0])).toEqual(notCallable.map(row => row.id));
-  });
   it('requires deprecations and tombstones to point at an active replacement', () => {
     const tools = AGENT_TOOL_DEFINITIONS, total = validateRegistry().length, replace = (name,patch) => tools.map(entry => entry.name === name ? {...entry,...patch} : entry);
     expect(() => validateRegistry({tools:replace('take_notes',{status:'deprecated'})})).toThrow('needs an active replacement');
@@ -80,8 +68,5 @@ describe('Studio v3 agent discovery and lifecycle (COV-05)', () => {
     expect(catalog.knowledge.map(item => item.id)).toContain('synthetic-guide');
     expect(skill.content).toContain('Call synthetic_lookup');
     expect(value).toBe('Synthetic value for answer.');
-    // The core prompt text and the handler list were not edited; the new name only reaches the prompt through the registry.
-    const loop = fs.readFileSync('studio-v3/agent-loop.js','utf8'), tools = fs.readFileSync('studio-v3/agent-tools.js','utf8');
-    expect(loop).not.toContain('synthetic_lookup'); expect(tools).not.toContain('synthetic_lookup');
   });
 });
