@@ -117,3 +117,10 @@ e385公开版本接受自然语言改纸/先预览后人工Apply任务，原demo
 后续完整来源构建266文件/3238项通过、9opt-in跳过，原127契约实例与39审查通过。旧729场景623/106保留；发现的raw模块404、旧入口/隐藏结构、终止文案/原生File.text假设分开修复，不把Node SDK本身当浏览器集成证明。原生55000字符长描述实际合法34页且逐字完整；错误按semantic ID只取两段的3167字符观察也保留，改读真实续页单元格而不是宣称数据丢失。原子页尾则保留所有纸张/字体/原文，仅明确keepTogether并实际阻断。[完整范围](acceptance/STUDIO_V3_GENERAL_CAPABILITIES_20261017.md)。
 
 [PR95/main c89d85bd](https://github.com/yapweijun1996/printform-js/pull/95)构建发布成功；单次原精确公开纸张任务真实Preview/显式验收驱动Apply/实际Save深比较Pass，6HTTP200/19.793秒，全部其他属性守恒、3canary未出站、0pageerrors。与旧三个Fail分别保留，不把一次独立Pass或已修复宿主误完成当作完整AI生产资格。[证据](STUDIO_V3_AI_DRAFT_OUTCOME.zh-CN.md)。
+
+## 2026-10-19：源码所有权、制品歧义及检验来源
+
+- 确认缺陷：`DockerBroker.cleanupExpired()`只凭managed／过期标签就可删其他broker资源；受控命令夹具实际发出2次foreign删除，没有执行真实foreign删除。修复为当前owner过滤、metadata核验及最终`remove()`重读；2项资源存留／替换竞态与9项实际Docker／浏览器协议通过。
+- 确认缺陷：原制品hash／custody正确仍接受重复`summary`并last-key-wins。复用既有严格parser在native类型解析前拒绝重复／危险键；17项实际typed消费／inspection／AIPanel状态机回归通过，同源码真实测试exit1→0／build0及真实候选纸面另证。[完整边界](STUDIO_V3_SOURCE_ARTIFACT_LIFECYCLE.zh-CN.md)。
+- 新的固定ERPNext检验来源复用InspectionReport：原Data词形不数值化，Float只用另行授权精确事实，不求平均或重算Accepted。57项Node与三引擎实际文件／冷HTML消费者通过；独立来源语义和runner安全静态审查均无新增实质缺陷，静态审查不是runtime Pass。
+- 18场景长表／固定模块标签与4份PDF／独立像素解码未发现需改产品的打印缺陷。生成物顺序、残留源码文本断言、新夹具变量与首次镜像不可见等失败分别保留；不改预算／模型／原WebKit冷offline条件，不把数字验证当实体或生产资格。[打印记录](STUDIO_V3_LONG_TABLE_LABEL_PRINTING.zh-CN.md)。
