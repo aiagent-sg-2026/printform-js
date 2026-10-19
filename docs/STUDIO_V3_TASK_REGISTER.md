@@ -68,3 +68,9 @@ Nine supplied-business starters, bounded independent tables/barcodes,16 primary 
 The new general-print guide separates human New/table/collection/currency/import/download paths from callable tools. Existing60tasks/20holdout, six signed historical attempts, per-profile identity and original thresholds remain unchanged. Do not refreeze, reinterpret correct refusals as featurePass, merge profiles, or read/publish private model reasoning to manufacture qualification.
 
 Post-PR95 main`c89d85bd` independent public paper task:1run/6HTTP200/19.793s, actualPreview/r1 then explicit driver UIApply/r2; filesystemSave deep-equals expected paper-only change, all source facts/profile retained,3canaries absent,0pageerrors. This taskPass is NOT a new formalG8attempt and does not replace any earlierFail. Upstream identity remains unavailable; qualification remainsfalse.
+
+## 2026-10-19 source/runner/printing feature evidence
+
+[Quality Inspection SDK](ERPNEXT_QUALITY_INSPECTION_ADAPTER.zh-CN.md), [actual local source artifact bridge](STUDIO_V3_SOURCE_ARTIFACT_LIFECYCLE.zh-CN.md) and [long-table/label investigation](STUDIO_V3_LONG_TABLE_LABEL_PRINTING.zh-CN.md) are separately verified bounded features. Genuine Docker test/build receipts, strict typed import and real candidate rendering do not become a native AIPanel/model task or automatically satisfy G6/G8/G9.
+
+No formal task/input/attempt/holdout/oracle/threshold/profile is changed and no model request is made. Existing60tasks/20holdout/six signed attempts and the original qualification failures remain. [Separate scoped evidence](acceptance/STUDIO_V3_SOURCE_PRINT_20261019.json) records fixture, actual runtime and digital-versus-physical limits; original WebKit cold transport-offline file failure is not rerun or relabelled.

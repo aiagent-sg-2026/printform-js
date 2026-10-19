@@ -202,3 +202,11 @@ Fixed-upstream provenance and physical evidence are read-only qualification cons
 
 [Source-backed governance dossiers](STUDIO_V3_GOVERNANCE_EVIDENCE.zh-CN.md) validate bounded applicable review inputs, never actual legal authority or production permission. Original gates, model/route/budgets and all frozen G8 histories remain unchanged.
 
+## Inspection source and artifact custody — 2026-10-19
+
+[Pinned Quality Inspection SDK](ERPNEXT_QUALITY_INSPECTION_ADAPTER.zh-CN.md) reuses InspectionReport within the same11 canonical kinds. Native Data readings retain exact text; Float criteria require independent exact facts; no result calculation, raw UI connector or extra tool grant. The actual Node fixture and three-engine file/cold-HTML consumers are included in the existing general guide fingerprint.
+
+[Source artifact lifecycle](STUDIO_V3_SOURCE_ARTIFACT_LIFECYCLE.zh-CN.md) preserves numeric operation types after strict decoded-key parsing, and constrains expired cleanup to the current broker owner with final ownership reinspection. Actual local Docker receipts and a real rendered candidate are separate from fixture-based AIPanel state-machine checks, native UI/model tasks and production qualification.22tools/13operations/4guides,127 contract examples and the original39-change review baseline remain; no G8/profile/model/budget authority is added.
+
+[Long-row/label investigation](STUDIO_V3_LONG_TABLE_LABEL_PRINTING.zh-CN.md) is digital DOM/PDF/pixel evidence, not a new agent capability or physical qualification. Original failures and the cold transport-offline WebKit file boundary remain separate.
+

@@ -1,0 +1,30 @@
+{
+  "purpose": "Bounded source, local runner and digital print feature evidence; not a production or G8 qualification protocol",
+  "baseline": "e0924ebaeee594cbabeae14b161bac563de13ca0",
+  "qualitySourceEvidence": "STUDIO_V3_QUALITY_SOURCE_20261019.json",
+  "sourceArtifactEvidence": "STUDIO_V3_SOURCE_ARTIFACT_20261019.json",
+  "printing": {
+    "reportSha256": "42e4b28b06069f7a90739fe8c51754bd11e374fbcfac14c45ca0a2b38b2b809b",
+    "runtimeFiles": {
+      "documentRuntime": "sha256:5da592f5f8fba25b29364d925c68ca99773d9a7dde9a7c0616390a4bf7793798",
+      "printform": "sha256:2781201944f91f80518837c4503c9f40ce8b0a7070e4307be4a5eb173984f582"
+    },
+    "engineCases": 18,
+    "pdfFiles": 4,
+    "pngPixelDecodes": 6,
+    "pdfPixelDecodes": 2,
+    "httpRequests": 0,
+    "pageErrors": 0,
+    "chromiumSandboxRequested": true,
+    "noSandboxArgumentPresent": false,
+    "coldTransportOfflineWebKitRechecked": false
+  },
+  "modelRequests": 0,
+  "newFormalG8Attempts": 0,
+  "productionQualified": false,
+  "physicalQualified": false,
+  "notes": [
+    "Actual runner bridge uses supported SourceConnection native-browser fetch transport, genuine Docker receipts and a real offline rendered candidate; explicit host commit is not a native AIPanel UI or model task claim.",
+    "Original cold transport-offline WebKit file failure and upstream/governance/G6/G8/G9 blockers remain separate."
+  ]
+}
