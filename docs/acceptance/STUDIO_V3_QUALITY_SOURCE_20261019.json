@@ -1,0 +1,20 @@
+{
+  "purpose": "Bounded fixed-source SDK and actual browser file consumers, not ERP authentication or production qualification",
+  "baseline": "e0924ebaeee594cbabeae14b161bac563de13ca0",
+  "officialRevision": "0925cb28c7ab93b7900dd8f37527482d30b21785",
+  "version": "15.0.0",
+  "canonicalKind": "InspectionReport",
+  "unitConsumersPassed": 57,
+  "browserConsumers": {
+    "chromium": "passed",
+    "firefox": "passed",
+    "webkit": "passed",
+    "retries": 0
+  },
+  "rawSnapshotBytesPreserved": true,
+  "canonicalKindsAdded": 0,
+  "modelRequests": 0,
+  "newFormalG8Attempts": 0,
+  "productionQualified": false,
+  "physicalQualified": false
+}

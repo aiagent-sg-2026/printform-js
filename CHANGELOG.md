@@ -15,6 +15,9 @@ who don't need the diary.
 
 ## [Unreleased]
 
+### Optional pinned quality-inspection source — 2026-10-19
+- Map authorized ERPNext v15.0.0 Quality Inspection snapshots to existing InspectionReport, retaining native Data readings, exact Float overlays and raw live evidence without recalculating acceptance.
+
 ### Custom paper and PDF precedence investigation — 2026-10-19
 
 - Run12 three-engine digital scenarios and8 Chromium PDFs against the final built runtime with explicit Chromium sandbox and command-line verification; preserve asymmetric author insets, source tokens and custom orientation.
