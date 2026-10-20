@@ -1,4 +1,5 @@
 import { activityLines } from './ai-activity.js';
+import { icon } from './icons.js';
 
 // Style patches arrive as JSON text; show "fontSize 12 · bold" instead.
 const readable = value => {
@@ -21,6 +22,24 @@ function renderDetails(diff) {
   return details;
 }
 const HEADINGS = {ready:'Suggested changes',applied:'Changes applied'};
+let detailsId = 0;
+const withIcon = (element,name) => { const image = node('span','ai-card-icon'); image.innerHTML = icon(name); element.prepend(image); return element; };
+function appliedHeader(panel,message,details) {
+  const header = node('div','ai-card-header'), heading = withIcon(node('h3','',Number.isInteger(message.appliedRevision) ? `Applied to draft · Revision ${message.appliedRevision}` : 'Applied to draft'),'check');
+  const actions = node('div','ai-card-tools');
+  if (panel.canUndo(message)) { const undo = withIcon(node('button','','Undo'),'undo'); undo.type = 'button'; undo.dataset.ai = 'undo'; undo.dataset.cardId = message.id; undo.disabled = Boolean(panel.applying); actions.append(undo); }
+  const view = withIcon(node('button','','View changes'),'eye'); view.type = 'button';
+  details.id = `ai-card-details-${++detailsId}`; view.setAttribute('aria-controls',details.id); view.setAttribute('aria-expanded','false');
+  details.addEventListener('toggle',() => view.setAttribute('aria-expanded',String(details.open)));
+  view.addEventListener('click',() => { details.open = !details.open; view.setAttribute('aria-expanded',String(details.open)); details.scrollIntoView?.({block:'nearest'}); });
+  actions.append(view); header.append(heading,actions); return header;
+}
+function appliedFooter(message) {
+  const footer = node('div','ai-card-footer'), label = withIcon(node('strong','','Form layout updated'),'form');
+  footer.append(label,node('span','',`${message.diff.length} changes applied`));
+  if (Number.isFinite(message.at)) { const date = new Date(message.at); if (Number.isFinite(date.getTime())) { const time = node('time','',date.toLocaleTimeString(undefined,{hour:'numeric',minute:'2-digit'})); time.dateTime = date.toISOString(); footer.append(time); } }
+  return footer;
+}
 function cardState(panel,message,previewed) {
   if (message.status === 'ready') return previewed ? 'Previewed on paper · review it, then Apply' : 'Not applied yet · preview, then Apply';
   if (message.status !== 'applied') return 'Expired · send a new request';
@@ -31,10 +50,14 @@ export function renderChangeCard(panel,message) {
   const active = panel.proposal?.cardId === message.id;
   const card = node('section','ai-change-card'); card.setAttribute('aria-label','AI layout changes');
   if (active) card.dataset.aiProposal = '';
-  card.append(node('h3','',HEADINGS[message.status] || 'Earlier suggestion'));
+  const applied = message.status === 'applied', details = renderDetails(message.diff);
+  if (applied) card.classList.add('ai-change-applied');
+  card.append(applied ? appliedHeader(panel,message,details) : node('h3','',HEADINGS[message.status] || 'Earlier suggestion'));
   const lines = node('ul','ai-activity');
   for (const line of activityLines(message.diff)) lines.append(node('li','',line));
-  card.append(lines,renderDetails(message.diff));
+  card.append(lines);
+  if (applied) card.append(appliedFooter(message));
+  card.append(details);
   const previewed = active && panel.viewing && panel.checked;
   card.append(node('p','ai-card-state',cardState(panel,message,previewed)));
   if (active) {
@@ -43,8 +66,6 @@ export function renderChangeCard(panel,message) {
       const button = node('button',action === 'apply' ? 'primary' : '',label); button.type = 'button'; button.dataset.ai = action; if (action === 'apply') button.dataset.intent = panel.proposal?.intentKey || ''; button.disabled = Boolean(disabled || panel.applying); actions.append(button);
     }
     card.append(actions);
-  } else if (message.status === 'applied' && panel.canUndo(message)) {
-    const button = node('button','','Undo this edit'); button.type = 'button'; button.dataset.ai = 'undo'; button.dataset.cardId = message.id; button.disabled = Boolean(panel.applying); card.append(button);
   }
   return card;
 }
