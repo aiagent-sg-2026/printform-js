@@ -7,7 +7,7 @@ const ADDED_EDIT = '(?:give(?!\\s+(?:me|us)\\b)(?=\\s+(?:the|this|that|these|tho
 const COMMAND_PREFIX = '^\\s*(?:please\\s+)?(?:(?:can|could|would|will)\\s+you\\s+(?:please\\s+)?|do\\s+)?';
 const COMMAND = new RegExp(`${COMMAND_PREFIX}(?:${EDIT})\\b`,'i');
 const ADDED_COMMAND = new RegExp(`${COMMAND_PREFIX}${ADDED_EDIT}\\b`,'i');
-const RESPONSE_TARGET = /\b(?:your|the|an?)\s+(?:answer|explanation|analysis|assessment|response|reply|summary|review|report)\b|\bexplain(?:s|ed|ing)?\b|\b(?:in|into|as)\s+a\s+(?:list|table of values|bullet list)\b|\b(?:score|rating|jargon|tone|plain english)\b/i;
+const RESPONSE_TARGET = /\b(?:your|the|an?)\s+(?:answer|explanation|analysis|assessment|response|reply|summary|review|report)\b|\b(?:explanation|answer|description(?!\s+column\b)|instructions|summary|steps|tips|guidance)\b|\bin\s+(?:the\s+)?chat\b|\bexplain(?:s|ed|ing)?\b|\b(?:in|into|as)\s+a\s+(?:list|table of values|bullet list)\b|\b(?:score|rating|jargon|tone|plain english)\b/i;
 const QUESTION = /^\s*(?:please\s+)?(?:what\b|why\b|which\b|where\b|when\b|how\b|should\b|may\b|might\b|is\b|are\b|was\b|were\b|do\b|does\b|did\b|will\b|can\b|could\b|would\b|has\b|have\b|explain\b|describe\b|tell me (?:about|what|how|why|if|whether)\b|请问|为什么|多少|多大|怎么|如何|应该|能否|可否|请解释|解释一下|是否)/i;
 const EXPLANATION = /^\s*(?:please\s+)?(?:(?:can|could|would|will)\s+you\s+(?:please\s+)?|do\s+)?(?:write|prepare|generate|make|create|give|provide|show)\s+(?:(?:me|us)\s+)?(?:an?\s+|the\s+)?(?:explanation|answer|description|instructions|summary)\b/i;
 const FOCUS = /^(?:(?:please|only|just)\s+)+/i;

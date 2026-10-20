@@ -85,6 +85,7 @@ describe('Studio v3 effect grants (RUN-02)', () => {
     'Give the table a thin grey border.','Give the footer a smaller font.',
     'Keep the bindings and give the items table header row a light blue background.',
     'Turn the heading navy.','Rename the Notes label to Remarks.','Center the logo.',
+    'Insert a signature line in the footer.','Widen the description column.',
     'Could you rename the Notes label to Remarks.','Bold the heading.','Move the logo to the right.',
     'Keep the bindings and bold the heading.','Change the heading color?',
     'Rename the Notes label to Remarks.\nSource: Why?'
@@ -94,6 +95,15 @@ describe('Studio v3 effect grants (RUN-02)', () => {
   });
   it.each([
     'Highlight the total row.','Put the logo on the right.',
+    'Insert instructions for changing the page size here in chat.',
+    'Insert the steps to export a PDF here in chat.','Turn the export steps into tips in chat.',
+    'Generate instructions for changing the page size here in chat.',
+    'Insert instructions for changing the page size.','Insert the steps to export a PDF.',
+    'Turn the export procedure into tips.','Insert guidance for changing the page size.',
+    'Insert an explanation of the page size.','Insert an answer about the page size.',
+    'Insert a description of this layout.','Insert a summary of this layout.',
+    'Insert the page size here in chat.','Insert the page size in chat.','Insert the page size in the chat.',
+    'Keep the bindings and insert instructions for changing the page size.',
     'Give the current layout a letter grade.','Give the current layout a readability score.','Give the form a quick check.',
     'Put the current font sizes in a list.','Highlight the key risks.','Narrow down the issues.',
     'Can you put the current font sizes in a list?',

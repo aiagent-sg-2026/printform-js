@@ -119,6 +119,7 @@ current form.
 A request that reads like a question is read-only: any proposal returned for it is rejected
 (`UNSAFE_PROPOSAL`). Advice requests such as “How should I…”, “Should I…” and “Please explain…”
 remain questions; an explicit “Can you improve…” request remains an edit. Ambiguous verbs `put`, `highlight` and `narrow` do not grant drafting; `move` remains an edit. Starter wording is not a test contract: the host enforces the request's effect grant, not a button label.
+- **Known limitation.** Request intent is a conservative pattern classifier, not a semantic one. Some assessment-style requests phrased as commands (for example, “Make a color contrast assessment of this layout.”) receive an edit grant; the agent may then propose a change, which the person can Undo or Discard.
 
 In a step run the host builds a frozen effect grant before the first model call. A question gets the read-only grant:
 the model is shown only the read, notes, `finish_answer` and `report_blocked` tools, so it cannot change a draft or
