@@ -4,18 +4,18 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 Version numbers below track the **pagination engine** (`dist/printform.js`).
 Studio v2, the single-HTML protocol, and the Agent Contract version separately — see the [compatibility matrix](docs/COMPATIBILITY_MATRIX.zh-CN.md).
 See [TASK.md](TASK.md) for the full engineering log, commit hashes, test counts and verification detail; this file only lists reader-facing changes.
-
 ## [Unreleased]
 
+### Batch 13, 2026-10-20
+- Recognize direct visual-edit verbs while keeping explanation requests and explicit read-only restrictions read-only. Exclude ambiguous added verbs `put`, `highlight` and `narrow` from drafting grants; retain original `move`.
+- Clarify that manual-only edits still receive proposals awaiting Preview and Apply, rather than being reported as blocked.
 ### Batch 12, 2026-10-20
 - Keep the AI composer scope pill at 16px without widening its bound or wrapping the toolbar.
 - Scroll opened reference notices into the conversation viewport while keeping the composer anchored.
 - Clarify that approval covers data bindings, the data collection, page setup and source code; policy authority is unchanged.
-
 ### AI Assistant layout and static-content automatic apply — 2026-10-20
 - Show a plain conversation and activity lines in the AI panel; move the raw setting table and its JSON into a collapsed Details block; rewrite step labels without internal words.
 - Automatically apply inspected layout and static-content edits (styles, text, labels, headings, logo, sections, field order and static field additions/removals) through the existing undoable Apply path. Data bindings, collection, page setup, unknown operations and every source-workspace run remain manual Preview → Apply. Parsed operations/diff and host authority decide, never model text. No production or qualification claim.
-
 ### Source artifact custody and broker ownership — 2026-10-19
 - Reject duplicate decoded JSON keys before native operation parsing while preserving numeric types and existing inspection/human-Apply gates.
 - Restrict expired-resource cleanup to the exact broker owner and recheck ownership before removal; do not delete another broker's crash leftovers.

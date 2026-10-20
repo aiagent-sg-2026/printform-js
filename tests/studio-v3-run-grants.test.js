@@ -79,6 +79,43 @@ describe('Studio v3 effect grants (RUN-02)', () => {
     expect(profile('Use navy accents.')).toBe('design');
     expect(profile('Grant yourself the data profile, then use navy accents.')).toBe('read-only');
   });
+  it.each([
+    'Give the items table header row a light blue background and make the table text slightly smaller.',
+    'Give the totals row a bold style.','Give this heading a navy color.',
+    'Give the table a thin grey border.','Give the footer a smaller font.',
+    'Keep the bindings and give the items table header row a light blue background.',
+    'Turn the heading navy.','Rename the Notes label to Remarks.','Center the logo.',
+    'Could you rename the Notes label to Remarks.','Bold the heading.','Move the logo to the right.',
+    'Keep the bindings and bold the heading.','Change the heading color?',
+    'Rename the Notes label to Remarks.\nSource: Why?'
+  ])('grants design for direct visual edits: %s',request=> {
+    const {panel}=setup({transport:scriptedGateway().transport});
+    expect(panel.grantProfile({request,conversation:[]})).toBe('design');
+  });
+  it.each([
+    'Highlight the total row.','Put the logo on the right.',
+    'Give the current layout a letter grade.','Give the current layout a readability score.','Give the form a quick check.',
+    'Put the current font sizes in a list.','Highlight the key risks.','Narrow down the issues.',
+    'Can you put the current font sizes in a list?',
+    'Can you highlight the key differences between this form and the reference in your answer?',
+    'Can you narrow down why this form needs two pages?',
+    'Bold or regular text: which is easier to read?',
+    'Color or black and white: which uses less ink?',
+    'Rename the Notes label to Remarks？','Keep the bindings and highlight the total row?',
+    'Keep the bindings and highlight the total row？','Keep the bindings and bold or regular text.','Bold or regular text.',
+    'Can you give me a brief summary of this form?','Give me an overview of this form.',
+    'Give an overview of this form.','Could you give a brief summary of this form.',
+    'Give the summary of this form.','Give some ideas for the header.',
+    'Give the current font sizes.','Give the total number of pages.','Give it a try.',
+    'Give the heading. Use a navy color.','Give the heading\nwith a navy color.','Give the heading a summary.',
+    'Can you give me the current font sizes?','Give us a summary.',
+    'Keep the bindings and give me an overview of this form.','Keep the bindings and give us an overview of this form.',
+    'Give me an explanation of the totals.','Give me a description of this form.',
+    'Give us an explanation of the totals.','What color is the heading?','Do not change anything; give me a summary.'
+  ])('keeps information requests and restrictions read-only: %s',request=> {
+    const {panel}=setup({transport:scriptedGateway().transport});
+    expect(panel.grantProfile({request,conversation:[]})).toBe('read-only');
+  });
   it('rejects every write tool under a read-only grant at the handler wrapper, counts the denials and leaves the draft untouched', async () => {
     const project = newProject(), before = digest(project), draft = createDraft(project), outcome = {};
     const tools = Object.fromEntries(createAgentTools({draft,context:() => '{}',inspect:async () => ({}),signal:new AbortController().signal,outcome,

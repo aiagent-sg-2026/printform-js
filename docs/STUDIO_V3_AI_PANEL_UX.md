@@ -4,6 +4,26 @@ Status: **2026-10-15 implementation authorized by the user**, following the earl
 
 Evidence tags: **[code]** the string or behavior was found in the source; **[shot]** seen only in the screenshot, not reproduced in a browser run.
 
+## Batch 13h, 2026-10-21
+- Replace the open `give … a/an` lookahead with zero to three alphabetic modifier words followed by a closed formatting-attribute whitelist. Preserve the definite-object, `me/us`, question-mark, `or`, blocked-noun and response-target guards.
+- Grammar and host-grant cases cover letter grades, readability scores and quick checks as read-only, while retaining the five requested formatting commands as drafting/design requests.
+- Tests and runtime verification remain with the manager for this edit-only batch.
+
+## Batch 13g, 2026-10-20
+- One shared response-target guard prevents `ADDED_EDIT` commands from granting drafting when the stripped instruction targets an answer, explanation, assessment or informational presentation. Direct and preservation-plus-added-edit commands share this guard; original `EDIT` verbs are unchanged.
+- Grammar cases cover all 15 reported information requests, preservation-plus-added-edit rejection, the eight requested drafting examples and an original edit verb with explanation wording. Existing read-only and unsafe-proposal assertions are retained.
+- The guard does not match `description`, so the description-column drafting request remains eligible. Tests and runtime verification remain with the manager for this edit-only batch.
+
+## Batch 13d, 2026-10-20
+- In `ADDED_EDIT` only, `give` requires an immediately following definite object word (`the|this|that|these|those|it|its|each|every|all`) and excludes `overview|summary|explanation|description|answer|list|breakdown|report|review|idea|ideas|suggestion|suggestions|example|examples|advice|feedback` anywhere before the next `.`, `!`, `?` or end.
+- Preserve the original `EDIT` list and existing `me/us`, question-mark and `or` gates. Both grammar and host-grant cases cover the four reported information requests and three authorized visual edits.
+- Unit tests and runtime verification remain with the manager for this edit-only batch.
+
+## Batch 13c, 2026-10-20
+- Preserve the original direct-edit verbs and ordering. Batch 13 additions grant drafting only when the stripped instruction contains neither `?` nor `？` and the added verb is not immediately followed by `or`; preservation-plus-edit requests use the same gate.
+- Retain the `give me/us` exclusion and explicit read-only restrictions. Grammar and host-profile regression cases cover informational questions, alternatives, direct edits and stripped source questions.
+- Test execution remains with the manager; this edit-only batch has no runtime verification.
+
 ## Batch 12, 2026-10-20
 - Keep the composer scope selector at 16px to avoid mobile input zoom; retain its bounded pill width and single toolbar row.
 - Opening references scrolls the trailing notice into view within the conversation, keeping the retry action reachable and the composer anchored.

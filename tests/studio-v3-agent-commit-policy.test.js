@@ -12,6 +12,12 @@ import {renderWelcome} from '../studio-v3/ai-welcome.js';
 
 const args={request:'Make the title blue',scope:{mode:'whole'},typography:[],conversation:[]};
 describe('truthful host commit policy',()=> {
+  it('requires proposals for manual-only edits without treating approval as a block',()=> {
+    expect(COMMIT_POLICY_SHORT).toContain('Propose every requested edit');
+    expect(COMMIT_POLICY_DESIGN).toContain('still proposed normally');
+    expect(COMMIT_POLICY_DESIGN).toContain("then wait for the person's Preview and Apply");
+    expect(COMMIT_POLICY_DESIGN).not.toMatch(/can't|cannot make/i);
+  });
   it('sends the design policy in the actual context and system wire without universal human-only approval',()=> {
     const project=newProject(),context=chatRequest(project,args,{mode:'steps'}), sent=JSON.parse(context);
     expect(sent.run.commit).toBe(COMMIT_POLICY_SHORT);

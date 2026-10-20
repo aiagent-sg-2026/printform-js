@@ -118,8 +118,7 @@ current form.
 
 A request that reads like a question is read-only: any proposal returned for it is rejected
 (`UNSAFE_PROPOSAL`). Advice requests such as “How should I…”, “Should I…” and “Please explain…”
-remain questions; an explicit “Can you improve…” request remains an edit. Starter wording is
-not a test contract: the host enforces the request's effect grant, not a button label.
+remain questions; an explicit “Can you improve…” request remains an edit. Ambiguous verbs `put`, `highlight` and `narrow` do not grant drafting; `move` remains an edit. Starter wording is not a test contract: the host enforces the request's effect grant, not a button label.
 
 In a step run the host builds a frozen effect grant before the first model call. A question gets the read-only grant:
 the model is shown only the read, notes, `finish_answer` and `report_blocked` tools, so it cannot change a draft or
@@ -280,7 +279,6 @@ Synthetic Pi and browser checks cover discovery, guide reading, editing, inspect
 See [current production-readiness evidence](STUDIO_V3_GENERAL_AI_READINESS.zh-CN.md) and [Registry maintenance](STUDIO_V3_AGENT_REGISTRY.md); neither UI polish nor a live draft proves G6–G9 or approval to send confidential production data through the Demo route.
 
 ## Automatic apply (owner decision, 2026-10-20)
-
 `ai-auto-apply-policy.js` decides from parsed operations/diff and the host workspace flag only, never model text. Owner widening, 2026-10-20: layout and static content are automatic; bindings, collection, page setup and source work are manual. Every operation must pass:
 
 | Operation | Automatic condition |
@@ -292,9 +290,10 @@ See [current production-readiness evidence](STUDIO_V3_GENERAL_AI_READINESS.zh-CN
 | Legacy single-step `edits` | Parsed global style keys and column widths remain allowed |
 | `set_collection`, `set_page`, unknown operations | Never |
 | Every source-workspace run | Never, regardless of operations |
-
 The source exclusion remains enforced at three points: host policy rejects the workspace flag; panel runs block workspace/coding profiles and record `sourceBound`; `AIPanel.autoApply()` refuses `sourceBound` or `workspace`. Wide-screen automatic preview and human Apply remain unchanged.
 - An allowed proposal is previewed at any screen width and applied through the same `apply()` path as the button (intent ledger, stale/scope/binding checks, restore on failure) only when the local inspection and the paper preview both pass. A blocked or stale proposal falls back to the card.
 - "Draft" here means a new, undoable revision of the open form. Nothing is saved, exported or shared automatically; card Undo and history Undo work as before.
 - `agent-commit-policy.js` is the single wording source for model-facing prompts, guides, capability/context commit fields and tool replies, plus shared welcome/scope help: inspected layout/static content may auto-apply with Undo; bindings, collection, page setup and all source work require human Preview/Apply. The agent never applies or saves.
+The agent still proposes requested data-binding, data-collection, page-setup and source-workspace changes normally.
+These proposals wait for the person's Preview and Apply; manual approval alone is not a reason to report a request as blocked.
 - The change card shows plain activity lines (derived from the diff by `ai-activity.js`); the raw setting table and its JSON sit in a collapsed Details block.
