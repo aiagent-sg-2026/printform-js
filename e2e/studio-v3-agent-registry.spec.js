@@ -29,10 +29,13 @@ test('discovers the shipped registry and guide, inspects, then preserves Preview
   const errors=[];page.on('pageerror',e=>errors.push(e.message));page.on('console',m=>{if(m.type()==='error')errors.push(m.text());});
   await gateway(page);await open(page);
   const accent=()=>page.frameLocator('#preview-frame').locator('.v3-header').first().evaluate(node=>getComputedStyle(node).borderBottomColor),before=await accent();
+  const heading=()=>page.frameLocator('#preview-frame').locator('[data-v3-id=header-title]').first(),originalHeading=await heading().textContent();
   await send(page);
   await expect(page.locator('[data-ai-proposal]')).toBeVisible();await expect(page.locator('#revision')).toHaveText('r0');
   await page.locator('[data-ai=apply]').click();await ready(page);await expect(page.locator('#revision')).toHaveText(/^r1\b/);expect(await accent()).toBe('rgb(22, 58, 101)');
+  await expect(heading()).toHaveText('Tax Invoice');
   await page.locator('[data-ai=undo]').click();await ready(page);await expect(page.locator('#revision')).toHaveText(/^r2\b/);expect(await accent()).toBe(before);expect(errors).toEqual([]);
+  await expect(heading()).toHaveText(originalHeading);
 });
 
 test('answers a question in steps under a read-only grant with no proposal and no revision change',async({page})=> {

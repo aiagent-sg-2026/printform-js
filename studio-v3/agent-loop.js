@@ -47,7 +47,7 @@ export async function runAgentLoop({models,model,project,request,scope = {mode:'
       await workspace.open({identity,project,baseRevision,runId},stop);
     }
     stop.throwIfAborted(); assertCurrent();
-    const tools = createAgentTools({draft,context,inspect,signal:stop,outcome,limits,identity,stopRun:()=>halt.abort(),memory,onStep,grant,intent,finalizeAnswer,baseRevision,assertCurrent,runId,observationAuthorization,readObservationHost,capturePixels,workspace});
+    const tools = createAgentTools({draft,context:(current,info)=>context(current,{...info,source:grant.profile.startsWith('coding')}),inspect,signal:stop,outcome,limits,identity,stopRun:()=>halt.abort(),memory,onStep,grant,intent,finalizeAnswer,baseRevision,assertCurrent,runId,observationAuthorization,readObservationHost,capturePixels,workspace});
     const shown = new Set(grantedDefinitions(grant,AGENT_TOOL_DEFINITIONS).map(tool=>tool.name));
     const ctx = withAbortSignal(stop,BACKGROUND_CONTEXT);
     const session = await new MemorySessionRepo().create({},ctx);
