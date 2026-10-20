@@ -1,4 +1,4 @@
-import {beforeEach,describe,it,expect} from 'vitest';
+import {beforeEach,describe,it,expect,vi} from 'vitest';
 import {AIElementTags} from '../studio-v3/ai-element-tags.js';
 import {html,setup} from './support/chat-panel.js';
 beforeEach(()=> {document.documentElement.innerHTML=html.replace(/<!doctype html>/i,'');document.body.inert=false;});
@@ -22,7 +22,28 @@ describe('conversation scrolling',()=> {
   });
   it('follows new work when already near the bottom',async()=> {
     const {panel}=setup();await panel.send();const scroll=viewport(panel);scroll.scrollTop=690;
-    panel.update();expect(scroll.scrollTop).toBe(1000);
+    const geometry=vi.spyOn(HTMLElement.prototype,'getBoundingClientRect').mockReturnValue({top:350,height:120});
+    try {panel.update();expect(scroll.scrollTop).toBe(1000);} finally {geometry.mockRestore();}
+  });
+  it('aligns a tall newest answer to its card instead of hiding the heading',async()=> {
+    const {panel}=setup();await panel.send();const scroll=viewport(panel);scroll.scrollTop=690;
+    const geometry=vi.spyOn(HTMLElement.prototype,'getBoundingClientRect').mockImplementation(function() {
+      if(this===scroll)return {top:100,height:300};
+      if(this.classList.contains('ai-message'))return {top:310,height:600};
+      if(this.classList.contains('ai-change-card'))return {top:350,height:420};
+      return {top:0,height:0};
+    });
+    try {panel.update();expect(scroll.scrollTop).toBe(932);} finally {geometry.mockRestore();}
+  });
+  it('does not align a tall answer when the reader has scrolled up',async()=> {
+    const {panel}=setup();await panel.send();const scroll=viewport(panel);scroll.scrollTop=120;
+    const geometry=vi.spyOn(HTMLElement.prototype,'getBoundingClientRect').mockReturnValue({top:350,height:600});
+    try {panel.update();expect(scroll.scrollTop).toBe(120);} finally {geometry.mockRestore();}
+  });
+  it('keeps a pending run following the bottom even when its bubble is tall',async()=> {
+    const {panel}=setup();await panel.send();const scroll=viewport(panel);scroll.scrollTop=690;panel.pendingMessage={};
+    const geometry=vi.spyOn(HTMLElement.prototype,'getBoundingClientRect').mockReturnValue({top:350,height:600});
+    try {panel.update();expect(scroll.scrollTop).toBe(1000);} finally {geometry.mockRestore();}
   });
   it('keeps sharing controls in place when a permission changes before the first message',()=> {
     const {panel}=setup(),scroll=viewport(panel);scroll.scrollTop=500;
@@ -56,6 +77,15 @@ describe('scope and sharing',()=> {
     }
     sharing.open=true;sharing.open=false;
     expect(panel.node('#ai-observation-text').checked).toBe(false);expect(panel.node('#ai-observation-pixels').checked).toBe(false);
+  });
+  it('preserves one sharing disclosure and its chevron through permission and conversation updates',async()=> {
+    const {panel}=setup(),sharing=panel.node('.ai-sharing'),summary=sharing.querySelector('summary'),chevron=summary.querySelector('.ai-sharing-chevron');
+    expect(chevron.getAttribute('aria-hidden')).toBe('true');
+    sharing.open=true;const input=panel.node('#ai-observation-text');input.checked=true;input.dispatchEvent(new Event('change',{bubbles:true}));
+    expect(sharing.open).toBe(true);expect(summary.querySelector('.ai-sharing-chevron')).toBe(chevron);
+    await panel.send();
+    expect(panel.root.querySelectorAll('.ai-sharing')).toHaveLength(1);expect(panel.node('.ai-sharing')).toBe(sharing);
+    expect(summary.querySelector('.ai-sharing-chevron')).toBe(chevron);expect(sharing.contains(input)).toBe(true);
   });
 });
 

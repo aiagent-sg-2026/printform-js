@@ -16,8 +16,10 @@ const avatar = role=> {
 export function renderConversation(panel) {
   const log = panel.node('[data-ai-log]'), scroll = panel.node('.ai-conversation-scroll') || log;
   const position = scroll.scrollTop, atEnd = scroll.scrollHeight-position-scroll.clientHeight < 60;
+  const wasPending = log.dataset.pending === 'true';
+  log.dataset.pending = String(Boolean(panel.pendingMessage));
   const sharing = panel.node('.ai-sharing'), granted = ['#ai-observation-text','#ai-observation-pixels'].filter(selector=>panel.node(selector)?.checked).length;
-  if (sharing) sharing.querySelector('summary').textContent = granted ? `Sharing permissions · ${granted} selected for one run` : 'Sharing permissions · fictional data only';
+  if (sharing) sharing.querySelector('.ai-sharing-label').textContent = granted ? `Sharing permissions · ${granted} selected for one run` : 'Sharing permissions · fictional data only';
   log.replaceChildren();
   updateSuggestions(panel);
   if (!panel.conversation.messages.length) {
@@ -58,8 +60,15 @@ export function renderConversation(panel) {
     }
     log.append(wait);
   }
-  // Respect a reader's position in history; only a reader already at the end follows new work.
-  scroll.scrollTop = panel.conversation.messages.length && atEnd ? scroll.scrollHeight : position;
+  // Explicit sends and their completed answers follow new work; otherwise preserve history reading.
+  if (panel.conversation.messages.length && (atEnd || panel.pendingMessage || wasPending)) {
+    const newest = log.lastElementChild, bounds = newest?.getBoundingClientRect();
+    // A tall answer starts at its actionable card; a pending bubble still follows the end.
+    if (!panel.pendingMessage && bounds?.height > scroll.clientHeight) {
+      const target = newest.querySelector('.ai-change-card') || newest;
+      scroll.scrollTop = Math.max(0,scroll.scrollTop+target.getBoundingClientRect().top-scroll.getBoundingClientRect().top-8);
+    } else scroll.scrollTop = scroll.scrollHeight;
+  } else scroll.scrollTop = position;
 }
 export function setupPanelLayout(panel) {
   setupVersionHistory(panel);
