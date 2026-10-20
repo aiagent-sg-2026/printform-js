@@ -1,7 +1,17 @@
 import { renderWelcome } from './ai-welcome.js';
 import { taskOutcomeNotice } from './ai-task-outcome.js';
 import { renderChangeCard } from './ai-change-card.js';
+import { icon } from './icons.js';
+import { formatMessageTime } from './ai-message-time.js';
+import { setupVersionHistory } from './ai-version-history.js';
 const node = (tag,className,text) => { const n = document.createElement(tag); n.className = className; if (text !== undefined) n.textContent = text; return n; };
+const avatarTemplates = new WeakMap();
+const avatar = role=> {
+  let templates = avatarTemplates.get(document);
+  if (!templates) { templates = new Map(); avatarTemplates.set(document,templates); }
+  if (!templates.has(role)) { const n = node('span',`ai-avatar ai-avatar-${role}`); n.setAttribute('aria-hidden','true'); n.innerHTML = icon(role === 'user' ? 'customer' : 'sparkles'); templates.set(role,n); }
+  return templates.get(role).cloneNode(true);
+};
 export function renderConversation(panel) {
   const log = panel.node('[data-ai-log]'), scroll = panel.node('.ai-conversation-scroll') || log;
   const position = scroll.scrollTop, atEnd = scroll.scrollHeight-position-scroll.clientHeight < 60;
@@ -14,8 +24,11 @@ export function renderConversation(panel) {
   for (const message of panel.conversation.messages) {
     const article = node('article',`ai-message ai-${message.role}`); article.dataset.messageId = message.id;
     article.dataset.state = message.status || 'answer';
+    article.append(avatar(message.role));
     const outcome = message.status === 'error' ? ' · request failed' : message.status === 'cancelled' ? ' · stopped' : '';
-    article.append(node('div','ai-message-label',message.role === 'user' ? 'You' : `AI assistant${outcome}`));
+    const label = node('div','ai-message-label',message.role === 'user' ? 'You' : `AI assistant${outcome}`), time = formatMessageTime(message.at);
+    if (time) { const stamp = node('time','ai-message-time',time); stamp.dateTime = new Date(message.at).toISOString(); label.append(stamp); }
+    article.append(label);
     const notice = taskOutcomeNotice(message.taskOutcome);
     if (notice) { const state = node('p','ai-card-state',notice); state.setAttribute('role','status'); article.append(state); }
     article.append(node('div','ai-message-text',message.text));
@@ -33,7 +46,7 @@ export function renderConversation(panel) {
   // The wait is shown where the answer will appear. The status line stays the announced source, so this copy is hidden from readers.
   if (panel.pendingMessage) {
     const wait = node('article','ai-message ai-assistant ai-pending'); wait.setAttribute('aria-hidden','true');
-    wait.append(node('div','ai-message-label','AI assistant'));
+    wait.append(avatar('assistant'),node('div','ai-message-label','AI assistant'));
     wait.append(node('div','ai-message-text ai-pending-text',panel.node('[data-ai-status]').textContent || 'Working…'));
     // A run in steps shows its latest steps; a rejected one carries its code in the tooltip only.
     if (panel.agentSteps?.length) {
@@ -47,6 +60,7 @@ export function renderConversation(panel) {
   scroll.scrollTop = panel.conversation.messages.length && atEnd ? scroll.scrollHeight : position;
 }
 export function setupPanelLayout(panel) {
+  setupVersionHistory(panel);
   const key = 'printform-studio-v3:ai-width', separator = panel.node('[data-ai-resize]');
   let width = 390;
   try { const saved = localStorage.getItem(key); if (/^\d{3}$/.test(saved) && Number(saved) >= 320 && Number(saved) <= 600) width = Number(saved); } catch {}
@@ -80,6 +94,7 @@ export function setupPanelLayout(panel) {
   document.addEventListener('keydown',event=> {
     if (!panel.open || document.querySelector('dialog[open]')) return;
     if (event.key === 'Escape') {
+      if (panel.closeVersionHistory?.()) { event.preventDefault(); return; }
       event.preventDefault(); const menu = panel.node('.ai-settings');
       if (menu.open) { menu.open = false; menu.querySelector('summary').focus(); } else panel.close(); // the open menu takes the first Escape
     }

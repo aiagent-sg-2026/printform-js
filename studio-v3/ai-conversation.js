@@ -39,6 +39,10 @@ export function cleanMessages(messages) {
   return messages.map(message=> {
     if (!message || !roles.includes(message.role) || typeof message.text !== 'string' || message.text.length > 4000 || !Number.isFinite(message.time) || message.time < 0 || message.time > 8640000000000000) throw fail('INVALID_CHAT_RECOVERY');
     const cleaned = {id:crypto.randomUUID(),role:message.role,text:message.text,time:message.time,status:statuses.includes(message.status) ? message.status : 'answer'};
+    if (message.at !== undefined) {
+      if (!Number.isSafeInteger(message.at) || message.at < 0 || message.at > 8640000000000000) throw fail('INVALID_CHAT_RECOVERY');
+      cleaned.at = message.at;
+    }
     if (message.observationProtected === true) cleaned.observationProtected = true;
     if (message.taskOutcome !== undefined) {
       if (message.role !== 'assistant' || !TASK_OUTCOMES.includes(message.taskOutcome)) throw fail('INVALID_CHAT_RECOVERY');
@@ -67,7 +71,7 @@ export function cleanMessages(messages) {
 export class Conversation {
   constructor() { this.messages = []; }
   add(role,text,status='answer',extra={}) {
-    const message = {id:crypto.randomUUID(),role,text:text.slice(0,4000),status,time:Date.now(),...extra};
+    const now = Date.now(), message = {id:crypto.randomUUID(),role,text:text.slice(0,4000),status,time:now,...extra,at:now};
     if (extra.observation !== undefined) message.observation = receiptIdentity(extra.observation);
     this.messages.push(message); this.messages = this.messages.slice(-HISTORY_LIMIT); return message;
   }
@@ -76,7 +80,7 @@ export class Conversation {
     let remaining = 3000;
     return recent.reverse().map(m=> { const content = m.text.slice(0,Math.min(800,remaining)); remaining -= content.length; return {role:m.role,content}; }).filter(m=>m.content).reverse();
   }
-  snapshot() { return this.messages.map(({role,text,time,status,diff,documentKey,observationProtected,observation,taskOutcome})=>({role,text,time,status,documentKey,...(taskOutcome ? {taskOutcome} : {}),...(observationProtected ? {observationProtected:true} : {}),...(observation ? {observation:receiptIdentity(observation)} : {}),...(diff ? {diff} : {})})); }
+  snapshot() { return this.messages.map(({role,text,time,at,status,diff,documentKey,observationProtected,observation,taskOutcome})=>({role,text,time,...(at !== undefined ? {at} : {}),status,documentKey,...(taskOutcome ? {taskOutcome} : {}),...(observationProtected ? {observationProtected:true} : {}),...(observation ? {observation:receiptIdentity(observation)} : {}),...(diff ? {diff} : {})})); }
   restore(messages,documentKey) { this.messages = cleanMessages(messages); }
   expire() { for (const m of this.messages) if (m.diff && m.status === 'ready') m.status = 'expired'; }
 }

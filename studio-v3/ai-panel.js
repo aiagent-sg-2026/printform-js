@@ -83,7 +83,7 @@ export class AIPanel {
     catch (error) { this.shareBlocked = true; this.sharedRequest = null; this.message(error.message); }
   }
   show() { this.open = true; this.root.hidden = false; document.body.classList.add('ai-open'); this.contextChanged(); this.share(); this.update(); this.node('#ai-prompt').focus(); this.sync(); }
-  suspend() { this.node('.ai-settings').open = false; this.open = false; this.root.hidden = true; document.body.classList.remove('ai-open'); this.update(); this.sync(); }
+  suspend() { this.closeVersionHistory?.(false); this.node('.ai-settings').open = false; this.open = false; this.root.hidden = true; document.body.classList.remove('ai-open'); this.update(); this.sync(); }
   close() { if (this.applying) return; if (this.busy) void this.stop(); this.sourceWorkspace?.resetConsent(); this.suspend(); document.querySelector('[data-ai-toggle]').focus(); }
   contextChanged(force=false) {
     const bus = this.getBus(), selected = this.getSelection();
@@ -216,6 +216,7 @@ export class AIPanel {
     document.querySelector('#ai-preview-banner').hidden = !this.viewing;
     document.querySelector('[data-ai-toggle]').setAttribute('aria-expanded',String(Boolean(this.open)));
     this.elementTags?.setBusy(Boolean(this.busy || this.applying || this.restoring)); this.referenceFiles?.setBusy(Boolean(this.busy || this.applying || this.restoring));
+    this.updateVersionHistory?.();
     for (const node of this.root.querySelectorAll('#ai-prompt,#ai-model,#ai-scope,#ai-agent,[data-ai=models],[data-ai-send],[data-prompt]')) node.disabled = Boolean(this.busy || this.applying || this.restoring || this.referenceFiles?.reading);
     this.referenceFiles?.capabilityChanged(); if (this.referenceFiles?.imageBlocked()) this.node('[data-ai-send]').disabled=true;
     this.sourceWorkspace?.update();

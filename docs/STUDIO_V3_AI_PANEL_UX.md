@@ -71,3 +71,13 @@ Priority: **P1** the user cannot tell what is happening; **P2** layout and scrol
 
 - The panel shows a short conversation and plain activity lines such as "Updated table row color" or "Adjusted header spacing". Technical properties, the raw diff and its JSON move into a collapsed Details block. Step lines no longer use "draft", "note" or "operations" (progress on UX-01; UX-02 and UX-03 are not closed).
 - Ordinary layout edits are applied to the open form automatically after local checks and the paper preview pass; the allowlist and fallbacks are in [STUDIO_V3_AI_CHAT.md](STUDIO_V3_AI_CHAT.md#automatic-apply-owner-decision-2026-10-20). This replaces the "Preview → Apply must not change" constraint for the allowlisted operations only. No production, G6–G9 or visual-approval claim is made.
+
+## Assistant redesign batch 1, 2026-10-20
+
+- Header adds the BETA pill, editing subtitle and a keyboard-accessible Version history popover; the visible Demo/fictional-data notice remains.
+- History is read-only: it lists retained snapshot revision numbers plus the current bus revision, marking the latter as Current. Undo/redo allocate monotonic revisions that need not have their own snapshot entry; missing or pruned revisions are not fabricated. No history navigation semantics change.
+- Version history is disabled during requests, Apply and recovery. Escape closes it before the panel and returns focus to its trigger.
+- User messages use a neutral person icon and blue-tinted bubble; assistant and working messages use a sparkle avatar. Assistant cards use the theme surface and border.
+- New messages retain an epoch-millisecond `at` field through snapshots; validation accepts its absence for older conversations, which show no timestamp. Times use the user's locale and local timezone; provider conversation context remains role/text only.
+- Added unit coverage: timestamp recovery and invalid values, legacy recovery, icon-only avatars, busy history states, monotonic revision listing and keyboard dismissal.
+- Unverified: tests, build, service-worker output, 400 x 800 and wide-screen screenshots, theme contrast and screen-reader behavior. This batch was edit-only; the manager runs verification. No visual approval or backlog closure is claimed.
