@@ -168,7 +168,7 @@ export class AIPanel {
   }
   // The same Apply path as the button (intent ledger, stale checks, restore on failure), reached without a click.
   async autoApply(proposal) {
-    if (this.proposal !== proposal || !this.checked || this.busy || this.applying) return;
+    if (this.proposal !== proposal || proposal.sourceBound || proposal.workspace || !this.checked || this.busy || this.applying) return;
     await this.guard(()=>this.apply(proposal.intentKey)).catch(error=>this.error(error));
   }
   // A duplicate Apply for a key already seen (a second click, a queued repeat) waits for the original outcome and does

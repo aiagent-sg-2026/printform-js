@@ -32,6 +32,7 @@ export async function sendPanelMessage() {
   try {
     const runId = crypto.randomUUID(), readObservationHost = ()=>this.observationAccess.state(runId), baseProfile = this.grantProfile(payload);
     workspace = this.sourceWorkspace?.consume(baseProfile);
+    const sourceBound = Boolean(workspace) || [workspace?.profile,baseProfile].some(profile=>profile?.startsWith('coding'));
     const observationAuthorization = await this.observationAccess.consume(runId); assertContext(); signal.throwIfAborted();
     if (this.viewing) { await this.restore(); this.viewing = false; }
     assertContext();
@@ -67,10 +68,10 @@ export async function sendPanelMessage() {
     if (result.kind === 'answer' && this.viewing) { await this.restoreUnapplied(); if (id !== this.generation) return; assertContext(); }
     const incomplete = result.taskOutcome === 'draft-not-produced';
     const card = this.conversation.add('assistant',result.kind === 'answer' ? result.message : result.summary,incomplete ? 'error' : result.kind === 'answer' ? 'answer' : 'ready',{documentKey:this.documentKey(),...(result.taskOutcome ? {taskOutcome:result.taskOutcome} : {}),...(incomplete ? {request:payload.request} : {}),observationProtected:observationAuthorization.text || observationAuthorization.values,...(result.kind === 'answer' && result.observation ? {observation:result.observation} : {}),...(result.diff ? {diff:result.diff} : {})});
-    if (result.kind === 'proposal') this.proposal = {...result,bus,revision,baseDesign,epoch,selection,scope,cardId:card.id,intentKey:newIntentKey()};
+    if (result.kind === 'proposal') this.proposal = {...result,bus,revision,baseDesign,epoch,selection,scope,cardId:card.id,intentKey:newIntentKey(),sourceBound};
     if (result.kind === 'answer' && this.viewing) return;
     // Ordinary layout edits (see ai-auto-apply-policy.js) are previewed at any width and applied once the checks pass.
-    const direct = result.kind === 'proposal' && result.inspection?.ready && autoApplicable(result);
+    const direct = result.kind === 'proposal' && result.inspection?.ready && !sourceBound && autoApplicable(result,{workspace});
     const auto = result.kind === 'proposal' && (direct || innerWidth > 900), next = direct ? 'Applying to the form…' : auto && result.inspection?.ready ? 'Review the paper preview, then Apply.' : 'Preview before Apply.';
     const details = `${alias} · ${result.kind === 'answer' ? '' : `r${revision} · ${result.mode === 'steps' ? `${result.turns} steps` : `${result.iterations} inspection round(s)`} · `}Tokens: ${result.usage?.total ?? 'unavailable'}`;
     this.message(`${incomplete ? taskOutcomeNotice(result.taskOutcome) : result.kind === 'answer' ? 'Read-only answer; form unchanged.' : `${result.inspection?.ready ? 'Local checks passed.' : 'Local checks blocked.'} ${next}`} (${details})`);

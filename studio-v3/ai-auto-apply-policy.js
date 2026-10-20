@@ -1,7 +1,7 @@
 import { GLOBAL_STYLE_KEYS } from './ai-authoring-contract.js';
 
 // Host-owned decision: may a checked proposal go straight to the form without a human Apply click?
-// It reads only the parsed operations/diff, never the model's summary or any other model text.
+// It reads only the parsed operations/diff and the host workspace flag, never model text.
 // Auto-apply is an ordinary revision (card Undo and history Undo still work); it never saves or exports.
 // Anything outside this allowlist keeps the Preview / Apply card.
 const SAFE_GLOBAL_STYLE = Object.freeze(['color','font','padding','striped','borders']);
@@ -22,8 +22,8 @@ export function operationAutoApplicable(op) {
 // can only touch global style keys and column widths there.
 const legacyDiffApplicable = diff => diff.length > 0 && diff.every(({target,property})=>
   (target === 'style' && SAFE_GLOBAL_STYLE.includes(property) && GLOBAL_STYLE_KEYS.includes(property)) || (property === 'width' && /^items-/.test(target)));
-export function autoApplicable(proposal) {
-  if (!proposal || proposal.kind !== 'proposal' || !Array.isArray(proposal.diff)) return false;
+export function autoApplicable(proposal,{workspace} = {}) {
+  if (workspace || !proposal || proposal.kind !== 'proposal' || !Array.isArray(proposal.diff)) return false;
   if (Array.isArray(proposal.operations) && proposal.operations.length) return proposal.operations.every(operationAutoApplicable);
   return legacyDiffApplicable(proposal.diff);
 }
