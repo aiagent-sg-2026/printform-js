@@ -76,7 +76,7 @@ body.ai-open.preview-only .studio-grid { grid-template-columns:0 minmax(0,1fr) v
 .ai-message[data-state=cancelled] .ai-message-label { color:var(--muted); }
 .ai-context { display:grid; gap:12px; padding:0 16px; }
 .ai-context:has(> :not([hidden])) { border-top:1px solid var(--line); padding-top:12px; }
-.ai-sharing { font-size:13px; color:var(--muted); }
+.ai-sharing { font-size:14px; color:var(--muted); }
 .ai-sharing summary,.ai-reference-files>summary { cursor:pointer; min-height:44px; padding:10px 0; line-height:1.5; overflow-wrap:anywhere; }
 .ai-sharing[open] summary { color:var(--ink); }
 .ai-observation-disclosure { display:grid; gap:12px; padding:8px 0; }
@@ -197,8 +197,6 @@ body.ai-open.preview-only .studio-grid { grid-template-columns:0 minmax(0,1fr) v
 .ai-suggestion-chips { display:flex; flex-wrap:nowrap; gap:6px; overflow-x:auto; scroll-snap-type:x proximity; scrollbar-width:none; }
 .ai-suggestion-chips button { flex:none; display:flex; align-items:center; gap:6px; min-height:44px; padding:6px 10px; border-radius:999px; background:var(--surface); font-size:14px; text-align:left; white-space:nowrap; scroll-snap-align:start; }
 .ai-suggestion-chips svg { flex:none; color:var(--muted); }
-#ai-panel>.ai-sharing { flex:none; padding:0 16px; max-height:22dvh; overflow:auto; font-size:14px; }
-#ai-panel>.ai-sharing label { font-size:14px; }
 #ai-panel .ai-composer-toolbar .ai-input-hint { display:block; }
 #ai-panel .ai-composer-toolbar :focus-visible,#ai-panel .ai-suggestions button:focus-visible { outline:2px solid var(--blue); outline-offset:2px; }
 .ai-suggestion-chips::-webkit-scrollbar { display:none; }

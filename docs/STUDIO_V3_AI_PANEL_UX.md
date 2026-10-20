@@ -120,3 +120,11 @@ Priority: **P1** the user cannot tell what is happening; **P2** layout and scrol
 - Applied-card secondary text uses the existing ink token rather than the muted token on its green-tinted background. Theme contrast still requires measurement.
 - Added unit coverage for every operation type's activity semantics, historical/current card distinction and the View changes disclosure round trip. No policy, agent implementation or e2e files changed.
 - Unverified: unit tests, build, both layout/empty-state e2e gates, 400 x 800 and 1440 x 900 rendering, desktop resize behavior, keyboard focus and measured 4.5:1 contrast. This batch allows file edits only; the manager performs execution and screenshot review.
+
+## Single scroll owner restoration (2026-10-20, batch 6)
+
+- Sharing permissions returns to `.ai-context` inside `.ai-conversation-scroll`, superseding the batch 3 footer placement. Expanded permissions and reference files share the conversation scroll surface.
+- Removed the footer-only height cap and overflow rules; the disclosure retains 14px text. The scroller keeps `flex:1 1 auto; min-height:0`; composer and suggestions remain non-growing.
+- The short recipient notice stays under the composer. Full consent state and the Demo notice stay inside the disclosure; permission IDs, summary updates, authorization and source-workspace queries are unchanged.
+- Chromium local-file DOM/CSS smoke at 400 x 800, 320 x 568 and 1440 x 900 found only the conversation scroll owner, no horizontal overflow, and fully visible pixel permission, prompt and send controls after scrolling to the end. Native text-checkbox toggles retained visibility at both narrow sizes.
+- Unverified: application JavaScript did not initialize in the local-file smoke. PDF attachment/expanded references, dynamic permission updates, inference-request absence, post-exchange layout budgets, applied-card visibility, all four acceptance e2e specs, unit tests, build, other engines, themes and keyboard/screen-reader behavior still require manager verification. No shell, Git or test commands were run; e2e and unit files are unchanged.

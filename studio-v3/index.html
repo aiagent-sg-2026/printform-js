@@ -69,13 +69,6 @@
       <div data-ai-log role="log" aria-label="AI conversation" aria-live="polite" aria-relevant="additions text"></div>
       <div class="ai-context">
         <div data-ai-element-tags aria-label="Referenced elements" hidden></div>
-      </div>
-      </div>
-      <form class="ai-composer">
-        <div class="ai-input"><label class="sr-only" for="ai-prompt">Message AI assistant</label><textarea id="ai-prompt" maxlength="4000" rows="1" placeholder="Describe what you want to change…"></textarea><div class="ai-composer-toolbar"><button type="button" class="ai-plus" data-ai="attach" data-icon="clip" aria-label="Attach reference" title="Attach reference (PDF, PNG or JPG)"></button><label class="sr-only" for="ai-scope">Edit:</label><select id="ai-scope"><option value="whole">Whole form</option><option value="selected" disabled>Selected elements</option></select><p class="ai-input-hint">Shift + Enter for new line</p><button class="primary ai-send" data-ai-send aria-describedby="ai-send-reason" data-icon="send" aria-label="Send message" title="Send (Enter)"></button><button type="button" class="ai-send" data-ai="cancel" data-icon="stop" aria-label="Stop request" title="Stop request" hidden></button></div></div>
-        <p class="ai-send-reason" id="ai-send-reason" data-ai-send-reason></p>
-        <p data-ai-status role="status" aria-live="polite"></p>
-      </form>
         <details class="ai-sharing"><summary>Sharing permissions · fictional data only</summary>
         <div class="ai-observation-disclosure" role="group" aria-label="Observation sharing permissions">
         <p class="ai-demo-notice">Demo · fictional forms and references only</p>
@@ -84,6 +77,13 @@
         <label class="hint"><input type="checkbox" id="ai-observation-pixels"> I confirm this form is fictional and authorize page/crop pixels for this run via Demo Gateway and the selected model. Text authorization is also required; denied values and embedded images stay blocked. Real forms require separate approval.</label>
         </div>
         </details>
+      </div>
+      </div>
+      <form class="ai-composer">
+        <div class="ai-input"><label class="sr-only" for="ai-prompt">Message AI assistant</label><textarea id="ai-prompt" maxlength="4000" rows="1" placeholder="Describe what you want to change…"></textarea><div class="ai-composer-toolbar"><button type="button" class="ai-plus" data-ai="attach" data-icon="clip" aria-label="Attach reference" title="Attach reference (PDF, PNG or JPG)"></button><label class="sr-only" for="ai-scope">Edit:</label><select id="ai-scope"><option value="whole">Whole form</option><option value="selected" disabled>Selected elements</option></select><p class="ai-input-hint">Shift + Enter for new line</p><button class="primary ai-send" data-ai-send aria-describedby="ai-send-reason" data-icon="send" aria-label="Send message" title="Send (Enter)"></button><button type="button" class="ai-send" data-ai="cancel" data-icon="stop" aria-label="Stop request" title="Stop request" hidden></button></div></div>
+        <p class="ai-send-reason" id="ai-send-reason" data-ai-send-reason></p>
+        <p data-ai-status role="status" aria-live="polite"></p>
+      </form>
     </aside>
   </main>
   <footer class="status-bar"><span id="status" role="status" aria-live="polite">Loading Studio…</span><span id="data-source" class="status-hint">Loading data source…</span><span class="update-tools"><span id="app-version" aria-label="Current app version"></span><button id="update-button" disabled>Check for updates</button><button id="recovery-download" hidden>Download recovery backup</button><button id="recovery-discard" hidden>Discard recovery backup</button><span id="update-status" role="status" aria-live="polite"></span></span><a href="../studio-v2/">Studio v2</a></footer>
