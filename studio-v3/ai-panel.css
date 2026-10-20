@@ -90,7 +90,11 @@ body.ai-open.preview-only .studio-grid { grid-template-columns:0 minmax(0,1fr) v
 .ai-target-highlight { outline:2px solid var(--blue); outline-offset:-2px; background:var(--blue-soft); }
 .paper-toolbar [data-ai-add] { width:auto; font-size:11px; }
 .ai-change-card { border:1px solid var(--line); border-radius:10px; padding:12px; background:var(--surface); }
-.ai-change-card h3 { font-size:14px; margin:0 0 12px; }
+.ai-change-card h3 { font-size:14px; margin:0 0 8px; }
+.ai-activity { margin:0 0 4px; padding:0; list-style:none; display:grid; gap:4px; font-size:14px; line-height:1.45; }
+.ai-activity li { padding-left:20px; position:relative; }
+.ai-activity li::before { content:"✓"; position:absolute; left:2px; color:var(--muted); }
+.ai-diff-json { margin:8px 0 0; padding:8px; max-height:220px; overflow:auto; font-size:12px; line-height:1.5; background:var(--bg,#f6f7f9); border:1px solid var(--line); border-radius:8px; white-space:pre-wrap; overflow-wrap:anywhere; }
 .ai-diff { width:100%; table-layout:fixed; border-collapse:collapse; font-size:13px; }
 .ai-diff th,.ai-diff td { padding:8px 4px; border-bottom:1px solid var(--line); text-align:left; overflow-wrap:anywhere; vertical-align:top; }
 .ai-diff th:first-child { width:42%; }

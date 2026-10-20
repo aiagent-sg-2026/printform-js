@@ -19,7 +19,7 @@ anything outside the references is rejected (`UNSAFE_SCOPE`).
 
 - **Empty conversation.** Four general-form starters fill the input without sending.
   The review starter asks for advice and receives a read-only grant; the others request edits.
-  The visible sequence is Ask → Preview → Apply → Undo if needed.
+  The visible sequence is Ask → Preview → Apply → Undo if needed; ordinary layout edits skip the manual Preview and Apply (see Automatic apply).
 - **Scope.** Neutral Whole form or explicitly referenced elements. Choosing Whole form removes
   references; selected scope cannot be chosen without references. Scope is locked while busy.
 - **One scrolling body.** Conversation, selected-element comments, compact references and
@@ -184,7 +184,7 @@ before each remote request and around every local inspection.
 
 The final candidate has one complete Before/After diff, including implicit
 binding cleanup and added/removed field definitions. Local inspection never
-commits. The user must still choose Preview and then Apply. Apply requires
+commits. Unless the change is an ordinary layout edit (Automatic apply), the user must still choose Preview and then Apply. Apply requires
 current passing layout/data checks and draft Apply/Discard/Stay protection,
 then rechecks identity at CommandBus queue execution. It creates one history
 entry. Card Undo is bound to that exact bus/revision/epoch. Printing/exporting
@@ -287,3 +287,12 @@ qualification are not. The optional Node/JSON source profile retains human Apply
 See [current production-readiness evidence](STUDIO_V3_GENERAL_AI_READINESS.zh-CN.md) and
 [Registry maintenance](STUDIO_V3_AGENT_REGISTRY.md); neither UI polish nor a live draft proves
 G6–G9 or approval to send confidential production data through the Demo route.
+
+
+## Automatic apply (owner decision, 2026-10-20)
+
+- `ai-auto-apply-policy.js` decides from the parsed operations/diff only, never from model text. Allowed: global color, font, padding, striping and borders; element typography; table row color; field/column label and value styling and `showLabel`; column width; section layout (columns/gap).
+- Everything else keeps the manual Preview → Apply card: text, labels, pointers and bindings, add/remove/reorder of fields or sections, collection, heading, logo, page setup, pagination flags (repeat, break, page numbers), and anything on the source-workspace path.
+- An allowed proposal is previewed at any screen width and applied through the same `apply()` path as the button (intent ledger, stale/scope/binding checks, restore on failure) only when the local inspection and the paper preview both pass. A blocked or stale proposal falls back to the card.
+- "Draft" here means a new, undoable revision of the open form. Nothing is saved, exported or shared automatically; card Undo and history Undo work as before.
+- The change card shows plain activity lines (derived from the diff by `ai-activity.js`); the raw setting table and its JSON sit in a collapsed Details block.

@@ -39,7 +39,7 @@ Priority: **P1** the user cannot tell what is happening; **P2** layout and scrol
 ## Constraints for any slice
 
 - Existing behavior/wire/geometry checks migrate with the interface. Tests that pin wording, source structure or obsolete defaults are deleted, not re-pinned to new copy. Preserve substantive scope, disclosure, Stop, restore and Apply/Undo checks.
-- Authority, scope and privacy behavior must not change: Preview → Apply → Undo, derived scope, reference sharing rules and the data-value-free context stay as documented in [STUDIO_V3_AI_CHAT.md](STUDIO_V3_AI_CHAT.md).
+- Authority, scope and privacy behavior must not change, except the 2026-10-20 owner decision below: Preview → Apply → Undo, derived scope, reference sharing rules and the data-value-free context stay as documented in [STUDIO_V3_AI_CHAT.md](STUDIO_V3_AI_CHAT.md).
 - Layout items (UX-05 to UX-07) need real-browser evidence at 400 x 800 and one wide viewport in all three engines; a unit test cannot establish them. Firefox needs extra care because it intermittently cannot reach the re-navigated preview frame in Playwright (read page thumbnails instead; see PR #32 and #33).
 - Each changed non-generated file stays at most 300 lines; split by responsibility if necessary.
 
@@ -66,3 +66,8 @@ Priority: **P1** the user cannot tell what is happening; **P2** layout and scrol
 - UX-01/02/03 and real screen-reader/contrast audit are not declared closed by this layout work. Historical owner decisions and findings above remain dated records.
 - Pi/Oh My PI workflow reuse does not add terminal privileges or qualify the full G6–G9 coding-agent milestones.
 
+
+## Owner decision, 2026-10-20
+
+- The panel shows a short conversation and plain activity lines such as "Updated table row color" or "Adjusted header spacing". Technical properties, the raw diff and its JSON move into a collapsed Details block. Step lines no longer use "draft", "note" or "operations" (progress on UX-01; UX-02 and UX-03 are not closed).
+- Ordinary layout edits are applied to the open form automatically after local checks and the paper preview pass; the allowlist and fallbacks are in [STUDIO_V3_AI_CHAT.md](STUDIO_V3_AI_CHAT.md#automatic-apply-owner-decision-2026-10-20). This replaces the "Preview → Apply must not change" constraint for the allowlisted operations only. No production, G6–G9 or visual-approval claim is made.

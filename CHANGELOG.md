@@ -15,6 +15,10 @@ who don't need the diary.
 
 ## [Unreleased]
 
+### AI Assistant activity log and automatic layout apply — 2026-10-20
+- Show a plain conversation and activity lines in the AI panel; move the raw setting table and its JSON into a collapsed Details block; rewrite step labels without internal words.
+- Apply allowlisted ordinary layout edits (style, table color, column width, spacing) automatically once local checks and the paper preview pass, through the existing Apply path; text, binding, structure, pagination and page-setup edits still require Apply. Undo restores the previous revision. Not a production or qualification claim.
+
 ### Source artifact custody and broker ownership — 2026-10-19
 - Reject duplicate decoded JSON keys before native operation parsing while preserving numeric types and existing inspection/human-Apply gates.
 - Restrict expired-resource cleanup to the exact broker owner and recheck ownership before removal; do not delete another broker's crash leftovers.

@@ -1,11 +1,11 @@
 import {afterEach,beforeEach,describe,expect,it,vi} from 'vitest';
 import {html,setup} from './support/chat-panel.js';
-import {scriptedGateway,successfulRun,json,plain,turn,reasoning,fn,message,colour} from './support/agent-gateway.js';
+import {scriptedGateway,successfulRun,json,plain,turn,reasoning,fn,message,heading} from './support/agent-gateway.js';
 import {setAgentEnabled} from '../studio-v3/agent-preference.js';
 
 beforeEach(()=> {document.documentElement.innerHTML = html.replace(/<!doctype html>/i,'');document.body.inert = false;localStorage.clear();});
 afterEach(()=> localStorage.clear());
-const NAVY = '{"kind":"proposal","summary":"Navy","edits":[{"target":"style","property":"color","value":"#163a65"}]}';
+const NAVY = '{"kind":"proposal","summary":"Heading","operations":[{"type":"set_heading","value":"Tax Invoice"}]}';
 const lastCard = panel => panel.conversation.messages.at(-1);
 const ask = (panel,text) => { panel.node('#ai-prompt').value = text; panel.share(); };
 
@@ -106,7 +106,7 @@ describe('the panel working in steps',()=> {
   it('works in steps on reference images once the gateway has confirmed image support, and stops resending them after a few turns',async()=> {
     const gateway = scriptedGateway({multimodal:true,agent:[
       turn([reasoning(1),fn(1,'get_context',{})]),turn([reasoning(2),fn(2,'take_notes',{notes:'Two columns; total bottom right.'})]),turn([reasoning(3),fn(3,'get_context',{})]),
-      turn([reasoning(4),fn(4,'get_context',{})]),turn([reasoning(5),fn(5,'apply_operations',{summary:'Navy accents',operations:[colour('#163a65')]})]),turn([reasoning(6),fn(6,'inspect_draft',{})]),turn([reasoning(7),fn(7,'finish',{summary:'Navy accents'})])
+      turn([reasoning(4),fn(4,'get_context',{})]),turn([reasoning(5),fn(5,'apply_operations',{summary:'Navy accents',operations:[heading('Tax Invoice')]})]),turn([reasoning(6),fn(6,'inspect_draft',{})]),turn([reasoning(7),fn(7,'finish',{summary:'Navy accents'})])
     ]}), {panel} = setup({transport:gateway.transport});
     panel.referenceFiles.files = [{id:'ref-1',name:'fictional.png',kind:'image',mime:'image/png',processing:'visual',pageCount:1,text:'',pages:[{number:1,width:10,height:10,text:'',textItems:[],preview:{dataUrl:'data:image/png;base64,AAAA'}}],warnings:[]}];
     panel.referenceFiles.root.open = true; panel.referenceFiles.changed();
@@ -123,7 +123,7 @@ describe('the panel working in steps',()=> {
     const gateway = scriptedGateway({agent:[turn([reasoning(1),fn(1,'get_context',{})]),init=>new Promise((_resolve,reject)=>init.signal.addEventListener('abort',()=>reject(Object.assign(new Error('aborted'),{name:'AbortError'}))))]}), {panel} = setup({transport:gateway.transport});
     const sending = panel.send();
     await vi.waitFor(()=>expect(panel.node('[data-ai-log] .ai-steps li')).not.toBeNull());
-    expect(panel.node('[data-ai-log] .ai-steps li').textContent).toContain('Read the form');
+    expect(panel.node('[data-ai-log] .ai-steps li').textContent).toContain('Looked at the form');
     expect(panel.node('[data-ai-status]').textContent).toMatch(/12 tokens/); // 10 in + 2 out of the finished turn
     panel.node('[data-ai=cancel]').click(); await sending;
     expect(panel.node('[data-ai-log] .ai-steps')).toBeNull();

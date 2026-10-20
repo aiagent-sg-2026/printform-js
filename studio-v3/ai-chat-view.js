@@ -1,11 +1,6 @@
 import { renderWelcome } from './ai-welcome.js';
 import { taskOutcomeNotice } from './ai-task-outcome.js';
-// Style patches arrive as JSON text; show "fontSize 12 · bold" instead.
-const readable = value => {
-  const text = String(value);
-  if (!text.startsWith('{')) return text;
-  try { return Object.entries(JSON.parse(text)).map(([key,item]) => item === true ? key : `${key} ${item}`).join(' · ') || text; } catch { return text; }
-};
+import { renderChangeCard } from './ai-change-card.js';
 const node = (tag,className,text) => { const n = document.createElement(tag); n.className = className; if (text !== undefined) n.textContent = text; return n; };
 export function renderConversation(panel) {
   const log = panel.node('[data-ai-log]'), scroll = panel.node('.ai-conversation-scroll') || log;
@@ -28,32 +23,7 @@ export function renderConversation(panel) {
       const citation = node('div','ai-observation-receipt',`Observation receipt: ${message.observation.id}`);
       citation.setAttribute('aria-label','Answer observation receipt'); article.append(citation);
     }
-    if (message.diff) {
-      const active = panel.proposal?.cardId === message.id;
-      const card = node('section','ai-change-card'); card.setAttribute('aria-label','AI layout changes');
-      if (active) card.dataset.aiProposal = '';
-      card.append(node('h3','','Review changes'));
-      const table = node('table','ai-diff'), head = document.createElement('thead'), row = document.createElement('tr');
-      for (const label of ['Setting','Before','After']) { const cell = node('th','',label); cell.scope = 'col'; row.append(cell); } head.append(row);
-      const body = document.createElement('tbody');
-      for (const diff of message.diff) { const r = document.createElement('tr'); for (const value of [`${diff.target} · ${diff.property}`,diff.before,diff.after]) r.append(node('td','',readable(value))); body.append(r); }
-      table.append(head,body);
-      const details = node('details','ai-change-details');
-      details.append(node('summary','',`View ${message.diff.length} change${message.diff.length === 1 ? '' : 's'}`),table);
-      card.append(details);
-      const previewed = active && panel.viewing && panel.checked;
-      const state = node('p','ai-card-state',message.status === 'ready' ? (previewed ? 'Previewed on paper · review it, then Apply' : 'Not applied · preview first') : message.status === 'applied' ? (message.appliedBus !== panel.getBus() ? 'Applied to a previous form · history only' : panel.canUndo(message) ? 'Applied to the form' : 'Applied earlier · history only') : 'Expired · send a new request'); card.append(state);
-      if (active) {
-        const actions = node('div','ai-actions');
-        for (const [action,label,disabled] of [['preview',previewed ? 'Preview again' : 'Preview on page',panel.busy],['apply','Apply',!panel.checked || panel.busy],['discard','Discard',panel.applying]]) {
-          const button = node('button',action === 'apply' ? 'primary' : '',label); button.type = 'button'; button.dataset.ai = action; if (action === 'apply') button.dataset.intent = panel.proposal?.intentKey || ''; button.disabled = Boolean(disabled || panel.applying); actions.append(button);
-        }
-        card.append(actions);
-      } else if (message.status === 'applied' && panel.canUndo(message)) {
-        const button = node('button','','Undo this edit'); button.type = 'button'; button.dataset.ai = 'undo'; button.dataset.cardId = message.id; button.disabled = Boolean(panel.applying); card.append(button);
-      }
-      article.append(card);
-    }
+    if (message.diff) article.append(renderChangeCard(panel,message));
     // Only the newest failure can be resent; after a later request an old Edit & resend would be stale history.
     if ((message.status === 'error' || message.status === 'cancelled') && panel.conversation.messages.at(-1) === message) {
       const button = node('button','ai-retry','Edit & resend'); button.type = 'button'; button.dataset.ai = 'retry'; button.dataset.cardId = message.id; article.append(button);

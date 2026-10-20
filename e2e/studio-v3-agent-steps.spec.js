@@ -43,7 +43,7 @@ test('works in steps: a visible timeline, one reviewable proposal, then Apply an
   page.on('console',message=> { if (message.type() === 'error') errors.push(message.text()); });
   await page.addInitScript(()=>{ window.__hold = true; }); await gateway(page); await open(page); await send(page);
   const steps = page.locator('[data-ai-log] .ai-steps li');
-  await expect(steps.first()).toContainText('Read the form'); await expect(steps.nth(1)).toContainText('Changed the draft · 1 change');
+  await expect(steps.first()).toContainText('Looked at the form'); await expect(steps.nth(1)).toContainText('Made changes · 1 change');
   await expect(page.locator('[data-ai=cancel]')).toBeVisible(); await expect(page.locator('#revision')).toHaveText('r0');
   await page.screenshot({path:info.outputPath('agent-steps-running.png')});
   await page.waitForFunction(()=>window.__release); await page.evaluate(()=>window.__release());

@@ -7,6 +7,7 @@ import { errorMessage } from './ai-messages.js';
 import { DEMO_CONFIG } from './ai-gateway-config.js';
 import { newIntentKey } from './intent-ledger.js';
 import { taskOutcomeNotice } from './ai-task-outcome.js';
+import { autoApplicable } from './ai-auto-apply-policy.js';
 
 // Same conversation/proposal lifecycle; extraction keeps AIPanel below300 lines.
 export async function sendPanelMessage() {
@@ -26,7 +27,7 @@ export async function sendPanelMessage() {
     validateElementReferences(bus.project,payload.references,bus.revision);
   };
   const {id,signal} = this.begin(); this.conversation.expire(); this.proposal = null; this.checked = false;
-  let inspected = false, workspace;
+  let inspected = false, workspace, applyNow = null;
   this.pendingMessage = payload.request; this.conversation.add('user',[payload.request,...payload.references.filter(r=>r.comment).map(r=>`${r.id}: ${r.comment}`)].join('\n'),'answer',{documentKey:this.documentKey()}); this.node('#ai-prompt').value = ''; this.share(); this.update();
   try {
     const runId = crypto.randomUUID(), readObservationHost = ()=>this.observationAccess.state(runId), baseProfile = this.grantProfile(payload);
@@ -68,10 +69,14 @@ export async function sendPanelMessage() {
     const card = this.conversation.add('assistant',result.kind === 'answer' ? result.message : result.summary,incomplete ? 'error' : result.kind === 'answer' ? 'answer' : 'ready',{documentKey:this.documentKey(),...(result.taskOutcome ? {taskOutcome:result.taskOutcome} : {}),...(incomplete ? {request:payload.request} : {}),observationProtected:observationAuthorization.text || observationAuthorization.values,...(result.kind === 'answer' && result.observation ? {observation:result.observation} : {}),...(result.diff ? {diff:result.diff} : {})});
     if (result.kind === 'proposal') this.proposal = {...result,bus,revision,baseDesign,epoch,selection,scope,cardId:card.id,intentKey:newIntentKey()};
     if (result.kind === 'answer' && this.viewing) return;
-    const auto = result.kind === 'proposal' && innerWidth > 900, next = auto && result.inspection?.ready ? 'Review the paper preview, then Apply.' : 'Preview before Apply.';
+    // Ordinary layout edits (see ai-auto-apply-policy.js) are previewed at any width and applied once the checks pass.
+    const direct = result.kind === 'proposal' && result.inspection?.ready && autoApplicable(result);
+    const auto = result.kind === 'proposal' && (direct || innerWidth > 900), next = direct ? 'Applying to the form…' : auto && result.inspection?.ready ? 'Review the paper preview, then Apply.' : 'Preview before Apply.';
     const details = `${alias} · ${result.kind === 'answer' ? '' : `r${revision} · ${result.mode === 'steps' ? `${result.turns} steps` : `${result.iterations} inspection round(s)`} · `}Tokens: ${result.usage?.total ?? 'unavailable'}`;
     this.message(`${incomplete ? taskOutcomeNotice(result.taskOutcome) : result.kind === 'answer' ? 'Read-only answer; form unchanged.' : `${result.inspection?.ready ? 'Local checks passed.' : 'Local checks blocked.'} ${next}`} (${details})`);
-    if (auto) await this.preview(true).catch(error=>this.error(error));
+    if (auto) await this.preview(true,{keepOpen:direct}).catch(error=>this.error(error));
+    // Apply runs after the run is finished (busy is cleared in finally) and only if the same checked proposal is still current.
+    if (direct && this.checked && id === this.generation) applyNow = this.proposal;
   } catch (error) {
     if (id === this.generation) { const message = errorMessage(this.timedOut === id ? fail(this.timeoutCode) : error); this.conversation.add('assistant',message,error.name === 'AbortError' && this.timedOut !== id ? 'cancelled' : 'error',{request:payload.request,documentKey:this.documentKey()}); this.message(''); }
     if (id === this.generation && inspected && this.viewing && !this.proposal) await this.restoreUnapplied();
@@ -79,4 +84,5 @@ export async function sendPanelMessage() {
     await this.sourceWorkspace?.release(workspace);
     if (id === this.generation) { this.transport.clearSession(); this.finish(); this.share(); this.sync(); }
   }
+  if (applyNow && id === this.generation) await this.autoApply(applyNow);
 }

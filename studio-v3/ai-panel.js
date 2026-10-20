@@ -64,7 +64,7 @@ export class AIPanel {
     bar.dataset.scope = count ? 'selected' : 'whole';
     selected.disabled = !count; selected.textContent = count ? `${count} selected element${count > 1 ? 's' : ''}` : 'Selected elements'; choice.value = count ? 'selected' : 'whole';
     const how = count ? 'Choose Whole form to edit any part.' : innerWidth <= 900 ? 'To limit them, close this panel, tap an element, then press Add to chat.' : 'To limit them, select an element and press Add to chat.';
-    this.node('.ai-scope-help').textContent = count ? 'Only referenced elements can change.' : 'Any part can change. Preview before Apply.';
+    this.node('.ai-scope-help').textContent = count ? 'Only referenced elements can change.' : 'Any part can change. Layout edits apply automatically; Undo restores them.';
     choice.title = how; choice.setAttribute('aria-description',how);
     if (!count && innerWidth <= 900) this.node('.ai-scope-help').textContent += ' To limit edits, close AI, select an element, then Add to chat.';
   }
@@ -158,13 +158,18 @@ export class AIPanel {
   stepDone(step,id) { if (id === this.generation) { this.agentSteps.push({text:stepLabel(step),ok:step.ok,code:step.code}); this.update(); } }
   async send() { return sendPanelMessage.call(this); }
   present() { this.update(); }
-  async preview(quiet = false) {
+  async preview(quiet = false,{keepOpen = false} = {}) {
     const proposal = this.proposal; this.assertCurrent(proposal); this.viewing = true; this.checked = false; this.update(); this.sync();
     const report = await this.renderPreview(proposal.candidate); if (this.proposal !== proposal) return;
     this.assertCurrent(proposal); this.checked = inspectProject(proposal.candidate,report).ready;
     if (!quiet) this.message(this.checked ? 'Unapplied paper preview passed. Review the pages before Apply.' : 'Unapplied preview blocked by layout/data validation. Discard or request another suggestion.');
     this.update(); this.sync();
-    if (innerWidth <= 900) { this.suspend(); document.querySelector('[data-ai-toggle]').focus(); }
+    if (innerWidth <= 900 && !keepOpen) { this.suspend(); document.querySelector('[data-ai-toggle]').focus(); }
+  }
+  // The same Apply path as the button (intent ledger, stale checks, restore on failure), reached without a click.
+  async autoApply(proposal) {
+    if (this.proposal !== proposal || !this.checked || this.busy || this.applying) return;
+    await this.guard(()=>this.apply(proposal.intentKey)).catch(error=>this.error(error));
   }
   // A duplicate Apply for a key already seen (a second click, a queued repeat) waits for the original outcome and does
   // nothing more: one commit, no stale-proposal or busy error for the harmless repeat.
@@ -181,7 +186,7 @@ export class AIPanel {
       if (card) Object.assign(card,{status:'applied',appliedBus:applied.bus,appliedRevision:applied.revision,appliedEpoch:proposal.epoch});
       // The references pointed at the revision just replaced; keeping them would block the next Send as outdated.
       if (applied.bus === this.getBus()) { this.elementTags?.consume(); this.showScopeHint(); }
-      this.message(applied.bus === this.getBus() ? `Applied ${proposal.alias} suggestion. Undo restores the previous layout.` : 'Applied to the previous form. Current form unchanged.');
+      this.message(applied.bus === this.getBus() ? 'Applied to the form. Undo restores the previous layout.' : 'Applied to the previous form. Current form unchanged.');
     } catch (error) {
       try { await this.restore(); canonical = true; this.error(error); }
       catch { this.message('Apply failed. The candidate remains unapplied; restore the form before printing.'); }

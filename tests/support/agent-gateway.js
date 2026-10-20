@@ -8,6 +8,8 @@ export const turn = (output,tokens = 10) => stream([{type:'response.created',res
 export const plain = text => json({status:'completed',output:[{type:'message',content:[{type:'output_text',text}]}],usage:{input_tokens:3,output_tokens:4,total_tokens:7}});
 export const message = text => ({id:'msg_1',type:'message',status:'completed',content:[{type:'output_text',text}],phase:'final_answer',role:'assistant'});
 export const colour = value => ({type:'set_style',patch:{color:value}});
+// Outside the auto-apply allowlist (heading text), so the person still reviews and applies it.
+export const heading = value => ({type:'set_heading',value});
 export function scriptedGateway({agent = [],single = [],multimodal = false} = {}) {
   const bodies = [], transport = createDemoTransport({fetchImpl:async(url,init)=> {
     if (url.endsWith('/session')) return json({token:'dmo_synthetic1',expires_in:900},201);
@@ -19,9 +21,9 @@ export function scriptedGateway({agent = [],single = [],multimodal = false} = {}
   return {transport,bodies,agentCalls:()=>bodies.filter(body=>body.tools).length,singleCalls:()=>bodies.filter(body=>!body.tools).length};
 }
 // The four turns of a plain successful run.
-export const successfulRun = () => [
+export const successfulRun = (operation = heading('Tax Invoice')) => [
   turn([reasoning(1),fn(1,'get_context',{})]),
-  turn([reasoning(2),fn(2,'apply_operations',{summary:'Navy accents',operations:[colour('#163a65')]})]),
+  turn([reasoning(2),fn(2,'apply_operations',{summary:'Navy accents',operations:[operation]})]),
   turn([reasoning(3),fn(3,'inspect_draft',{})]),
   turn([reasoning(4),fn(4,'finish',{summary:'Navy accents'})])
 ];

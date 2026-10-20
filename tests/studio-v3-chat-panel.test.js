@@ -157,7 +157,7 @@ it('hides duplicate progress from screen readers and removes the wait after comp
   await panel.send();expect(hidden).toBe('true');expect(pending()).toBeNull();
 });
 it('clears element references once their own Apply succeeds, so the next Send is not blocked as outdated',async()=> {
-  const label={kind:'proposal',summary:'Label',operations:[{type:'set_field',target:'label-customer-ship',patch:{labelStyle:{fontSize:12,bold:true}}}]};
+  const label={kind:'proposal',summary:'Label',operations:[{type:'set_field',target:'label-customer-ship',patch:{label:'Deliver to'}}]};
   // Like the app, the commit announces the changed document (refreshing the hint) while the references still exist.
   let holder;const {panel}=setup({reply:label,commit:async()=> {holder.contextChanged();return {bus:holder.getBus(),revision:1};}});holder=panel;
   panel.elementTags=new AIElementTags({bus:()=>panel.getBus(),selection:()=>'label-customer-ship',onChange:()=>panel.share()});
@@ -167,7 +167,7 @@ it('clears element references once their own Apply succeeds, so the next Send is
   expect(panel.elementTags.snapshot()).toEqual([]);expect(panel.scope()).toEqual({mode:'whole'});
 });
 it('keeps element references when the Apply fails',async()=> {
-  const label={kind:'proposal',summary:'Label',operations:[{type:'set_field',target:'label-customer-ship',patch:{labelStyle:{fontSize:12,bold:true}}}]};
+  const label={kind:'proposal',summary:'Label',operations:[{type:'set_field',target:'label-customer-ship',patch:{label:'Deliver to'}}]};
   const {panel}=setup({reply:label,commit:async()=> {throw new Error('commit failed');}});
   panel.elementTags=new AIElementTags({bus:()=>panel.getBus(),selection:()=>'label-customer-ship',onChange:()=>panel.share()});
   panel.elementTags.add('label-customer-ship');

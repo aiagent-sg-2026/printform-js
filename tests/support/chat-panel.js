@@ -5,9 +5,13 @@ import {newProject} from '../../studio-v3/model.js';
 import {createBus} from '../../studio-v3/controller.js';
 // Shared by the chat panel tests: the real index.html shell plus a ready AIPanel.
 export const html=fs.readFileSync('studio-v3/index.html','utf8');
-export function setup({facts=()=>[],commit,plan,transport,restore=async()=>{},reply={kind:'proposal',summary:'Navy',edits:[{target:'style',property:'color',value:'#163a65'}]}}={}) {
+// Default reply: a heading text change is outside the auto-apply allowlist, so these tests keep exercising the
+// Preview / Apply card. AUTO_REPLY is an ordinary style edit that the panel applies by itself.
+export const MANUAL_REPLY={kind:'proposal',summary:'Heading',operations:[{type:'set_heading',value:'Tax Invoice'}]};
+export const AUTO_REPLY={kind:'proposal',summary:'Navy',edits:[{target:'style',property:'color',value:'#163a65'}]};
+export function setup({facts=()=>[],commit,plan,transport,restore=async()=>{},preview=async()=>({status:'ready',validation:{errors:[],warnings:[]}}),reply=MANUAL_REPLY}={}) {
   let bus=createBus(newProject()),calls=0,selected='items';
-  const panel=new AIPanel({bus:()=>bus,selection:()=>selected,facts,guard:work=>work(),preview:async()=>({status:'ready',validation:{errors:[],warnings:[]}}),restore,commit,sync:()=>{},transport:transport || {clear:()=>{},clearSession:()=>{},discover:async()=>['demo-fast'],plan:async(...args)=> {calls++;return plan ? plan(...args) : {text:JSON.stringify(reply)};}}});
+  const panel=new AIPanel({bus:()=>bus,selection:()=>selected,facts,guard:work=>work(),preview,restore,commit,sync:()=>{},transport:transport || {clear:()=>{},clearSession:()=>{},discover:async()=>['demo-fast'],plan:async(...args)=> {calls++;return plan ? plan(...args) : {text:JSON.stringify(reply)};}}});
   panel.contextChanged();panel.node('#ai-prompt').value='Use navy accents.';panel.share();
   return {panel,calls:()=>calls,changeBus:()=> {bus=createBus(newProject());panel.contextChanged();return bus;},select:id=> {selected=id;panel.contextChanged();}};
 }
