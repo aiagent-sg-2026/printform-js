@@ -3,7 +3,7 @@ import { test, expect } from './studio-v3-test.js';
 // delays, so the browser's own stream, decoder and timers are exercised. Nothing leaves the machine.
 
 const ready = page=>expect(page.locator('[data-action=export]')).toBeEnabled({timeout:30000});
-const proposal = {summary:'Use navy and compact spacing with Tax Invoice heading',operations:[{type:'set_style',patch:{color:'#163a65',padding:5}},{type:'set_heading',value:'Tax Invoice'}]};
+const proposal = {summary:'Use navy and compact spacing with page margins',operations:[{type:'set_style',patch:{color:'#163a65',padding:5}},{type:'set_page',patch:{margins:{top:12}}}]};
 async function streamingGateway(page) {
   await page.addInitScript(text=> {
     const original=window.fetch.bind(window),sleep=ms=>new Promise(resolve=>setTimeout(resolve,ms)),encoder=new TextEncoder();

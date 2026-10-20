@@ -13,7 +13,7 @@ async function gateway(page,mode = 'run') {
     const sse = output=>new Response(frame('response.created',{response:{status:'in_progress',output:[]}})+frame('response.completed',{response:{status:'completed',output,usage:{input_tokens:10,output_tokens:2,total_tokens:12}}}),{status:200,headers:{'content-type':'text/event-stream'}});
     const reasoning = n=>({id:`rs_${n}`,type:'reasoning',content:[],encrypted_content:`enc-${n}`,summary:[]});
     const call = (n,name,args)=>({id:`fc_${n}`,type:'function_call',status:'completed',call_id:`call_${n}`,name,arguments:JSON.stringify(args)});
-    const navy = {summary:'Tax Invoice heading',operations:[{type:'set_heading',value:'Tax Invoice'}]};
+    const navy = {summary:'Page margins',operations:[{type:'set_page',patch:{margins:{top:12}}}]};
     const script = mode === 'images'
       ? [()=>call(1,'get_context',{}),()=>call(2,'take_notes',{notes:'Two columns; total bottom right.'}),()=>call(3,'get_context',{}),()=>call(4,'get_context',{}),()=>call(5,'apply_operations',navy),()=>call(6,'inspect_draft',{}),()=>call(7,'finish',{summary:'Navy accents'})]
       : [()=>call(1,'get_context',{}),()=>call(2,'apply_operations',navy),()=>call(3,'inspect_draft',{}),()=>call(4,'finish',{summary:'Navy accents'})];
@@ -32,7 +32,7 @@ async function gateway(page,mode = 'run') {
       }
       return sse([{type:'message',content:[{type:'output_text',text:single}]}]);
     };
-  },{mode,single:JSON.stringify({summary:'Tax Invoice heading',operations:[{type:'set_heading',value:'Tax Invoice'}]})});
+  },{mode,single:JSON.stringify({summary:'Page margins',operations:[{type:'set_page',patch:{margins:{top:12}}}]})});
 }
 async function open(page) { await page.goto('/studio-v3/'); await ready(page); await page.locator('[data-ai-toggle]').click(); }
 const send = async(page,text = 'Use navy accents #163a65.')=> { await page.locator('#ai-prompt').fill(text); await page.locator('[data-ai-send]').click(); };

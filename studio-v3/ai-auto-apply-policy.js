@@ -4,26 +4,25 @@ import { GLOBAL_STYLE_KEYS } from './ai-authoring-contract.js';
 // It reads only the parsed operations/diff and the host workspace flag, never model text.
 // Auto-apply is an ordinary revision (card Undo and history Undo still work); it never saves or exports.
 // Anything outside this allowlist keeps the Preview / Apply card.
-const SAFE_GLOBAL_STYLE = Object.freeze(['color','font','padding','striped','borders']);
-const SAFE_FIELD_PATCH = Object.freeze(['labelStyle','valueStyle','showLabel','width']);
-const SAFE_LAYOUT_PATCH = Object.freeze(['layout']);
-const keysWithin = (patch,allowed) => Boolean(patch) && typeof patch === 'object' && !Array.isArray(patch) && Object.keys(patch).length > 0 && Object.keys(patch).every(key=>allowed.includes(key));
+const BINDING_KEYS = Object.freeze(['pointer','format','kind','barcode']);
+const has = (value,key) => Object.hasOwn(value || {},key);
+const always = () => true;
 const SAFE_OPERATION = Object.freeze({
-  set_element_style:op=>keysWithin(op.patch,['fontSize','bold','color','align']),
-  set_style:op=>keysWithin(op.patch,SAFE_GLOBAL_STYLE),
-  set_table_style:op=>keysWithin(op.patch,['rowBackground']),
-  set_field:op=>keysWithin(op.patch,SAFE_FIELD_PATCH),
-  set_section:op=>keysWithin(op.patch,SAFE_LAYOUT_PATCH)
+  set_style:always,set_element_style:always,set_table_style:always,set_heading:always,set_logo:always,
+  set_section:always,reorder_sections:always,reorder_fields:always,
+  set_field:op=>!BINDING_KEYS.some(key=>has(op.patch,key)),
+  add_field:op=>!['pointer','format','barcode'].some(key=>has(op.field,key)) && (!has(op.field,'kind') || ['static','image'].includes(op.field.kind)),
+  remove_field:(op,diff)=>!diff.some(entry=>entry.target === op.target && entry.property === 'pointer' && Boolean(entry.before))
 });
-export function operationAutoApplicable(op) {
-  return Boolean(op) && Object.hasOwn(SAFE_OPERATION,op.type) && SAFE_OPERATION[op.type](op);
+export function operationAutoApplicable(op,diff=[]) {
+  return Boolean(op) && Object.hasOwn(SAFE_OPERATION,op.type) && SAFE_OPERATION[op.type](op,diff);
 }
 // Legacy single-step proposals carry `edits` instead of `operations`; the parser reduces them to the diff, which
 // can only touch global style keys and column widths there.
 const legacyDiffApplicable = diff => diff.length > 0 && diff.every(({target,property})=>
-  (target === 'style' && SAFE_GLOBAL_STYLE.includes(property) && GLOBAL_STYLE_KEYS.includes(property)) || (property === 'width' && /^items-/.test(target)));
+  (target === 'style' && GLOBAL_STYLE_KEYS.includes(property)) || (property === 'width' && /^items-/.test(target)));
 export function autoApplicable(proposal,{workspace} = {}) {
   if (workspace || !proposal || proposal.kind !== 'proposal' || !Array.isArray(proposal.diff)) return false;
-  if (Array.isArray(proposal.operations) && proposal.operations.length) return proposal.operations.every(operationAutoApplicable);
+  if (Array.isArray(proposal.operations) && proposal.operations.length) return proposal.operations.every(op=>operationAutoApplicable(op,proposal.diff));
   return legacyDiffApplicable(proposal.diff);
 }

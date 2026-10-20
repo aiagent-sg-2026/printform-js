@@ -6,7 +6,7 @@ import {setAgentEnabled} from '../studio-v3/agent-preference.js';
 
 beforeEach(()=> { document.documentElement.innerHTML=html.replace(/<!doctype html>/i,''); document.body.inert=false; localStorage.clear(); });
 afterEach(()=> { vi.useRealTimers(); vi.restoreAllMocks(); localStorage.clear(); });
-const navy = '{"summary":"Heading","operations":[{"type":"set_heading","value":"Tax Invoice"}]}';
+const navy = '{"summary":"Page margins","operations":[{"type":"set_page","patch":{"margins":{"top":12}}}]}';
 
 describe('panel mode deadlines',()=> {
   it('keeps a multi-step run alive beyond the single-step limit, then aborts at its own deadline',async()=> {

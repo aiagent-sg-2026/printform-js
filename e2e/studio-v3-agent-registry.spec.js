@@ -25,17 +25,29 @@ async function gateway(page,steps=EDIT) {
 async function open(page) {await page.goto('/studio-v3/');await ready(page);await page.locator('[data-ai-toggle]').click();}
 async function send(page) {await page.locator('#ai-prompt').fill('Use navy accents #163a65.');await page.locator('[data-ai-send]').click();}
 
-test('discovers the shipped registry and guide, inspects, then preserves Preview/Apply/Undo',async({page})=> {
+test('discovers the shipped registry and guide, inspects, then automatically applies heading edits with Undo',async({page})=> {
   const errors=[];page.on('pageerror',e=>errors.push(e.message));page.on('console',m=>{if(m.type()==='error')errors.push(m.text());});
   await gateway(page);await open(page);
   const accent=()=>page.frameLocator('#preview-frame').locator('.v3-header').first().evaluate(node=>getComputedStyle(node).borderBottomColor),before=await accent();
   const heading=()=>page.frameLocator('#preview-frame').locator('[data-v3-id=header-title]').first(),originalHeading=await heading().textContent();
   await send(page);
-  await expect(page.locator('[data-ai-proposal]')).toBeVisible();await expect(page.locator('#revision')).toHaveText('r0');
-  await page.locator('[data-ai=apply]').click();await ready(page);await expect(page.locator('#revision')).toHaveText(/^r1\b/);expect(await accent()).toBe('rgb(22, 58, 101)');
+  await expect(page.locator('.ai-change-card')).toContainText('Applied to draft');await ready(page);await expect(page.locator('#revision')).toHaveText(/^r1\b/);expect(await accent()).toBe('rgb(22, 58, 101)');
   await expect(heading()).toHaveText('Tax Invoice');
   await page.locator('[data-ai=undo]').click();await ready(page);await expect(page.locator('#revision')).toHaveText(/^r2\b/);expect(await accent()).toBe(before);expect(errors).toEqual([]);
   await expect(heading()).toHaveText(originalHeading);
+});
+
+test('inspected page setup preserves manual Preview/Apply/Undo',async({page})=> {
+  await gateway(page,[['get_context'],['apply_operations',{summary:'Page margins',operations:[{type:'set_page',patch:{margins:{top:12}}}]}],['inspect_draft'],['finish',{summary:'Page margins'}]]);
+  await open(page);
+  const margin=()=>page.frameLocator('#preview-frame').locator('.physical_page_wrapper').first().evaluate(node=>node.querySelector('.printform_page').getBoundingClientRect().top-node.getBoundingClientRect().top),before=await margin();
+  await send(page);
+  await expect(page.locator('[data-ai-proposal]')).toBeVisible();await expect(page.locator('#revision')).toHaveText('r0');
+  await page.locator('[data-ai=preview]').click();await expect(page.locator('[data-ai=apply]')).toBeEnabled();
+  await page.locator('[data-ai=apply]').click();await ready(page);await expect(page.locator('#revision')).toHaveText(/^r1\b/);
+  expect(await margin()).toBeCloseTo(12,0);
+  await page.locator('[data-ai=undo]').click();await ready(page);await expect(page.locator('#revision')).toHaveText(/^r2\b/);
+  expect(await margin()).toBeCloseTo(before,0);
 });
 
 test('answers a question in steps under a read-only grant with no proposal and no revision change',async({page})=> {

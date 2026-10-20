@@ -13,9 +13,9 @@ async function gateway(page) {
     const reasoning = n=>({id:`rs_${n}`,type:'reasoning',content:[],encrypted_content:`enc-${n}`,summary:[]});
     const call = (n,name,args)=>({id:`fc_${n}`,type:'function_call',status:'completed',call_id:`call_${n}`,name,arguments:JSON.stringify(args)});
     const a = {summary:'Larger blue title and tighter table',operations:[{type:'set_style',patch:{color:'#1d4ed8'}},{type:'set_element_style',target:'header-title',patch:{fontSize:20,color:'#1d4ed8'}},{type:'set_table_style',target:'items',patch:{rowBackground:'#eef2ff'}}]};
-    const b = {summary:'Heading text',operations:[{type:'set_heading',value:'Tax Invoice'}]};
+    const b = {summary:'Page margins',operations:[{type:'set_page',patch:{margins:{top:12}}}]};
     const script = [()=>call(1,'get_context',{}),()=>call(2,'apply_operations',a),()=>call(3,'inspect_draft',{}),()=>call(4,'finish',{summary:'I made the title larger and blue and tinted the table rows. The changes are applied to your draft.'}),
-      ()=>call(5,'get_context',{}),()=>call(6,'apply_operations',b),()=>call(7,'inspect_draft',{}),()=>call(8,'finish',{summary:'I changed the heading text. Review it, then apply.'})];
+      ()=>call(5,'get_context',{}),()=>call(6,'apply_operations',b),()=>call(7,'inspect_draft',{}),()=>call(8,'finish',{summary:'I changed the page margins. Review them, then apply.'})];
     let turns = 0;
     window.fetch = async (input,init)=> {
       const url = new URL(typeof input === 'string' ? input : input.url,location.href);
@@ -65,7 +65,7 @@ for (const [width,height] of SIZES) {
     const head = await card.getByRole('heading',{name:/Applied to draft/}).boundingBox(), undo = await card.locator('[data-ai=undo]').boundingBox();
     for (const [what,b] of [['card heading',head],['Undo button',undo]]) { expect.soft(b,what).not.toBeNull(); expect.soft(b.y,what+' top inside the conversation').toBeGreaterThanOrEqual(sc.y-1); expect.soft(b.y+b.height,what+' bottom inside the conversation').toBeLessThanOrEqual(sc.y+sc.height+1); }
     // A needs-approval card: Apply/Preview/Discard row is reachable and the card heading is visible.
-    await send(page,'Change the heading text to Tax Invoice.');
+    await send(page,'Set the top page margin to 12 px.');
     await expect(page.locator('[data-ai-proposal]')).toBeVisible({timeout:30000});
     const sc2 = await box(page,'.ai-conversation-scroll'), prop = page.locator('[data-ai-proposal]');
     const ph = await prop.getByRole('heading',{name:/Suggested changes/}).boundingBox(), pd = await prop.locator('[data-ai=discard]').boundingBox();

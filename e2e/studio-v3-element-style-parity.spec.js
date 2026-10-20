@@ -51,8 +51,8 @@ for (const target of ['header-title','page-number']) test(`real ${target} inspec
   expect(numeric).toEqual(uiObserved.diagnostics); expect(observation).toMatchObject({baseRevision:2,candidateVersion:1});
   await ready(page); await expect(page.locator('#revision')).toHaveText(/^r3\b/);
   const pi = await save(page,info,'pi.printform.json'); expect(normalized(pi.project)).toEqual(normalized(ui.project)); expect(await styles(page,target)).toEqual(uiStyles);
-  await send(page,'Clear the selected typography override.'); await expect(page.locator('[data-ai-proposal]')).toBeVisible(); await expect(page.locator('[data-ai=apply]')).toBeEnabled();
-  await expect(page.locator('#revision')).toHaveText('r3'); await page.locator('[data-ai=apply]').click(); await ready(page); await expectApplied(page,4);
+  await send(page,'Clear the selected typography override.');
+  await expectApplied(page,4); await ready(page);
   const cleared = await save(page,info,'cleared.printform.json'); expect(normalized(cleared.project)).toEqual(normalized(before.project)); expect(await styles(page,target)).toEqual(inherited);
   await page.locator('[data-ai=undo]').click(); await ready(page); const undone = await save(page,info,'undone.printform.json'); expect(normalized(undone.project)).toEqual(normalized(ui.project));
   await send(page,'Increase selected typography by 0.25pt.'); await expectApplied(page,6);

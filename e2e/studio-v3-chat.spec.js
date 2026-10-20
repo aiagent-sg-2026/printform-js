@@ -8,7 +8,7 @@ import { test, expect } from './studio-v3-test.js';
 const ready=page=>expect(page.locator('[data-action=export]')).toBeEnabled({timeout:30000});
 const answer={kind:'answer',message:'The supplied facts show the current font sizes.'};
 const proposal={kind:'proposal',summary:'Use navy accents',edits:[{target:'style',property:'color',value:'#163a65'}]};
-const manualProposal={kind:'proposal',summary:'Use navy accents and Tax Invoice heading',operations:[{type:'set_style',patch:{color:'#163a65'}},{type:'set_heading',value:'Tax Invoice'}]};
+const manualProposal={kind:'proposal',summary:'Use navy accents and page margins',operations:[{type:'set_style',patch:{color:'#163a65'}},{type:'set_page',patch:{margins:{top:12}}}]};
 async function mock(page,replies=[answer]) {
   const requests=[];let index=0;
   await page.route('https://gpt.yapweijun1996.com/demo/**',async route=> {

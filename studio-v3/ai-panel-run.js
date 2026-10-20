@@ -70,7 +70,7 @@ export async function sendPanelMessage() {
     const card = this.conversation.add('assistant',result.kind === 'answer' ? result.message : result.summary,incomplete ? 'error' : result.kind === 'answer' ? 'answer' : 'ready',{documentKey:this.documentKey(),...(result.taskOutcome ? {taskOutcome:result.taskOutcome} : {}),...(incomplete ? {request:payload.request} : {}),observationProtected:observationAuthorization.text || observationAuthorization.values,...(result.kind === 'answer' && result.observation ? {observation:result.observation} : {}),...(result.diff ? {diff:result.diff} : {})});
     if (result.kind === 'proposal') this.proposal = {...result,bus,revision,baseDesign,epoch,selection,scope,cardId:card.id,intentKey:newIntentKey(),sourceBound};
     if (result.kind === 'answer' && this.viewing) return;
-    // Ordinary layout edits (see ai-auto-apply-policy.js) are previewed at any width and applied once the checks pass.
+    // Layout/static-content edits (see ai-auto-apply-policy.js) are previewed at any width and applied once the checks pass.
     const direct = result.kind === 'proposal' && result.inspection?.ready && !sourceBound && autoApplicable(result,{workspace});
     const auto = result.kind === 'proposal' && (direct || innerWidth > 900), next = direct ? 'Applying to the form…' : auto && result.inspection?.ready ? 'Review the paper preview, then Apply.' : 'Preview before Apply.';
     const details = `${alias} · ${result.kind === 'answer' ? '' : `r${revision} · ${result.mode === 'steps' ? `${result.turns} steps` : `${result.iterations} inspection round(s)`} · `}Tokens: ${result.usage?.total ?? 'unavailable'}`;

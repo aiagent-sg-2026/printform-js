@@ -3,33 +3,58 @@ import {html,setup,AUTO_REPLY,MANUAL_REPLY} from './support/chat-panel.js';
 import {editProject,designOperations} from '../studio-v3/controller.js';
 import {autoApplicable,operationAutoApplicable} from '../studio-v3/ai-auto-apply-policy.js';
 import {activityLines,describeChange} from '../studio-v3/ai-activity.js';
+import {parseChatReply} from '../studio-v3/ai-chat-protocol.js';
+import {newProject} from '../studio-v3/model.js';
 
 beforeEach(()=> {document.documentElement.innerHTML=html.replace(/<!doctype html>/i,'');document.body.inert=false;});
 const proposal = (operations,diff=[{target:'style',property:'color'}]) => ({kind:'proposal',operations,diff});
 const commitInto = counter => async next => { counter.count++; await editProject(next.bus,designOperations(next.bus.project,next.design),'AI'); return {bus:next.bus,revision:next.bus.revision}; };
 
 describe('auto-apply policy',()=> {
-  it('allows ordinary style, table style, column width and spacing edits',()=> {
-    for (const op of [{type:'set_style',patch:{color:'#163a65',font:10,padding:4,striped:true,borders:false}},{type:'set_element_style',target:'header-title',patch:{fontSize:20}},
-      {type:'set_table_style',target:'items',patch:{rowBackground:'#eeeeee'}},{type:'set_field',target:'label-items-qty',patch:{labelStyle:{color:'#ffffff'}}},
-      {type:'set_field',target:'items-qty',patch:{width:12}},{type:'set_section',target:'header',patch:{layout:{gap:8}}}]) expect(operationAutoApplicable(op)).toBe(true);
-    expect(autoApplicable(proposal([{type:'set_style',patch:{color:'#163a65'}},{type:'set_table_style',target:'items',patch:{rowBackground:null}}]))).toBe(true);
+  it('allows layout and static-content operations',()=> {
+    const allowed=[{type:'set_style',patch:{repeatHeader:true}},{type:'set_element_style',target:'header-title',patch:{fontSize:20}},
+      {type:'set_table_style',target:'items',patch:{rowBackground:'#eee'}},{type:'set_heading',value:'Tax Invoice'},{type:'set_logo',value:null},
+      {type:'set_section',target:'header',patch:{enabled:false}},{type:'reorder_fields',section:'items',order:[]},{type:'reorder_sections',order:[]},
+      {type:'set_field',target:'footer-note',patch:{text:'Thanks',label:'Note',showLabel:true,width:12}},
+      ...[undefined,'static','image'].map(kind=>({type:'add_field',section:'footer',field:{id:'note',text:'Thanks',...(kind ? {kind} : {})}})),
+      {type:'remove_field',target:'footer-note'}];
+    for (const op of allowed) {
+      expect(operationAutoApplicable(op)).toBe(true); expect(autoApplicable(proposal([op]))).toBe(true);
+      expect(autoApplicable(proposal([op]),{workspace:true})).toBe(false);
+    }
   });
-  it('keeps text, binding, structure, pagination and page changes for a human Apply',()=> {
-    for (const op of [{type:'set_heading',value:'Tax Invoice'},{type:'set_collection',value:'/lines'},{type:'set_logo',value:null},{type:'remove_field',target:'items-qty'},
-      {type:'add_field',section:'footer',field:{id:'note',text:'Thanks'}},{type:'reorder_fields',section:'items',order:[]},{type:'reorder_sections',order:[]},{type:'set_page',patch:{paper:'A5'}},
-      {type:'set_style',patch:{repeatHeader:true}},{type:'set_style',patch:{color:'#163a65',breakBefore:true}},{type:'set_style',patch:{}},
-      {type:'set_field',target:'items-qty',patch:{text:'x'}},{type:'set_field',target:'items-qty',patch:{pointer:'./qty'}},{type:'set_field',target:'items-qty',patch:{labelStyle:{bold:true},label:'Q'}},
-      {type:'set_section',target:'header',patch:{enabled:false}},{type:'set_section',target:'items',patch:{breakBefore:true}},{type:'unknown_new_op',patch:{color:'#163a65'}}]) expect(operationAutoApplicable(op)).toBe(false);
+  it('keeps binding keys, collection, page and unknown operations manual',()=> {
+    const manual=[{type:'set_collection',value:'/lines'},{type:'set_page',patch:{margins:{top:12}}},{type:'unknown_new_op'},
+      ...['pointer','format','kind','barcode'].map(key=>({type:'set_field',target:'items-qty',patch:{[key]:null}})),
+      ...['pointer','format','barcode'].map(key=>({type:'add_field',section:'footer',field:{id:'note',[key]:null}})),
+      {type:'add_field',section:'footer',field:{id:'note',kind:'bound'}}];
+    for (const op of manual) expect(autoApplicable(proposal([op]))).toBe(false);
+  });
+  it('uses the removed target pointer diff, not another field or model text',()=> {
+    const op={type:'remove_field',target:'footer-note'};
+    for (const before of [undefined,null,'']) expect(autoApplicable(proposal([op],[{target:op.target,property:'pointer',before}]))).toBe(true);
+    expect(autoApplicable(proposal([op],[{target:op.target,property:'pointer',before:'/customer/name'}]))).toBe(false);
+    expect(autoApplicable(proposal([op],[{target:'items-qty',property:'pointer',before:'./qty'}]))).toBe(true);
+  });
+  it('recognizes static and bound removals from the real parser diff',()=> {
+    const project=newProject(),parse=operations=>parseChatReply(JSON.stringify({kind:'proposal',summary:'Field edits',operations}),project);
+    const staticField={type:'add_field',section:'footer',field:{id:'auto-note',kind:'static',text:'Thanks'}},added=parse([staticField]);
+    expect(autoApplicable(added)).toBe(true);
+    const removed=parseChatReply(JSON.stringify({kind:'proposal',summary:'Remove note',operations:[{type:'remove_field',target:'footer-auto-note'}]}),added.candidate);
+    expect(autoApplicable(removed)).toBe(true);
+    const bound=parse([{type:'remove_field',target:'customer-ship'}]);
+    expect(bound.diff).toContainEqual(expect.objectContaining({target:'customer-ship',property:'pointer',before:expect.stringMatching(/\S/)}));
+    expect(autoApplicable(bound)).toBe(false);
   });
   it('requires every operation to pass, and rejects anything that is not a proposal',()=> {
-    expect(autoApplicable(proposal([{type:'set_style',patch:{color:'#163a65'}},{type:'set_heading',value:'x'}]))).toBe(false);
+    expect(autoApplicable(proposal([{type:'set_heading',value:'x'},{type:'set_page',patch:{paper:'A5'}}]))).toBe(false);
     expect(autoApplicable({kind:'answer',message:'hi'})).toBe(false); expect(autoApplicable(null)).toBe(false);
     expect(autoApplicable({kind:'proposal',diff:[]})).toBe(false);
   });
   it('decides single-step edits from the diff and ignores the model summary',()=> {
     expect(autoApplicable({kind:'proposal',summary:'Needs approval',diff:[{target:'style',property:'color'},{target:'items-qty',property:'width'}]})).toBe(true);
-    expect(autoApplicable({kind:'proposal',summary:'Fine',diff:[{target:'style',property:'repeatHeader'}]})).toBe(false);
+    expect(autoApplicable({kind:'proposal',summary:'Fine',diff:[{target:'style',property:'repeatHeader'}]})).toBe(true);
+    expect(autoApplicable({kind:'proposal',diff:[{target:'page',property:'margins'}]})).toBe(false);
   });
 });
 

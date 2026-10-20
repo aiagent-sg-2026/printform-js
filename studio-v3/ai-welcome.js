@@ -1,4 +1,5 @@
 import { icon } from './icons.js';
+import { COMMIT_POLICY_HELP } from './agent-commit-policy.js';
 // Starting actions shown in the empty conversation: each fills the message box, nothing is sent.
 export const STARTERS = [
   ['form','Organize this form','Organize this form into a clear reading order. Keep existing data bindings and make section headings easy to scan.'],
@@ -15,6 +16,6 @@ export function renderWelcome() {
     chip.insertAdjacentHTML('beforeend',icon(name)); chip.append(node('span','',label)); chips.append(chip);
   }
   for (const step of ['Ask','Review','Undo if needed']) flow.append(node('li','',step));
-  intro.append(node('h3','','Your form, made clearer.'),node('p','','Describe what you need in everyday language. Simple layout edits are applied to your draft and can be undone; bigger changes ask for your approval.'),chips,flow);
+  intro.append(node('h3','','Your form, made clearer.'),node('p','',`Describe what you need in everyday language. ${COMMIT_POLICY_HELP}`),chips,flow);
   return intro;
 }

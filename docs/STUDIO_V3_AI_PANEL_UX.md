@@ -70,7 +70,7 @@ Priority: **P1** the user cannot tell what is happening; **P2** layout and scrol
 ## Owner decision, 2026-10-20
 
 - The panel shows a short conversation and plain activity lines such as "Updated table row color" or "Adjusted header spacing". Technical properties, the raw diff and its JSON move into a collapsed Details block. Step lines no longer use "draft", "note" or "operations" (progress on UX-01; UX-02 and UX-03 are not closed).
-- Ordinary layout edits are applied to the open form automatically after local checks and the paper preview pass; the allowlist and fallbacks are in [STUDIO_V3_AI_CHAT.md](STUDIO_V3_AI_CHAT.md#automatic-apply-owner-decision-2026-10-20). This replaces the "Preview → Apply must not change" constraint for the allowlisted operations only. No production, G6–G9 or visual-approval claim is made.
+- Owner widening, 2026-10-20 (batch 11): inspected layout and static-content edits apply automatically, including text, labels, headings, logo, section changes, field order and static field additions/removals. Data-binding keys, collection, page setup, unknown operations and every source-workspace run remain manual Preview → Apply; Undo remains revision-bound. The exact allowlist and removal/diff rule are in [STUDIO_V3_AI_CHAT.md](STUDIO_V3_AI_CHAT.md#automatic-apply-owner-decision-2026-10-20). This supersedes the earlier narrow layout allowlist, without changing scope, privacy, inspection or the three source exclusions. No production, G6–G9 or visual-approval claim is made.
 
 ## Assistant redesign batch 1, 2026-10-20
 
@@ -107,7 +107,7 @@ Priority: **P1** the user cannot tell what is happening; **P2** layout and scrol
 - Suggested actions use one horizontally scrolling, snap-aligned chip row under a 44px heading row (96px total including padding). They are hidden for empty conversations and during requests, Apply, restore or reference reading; prompt-fill and refresh behavior remain local.
 - The composer toolbar no longer wraps. Its keyboard hint is hidden in compact panels. Recipient text remains visible; complete consent/source state is readable inside Sharing permissions without granting permission. Blocking reasons retain their text in a height-capped scrollable notice.
 - Status text and live-region behavior remain intact; visual display is one ellipsized line with full text in its tooltip. The current applied card's redundant state paragraph is visually hidden only while its Undo control exists; history states remain visible.
-- Welcome copy describes automatic simple layout edits and approval for bigger changes. Logo and QR suggestions use image and QR icons from the existing inline SVG helper.
+- Welcome copy describes automatic layout/text edits and approval for bindings or page setup (updated by batch 11). Logo and QR suggestions use image and QR icons from the existing inline SVG helper.
 - Unit coverage adds busy/reading suggestion visibility, consent state transitions in the disclosure, and status tooltip/announcement preservation. No e2e specs or authority/policy rules were changed.
 - Unverified: no shell, Git, tests, builds or browser runs were performed in this edit-only batch. The 300px/340px conversation gates, full applied-card visibility, 104px header and other measured budgets require the manager's existing layout-budget spec and screenshots at 400x800 and 1440x900. Theme contrast, keyboard/screen-reader behavior and service-worker output also remain unverified.
 
@@ -128,3 +128,8 @@ Priority: **P1** the user cannot tell what is happening; **P2** layout and scrol
 - The short recipient notice stays under the composer. Full consent state and the Demo notice stay inside the disclosure; permission IDs, summary updates, authorization and source-workspace queries are unchanged.
 - Chromium local-file DOM/CSS smoke at 400 x 800, 320 x 568 and 1440 x 900 found only the conversation scroll owner, no horizontal overflow, and fully visible pixel permission, prompt and send controls after scrolling to the end. Native text-checkbox toggles retained visibility at both narrow sizes.
 - Unverified: application JavaScript did not initialize in the local-file smoke. PDF attachment/expanded references, dynamic permission updates, inference-request absence, post-exchange layout budgets, applied-card visibility, all four acceptance e2e specs, unit tests, build, other engines, themes and keyboard/screen-reader behavior still require manager verification. No shell, Git or test commands were run; e2e and unit files are unchanged.
+
+## Batch 11 gate repair, 2026-10-20
+
+- Reference-consumption tests await the automatic label Apply performed by Send instead of applying the consumed proposal again. They assert exactly one commit, applied status on success, unchanged revision on failure, and the original reference-clearing/preservation outcomes.
+- The bundled form-authoring skill exceeded the 16000-character bound because the short commit policy is repeated in it; the short policy text was shortened. The bound is unchanged.

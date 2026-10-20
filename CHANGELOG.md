@@ -1,23 +1,19 @@
 # Changelog
-
 All notable changes to this project are documented in this file.
-
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
-
 Version numbers below track the **pagination engine** (`dist/printform.js`).
 Studio v2, the single-HTML protocol, and the Agent Contract version separately —
 see the [compatibility matrix](docs/COMPATIBILITY_MATRIX.zh-CN.md) for why, and
 for the current number on each line.
-
 See [TASK.md](TASK.md) for the full engineering log with commit hashes, test
 counts, and verification detail; this file only lists what changed, for readers
 who don't need the diary.
 
 ## [Unreleased]
 
-### AI Assistant activity log and automatic layout apply — 2026-10-20
+### AI Assistant layout and static-content automatic apply — 2026-10-20
 - Show a plain conversation and activity lines in the AI panel; move the raw setting table and its JSON into a collapsed Details block; rewrite step labels without internal words.
-- Apply allowlisted ordinary layout edits (style, table color, column width, spacing) automatically once local checks and the paper preview pass, through the existing Apply path; text, binding, structure, pagination and page-setup edits still require Apply. Undo restores the previous revision. Not a production or qualification claim.
+- Automatically apply inspected layout and static-content edits (styles, text, labels, headings, logo, sections, field order and static field additions/removals) through the existing undoable Apply path. Data bindings, collection, page setup, unknown operations and every source-workspace run remain manual Preview → Apply. Parsed operations/diff and host authority decide, never model text. No production or qualification claim.
 
 ### Source artifact custody and broker ownership — 2026-10-19
 - Reject duplicate decoded JSON keys before native operation parsing while preserving numeric types and existing inspection/human-Apply gates.

@@ -1,11 +1,11 @@
 import {afterEach,beforeEach,describe,expect,it,vi} from 'vitest';
 import {html,setup} from './support/chat-panel.js';
-import {scriptedGateway,successfulRun,json,plain,turn,reasoning,fn,message,heading} from './support/agent-gateway.js';
+import {scriptedGateway,successfulRun,json,plain,turn,reasoning,fn,message,manualOp} from './support/agent-gateway.js';
 import {setAgentEnabled} from '../studio-v3/agent-preference.js';
 
 beforeEach(()=> {document.documentElement.innerHTML = html.replace(/<!doctype html>/i,'');document.body.inert = false;localStorage.clear();});
 afterEach(()=> localStorage.clear());
-const NAVY = '{"kind":"proposal","summary":"Heading","operations":[{"type":"set_heading","value":"Tax Invoice"}]}';
+const NAVY = '{"kind":"proposal","summary":"Page margins","operations":[{"type":"set_page","patch":{"margins":{"top":12}}}]}';
 const lastCard = panel => panel.conversation.messages.at(-1);
 const ask = (panel,text) => { panel.node('#ai-prompt').value = text; panel.share(); };
 
@@ -106,7 +106,7 @@ describe('the panel working in steps',()=> {
   it('works in steps on reference images once the gateway has confirmed image support, and stops resending them after a few turns',async()=> {
     const gateway = scriptedGateway({multimodal:true,agent:[
       turn([reasoning(1),fn(1,'get_context',{})]),turn([reasoning(2),fn(2,'take_notes',{notes:'Two columns; total bottom right.'})]),turn([reasoning(3),fn(3,'get_context',{})]),
-      turn([reasoning(4),fn(4,'get_context',{})]),turn([reasoning(5),fn(5,'apply_operations',{summary:'Navy accents',operations:[heading('Tax Invoice')]})]),turn([reasoning(6),fn(6,'inspect_draft',{})]),turn([reasoning(7),fn(7,'finish',{summary:'Navy accents'})])
+      turn([reasoning(4),fn(4,'get_context',{})]),turn([reasoning(5),fn(5,'apply_operations',{summary:'Page margins',operations:[manualOp()]})]),turn([reasoning(6),fn(6,'inspect_draft',{})]),turn([reasoning(7),fn(7,'finish',{summary:'Page margins'})])
     ]}), {panel} = setup({transport:gateway.transport});
     panel.referenceFiles.files = [{id:'ref-1',name:'fictional.png',kind:'image',mime:'image/png',processing:'visual',pageCount:1,text:'',pages:[{number:1,width:10,height:10,text:'',textItems:[],preview:{dataUrl:'data:image/png;base64,AAAA'}}],warnings:[]}];
     panel.referenceFiles.root.open = true; panel.referenceFiles.changed();

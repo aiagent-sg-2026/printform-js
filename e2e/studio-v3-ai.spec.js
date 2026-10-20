@@ -5,7 +5,7 @@ import { keepStructureOpen } from './studio-v3-structure.js';
 // These deterministic transport tests need interception before a worker claims
 // the client; real worker+AI recovery is covered in the upgrade tests.
 
-const proposal = {summary:'Use navy and compact spacing with a Tax Invoice heading',operations:[{type:'set_style',patch:{color:'#163a65',padding:5}},{type:'set_heading',value:'Tax Invoice'}]};
+const proposal = {summary:'Use navy and compact spacing with portrait page setup',operations:[{type:'set_style',patch:{color:'#163a65',padding:5}},{type:'set_page',patch:{orientation:'portrait'}}]};
 const frame = page=>page.frameLocator('#preview-frame');
 const ready = page=>expect(page.locator('[data-action=export]')).toBeEnabled({timeout:30000});
 async function openAI(page) { await page.locator('[data-ai-toggle]').click(); await page.locator('#ai-prompt').fill('Use navy #163a65 and padding 5 px.'); }

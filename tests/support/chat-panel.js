@@ -5,9 +5,8 @@ import {newProject} from '../../studio-v3/model.js';
 import {createBus} from '../../studio-v3/controller.js';
 // Shared by the chat panel tests: the real index.html shell plus a ready AIPanel.
 export const html=fs.readFileSync('studio-v3/index.html','utf8');
-// Default reply: a heading text change is outside the auto-apply allowlist, so these tests keep exercising the
-// Preview / Apply card. AUTO_REPLY is an ordinary style edit that the panel applies by itself.
-export const MANUAL_REPLY={kind:'proposal',summary:'Heading',operations:[{type:'set_heading',value:'Tax Invoice'}]};
+// Page setup keeps the Preview / Apply path; AUTO_REPLY exercises automatic layout edits.
+export const MANUAL_REPLY={kind:'proposal',summary:'Page margins',operations:[{type:'set_page',patch:{margins:{top:12}}}]};
 export const AUTO_REPLY={kind:'proposal',summary:'Navy',edits:[{target:'style',property:'color',value:'#163a65'}]};
 export function setup({facts=()=>[],commit,plan,transport,restore=async()=>{},preview=async()=>({status:'ready',validation:{errors:[],warnings:[]}}),reply=MANUAL_REPLY}={}) {
   let bus=createBus(newProject()),calls=0,selected='items';

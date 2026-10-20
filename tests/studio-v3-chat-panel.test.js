@@ -159,19 +159,19 @@ it('hides duplicate progress from screen readers and removes the wait after comp
 it('clears element references once their own Apply succeeds, so the next Send is not blocked as outdated',async()=> {
   const label={kind:'proposal',summary:'Label',operations:[{type:'set_field',target:'label-customer-ship',patch:{label:'Deliver to'}}]};
   // Like the app, the commit announces the changed document (refreshing the hint) while the references still exist.
-  let holder;const {panel}=setup({reply:label,commit:async()=> {holder.contextChanged();return {bus:holder.getBus(),revision:1};}});holder=panel;
+  let holder;const commit=vi.fn(async()=> {holder.contextChanged();return {bus:holder.getBus(),revision:1};});const {panel}=setup({reply:label,commit});holder=panel;
   panel.elementTags=new AIElementTags({bus:()=>panel.getBus(),selection:()=>'label-customer-ship',onChange:()=>panel.share()});
   panel.elementTags.add('label-customer-ship');expect(panel.scope().mode).toBe('selected');
-  await panel.send();expect(panel.checked).toBe(true);
-  await panel.apply();
+  await panel.send();expect(commit).toHaveBeenCalledTimes(1);
+  expect(panel.conversation.messages.find(m=>m.diff).status).toBe('applied');
   expect(panel.elementTags.snapshot()).toEqual([]);expect(panel.scope()).toEqual({mode:'whole'});
 });
 it('keeps element references when the Apply fails',async()=> {
   const label={kind:'proposal',summary:'Label',operations:[{type:'set_field',target:'label-customer-ship',patch:{label:'Deliver to'}}]};
-  const {panel}=setup({reply:label,commit:async()=> {throw new Error('commit failed');}});
+  const commit=vi.fn(async()=> {throw new Error('commit failed');});const {panel}=setup({reply:label,commit});
   panel.elementTags=new AIElementTags({bus:()=>panel.getBus(),selection:()=>'label-customer-ship',onChange:()=>panel.share()});
   panel.elementTags.add('label-customer-ship');
-  await panel.send();await panel.apply();
+  await panel.send();expect(commit).toHaveBeenCalledTimes(1);expect(panel.getBus().revision).toBe(0);
   expect(panel.elementTags.snapshot().map(r=>r.id)).toEqual(['label-customer-ship']);
 });
 it('offers Edit & resend only on the newest failed request, not on history',async()=> {

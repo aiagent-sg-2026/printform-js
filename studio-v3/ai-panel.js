@@ -16,6 +16,7 @@ import { DEMO_CONFIG, isDemoAlias } from './ai-gateway-config.js';
 import { fillModels, showAlias } from './ai-model-select.js';
 import { AIObservationAuthorization } from './ai-observation-authorization.js';
 import { AISourceWorkspace } from './ai-source-workspace.js';
+import { COMMIT_POLICY_HELP } from './agent-commit-policy.js';
 // Shown under the message box whenever Send works; it is the recipient notice Send accepts.
 const RECIPIENT_NOTICE = 'Sent to the Demo gateway · use fictional data only';
 
@@ -23,6 +24,7 @@ export class AIPanel {
   constructor({bus,selection=()=> 'items',facts=()=>[],elementTags,guard,preview,capturePixels,restore,commit,undo,sync,transport=createDemoTransport()}) {
     Object.assign(this,{getBus:bus,getSelection:selection,getFacts:facts,elementTags,guard,renderPreview:preview,capturePixels,restore,commit,undo,sync,transport});
     this.root = document.querySelector('#ai-panel'); this.viewing = false; this.agentSteps = []; this.agentUnavailable = false; this.modelChosen = false; this.proposal = null; this.generation = 0; this.epoch = 0; this.intents = createIntentLedger(); this.conversation = new Conversation();
+    this.node('[data-ai-commit-help]').textContent = COMMIT_POLICY_HELP;
     this.root.addEventListener('submit',event=> { event.preventDefault(); void this.send(); });
     this.node('#ai-agent').checked = agentEnabled();
     this.root.addEventListener('change',event=> { if (event.target.id === 'ai-agent') { setAgentEnabled(event.target.checked); this.agentUnavailable = false; }
@@ -64,7 +66,7 @@ export class AIPanel {
     bar.dataset.scope = count ? 'selected' : 'whole';
     selected.disabled = !count; selected.textContent = count ? `${count} selected element${count > 1 ? 's' : ''}` : 'Selected elements'; choice.value = count ? 'selected' : 'whole';
     const how = count ? 'Choose Whole form to edit any part.' : innerWidth <= 900 ? 'To limit them, close this panel, tap an element, then press Add to chat.' : 'To limit them, select an element and press Add to chat.';
-    this.node('.ai-scope-help').textContent = count ? 'Only referenced elements can change.' : 'Any part can change. Layout edits apply automatically; Undo restores them.';
+    this.node('.ai-scope-help').textContent = count ? 'Only referenced elements can change.' : `Any part can change. ${COMMIT_POLICY_HELP}`;
     const guidance = `${this.node('.ai-scope-help').textContent} ${how}`;
     choice.title = guidance; choice.setAttribute('aria-description',guidance);
   }

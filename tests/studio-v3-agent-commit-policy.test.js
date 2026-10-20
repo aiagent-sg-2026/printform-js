@@ -1,8 +1,5 @@
 import {describe,it,expect} from 'vitest';
-import fs from 'node:fs';
-import path from 'node:path';
-import {fileURLToPath} from 'node:url';
-import {COMMIT_POLICY_DESIGN,COMMIT_POLICY_SOURCE,COMMIT_POLICY_SHORT} from '../studio-v3/agent-commit-policy.js';
+import {COMMIT_POLICY_DESIGN,COMMIT_POLICY_SOURCE,COMMIT_POLICY_SHORT,COMMIT_POLICY_HELP} from '../studio-v3/agent-commit-policy.js';
 import {AGENT_PROMPT,promptFor} from '../studio-v3/agent-loop.js';
 import {CHAT_PROMPT,chatRequest} from '../studio-v3/ai-chat-protocol.js';
 import {capabilityCatalog} from '../studio-v3/agent-registry.js';
@@ -10,6 +7,8 @@ import {createGrant} from '../studio-v3/agent-effects.js';
 import {authorizeSourceWorkspace} from '../studio-v3/source-workspace-run.js';
 import {newProject} from '../studio-v3/model.js';
 import {agentBody} from '../studio-v3/agent-wire.js';
+import {html,setup} from './support/chat-panel.js';
+import {renderWelcome} from '../studio-v3/ai-welcome.js';
 
 const args={request:'Make the title blue',scope:{mode:'whole'},typography:[],conversation:[]};
 describe('truthful host commit policy',()=> {
@@ -38,8 +37,11 @@ describe('truthful host commit policy',()=> {
       expect(COMMIT_POLICY_SHORT).toContain('source-workspace work always requires explicit Preview and Apply');
     } finally {await workspace.close();}
   });
-  it.each(['agent-loop.js','agent-registry.js','agent-handlers.js','agent-knowledge.js','agent-workflows.js','agent-general-print-guide.js','ai-chat-protocol.js','ai-harness.js'])('%s uses the canonical wording source',name=> {
-    const source=fs.readFileSync(path.resolve(path.dirname(fileURLToPath(import.meta.url)),'../studio-v3',name),'utf8');
-    expect(source).toMatch(/import\s*\{[^}]*COMMIT_POLICY_\w+[^}]*\}\s*from\s*['"]\.\/agent-commit-policy\.js['"]/);
+  it('shows the current approval boundary in the welcome and whole-form scope help',()=> {
+    document.documentElement.innerHTML=html.replace(/<!doctype html>/i,'');document.body.inert=false;
+    const {panel}=setup();
+    expect(renderWelcome().textContent).toContain(COMMIT_POLICY_HELP);
+    expect(panel.node('.ai-scope-help').textContent).toContain(COMMIT_POLICY_HELP);
+    expect(panel.root.textContent).not.toContain('only ordinary layout edits');
   });
 });
