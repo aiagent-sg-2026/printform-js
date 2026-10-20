@@ -78,7 +78,7 @@ Start with a small catalog and pass the eligible tool schemas derived from it at
 | Bindings and data | Available schema, assigned paths, collections, invalid mappings and sample scenarios. | Dataset mutation/persistence is a separate capability; design intent does not authorize rewriting source data. |
 | References and assets | Attached files, page/crop retrieval, approved local asset import and uncertainty. | Run-owned IDs and explicit pixel/data disclosure policy. |
 | Inspection | Technical quality, pagination, scenario validation, semantic measurements and visual review. | Fresh candidate/version-bound observations, no hidden committed mutation. |
-| Lifecycle | Run status, candidate history, discard, final proposal and revision-bound Undo. | Existing human Preview/Apply and conflict handling remain authoritative. |
+| Lifecycle | Run status, candidate history, discard, final proposal and revision-bound Undo. | Host checks and conflict handling remain authoritative: checked allowlisted design edits may auto-apply with Undo; other/source-workspace work requires human Preview/Apply. |
 | Files and output | Prepare editable form/standalone HTML, validate portability, explain printing requirements. | File selection, download, native print and required human export checks remain host-owned. |
 | Database | Explain browser-local records, source freshness, pending edits and possible save/reload operations. | Explicit persistence intent and existing conflict/destructive-action guards. |
 | Product support | Inspect current state, read version-specific guides, diagnose errors and explain unsupported features. | Read-only tool run; no write tools merely because the question mentions an action. |

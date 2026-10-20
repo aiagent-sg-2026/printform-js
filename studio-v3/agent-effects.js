@@ -3,8 +3,8 @@ import { isSourceAuthorization } from './source-workspace-run.js';
 
 // Effect profiles (docs/STUDIO_V3_CODING_AGENT_CONTRACTS.md). A grant is built by the host from host state when a run
 // starts and is frozen. No tool argument, model text, reference text or classifier output can add an effect to it.
-// `read` and `memory` are always available; `draft` edits the private copy, `proposal` hands it to the person's
-// Preview/Apply, `answer` completes a run with text only, `stop` ends it. Nothing here can commit or persist.
+// `read` and `memory` are always available; `draft` edits the private copy, `proposal` hands it to the host:
+// checked ordinary design edits may auto-apply; other/source work needs human Preview/Apply. `answer` returns text; `stop` ends it. These effects never commit or persist.
 export const EFFECT_PROFILES = Object.freeze({
   'read-only':Object.freeze({available:true,effects:Object.freeze(['read','memory','answer','stop'])}),
   design:Object.freeze({available:true,effects:Object.freeze(['read','memory','answer','draft','proposal','stop'])}),

@@ -1,0 +1,3 @@
+export const COMMIT_POLICY_DESIGN = "You never apply or save anything. When your finished proposal contains only ordinary layout edits and passes inspection, the host may update the person's draft automatically and the person can undo it; every other proposal waits for the person to Preview and Apply.";
+export const COMMIT_POLICY_SOURCE = "Source-workspace work is never applied automatically: only the person's explicit Preview and Apply commits an imported artifact.";
+export const COMMIT_POLICY_SHORT = "The host may automatically apply inspected ordinary layout edits to the draft, with Undo available; other changes require the person to Preview and Apply, and source-workspace work always requires explicit Preview and Apply.";

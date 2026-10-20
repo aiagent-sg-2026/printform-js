@@ -30,6 +30,8 @@ local tool compiles a candidate but has no commit/export/financial capability.
 The sole human Apply path compiles the validated design to FormSpec and uses
 the existing v3 controller/CommandBus, preview/runtime, history and file format.
 
+2026-10-20 update: the historical sole-human-Apply statement above is superseded for checked allowlisted design edits only. The host may apply those to the draft automatically with Undo; every other proposal and all source-workspace work still require explicit human Preview and Apply. The agent itself never applies or saves.
+
 No dependencies, versions, registrations, grants or credentials were added.
 `github-pages` is the project ID found in the existing source and guide.
 Browser Origin is supplied by normal CORS, never a fabricated request header.

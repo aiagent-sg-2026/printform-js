@@ -1,3 +1,4 @@
+import { COMMIT_POLICY_SHORT } from './agent-commit-policy.js';
 import { AgentHarness, MemorySessionRepo, BACKGROUND_CONTEXT, withAbortSignal } from '@earendil-works/pi-agent-core';
 import { DEMO_CONFIG } from './ai-gateway-config.js';
 import { progressText } from './ai-response-reader.js';
@@ -59,7 +60,7 @@ async function runStepHarness({transport,alias,request,project,signal,chat={},me
     catch (error) { toolError = error; throw error; }
     const taskOutcome = proposal.taskOutcome || (inspection?.ready ? 'draft-ready' : undefined);
     const text = taskOutcome === 'draft-not-produced' ? 'Draft request not completed; model answer retained. No inspected proposal was delivered.'
-      : proposal.kind === 'answer' ? 'Read-only answer ready.' : inspection?.ready ? 'Candidate authored and locally inspected; human Apply required.' : 'Candidate requires a successful human Preview before Apply.';
+      : proposal.kind === 'answer' ? 'Read-only answer ready.' : `${inspection?.ready ? 'Candidate authored and locally inspected.' : 'Candidate requires successful inspection and paper preview before any commit.'} ${COMMIT_POLICY_SHORT}`;
     return {content:[{type:'text',text}],details:{terminal:true,...(taskOutcome ? {taskOutcome} : {}),...(inspection ? {inspection} : {})},terminate:true};
   }}));
   const created = await AgentHarness.create({session,models,model,tools,activeToolNames:tools.map(t=>t.name),systemPrompt:'Use one local answer or preview tool and stop.',toolExecution:'sequential',retry:{enabled:false,maxRetries:0,baseDelayMs:0}},context);

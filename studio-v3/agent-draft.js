@@ -17,7 +17,7 @@ function mergeDiff(entries) {
   return [...merged.values()].filter(entry=>!same(entry.before,entry.after));
 }
 // The agent's working copy. Every step is checked by the same parser and scope rules as a single proposal, against
-// the previous step's result, and the live form is never touched: only a human Apply of the final proposal changes it.
+// the previous step's result. Only the host commits the final proposal: checked ordinary design edits may auto-apply; other/source work needs human Preview/Apply.
 export function createDraft(project,{scope = {mode:'whole'},request = '',references = []} = {}) {
   const steps = [], explicit = explicitBindingPointers(request,references), baseline = protectedBindings(project.manifest.studioV3);
   let current = project, version = 0;

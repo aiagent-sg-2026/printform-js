@@ -1,3 +1,4 @@
+import { COMMIT_POLICY_SHORT } from './agent-commit-policy.js';
 // Generated from docs/STUDIO_V3_FEATURE_LEDGER.csv by scripts/generate-studio-v3-workflows.mjs. Do not edit by hand.
 // [ledger id, workflow, status, human path or reason] for every workflow the agent cannot perform today.
 export const LEDGER_WORKFLOWS = Object.freeze([
@@ -11,7 +12,7 @@ export const LEDGER_WORKFLOWS = Object.freeze([
   ["printform.project.export-html","Export validated standalone HTML","human-mediated","Export button"],
   ["printform.project.print","Native browser print","human-mediated","Print button"],
   ["printform.project.history","Committed form Undo/Redo","human-mediated","Undo / Redo"],
-  ["printform.proposal.review-apply","Preview, Apply and Undo proposal","human-mediated","Preview then Apply"],
+  ["printform.proposal.review-apply","Preview, Apply and Undo proposal","human-mediated",COMMIT_POLICY_SHORT],
   ["printform.data.json-edit","Edit active JSON form data","not-yet-callable","Eligible; the Studio UI has this service but no agent adapter yet"],
   ["printform.data.sample-switch","Switch synthetic validation samples and restore source","not-yet-callable","Eligible; the Studio UI has this service but no agent adapter yet"],
   ["printform.dataset.list","List compatible saved datasets","not-yet-callable","Eligible; the Studio UI has this service but no agent adapter yet"],

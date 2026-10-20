@@ -16,7 +16,7 @@
 1. 打开 [Studio v3](../studio-v3/)，选择 **New → Blank form → AI editor**；不需要安装 Pi CLI、写代码或填写模型密钥。
 2. 用日常语言描述表单。例如：`Create a blank equipment handover form with employee name, department, date, equipment, asset tag, condition and signatures. Hide invoice prices and totals. Do not change source data.`
 3. 需要检查当前文字时，在 Sharing permissions 展开项里明确选择本次虚构文字授权；像素授权独立、默认关闭。附件只用虚构 PDF/图片。
-4. 查看候选和变更明细；窄屏先选 **Preview** 看纸面，再回到 AI 选择 **Apply**。预览不是提交，AI 不能代替用户点击 Apply。
+4. 查看候选和变更明细；通过检查及纸面预览、且全部操作在允许列表内的普通设计编辑，可由宿主自动应用到草稿，并可 **Undo**。其他编辑和所有 source-workspace 工作仍需人工 **Preview → Apply**；窄屏先看纸面，再回到 AI 选择 **Apply**。预览本身不是提交，AI 本身不能应用或保存。
 5. 继续描述需要修改的字体、间距、字段和绑定；可 **Undo**。最后 **Save** 保留可编辑项目，或 **Export HTML** 下载可独立打开的打印文件。
 6. 已有 source schema 的字段可绑定；没有 source path 时，明确要求空白填写栏。不要要求 AI 编造金额、员工信息或未提供的字段。
 

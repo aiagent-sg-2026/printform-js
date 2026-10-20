@@ -1,3 +1,4 @@
+import { COMMIT_POLICY_SHORT } from './agent-commit-policy.js';
 import { CURRENCY_CODES } from './currency-catalog.js';
 import { BUSINESS_DOCUMENT_KINDS } from './business-document-adapter.js';
 
@@ -8,7 +9,7 @@ export const GENERAL_PRINT_SKILL = Object.freeze({
   evaluations:['tests/studio-v3-additional-tables.test.js','tests/studio-v3-barcode-authoring.test.js','tests/studio-v3-offline-barcode.test.js','tests/studio-v3-barcode-binding.test.js','tests/studio-v3-currency-catalog.test.js','tests/studio-v3-manufacturing-timesheet.test.js','tests/studio-v3-requisition-maintenance.test.js','tests/studio-v3-erpnext-material-request.test.js','tests/studio-v3-odoo-maintenance-request.test.js','tests/fixtures/odoo-maintenance-request.js','tests/fixtures/odoo-maintenance-request.json','tests/studio-v3-erpnext-quality-inspection.test.js','tests/fixtures/erpnext-quality-inspection.js','tests/fixtures/erpnext-quality-inspection.json','tests/studio-v3-capability-chat-recovery.test.js','tests/studio-v3-authoring-boundary-regressions.test.js','tests/studio-v3-barcode-content-diagnostics.test.js','tests/studio-v3-requisition-maintenance-agent.test.js','e2e/studio-v3-additional-tables-barcode.spec.js','e2e/studio-v3-offline-barcode.spec.js','e2e/studio-v3-barcode-overflow.spec.js','e2e/studio-v3-barcode-nested-overflow.spec.js','e2e/studio-v3-numeric-binding-finish.spec.js','e2e/studio-v3-business-document.spec.js','e2e/studio-v3-erpnext-material-request.spec.js','e2e/studio-v3-odoo-maintenance-request.spec.js','e2e/studio-v3-erpnext-quality-inspection.spec.js'],
   content:`# General supplied-data print authoring
 
-Read get_capabilities, get_context and form-authoring first. This guide grants no additional effects. Current transport schemas and actual target IDs are authoritative. Work on the private draft only; inspect the exact finished candidate, call finish for a proposal, and wait for human Preview and Apply. Read-only cannot author; finish_answer does not produce a requested draft. Numeric readiness is not source correctness, semantic acceptance or production qualification.
+Read get_capabilities, get_context and form-authoring first. This guide grants no additional effects. Current transport schemas and actual target IDs are authoritative. Work on the private draft only; inspect the exact finished candidate and call finish for a proposal. ${COMMIT_POLICY_SHORT} Read-only cannot author; finish_answer does not produce a requested draft. Numeric readiness is not source correctness, semantic acceptance or production qualification.
 
 ## Independent source tables
 

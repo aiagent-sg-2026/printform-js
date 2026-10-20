@@ -1,3 +1,4 @@
+import { COMMIT_POLICY_SHORT } from './agent-commit-policy.js';
 import { safeRunDiagnostics } from './ai-inspection.js';
 import { fail } from './ai-edits.js';
 import { capabilityCatalog } from './agent-registry.js';
@@ -81,7 +82,7 @@ export const TOOL_HANDLERS = Object.freeze({
     const inspection = {...observed.content,observation:observed.receipt};
     if (!inspection.ready) throw fail('AGENT_INSPECTION_BLOCKED');
     run.outcome.proposal = {...proposal,inspection,identity:run.identity,...(run.sourceArtifact ? {sourceEvidence:run.sourceArtifact.evidence} : {})};
-    return reply('Done. The person reviews and applies it.',{terminate:true});
+    return reply(`Done. ${COMMIT_POLICY_SHORT}`,{terminate:true});
   },
   finish_answer:async ({message,observationId},run) => {
     // An answer must rest on a read of the guide, the form or an inspection; get_capabilities alone is not evidence.

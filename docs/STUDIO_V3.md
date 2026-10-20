@@ -102,8 +102,8 @@ The previous reviewed context and model proposal may be resent for repair.
 Questions remain read-only, in steps under a read-only grant or in the single-step flow. Local tools build one unapplied candidate and a
 complete diff. Above 900 px the unapplied candidate is previewed on paper and
 locally checked automatically once the response arrives; at 900 px and below
-Preview stays a button because it reveals the full-screen paper. Apply is always an
-explicit click and stays disabled until that preview check passes. CommandBus commits
+Preview stays a button because it reveals the full-screen paper. Checked allowlisted
+design edits may apply automatically; other edits and all source-workspace work require explicit Preview then Apply. CommandBus commits
 one revision with scoped Undo after current validation and draft protection.
 While a request runs the wait is shown inside the conversation (a hidden-from-readers
 copy of the status line). The card says "Previewed on paper" once the preview passed. A
