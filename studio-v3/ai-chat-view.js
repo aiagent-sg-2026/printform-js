@@ -4,6 +4,7 @@ import { renderChangeCard } from './ai-change-card.js';
 import { icon } from './icons.js';
 import { formatMessageTime } from './ai-message-time.js';
 import { setupVersionHistory } from './ai-version-history.js';
+import { setupSuggestions,updateSuggestions } from './ai-suggestions.js';
 const node = (tag,className,text) => { const n = document.createElement(tag); n.className = className; if (text !== undefined) n.textContent = text; return n; };
 const avatarTemplates = new WeakMap();
 const avatar = role=> {
@@ -18,6 +19,7 @@ export function renderConversation(panel) {
   const sharing = panel.node('.ai-sharing'), granted = ['#ai-observation-text','#ai-observation-pixels'].filter(selector=>panel.node(selector)?.checked).length;
   if (sharing) sharing.querySelector('summary').textContent = granted ? `Sharing permissions · ${granted} selected for one run` : 'Sharing permissions · fictional data only';
   log.replaceChildren();
+  updateSuggestions(panel);
   if (!panel.conversation.messages.length) {
     log.append(renderWelcome());
   }
@@ -61,6 +63,7 @@ export function renderConversation(panel) {
 }
 export function setupPanelLayout(panel) {
   setupVersionHistory(panel);
+  setupSuggestions(panel);
   const key = 'printform-studio-v3:ai-width', separator = panel.node('[data-ai-resize]');
   let width = 390;
   try { const saved = localStorage.getItem(key); if (/^\d{3}$/.test(saved) && Number(saved) >= 320 && Number(saved) <= 600) width = Number(saved); } catch {}

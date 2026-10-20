@@ -79,12 +79,12 @@ body.ai-open.preview-only .studio-grid { grid-template-columns:0 minmax(0,1fr) v
 .ai-observation-disclosure label { display:flex; align-items:flex-start; gap:8px; line-height:1.6; color:var(--ink); }
 .ai-observation-disclosure input { margin-top:3px; }
 .ai-composer { flex:none; display:grid; gap:6px; padding:12px 16px 16px; border-top:1px solid var(--line); background:var(--surface); }
-.ai-input { display:flex; align-items:flex-end; gap:6px; padding:6px; border:1px solid var(--line); border-radius:16px; background:var(--surface); }
+.ai-input { display:flex; flex-direction:column; gap:6px; padding:6px; border:1px solid var(--line); border-radius:16px; background:var(--surface); }
 .ai-input:focus-within { border-color:var(--blue); box-shadow:0 0 0 2px var(--blue-soft); }
-.ai-plus,.ai-send { flex:none; width:44px; height:44px; min-height:44px; border-radius:12px; display:grid; place-items:center; padding:0; }
+.ai-plus,.ai-send { flex:none; width:44px; height:44px; min-height:44px; border-radius:50%; display:grid; place-items:center; padding:0; }
 .ai-plus { border:0; background:var(--subtle); }
 #ai-prompt { width:100%; min-height:44px; max-height:120px; resize:none; border:0; outline:0; background:transparent; font:14px/1.5 -apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif; padding:11px 2px; }
-#ai-panel .ai-input-hint { color:var(--muted); font-size:13px; }
+#ai-panel .ai-input-hint { color:var(--muted); font-size:14px; flex:1 1 140px; }
 [data-ai-send-reason] { overflow-wrap:anywhere; }
 [data-ai-send-reason][data-kind=notice] { color:var(--muted); }
 [data-ai-send-reason][data-kind=reason] { color:#8a4b00; }
@@ -177,3 +177,18 @@ body.ai-open.preview-only .studio-grid { grid-template-columns:0 minmax(0,1fr) v
 .ai-source-consent { padding:10px 0 0; }
 .ai-source-consent label { display:flex; align-items:flex-start; gap:8px; line-height:1.6; color:var(--ink); }
 .ai-source-consent input { flex:none; width:auto; margin-top:3px; }
+.ai-composer-toolbar { display:flex; align-items:center; flex-wrap:wrap; gap:6px; width:100%; }
+.ai-composer-toolbar #ai-scope { flex:1 1 120px; min-width:0; max-width:calc(100% - 56px); min-height:44px; border:1px solid var(--line); border-radius:999px; background:var(--subtle); padding:6px 10px; font-size:14px; }
+.ai-composer-toolbar .ai-send { margin-left:auto; }
+.ai-suggestions { flex:none; padding:8px 16px; max-height:26dvh; overflow:auto; font-size:14px; }
+.ai-suggestions[hidden] { display:none; }
+.ai-suggestions-heading { display:flex; align-items:center; justify-content:space-between; gap:8px; }
+.ai-suggestions h3 { display:flex; align-items:center; gap:6px; margin:0; font-size:14px; }
+.ai-suggestions-heading button { display:grid; place-items:center; min-width:44px; min-height:44px; background:transparent; border:0; }
+.ai-suggestion-chips { display:flex; flex-wrap:wrap; gap:6px; }
+.ai-suggestion-chips button { display:flex; align-items:center; gap:6px; min-height:44px; max-width:100%; padding:6px 10px; border-radius:999px; background:var(--surface); font-size:14px; text-align:left; }
+.ai-suggestion-chips svg { flex:none; color:var(--muted); }
+#ai-panel>.ai-sharing { flex:none; padding:0 16px; max-height:22dvh; overflow:auto; font-size:14px; }
+#ai-panel>.ai-sharing label { font-size:14px; }
+#ai-panel .ai-composer-toolbar .ai-input-hint { display:block; }
+#ai-panel .ai-composer-toolbar :focus-visible,#ai-panel .ai-suggestions button:focus-visible { outline:2px solid var(--blue); outline-offset:2px; }
