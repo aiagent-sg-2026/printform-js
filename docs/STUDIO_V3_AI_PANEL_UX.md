@@ -81,3 +81,21 @@ Priority: **P1** the user cannot tell what is happening; **P2** layout and scrol
 - New messages retain an epoch-millisecond `at` field through snapshots; validation accepts its absence for older conversations, which show no timestamp. Times use the user's locale and local timezone; provider conversation context remains role/text only.
 - Added unit coverage: timestamp recovery and invalid values, legacy recovery, icon-only avatars, busy history states, monotonic revision listing and keyboard dismissal.
 - Unverified: tests, build, service-worker output, 400 x 800 and wide-screen screenshots, theme contrast and screen-reader behavior. This batch was edit-only; the manager runs verification. No visual approval or backlog closure is claimed.
+
+## Applied change card redesign (2026-10-20, batch 2)
+
+- Applied cards use the stored numeric `appliedRevision`, a success-tinted frame, existing activity lines and an Undo button gated by `canUndo` and `applying`.
+- View changes toggles the existing initially collapsed technical disclosure, synchronizes `aria-expanded` with native disclosure toggles, and scrolls the disclosure into view. The raw table and JSON remain inside it.
+- The footer counts raw diff entries, not grouped activity lines, and displays local message time only when a valid `at` value exists. Legacy messages without a revision do not invent one.
+- Ready proposals retain Preview/Apply/Discard, intent routing and disabled gates. Previous-form and earlier-edit history notices remain visible.
+- Added behavior coverage for revision/count consistency, disclosure interaction, Undo routing/gating, missing timestamps and ready-state action gates.
+- Unverified: unit execution, real Undo interaction, browser rendering at 400 x 800 and desktop, contrast, keyboard/screen-reader behavior, build and service-worker output. This batch is edit-only; verification belongs to the manager.
+
+## Suggested actions and composer (2026-10-20, batch 3)
+
+- Host-owned suggestions rotate deterministically through ten fixed prompts, five at a time, wrapping after the second group. Refresh makes no model or network request. Logo, payment QR and footer examples explicitly remain fictional; QR asks for a placeholder, not real payment details.
+- Empty conversations show only the existing welcome starters. Suggested actions appear after a message exists and disappear when the conversation is cleared. Chips reuse the existing prompt-fill/focus handler and never submit; chips and refresh are disabled during requests, Apply, recovery and reference reading.
+- The composer places the growing textarea above a wrapping toolbar containing the existing attachment control, derived scope selector, keyboard hint and send/stop controls. IDs, accessible names, scope hint hooks and Enter/Shift+Enter handling are retained.
+- Sharing permissions remain an explicit disclosure below the composer; reference files and element tags stay in the conversation context. Recipient/status notices and the visible fictional-data boundary are retained. Existing theme variables supply surfaces, borders and focus colors.
+- Added unit coverage for pool rotation/wrap, fill-without-send, busy gates, welcome/suggestion exclusivity and toolbar scope/send/stop behavior.
+- Unverified: unit execution, build/precache output, actual attachment/scope interactions, textarea growth, mobile Tab trap, 400 x 800 and desktop rendering, theme contrast and screen-reader behavior. This batch permits file edits only; the manager runs commands and browser verification.
