@@ -1,6 +1,9 @@
 /* The conversation and expanded context share one scroll surface; the composer stays anchored. */
 #ai-panel { grid-column:3; grid-row:1; position:relative; display:flex; flex-direction:column; min-width:0; min-height:0; overflow:hidden; background:var(--surface); border-left:1px solid var(--line); }
 #ai-panel[hidden] { display:none; }
+/* An inert overlay keeps every panel control available as a drop destination. */
+.ai-drop-overlay { position:absolute; inset:8px; z-index:10; pointer-events:none; display:grid; place-items:center; text-align:center; padding:20px; color:var(--muted); font-weight:600; }
+#ai-panel.ai-drop-active .ai-drop-overlay { border:2px dashed var(--line); border-radius:12px; background:color-mix(in srgb,var(--surface) 90%,var(--muted)); }
 body.ai-open .studio-grid,body.ai-open.hide-properties .studio-grid { --right-size:var(--ai-width,390px); }
 body.ai-open #right-panel { visibility:hidden; }
 body.ai-open.preview-only .studio-grid { grid-template-columns:0 minmax(0,1fr) var(--ai-width,390px); }

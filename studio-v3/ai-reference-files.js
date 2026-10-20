@@ -1,5 +1,6 @@
 import { parseReferenceFiles } from './reference-files.js';
 import { referenceProjection } from './reference-sharing.js';
+import { setupReferenceIntake } from './ai-reference-intake.js';
 const node=(tag,text)=>{const n=document.createElement(tag); if(text!==undefined)n.textContent=text;return n;};
 const fileSize=bytes=>Number.isFinite(bytes)?bytes>=1048576?`${(bytes/1048576).toFixed(1)} MB`:`${Math.max(1,Math.ceil(bytes/1024))} KB`:'';
 export class AIReferenceFiles {
@@ -20,11 +21,7 @@ export class AIReferenceFiles {
     const context=panel.node('.ai-context'); if(context)context.prepend(this.root);else panel.node('.ai-input')?.before(this.root);
     this.input.addEventListener('change',()=>{const files=[...this.input.files];this.input.value='';void this.add(files);});
     this.root.addEventListener('toggle',()=>{if(this.root.open && !this.reading && this.hasImages() && !this.checkSupport.hidden)this.checkSupport.scrollIntoView?.({block:'nearest',inline:'nearest'});});
-    // Files may be dropped on the composer or anywhere in the conversation.
-    for (const zone of [panel.node('.ai-composer') || this.root,panel.node('.ai-conversation-scroll')].filter(Boolean)) {
-      zone.addEventListener('dragover',e=>{e.preventDefault();if(!this.locked)e.dataTransfer.dropEffect='copy';});
-      zone.addEventListener('drop',e=>{e.preventDefault();if(!this.locked)void this.add([...e.dataTransfer.files]);});
-    }
+    setupReferenceIntake(this);
     this.render();
   }
   async add(files) {
