@@ -20,7 +20,7 @@ export class AIReferenceFiles {
     this.root.append(modeLabel,label,this.cancel,this.list,this.statusRow,this.notice); (panel.node('.ai-settings-body') || this.root).append(this.diagnostics);
     const context=panel.node('.ai-context'); if(context)context.prepend(this.root);else panel.node('.ai-input')?.before(this.root);
     this.input.addEventListener('change',()=>{const files=[...this.input.files];this.input.value='';void this.add(files);});
-    this.root.addEventListener('toggle',()=>{if(this.root.open && !this.reading && this.hasImages() && !this.checkSupport.hidden)this.checkSupport.scrollIntoView?.({block:'nearest',inline:'nearest'});});
+    this.root.addEventListener('toggle',()=>{if(this.root.open && !this.reading)this.notice.scrollIntoView?.({block:'nearest',inline:'nearest'});});
     setupReferenceIntake(this);
     this.render();
   }

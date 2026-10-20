@@ -4,6 +4,11 @@ Status: **2026-10-15 implementation authorized by the user**, following the earl
 
 Evidence tags: **[code]** the string or behavior was found in the source; **[shot]** seen only in the screenshot, not reproduced in a browser run.
 
+## Batch 12, 2026-10-20
+- Keep the composer scope selector at 16px to avoid mobile input zoom; retain its bounded pill width and single toolbar row.
+- Opening references scrolls the trailing notice into view within the conversation, keeping the retry action reachable and the composer anchored.
+- Approval help explicitly includes data bindings, the data collection, page setup and source code; runtime and visual verification remain with the manager.
+
 ## Corrections to the first review
 
 - The Stop button is **not** unnamed: it has `aria-label="Stop request"` and a tooltip (`index.html`). It is icon-only to sighted users (UX-04, low).

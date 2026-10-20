@@ -1,6 +1,8 @@
 import { replyText, responsesReply, userText } from './demo-gateway-fixture.js';
 import { expect } from '@playwright/test';
 import { reviewCandidate } from './studio-v3-scope.js';
+import { expectApplied } from './ai-applied.js';
+import { operationAutoApplicable } from '../studio-v3/ai-auto-apply-policy.js';
 import fs from 'node:fs/promises';
 import { publicDemoPlanner } from './studio-v3-live-redesign.js';
 import { readFileSync } from 'node:fs';
@@ -94,7 +96,8 @@ export async function runRedesignLifecycle({page,context},info,fixtures) {
   const evidence = {baseline,rounds:[]};
   for (const prompt of ['Redesign this invoice freely. Rebuild its structure, layout and typography, not just its colors.','Redesign it again with a different structure and typography.'].slice(0,redesigns.length)) {
     await page.locator('#ai-prompt').fill(prompt); await page.locator('[data-ai-send]').click();
-    await expect(page.locator('[data-ai-proposal]')).toBeVisible({timeout:livePlan ? 150000 : 45000});
+    const revision=evidence.rounds.length+1,options={timeout:livePlan ? 150000 : 45000};
+    await expect(page.locator('[data-ai-proposal]').or(page.getByRole('heading',{name:`Applied to draft · Revision ${revision}`,exact:true}))).toBeVisible(options);
     if (livePlan) {
       const operations=JSON.parse(modelReplies.at(-1)).operations || [];
       expect(operations.length).toBeLessThanOrEqual(24);
@@ -102,9 +105,15 @@ export async function runRedesignLifecycle({page,context},info,fixtures) {
       expect(operations.some(o=>['reorder_fields','reorder_sections'].includes(o.type))).toBe(true);
       expect(operations.some(o=>o.type==='set_element_style' || (o.type==='set_style' && o.patch?.font!==undefined))).toBe(true);
     }
-    await reviewCandidate(page);
-    const preview = await inspect(page);
-    await page.locator('[data-ai=apply]').click(); await ready(page);
+    const operations=JSON.parse(modelReplies.at(-1)).operations || [];
+    const automatic=operations.length>0 && operations.every(op=>operationAutoApplicable(op));
+    let preview;
+    if(!automatic) {
+      await reviewCandidate(page);preview=await inspect(page);
+      await page.locator('[data-ai=apply]').click();await ready(page);
+    } else {
+      await expectApplied(page,revision,options);await ready(page);preview=await inspect(page);
+    }
     const applied = await inspect(page); expect(applied).toEqual(preview);
     expect(applied.structure).not.toEqual((evidence.rounds.at(-1)?.applied || baseline).structure);
     if (fixtures) {

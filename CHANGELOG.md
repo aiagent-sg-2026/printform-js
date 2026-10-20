@@ -2,14 +2,15 @@
 All notable changes to this project are documented in this file.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 Version numbers below track the **pagination engine** (`dist/printform.js`).
-Studio v2, the single-HTML protocol, and the Agent Contract version separately —
-see the [compatibility matrix](docs/COMPATIBILITY_MATRIX.zh-CN.md) for why, and
-for the current number on each line.
-See [TASK.md](TASK.md) for the full engineering log with commit hashes, test
-counts, and verification detail; this file only lists what changed, for readers
-who don't need the diary.
+Studio v2, the single-HTML protocol, and the Agent Contract version separately — see the [compatibility matrix](docs/COMPATIBILITY_MATRIX.zh-CN.md).
+See [TASK.md](TASK.md) for the full engineering log, commit hashes, test counts and verification detail; this file only lists reader-facing changes.
 
 ## [Unreleased]
+
+### Batch 12, 2026-10-20
+- Keep the AI composer scope pill at 16px without widening its bound or wrapping the toolbar.
+- Scroll opened reference notices into the conversation viewport while keeping the composer anchored.
+- Clarify that approval covers data bindings, the data collection, page setup and source code; policy authority is unchanged.
 
 ### AI Assistant layout and static-content automatic apply — 2026-10-20
 - Show a plain conversation and activity lines in the AI panel; move the raw setting table and its JSON into a collapsed Details block; rewrite step labels without internal words.

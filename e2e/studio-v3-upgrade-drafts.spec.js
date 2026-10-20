@@ -119,14 +119,14 @@ test('AI conversation recovers without token or consent and old candidates remai
   try {
     await demoMock(page,path=> {
       calls++;
-      const body=path.endsWith('/session')?{token:'dmo_synthetic123456',expires_in:900}:path.endsWith('/models')?{data:[{id:'demo-fast'}]}:responsesReply({summary:'Fictional navy proposal',edits:[{target:'style',property:'color',value:'#163a65'}]});
+      const body=path.endsWith('/session')?{token:'dmo_synthetic123456',expires_in:900}:path.endsWith('/models')?{data:[{id:'demo-fast'}]}:responsesReply({summary:'Fictional page margin proposal',operations:[{type:'set_page',patch:{margins:{top:12}}}]});
       return {status:path.endsWith('/session')?201:200,body};
     });
     await start(page,server);
-    await page.locator('[data-ai-toggle]').click();await page.locator('#ai-prompt').fill('Set the form accent color to navy #163a65.');await page.locator('[data-ai-send]').click();
+    await page.locator('[data-ai-toggle]').click();await page.locator('#ai-prompt').fill('Set the top page margin to 12 mm.');await page.locator('[data-ai-send]').click();
     await expect(page.locator('[data-ai-proposal]')).toBeVisible();await page.locator('[data-ai=preview]').click();await expect(page.locator('[data-ai=apply]')).toBeEnabled();
     await update(page,server);await expect(page.locator('#app-version')).toContainText(NEXT.slice(0,12));await ready(page);
-    await expect(page.locator('#ai-prompt')).toHaveValue('');await expect(page.locator('[data-ai-log]')).toContainText('Set the form accent color to navy #163a65.');await expect(page.locator('#ai-consent')).toHaveCount(0);
+    await expect(page.locator('#ai-prompt')).toHaveValue('');await expect(page.locator('[data-ai-log]')).toContainText('Set the top page margin to 12 mm.');await expect(page.locator('#ai-consent')).toHaveCount(0);
     await expect(page.locator('[data-ai-proposal]')).toHaveCount(0);await expect(page.locator('[data-ai=apply]')).toHaveCount(0);await expect(page.locator('[data-ai-log]')).toContainText('Expired');expect(calls).toBe(3);
     expect(await page.evaluate(()=>[...Object.keys(sessionStorage),...Object.keys(localStorage)].some(key=>/token|credential|demo-session/i.test(key)))).toBe(false);
     await expect(page.locator('[data-ai=preview]')).toHaveCount(0);await expect(page.locator('#revision')).toHaveText('r0');expect(calls).toBe(3);

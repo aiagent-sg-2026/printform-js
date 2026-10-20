@@ -192,7 +192,7 @@ body.ai-open.preview-only .studio-grid { grid-template-columns:0 minmax(0,1fr) v
 .ai-source-consent label { display:flex; align-items:flex-start; gap:8px; line-height:1.6; color:var(--ink); }
 .ai-source-consent input { flex:none; width:auto; margin-top:3px; }
 .ai-composer-toolbar { display:flex; align-items:center; flex-wrap:nowrap; gap:6px; width:100%; }
-.ai-composer-toolbar #ai-scope { flex:0 1 auto; width:auto; min-width:0; max-width:44%; min-height:44px; border:1px solid var(--line); border-radius:999px; background:var(--subtle); padding:6px 10px; font-size:14px; }
+.ai-composer-toolbar #ai-scope { flex:0 1 auto; width:auto; min-width:0; max-width:44%; min-height:44px; border:1px solid var(--line); border-radius:999px; background:var(--subtle); padding:6px 10px; font-size:16px; }
 .ai-composer-toolbar .ai-send { margin-left:auto; }
 .ai-suggestions { flex:none; padding:4px 16px; font-size:14px; }
 .ai-suggestions[hidden] { display:none; }
