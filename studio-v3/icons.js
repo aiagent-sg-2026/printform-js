@@ -34,6 +34,8 @@ const paths = {
   type:'M4 20 10 5l6 15 M6.5 14h7 M18 9v11', spacing:'M4 4h16 M4 20h16 M12 7v10 M9 10l3-3 3 3 M9 14l3 3 3-3',
   align:'M4 6h16 M4 12h10 M4 18h14', drop:'M12 3s6 6.5 6 11a6 6 0 0 1-12 0c0-4.5 6-11 6-11z',
   clip:'m21 11-9 9a5 5 0 0 1-7-7l9-9a3 3 0 0 1 4 4l-9 9a1 1 0 0 1-2-2l8-8',
+  image:'M3 4h18v16H3z M3 16l5-5 5 5 3-3 5 5 M15 8h2',
+  qr:'M3 3h6v6H3z M15 3h6v6h-6z M3 15h6v6H3z M15 15h3v3h3v3h-6z M21 12h-6v3 M12 3v9H3 M12 15v6',
   close:'m5 5 14 14 M19 5 5 19'
 };
 export const icon = name => `<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="${paths[name] || paths.field}"/></svg>`;

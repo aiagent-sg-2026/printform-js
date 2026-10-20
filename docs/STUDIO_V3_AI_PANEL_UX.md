@@ -99,3 +99,14 @@ Priority: **P1** the user cannot tell what is happening; **P2** layout and scrol
 - Sharing permissions remain an explicit disclosure below the composer; reference files and element tags stay in the conversation context. Recipient/status notices and the visible fictional-data boundary are retained. Existing theme variables supply surfaces, borders and focus colors.
 - Added unit coverage for pool rotation/wrap, fill-without-send, busy gates, welcome/suggestion exclusivity and toolbar scope/send/stop behavior.
 - Unverified: unit execution, build/precache output, actual attachment/scope interactions, textarea growth, mobile Tab trap, 400 x 800 and desktop rendering, theme contrast and screen-reader behavior. This batch permits file edits only; the manager runs commands and browser verification.
+
+## Corrective layout batch 4, 2026-10-20
+
+- The conversation uses `flex:1 1 auto; min-height:0`. Header copy and controls share a grid row; subtitle and the always-visible Demo boundary use single ellipsized lines. History is icon-only in panels at most 480px wide, with its accessible name retained.
+- Whole-form scope guidance stays in the DOM and selector tooltip/accessibility description without a visible banner. Selected scope uses one compact line; scope derivation is unchanged.
+- Suggested actions use one horizontally scrolling, snap-aligned chip row under a 44px heading row (96px total including padding). They are hidden for empty conversations and during requests, Apply, restore or reference reading; prompt-fill and refresh behavior remain local.
+- The composer toolbar no longer wraps. Its keyboard hint is hidden in compact panels. Recipient text remains visible; complete consent/source state is readable inside Sharing permissions without granting permission. Blocking reasons retain their text in a height-capped scrollable notice.
+- Status text and live-region behavior remain intact; visual display is one ellipsized line with full text in its tooltip. The current applied card's redundant state paragraph is visually hidden only while its Undo control exists; history states remain visible.
+- Welcome copy describes automatic simple layout edits and approval for bigger changes. Logo and QR suggestions use image and QR icons from the existing inline SVG helper.
+- Unit coverage adds busy/reading suggestion visibility, consent state transitions in the disclosure, and status tooltip/announcement preservation. No e2e specs or authority/policy rules were changed.
+- Unverified: no shell, Git, tests, builds or browser runs were performed in this edit-only batch. The 300px/340px conversation gates, full applied-card visibility, 104px header and other measured budgets require the manager's existing layout-budget spec and screenshots at 400x800 and 1440x900. Theme contrast, keyboard/screen-reader behavior and service-worker output also remain unverified.

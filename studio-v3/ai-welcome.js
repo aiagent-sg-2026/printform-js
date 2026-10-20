@@ -7,14 +7,14 @@ export const STARTERS = [
   ['eye','Review the layout','What would improve the readability and print layout of this form? Explain your recommendations without changing anything.']
 ];
 const node = (tag,className,text) => { const n = document.createElement(tag); n.className = className; if (text !== undefined) n.textContent = text; return n; };
-// The empty state: what to ask, how to start, and the Ask AI -> Preview -> Apply flow.
+// The empty state explains automatic layout edits and approval for bigger changes.
 export function renderWelcome() {
   const intro = node('section','ai-welcome'), chips = node('div','ai-chips'), flow = node('ol','ai-flow');
   for (const [name,label,prompt] of STARTERS) {
     const chip = node('button',''); chip.type = 'button'; chip.dataset.ai = 'prompt'; chip.dataset.prompt = prompt;
     chip.insertAdjacentHTML('beforeend',icon(name)); chip.append(node('span','',label)); chips.append(chip);
   }
-  for (const step of ['Ask','Preview','Apply','Undo if needed']) flow.append(node('li','',step));
-  intro.append(node('h3','','Your form, made clearer.'),node('p','','Describe what you need in everyday language. Review any proposed changes before you apply them.'),chips,flow);
+  for (const step of ['Ask','Review','Undo if needed']) flow.append(node('li','',step));
+  intro.append(node('h3','','Your form, made clearer.'),node('p','','Describe what you need in everyday language. Simple layout edits are applied to your draft and can be undone; bigger changes ask for your approval.'),chips,flow);
   return intro;
 }

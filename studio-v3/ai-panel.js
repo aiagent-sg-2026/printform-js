@@ -53,7 +53,7 @@ export class AIPanel {
   }
   node(selector) { return this.root.querySelector(selector); }
   // Progress ticks twice a second; they stay silent for screen readers, phase changes are announced.
-  message(text,{progress = false} = {}) { const status = this.node('[data-ai-status]'); status.setAttribute('aria-live',progress ? 'off' : 'polite'); status.textContent = text; const wait = this.root.querySelector('.ai-pending-text'); if (wait) wait.textContent = text; }
+  message(text,{progress = false} = {}) { const status = this.node('[data-ai-status]'); status.setAttribute('aria-live',progress ? 'off' : 'polite'); status.textContent = text; status.title = text; const wait = this.root.querySelector('.ai-pending-text'); if (wait) wait.textContent = text; }
   error(error) { this.message(errorMessage(error)); }
   // Scope is derived, never chosen: referenced elements limit the edit, otherwise the whole form is editable.
   scope() { const ids = this.elementTags?.snapshot().map(r=>r.id) || []; return ids.length ? {mode:'selected',id:ids[0],ids} : {mode:'whole'}; }
@@ -65,8 +65,8 @@ export class AIPanel {
     selected.disabled = !count; selected.textContent = count ? `${count} selected element${count > 1 ? 's' : ''}` : 'Selected elements'; choice.value = count ? 'selected' : 'whole';
     const how = count ? 'Choose Whole form to edit any part.' : innerWidth <= 900 ? 'To limit them, close this panel, tap an element, then press Add to chat.' : 'To limit them, select an element and press Add to chat.';
     this.node('.ai-scope-help').textContent = count ? 'Only referenced elements can change.' : 'Any part can change. Layout edits apply automatically; Undo restores them.';
-    choice.title = how; choice.setAttribute('aria-description',how);
-    if (!count && innerWidth <= 900) this.node('.ai-scope-help').textContent += ' To limit edits, close AI, select an element, then Add to chat.';
+    const guidance = `${this.node('.ai-scope-help').textContent} ${how}`;
+    choice.title = guidance; choice.setAttribute('aria-description',guidance);
   }
   documentKey() { return this.getBus()?.project.manifest.documentId; }
   payload() {
@@ -230,6 +230,8 @@ export class AIPanel {
     const files = this.referenceFiles, node = this.node('[data-ai-send-reason]');
     const source = this.sourceWorkspace;
     const reason = source?.closing || source?.cleanupFailed ? source.notice() : files?.reading ? 'Reading references… Send unlocks when they are ready.' : files?.imageBlocked() ? 'Send is off: image support is not confirmed for this model. Use Check image support, or remove the image.' : '';
-    node.textContent = reason || `${RECIPIENT_NOTICE}. ${this.observationAccess?.notice({compact:true}) || ''} ${source?.notice() || ''}`; node.dataset.kind = reason ? 'reason' : 'notice';
+    node.textContent = reason || `${RECIPIENT_NOTICE}.`; node.dataset.kind = reason ? 'reason' : 'notice';
+    const consent = this.node('[data-ai-consent-state]');
+    consent.textContent = `${this.observationAccess?.notice({compact:true}) || ''} ${source?.notice() || ''}`.trim();
   }
 }
