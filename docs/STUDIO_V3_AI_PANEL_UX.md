@@ -110,3 +110,13 @@ Priority: **P1** the user cannot tell what is happening; **P2** layout and scrol
 - Welcome copy describes automatic simple layout edits and approval for bigger changes. Logo and QR suggestions use image and QR icons from the existing inline SVG helper.
 - Unit coverage adds busy/reading suggestion visibility, consent state transitions in the disclosure, and status tooltip/announcement preservation. No e2e specs or authority/policy rules were changed.
 - Unverified: no shell, Git, tests, builds or browser runs were performed in this edit-only batch. The 300px/340px conversation gates, full applied-card visibility, 104px header and other measured budgets require the manager's existing layout-budget spec and screenshots at 400x800 and 1440x900. Theme contrast, keyboard/screen-reader behavior and service-worker output also remain unverified.
+
+## Screenshot polish (2026-10-20, batch 5)
+
+- The subtitle occupies its own full-width row without truncation. The Demo notice remains in the DOM inside Sharing permissions; the composer recipient notice remains unchanged and visible.
+- Version history shows its text above the 480px viewport breakpoint. Desktop panels have a 480px minimum displayed width to keep the title and all header controls on one row; narrow viewports retain the icon-only control.
+- Technical details use a secondary, normal-weight disclosure with a CSS chevron and explicit focus ring. The raw table/JSON, default collapsed state and View changes toggle remain unchanged.
+- Heading text, table collection, logo, page setup and field text changes have content-specific activity descriptions. Current applied cards use green checks; ready, expired and historical cards use muted dots.
+- Applied-card secondary text uses the existing ink token rather than the muted token on its green-tinted background. Theme contrast still requires measurement.
+- Added unit coverage for every operation type's activity semantics, historical/current card distinction and the View changes disclosure round trip. No policy, agent implementation or e2e files changed.
+- Unverified: unit tests, build, both layout/empty-state e2e gates, 400 x 800 and 1440 x 900 rendering, desktop resize behavior, keyboard focus and measured 4.5:1 contrast. This batch allows file edits only; the manager performs execution and screenshot review.

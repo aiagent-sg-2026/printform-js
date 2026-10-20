@@ -52,6 +52,7 @@ export function renderChangeCard(panel,message) {
   if (active) card.dataset.aiProposal = '';
   const applied = message.status === 'applied', details = renderDetails(message.diff);
   if (applied) card.classList.add('ai-change-applied');
+  if (applied && (message.appliedBus !== panel.getBus() || !panel.canUndo(message))) card.classList.add('ai-change-history');
   card.append(applied ? appliedHeader(panel,message,details) : node('h3','',HEADINGS[message.status] || 'Earlier suggestion'));
   const lines = node('ul','ai-activity');
   for (const line of activityLines(message.diff)) lines.append(node('li','',line));

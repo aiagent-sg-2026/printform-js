@@ -54,7 +54,7 @@
     <aside id="ai-panel" aria-label="AI layout editor" hidden>
       <div data-ai-resize role="separator" tabindex="0" aria-label="Resize AI panel" aria-orientation="vertical" aria-valuemin="320" aria-valuemax="600" aria-valuenow="390"></div>
       <header class="ai-heading">
-        <div class="ai-header-copy"><h2><span data-icon="sparkles"></span>AI Assistant <span class="ai-beta">BETA</span></h2><div class="ai-header-secondary"><p class="ai-subtitle" title="Edit, generate and refine your form with AI">Edit, generate and refine your form with AI</p><p class="ai-demo-notice" title="Demo · fictional forms and references only">Demo · fictional forms and references only</p></div></div>
+        <div class="ai-header-copy"><h2><span data-icon="sparkles"></span>AI Assistant <span class="ai-beta">BETA</span></h2><div class="ai-header-secondary"><p class="ai-subtitle" title="Edit, generate and refine your form with AI">Edit, generate and refine your form with AI</p></div></div>
         <div class="ai-header-actions"><button type="button" data-ai-history aria-label="Version history" aria-expanded="false" aria-controls="ai-history"><span data-icon="clock"></span><span class="ai-history-label">Version history</span></button><section id="ai-history" class="ai-history" tabindex="-1" aria-label="Version history" hidden></section><details class="ai-settings"><summary aria-label="AI settings"><span data-icon="more"></span></summary>
           <div class="ai-settings-body"><strong>AI settings</strong><p>Demo gateway · text and image requests. Simple layout edits apply automatically and can be undone; bigger changes ask for approval.</p><p data-ai-origin></p>
             <label>Selected model<select id="ai-model"><option value="demo-auto">demo-auto</option></select></label>
@@ -78,6 +78,7 @@
       </form>
         <details class="ai-sharing"><summary>Sharing permissions · fictional data only</summary>
         <div class="ai-observation-disclosure" role="group" aria-label="Observation sharing permissions">
+        <p class="ai-demo-notice">Demo · fictional forms and references only</p>
         <p data-ai-consent-state></p>
         <label class="hint"><input type="checkbox" id="ai-observation-text" data-ai="observation-text"> Share current labels, static text and assigned binding paths for one run (fictional text only)</label>
         <label class="hint"><input type="checkbox" id="ai-observation-pixels"> I confirm this form is fictional and authorize page/crop pixels for this run via Demo Gateway and the selected model. Text authorization is also required; denied values and embedded images stay blocked. Real forms require separate approval.</label>

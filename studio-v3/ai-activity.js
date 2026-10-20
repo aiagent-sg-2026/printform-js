@@ -16,20 +16,25 @@ const blockOf = target => String(labelSelection(target)).split('-')[0];
 export function describeChange({target,property,after}) {
   const label = typeof target === 'string' && target.startsWith('label-');
   const name = labelSelection(target);
+  if (property === 'title') return 'Changed the heading text';
+  if (property === 'collection') return 'Changed the table data source';
+  if (property === 'logo' || target === 'header-logo') return 'Changed the logo';
+  if (String(property).startsWith('page.')) return 'Changed page setup';
+  if (property === 'label' || property === 'text') return 'Edited field text';
   if (target === 'style') return STYLE_KEY_LINES[property] || 'Updated page style';
-  if (target === 'document') return property === 'sectionOrder' ? 'Reordered sections' : String(property).startsWith('page.') ? 'Changed page setup' : 'Updated the document';
-  if (ELEMENT_NAMES[target]) return `Updated ${ELEMENT_NAMES[target]} ${ASPECTS[property] || 'style'}`;
+  if (target === 'document') return property === 'sectionOrder' ? 'Reordered sections' : 'Updated the document';
+  if (ELEMENT_NAMES[target]) return `Updated ${ELEMENT_NAMES[target]} ${ASPECTS[property] || 'settings'}`;
   if (target === 'items' && property === 'rowBackground') return 'Updated table row color';
   if (property === 'width') return /^items-/.test(target) ? 'Changed column widths' : 'Resized an element';
   if (property === 'layout') return `Adjusted ${SECTION_NAMES[target] || 'section'} spacing`;
   if (property === 'labelStyle' || (label && property === 'valueStyle')) return blockOf(name) === 'items' ? `Updated table header ${aspect(property,after)}` : `Updated label ${aspect(property,after)}`;
   if (property === 'valueStyle') return blockOf(name) === 'items' ? `Updated table cell ${aspect(property,after)}` : `Updated value ${aspect(property,after)}`;
   if (property === 'showLabel') return 'Changed label visibility';
+  if (property === 'order') return 'Reordered fields';
   if (SECTION_NAMES[target]) return `Updated ${SECTION_NAMES[target]} settings`;
-  if (target === 'header-logo') return 'Changed the logo';
   if (property === 'add_field') return 'Added a field';
   if (property === 'remove_field') return 'Removed a field';
-  if (['label','text','pointer','kind','format'].includes(property)) return 'Edited field content';
+  if (['pointer','kind','format'].includes(property)) return 'Edited field content';
   return 'Updated a field';
 }
 // One line per kind of change, in first-seen order, so twelve property diffs read as two or three sentences.
