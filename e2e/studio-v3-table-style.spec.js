@@ -1,3 +1,4 @@
+import {expectApplied} from './ai-applied.js';
 import { responsesReply } from './demo-gateway-fixture.js';
 import { test, expect } from './studio-v3-test.js';
 import { limitToSelection, limitToWholeForm } from './studio-v3-scope.js';
@@ -33,19 +34,17 @@ async function expectYellow(locator){
   expect(await locator.evaluateAll(nodes=>nodes.every(node=>getComputedStyle(node).backgroundColor==='rgb(255, 255, 0)'))).toBe(true);
 }
 test.beforeEach(async({page})=>{page.on('dialog',dialog=>dialog.accept());await keepStructureOpen(page);await page.goto('/studio-v3/');await ready(page);});
-test('yellow rows are rendered across pages; Preview Apply Undo and save/reopen retain data and template identity',async({page,context,browserName},info)=>{
+test('yellow rows are rendered across pages; automatic apply, Undo and save/reopen retain data and template identity',async({page,context,browserName},info)=>{
   const calls=await mock(page,[wrong,fill]);const before=await save(page,info,'before-row-fill.printform.json');
   const totals=await paper(page).locator('[data-v3-id=totals-total]').allTextContents();
   const originalColors=await paper(page).locator('.prowitem_processed tr').evaluateAll(nodes=>nodes.map(node=>getComputedStyle(node).backgroundColor));
   expect(await paper(page).locator('.printform_page').count()).toBeGreaterThan(1);
   await page.locator('[data-ai-toggle]').click();await page.locator('#ai-prompt').fill(request);await page.locator('[data-ai-send]').click();
-  await expect(page.locator('[data-ai-proposal]')).toBeVisible();expect(calls).toHaveLength(2);expect(JSON.stringify(calls[1])).toContain('TABLE_BACKGROUND_INTENT');
-  await expect(page.locator('.ai-diff')).toContainText('tableStyle.rowBackground');await expect(page.locator('#revision')).toHaveText('r0');
-  // On wide screens the candidate is previewed and checked automatically; Apply is still an explicit click.
-  await expect(page.locator('[data-ai=apply]')).toBeEnabled();
+  await expectApplied(page,1);expect(calls).toHaveLength(2);expect(JSON.stringify(calls[1])).toContain('TABLE_BACKGROUND_INTENT');
+  await expect(page.locator('.ai-diff')).toContainText('tableStyle.rowBackground');
   await expectYellow(paper(page).locator('.prowitem_processed'));await expectYellow(paper(page).locator('.prowitem_processed tr'));await expectYellow(paper(page).locator('.prowitem_processed td'));
-  await expect(page.locator('#revision')).toHaveText('r0');await page.screenshot({path:info.outputPath('yellow-table-row-preview.png')});
-  await page.locator('[data-ai=apply]').click();await ready(page);await expect(page.locator('#revision')).toHaveText('r1 · unsaved template');
+  await page.screenshot({path:info.outputPath('yellow-table-row-applied.png')});
+  await ready(page);await expect(page.locator('#revision')).toHaveText('r1 · unsaved template');
   await expectYellow(paper(page).locator('.prowitem_processed tr'));await expectYellow(paper(page).locator('.prowitem_processed td'));
   await expect(paper(page).locator('.brand-mark').first()).toHaveCSS('color','rgb(23, 99, 220)');
   await expect(paper(page).locator('th').first()).toHaveCSS('background-color','rgb(233, 239, 248)');
@@ -67,8 +66,7 @@ test('yellow rows are rendered across pages; Preview Apply Undo and save/reopen 
 });
 test('table selection permits row fill; manual property clearing restores existing stripes',async({page})=>{
   await mock(page,[fill]);await page.locator('#left-panel [data-select=items]').click();await page.locator('[data-ai-toggle]').click();await limitToSelection(page);
-  await page.locator('#ai-prompt').fill(request);await page.locator('[data-ai-send]').click();await expect(page.locator('[data-ai-proposal]')).toBeVisible();
-  await page.locator('[data-ai=preview]').click();await expect(page.locator('[data-ai=apply]')).toBeEnabled();await page.locator('[data-ai=apply]').click();await ready(page);
+  await page.locator('#ai-prompt').fill(request);await page.locator('[data-ai-send]').click();await expectApplied(page,1);await ready(page);
   await expectYellow(paper(page).locator('.prowitem_processed tr'));await page.locator('[data-ai=close]').click();
   const field=page.getByLabel('Table row background',{exact:true});await expect(field).toHaveValue('#ffff00');await field.fill('');
   await expectYellow(paper(page).locator('.prowitem_processed tr'));await page.getByRole('button',{name:'Apply section',exact:true}).click();await ready(page);
@@ -76,25 +74,25 @@ test('table selection permits row fill; manual property clearing restores existi
   await page.locator('[data-action=go-style]').click();await expect(page.getByLabel('Table row background',{exact:true})).toHaveValue('');
   await page.getByLabel('Table row background',{exact:true}).fill('#ffff00');await page.getByRole('button',{name:'Apply style',exact:true}).click();await ready(page);await expectYellow(paper(page).locator('.prowitem_processed td'));
 });
-test('padding-only and wrong-color results are repaired before a natural yellow-row request can preview',async({page})=>{
+test('padding-only and wrong-color results are repaired before a natural yellow-row request auto-applies',async({page})=>{
  const padding={kind:'proposal',summary:'Made data rows yellow',operations:[{type:'set_style',patch:{padding:12}}]};
  const blue={kind:'proposal',summary:'Made data rows yellow',operations:[{type:'set_table_style',target:'items',patch:{rowBackground:'#0000ff'}}]};
  const calls=await mock(page,[padding,blue,fill]);await page.locator('[data-ai-toggle]').click();
  await page.locator('#ai-prompt').fill('Make every data row yellow.');await page.locator('[data-ai-send]').click();
- await expect(page.locator('[data-ai-proposal]')).toBeVisible();expect(calls).toHaveLength(3);
+ await expectApplied(page,1);expect(calls).toHaveLength(3);
  expect(JSON.stringify(calls[1])).toContain('TABLE_BACKGROUND_INTENT');expect(JSON.stringify(calls[2])).toContain('TABLE_BACKGROUND_INTENT');
  await expect(page.locator('.ai-diff')).toContainText('tableStyle.rowBackground');await expect(page.locator('.ai-diff')).not.toContainText('padding');
- await expect(page.locator('[data-ai=apply]')).toBeEnabled();await expect(page.locator('#revision')).toHaveText('r0');
- await expectYellow(paper(page).locator('.prowitem_processed td'));await page.locator('[data-ai=apply]').click();await ready(page);
+ await expect(page.locator('#revision')).toHaveText('r1 · unsaved template');
+ await expectYellow(paper(page).locator('.prowitem_processed td'));await ready(page);
  await expect(page.locator('#revision')).toHaveText('r1 · unsaved template');await expectYellow(paper(page).locator('.prowitem_processed td'));
 });
-test('comments-only table requests reject unrelated field styling before previewing the requested fill',async({page})=>{
+test('comments-only table requests reject unrelated field styling before automatically applying the requested fill',async({page})=>{
  const unrelated={kind:'proposal',summary:'Made data rows yellow',operations:[{type:'set_field',target:'items-description',patch:{valueStyle:{fontSize:12}}}]};
  const calls=await mock(page,[unrelated,fill]);await page.locator('#left-panel [data-select=items]').click();await page.locator('#left-panel [data-ai-add]').click();
  await page.getByLabel('Comment for items',{exact:true}).fill('Make this background yellow');
  await expect(page.locator('#ai-prompt')).toHaveValue('');await page.locator('[data-ai-send]').click();
- await expect(page.locator('[data-ai-proposal]')).toBeVisible();expect(calls).toHaveLength(2);expect(JSON.stringify(calls[1])).toContain('TABLE_BACKGROUND_INTENT');
- await expect(page.locator('.ai-diff')).toContainText('tableStyle.rowBackground');await expect(page.locator('#revision')).toHaveText('r0');
- await page.locator('[data-ai=preview]').click();await expect(page.locator('[data-ai=apply]')).toBeEnabled();await expectYellow(paper(page).locator('.prowitem_processed td'));
- await page.locator('[data-ai=apply]').click();await ready(page);await expect(page.locator('#revision')).toHaveText('r1 · unsaved template');await expectYellow(paper(page).locator('.prowitem_processed td'));
+ await expectApplied(page,1);expect(calls).toHaveLength(2);expect(JSON.stringify(calls[1])).toContain('TABLE_BACKGROUND_INTENT');
+ await expect(page.locator('.ai-diff')).toContainText('tableStyle.rowBackground');await expect(page.locator('#revision')).toHaveText('r1 · unsaved template');
+ await expectYellow(paper(page).locator('.prowitem_processed td'));
+ await ready(page);await expect(page.locator('#revision')).toHaveText('r1 · unsaved template');await expectYellow(paper(page).locator('.prowitem_processed td'));
 });

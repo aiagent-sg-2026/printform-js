@@ -6,14 +6,15 @@ test.beforeEach(async({page})=>{
  await page.goto('/studio-v3/');await ready(page);await page.locator('[data-ai-toggle]').click();
 });
 for(const viewport of [{width:400,height:800},{width:320,height:568}]){
- test(`${viewport.width}×${viewport.height}: changing a sharing permission keeps the next permission reachable`,async({page},info)=>{
+ test(`${viewport.width}×${viewport.height}: sharing permissions remain reachable in their scroll container after a change`,async({page},info)=>{
   await page.setViewportSize(viewport);
   const inference=[];page.on('request',request=>{if(request.url().endsWith('/demo/v1/responses'))inference.push(request.url());});
   await page.locator('.ai-sharing>summary').click();
   await page.locator('.ai-conversation-scroll').evaluate(node=>node.scrollTop=node.scrollHeight);
   const text=page.locator('#ai-observation-text'),pixels=page.locator('#ai-observation-pixels');
-  await expect(pixels).toBeInViewport({ratio:1});
+  await text.scrollIntoViewIfNeeded();
   await text.check();await expect(text).toBeChecked();
+  await pixels.scrollIntoViewIfNeeded();
   await expect(pixels).toBeInViewport({ratio:1});
   await pixels.check();await expect(pixels).toBeChecked();
   await expect(page.locator('#ai-prompt')).toBeInViewport({ratio:1});

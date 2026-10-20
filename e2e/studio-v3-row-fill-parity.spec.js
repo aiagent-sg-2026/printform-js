@@ -1,3 +1,4 @@
+import {expectApplied} from './ai-applied.js';
 import {test,expect} from './studio-v3-test.js';
 import {keepStructureOpen} from './studio-v3-structure.js';
 import {limitToSelection,limitToWholeForm} from './studio-v3-scope.js';
@@ -63,7 +64,7 @@ async function retain(page,info,evidence) {
 }
 test.beforeEach(async({page})=> { page.on('dialog',dialog=>dialog.accept()); await keepStructureOpen(page); });
 
-for (const kind of ['style','block']) test(`real ${kind} inspector and Pi wire agree on row fill, diagnostics, reset and approval`,async({page},info)=> {
+for (const kind of ['style','block']) test(`real ${kind} inspector and Pi wire agree on row fill, diagnostics, reset and automatic apply`,async({page},info)=> {
   const errors = []; page.on('pageerror',error=>errors.push(error.message));
   await gateway(page,[...completion('#12aBcD'),...completion(null)]);
   await page.goto('/studio-v3/'); await ready(page);
@@ -83,20 +84,18 @@ for (const kind of ['style','block']) test(`real ${kind} inspector and Pi wire a
   await page.locator('[data-ai-toggle]').click();
   if (kind === 'block') { await page.locator('#left-panel [data-select=items]').click(); await limitToSelection(page); }
   await send(page,'Set table row background to #12aBcD.');
-  await expect(page.locator('[data-ai-proposal]')).toBeVisible({timeout:60000}); await expect(page.locator('[data-ai=apply]')).toBeEnabled();
-  await expect(page.locator('#revision')).toHaveText(/^r2\b/); await expect(page.locator('.ai-diff')).toContainText('tableStyle.rowBackground');
+  await expectApplied(page,3,{timeout:60000}); await expect(page.locator('.ai-diff')).toContainText('tableStyle.rowBackground');
   const piObserved = await diagnostics(page,ui.project);
   expect(piObserved.diagnostics).toEqual(uiObserved.diagnostics);
   const wire = await page.evaluate(()=>window.__rowFillWire);
   expect(wire).toHaveLength(3);
   const observed = JSON.parse(wire[2].input.find(item=>item.type === 'function_call_output' && item.call_id === 'row_fill_2').output);
   const {observation,...numeric} = observed; expect(numeric).toEqual(uiObserved.diagnostics); expect(observation).toMatchObject({baseRevision:2,candidateVersion:1});
-  await page.locator('[data-ai=apply]').click(); await ready(page); await expect(page.locator('#revision')).toHaveText(/^r3\b/);
+  await ready(page); await expect(page.locator('#revision')).toHaveText(/^r3\b/);
   const pi = await save(page,info,'pi.printform.json'); expect(normalized(pi.project)).toEqual(normalized(ui.project));
   await expect(paper(page).locator('th').first()).toHaveCSS('background-color','rgb(233, 239, 248)');
   await expect(paper(page).locator('.brand-mark').first()).toHaveCSS('color','rgb(23, 99, 220)');
-  await send(page,'Clear table row background.'); await expect(page.locator('[data-ai-proposal]')).toBeVisible(); await expect(page.locator('[data-ai=apply]')).toBeEnabled();
-  await expect(page.locator('#revision')).toHaveText('r3'); await page.locator('[data-ai=apply]').click(); await ready(page);
+  await send(page,'Clear table row background.'); await expectApplied(page,4); await ready(page);
   const cleared = await save(page,info,'cleared.printform.json');
   expect(normalized(cleared.project).manifest.studioV3).toEqual(normalized(before.project).manifest.studioV3);
   expect(cleared.project.sampleData).toEqual(before.project.sampleData);
@@ -117,8 +116,7 @@ test('real Pi schema and column scope reject row fill before fresh table-scope r
   expect(wire[1].input.find(item=>item.type === 'function_call_output' && item.call_id === 'row_fill_1').output).toContain('AGENT_ARGUMENTS_INVALID');
   expect(wire[2].input.find(item=>item.type === 'function_call_output' && item.call_id === 'row_fill_2').output).toContain('UNSAFE_SCOPE');
   await limitToWholeForm(page); await page.locator('#left-panel [data-select=items]').click(); await limitToSelection(page);
-  await send(page,'Set table row background to #12aBcD.'); await expect(page.locator('[data-ai-proposal]')).toBeVisible(); await expect(page.locator('[data-ai=apply]')).toBeEnabled();
-  await expect(page.locator('#revision')).toHaveText('r0'); await page.locator('[data-ai=apply]').click(); await ready(page);
+  await send(page,'Set table row background to #12aBcD.'); await expectApplied(page,1); await ready(page);
   const recovered = await save(page,info,'recovered.printform.json');
   expect(recovered.project.manifest.studioV3.tableStyle).toEqual({rowBackground:'#12aBcD'}); expect(recovered.project.sampleData).toEqual(before.project.sampleData);
   await retain(page,info,{before:before.project,rejected:rejected.project,recovered:recovered.project});

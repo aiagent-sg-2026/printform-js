@@ -1,3 +1,4 @@
+import {expectApplied} from './ai-applied.js';
 import { test, expect } from './studio-v3-test.js';
 import { limitToSelection, limitToWholeForm } from './studio-v3-scope.js';
 import { clickPaper } from './studio-v3-paper-click.js';
@@ -35,20 +36,19 @@ async function prepare(page,fixture=syntheticPng()) {
  await expect(page.locator('.ai-reference-files')).toContainText('Images available');await expect(page.locator('[data-ai-send]')).toBeEnabled();
 }
 test.beforeEach(async({page})=>{page.on('dialog',d=>d.accept());await page.goto('/studio-v3/');await ready(page);});
-for(const kind of ['image','scanned-pdf'])test(`verified ${kind} uses bounded Responses and preserves selected scope through Preview Apply Undo`,async({page},info)=>{
+for(const kind of ['image','scanned-pdf'])test(`verified ${kind} uses bounded Responses and preserves selected scope through automatic apply and Undo`,async({page},info)=>{
  const {calls}=await provider(page);const total=await paper(page).locator('[data-v3-id=totals-total]').textContent();
  const node=()=>paper(page).locator('[data-v3-id=label-customer-ship]').first();
  const before=await node().evaluate(n=>({font:getComputedStyle(n).fontSize,weight:getComputedStyle(n).fontWeight}));
  await prepare(page,kind==='image'?syntheticPng():rasterPdf('jpeg',{text:false}));
  expect(calls.some(c=>c.path.endsWith('/responses'))).toBe(false);await page.locator('[data-ai-send]').click();
- await expect(page.locator('[data-ai-proposal]')).toBeVisible();await expect(page.locator('#revision')).toHaveText('r0');
+ await expectApplied(page,1);
  const inference=calls.filter(c=>c.path.endsWith('/responses'));expect(inference).toHaveLength(1);expect(calls.some(c=>c.path.endsWith('/chat/completions'))).toBe(false);
  const wire=inference[0].body,user=wire.input.find(m=>m.role==='user').content;
  expect(user.filter(p=>p.type==='input_image')).toHaveLength(1);expect(user[1].image_url).toMatch(/^data:image\/(png|jpeg|webp);base64,/);
  expect(JSON.stringify(wire)).not.toMatch(/ACME Industrial|Sterling Manufacturing|sampleData|dmo_synthetic/);
  expect(user[0].text).toContain('label-customer-ship');expect(user[0].text).toContain('visual-pages');
- await page.locator('[data-ai=preview]').click();await expect(page.locator('[data-ai=apply]')).toBeEnabled();await expect(page.locator('#revision')).toHaveText('r0');
- await page.locator('[data-ai=apply]').click();await ready(page);await expect(page.locator('#revision')).toHaveText('r1 · unsaved template');
+ await expect(page.locator('[data-ai=apply]')).toHaveCount(0);await ready(page);await expect(page.locator('#revision')).toHaveText('r1 · unsaved template');
  expect(await rendered(page).locator('[data-v3-id=totals-total]').first().textContent()).toBe(total);
  await expect.poll(()=>renderedStyle(page)).toEqual({font:'16px',weight:'700'});
  await page.screenshot({path:info.outputPath(`${kind}-selected-label-applied.png`)});

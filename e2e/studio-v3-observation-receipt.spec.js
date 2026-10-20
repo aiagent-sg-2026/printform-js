@@ -1,3 +1,4 @@
+import {expectApplied} from './ai-applied.js';
 import {test,expect} from './studio-v3-test.js';
 import fs from 'node:fs/promises';
 test.use({workInSteps:true});
@@ -47,15 +48,15 @@ test('Validate and AI panel carry fresh revision-bound receipts, reject undo-rev
   expect(first.observation).toMatchObject({baseRevision:0,candidateVersion:0,kind:'print-diagnostics',releaseIdentity:{verified:true}});
   expect(first.pages.length).toBeGreaterThan(0); expect(first.observation.evidenceRefs).toEqual([]);
   for (const key of ['candidateDigest','scenarioDigest','policyDigest','contentDigest']) expect(first.observation[key]).toMatch(/^[a-f0-9]{64}$/);
-  await send(page,'Use navy accents #163a65.'); await expect(page.locator('[data-ai-proposal]')).toBeVisible({timeout:60000});
+  await send(page,'Use navy accents #163a65.'); await expectApplied(page,1,{timeout:60000});
   wire = await page.evaluate(()=>window.__observationWire);
   const old = observed(wire[4],'call_4'), fresh = observed(wire[8],'call_8');
   const rejected = wire[7].input.find(item=>item.type === 'function_call_output' && item.call_id === 'call_7');
   expect(rejected.output).toContain('AGENT_INSPECTION_REQUIRED');
   expect(fresh.observation.candidateDigest).toBe(old.observation.candidateDigest);
   expect(fresh.observation.id).not.toBe(old.observation.id); expect(fresh.observation.candidateVersion).toBeGreaterThan(old.observation.candidateVersion);
-  expect(fresh.observation.runId).not.toBe(first.observation.runId); await expect(page.locator('#revision')).toHaveText('r0');
-  await page.locator('[data-ai=apply]').click(); await expect(page.locator('#revision')).toHaveText(/^r1\b/);
+  expect(fresh.observation.runId).not.toBe(first.observation.runId); await expect(page.locator('#revision')).toHaveText(/^r1\b/);
+  await expect(page.frameLocator('#preview-frame').locator('.brand-mark').first()).toHaveCSS('color','rgb(22, 58, 101)');
   await send(page,'Does the new committed form fit on the paper?');
   await expect(page.locator('.ai-message').filter({hasText:'The new committed revision was observed.'})).toBeVisible({timeout:60000});
   wire = await page.evaluate(()=>window.__observationWire); const committed = observed(wire.at(-1),'call_10');

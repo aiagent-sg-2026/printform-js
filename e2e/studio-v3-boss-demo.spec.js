@@ -1,3 +1,4 @@
+import {expectApplied} from './ai-applied.js';
 import { isInference, responsesReply, userText } from './demo-gateway-fixture.js';
 import { test, expect } from './studio-v3-test.js';
 import fs from 'node:fs/promises';
@@ -42,12 +43,12 @@ test('all business templates render and long scenario paginates without missing 
  const printed=await context.newPage();await printed.goto(pathToFileURL(path).href);await expect(printed.locator('html')).toHaveAttribute('data-printform-status','ready');await expect(printed.locator('.prowitem_processed')).toHaveCount(64);
  if(browserName==='chromium')await printed.pdf({path:info.outputPath('fictional-campus-invoice-A4.pdf'),preferCSSPageSize:true,printBackground:true});await printed.screenshot({path:info.outputPath('fictional-campus-invoice.png'),fullPage:true});await printed.close();
 });
-test('real PDF parsing -> explicit text-only sharing -> mocked AI Preview Apply Undo -> export',async({page},info)=>{
+test('real PDF parsing -> explicit text-only sharing -> mocked AI automatic apply and Undo -> export',async({page},info)=>{
  const calls=await mockProvider(page);await openReferences(page);await attach(page,syntheticPdf());
  expect(calls).toHaveLength(0);
- await page.locator('#ai-prompt').fill('Use navy #163a65 based on the reference structure.');await page.locator('[data-ai-send]').click();await expect(page.locator('[data-ai-proposal]')).toBeVisible();
+ await page.locator('#ai-prompt').fill('Use navy #163a65 based on the reference structure.');await page.locator('[data-ai-send]').click();await expectApplied(page,1);
  const wire=calls.find(c=>isInference(c.path)).payload;expect(userText(wire)).toContain('DEMO-REF-001');expect(JSON.stringify(wire)).toContain('FICTIONAL REFERENCE');expect(JSON.stringify(wire)).toContain('extracted-text-and-positions');expect(JSON.stringify(wire)).not.toContain('base64');expect(JSON.stringify(wire)).not.toContain('ACME Industrial');
- await page.locator('[data-ai=preview]').click();await expect(page.locator('[data-ai=apply]')).toBeEnabled();await page.locator('[data-ai=apply]').click();await expect(page.locator('#revision')).toContainText('r1');
+ await ready(page);await expect(page.locator('#revision')).toContainText('r1');
  const savePromise=page.waitForEvent('download');await page.locator('[data-action=save]').click();const saved=await savePromise,savedPath=info.outputPath('pdf-authored.printform.json');await saved.saveAs(savedPath);
  const authored=JSON.parse(await fs.readFile(savedPath,'utf8')).project;expect(authored.manifest.studioV3.color).toBe('#163a65');expect(authored.manifest.currency).toBe('MYR');expect(authored.sampleData.summary.total).toBe(12150);expect(authored.manifest.studioV3.columns.find(f=>f.id==='amount').pointer).toBe('./amount');
  await page.locator('[data-ai=undo]').click();await expect(page.locator('#revision')).toContainText('r2');await ready(page);

@@ -1,3 +1,4 @@
+import {expectApplied} from './ai-applied.js';
 import {test,expect} from './studio-v3-test.js';
 import {keepStructureOpen} from './studio-v3-structure.js';
 import {limitToSelection,limitToWholeForm} from './studio-v3-scope.js';
@@ -23,7 +24,7 @@ const fill = async(page,target,patch) => {
 };
 test.beforeEach(async({page})=> { page.on('dialog',dialog=>dialog.accept()); await keepStructureOpen(page); });
 
-for (const target of ['header-title','page-number']) test(`real ${target} inspector and Pi wire agree on typography, diagnostics, reset and approval`,async({page},info)=> {
+for (const target of ['header-title','page-number']) test(`real ${target} inspector and Pi wire agree on typography, diagnostics, reset and automatic apply`,async({page},info)=> {
   const errors = []; page.on('pageerror',error=>errors.push(error.message));
   const patch = {fontSize:target === 'header-title' ? 20.25 : 9.25,bold:false,color:'#163a5D',align:'center'};
   const reordered = {align:patch.align,color:patch.color,bold:patch.bold,fontSize:patch.fontSize}, increased = {...reordered,fontSize:patch.fontSize+.25};
@@ -42,25 +43,24 @@ for (const target of ['header-title','page-number']) test(`real ${target} inspec
   await page.locator('[data-action=undo]').click(); await ready(page); await expect(page.locator('#revision')).toHaveText(/^r2\b/);
   await select(page,target); await page.locator('[data-ai-toggle]').click(); await limitToSelection(page);
   await send(page,`Set the selected typography to ${patch.fontSize}pt normal, #163a5D, centered.`);
-  await expect(page.locator('[data-ai-proposal]')).toBeVisible({timeout:60000}); await expect(page.locator('[data-ai=apply]')).toBeEnabled();
-  await expect(page.locator('#revision')).toHaveText(/^r2\b/); await expect(page.locator('.ai-diff')).toContainText('typography');
+  await expectApplied(page,3,{timeout:60000});
+  await expect(page.locator('.ai-diff')).toContainText('typography');
   const piObserved = await diagnostics(page,ui.project); expect(piObserved.diagnostics).toEqual(uiObserved.diagnostics);
   const wire = await page.evaluate(()=>window.__elementStyleWire); expect(wire).toHaveLength(3);
   const {observation,...numeric} = JSON.parse(wire[2].input.find(item=>item.type === 'function_call_output' && item.call_id === 'element_style_2').output);
   expect(numeric).toEqual(uiObserved.diagnostics); expect(observation).toMatchObject({baseRevision:2,candidateVersion:1});
-  await page.locator('[data-ai=apply]').click(); await ready(page); await expect(page.locator('#revision')).toHaveText(/^r3\b/);
+  await ready(page); await expect(page.locator('#revision')).toHaveText(/^r3\b/);
   const pi = await save(page,info,'pi.printform.json'); expect(normalized(pi.project)).toEqual(normalized(ui.project)); expect(await styles(page,target)).toEqual(uiStyles);
   await send(page,'Clear the selected typography override.'); await expect(page.locator('[data-ai-proposal]')).toBeVisible(); await expect(page.locator('[data-ai=apply]')).toBeEnabled();
-  await expect(page.locator('#revision')).toHaveText('r3'); await page.locator('[data-ai=apply]').click(); await ready(page);
+  await expect(page.locator('#revision')).toHaveText('r3'); await page.locator('[data-ai=apply]').click(); await ready(page); await expectApplied(page,4);
   const cleared = await save(page,info,'cleared.printform.json'); expect(normalized(cleared.project)).toEqual(normalized(before.project)); expect(await styles(page,target)).toEqual(inherited);
   await page.locator('[data-ai=undo]').click(); await ready(page); const undone = await save(page,info,'undone.printform.json'); expect(normalized(undone.project)).toEqual(normalized(ui.project));
-  await send(page,'Increase selected typography by 0.25pt.'); await expect(page.locator('[data-ai-proposal]')).toBeVisible(); await expect(page.locator('[data-ai=apply]')).toBeEnabled();
-  await expect(page.locator('#revision')).toHaveText(/^r5\b/);
+  await send(page,'Increase selected typography by 0.25pt.'); await expectApplied(page,6);
   const noOpWire = await page.evaluate(()=>window.__elementStyleWire); expect(noOpWire).toHaveLength(10);
   expect(noOpWire[7].input.find(item=>item.type === 'function_call_output' && item.call_id === 'element_style_7').output).toContain('NO_CHANGES');
   const fresh = JSON.parse(noOpWire[9].input.find(item=>item.type === 'function_call_output' && item.call_id === 'element_style_9').output);
   expect(fresh.observation).toMatchObject({baseRevision:5,candidateVersion:1}); expect(fresh.observation.id).not.toBe(observation.id);
-  await page.locator('[data-ai=apply]').click(); await ready(page); const noOpRecovery = await save(page,info,'no-op-recovery.printform.json');
+  await ready(page); const noOpRecovery = await save(page,info,'no-op-recovery.printform.json');
   const expectedRecovery = normalized(ui.project); expectedRecovery.manifest.studioV3[keyFor(target)] = increased;
   expect(normalized(noOpRecovery.project)).toEqual(expectedRecovery);
   for (const style of await styles(page,target)) expect(parseFloat(style.fontSize)).toBeCloseTo(increased.fontSize*4/3,2);
@@ -83,8 +83,7 @@ test('real Pi schema and cross-target scope reject typography before fresh headi
   expect(wire[1].input.find(item=>item.type === 'function_call_output' && item.call_id === 'element_style_1').output).toContain('AGENT_ARGUMENTS_INVALID');
   expect(wire[2].input.find(item=>item.type === 'function_call_output' && item.call_id === 'element_style_2').output).toContain('UNSAFE_SCOPE');
   await limitToWholeForm(page); await select(page,'header-title'); await limitToSelection(page);
-  await send(page,'Set heading typography to 20pt normal.'); await expect(page.locator('[data-ai-proposal]')).toBeVisible(); await expect(page.locator('[data-ai=apply]')).toBeEnabled();
-  await expect(page.locator('#revision')).toHaveText('r0'); await page.locator('[data-ai=apply]').click(); await ready(page);
+  await send(page,'Set heading typography to 20pt normal.'); await expectApplied(page,1); await ready(page);
   const recovered = await save(page,info,'recovered.printform.json'); expect(recovered.project.manifest.studioV3.titleStyle).toEqual(patch); expect(recovered.project.sampleData).toEqual(before.project.sampleData);
   await retain(page,info,{before:before.project,rejected:rejected.project,recovered:recovered.project});
 });
@@ -105,8 +104,7 @@ test('real inspector and Pi inspection both block low-contrast typography and re
   await page.locator('[data-action=undo]').click(); await ready(page); await expect(page.locator('#revision')).toHaveText(/^r4\b/);
   await select(page,target); await page.locator('[data-ai-toggle]').click(); await limitToSelection(page);
   await send(page,'Set the selected heading to centered 20pt normal with a readable dark color.');
-  await expect(page.locator('[data-ai-proposal]')).toBeVisible({timeout:60000}); await expect(page.locator('[data-ai=apply]')).toBeEnabled();
-  await expect(page.locator('#revision')).toHaveText(/^r4\b/);
+  await expectApplied(page,5,{timeout:60000});
   const wire = await page.evaluate(()=>window.__elementStyleWire); expect(wire).toHaveLength(7);
   const rawOutput = id => wire.flatMap(body=>body.input).find(item=>item.type === 'function_call_output' && item.call_id === id).output;
   const output = id => JSON.parse(rawOutput(id));
@@ -114,7 +112,7 @@ test('real inspector and Pi inspection both block low-contrast typography and re
   expect(rawOutput('element_style_3')).toContain('AGENT_INSPECTION_BLOCKED');
   const {observation:goodReceipt,...goodNumeric} = output('element_style_6'); expect(goodNumeric).toEqual(recoveryDiagnostics.diagnostics);
   expect(badReceipt).toMatchObject({baseRevision:4,candidateVersion:1}); expect(goodReceipt).toMatchObject({baseRevision:4,candidateVersion:3}); expect(goodReceipt.id).not.toBe(badReceipt.id);
-  await page.locator('[data-ai=apply]').click(); await ready(page); const recovered = await save(page,info,'contrast-pi-recovered.printform.json');
+  await ready(page); const recovered = await save(page,info,'contrast-pi-recovered.printform.json');
   expect(normalized(recovered.project)).toEqual(normalized(uiRecovery.project)); expect(recovered.project.sampleData).toEqual(before.project.sampleData);
   await retain(page,info,{target,before:before.project,ui:ui.project,uiRecovery:uiRecovery.project,recovered:recovered.project,rejectedDiagnostics,recoveryDiagnostics,badReceipt,goodReceipt});
 });

@@ -3,7 +3,7 @@ import { test, expect } from './studio-v3-test.js';
 // delays, so the browser's own stream, decoder and timers are exercised. Nothing leaves the machine.
 
 const ready = page=>expect(page.locator('[data-action=export]')).toBeEnabled({timeout:30000});
-const proposal = {summary:'Use navy and compact spacing',edits:[{target:'style',property:'color',value:'#163a65'},{target:'style',property:'padding',value:5}]};
+const proposal = {summary:'Use navy and compact spacing with Tax Invoice heading',operations:[{type:'set_style',patch:{color:'#163a65',padding:5}},{type:'set_heading',value:'Tax Invoice'}]};
 async function streamingGateway(page) {
   await page.addInitScript(text=> {
     const original=window.fetch.bind(window),sleep=ms=>new Promise(resolve=>setTimeout(resolve,ms)),encoder=new TextEncoder();
@@ -47,11 +47,16 @@ test('a streamed answer shows silent progress, then the usual reviewable proposa
   expect(wire).toHaveLength(1);expect(wire[0].stream).toBe(true);expect(wire[0].model).toBe('demo-auto');expect(Object.keys(wire[0]).sort()).toEqual(['input','model','stream']);
 });
 test('Stop during a stream cancels cleanly and leaves the form unchanged',async({page})=> {
+  await page.addInitScript(()=>{window.__hold=true;});
   await streamingGateway(page);await ask(page);
+  await page.waitForFunction(()=>window.__gates?.first);await page.evaluate(()=>window.__gates.first());
   await expect(page.locator('[data-ai-status]')).toContainText('Receiving response');
-  await page.locator('[data-ai=cancel]').click();
+  await page.waitForFunction(()=>window.__gates?.second);
+  const stop=page.locator('[data-ai=cancel]');
+  await stop.focus();await stop.press('Space');
   await expect(page.locator('.ai-assistant .ai-message-text').last()).toContainText('Cancelled');
   await expect(page.locator('[data-ai-proposal]')).toHaveCount(0);await expect(page.locator('#revision')).toHaveText('r0');
+  await page.evaluate(()=>window.__gates.second());
   await page.waitForTimeout(2500);
-  await expect(page.locator('[data-ai-proposal]')).toHaveCount(0);await expect(page.locator('[data-ai-send]')).toBeVisible();
+  await expect(page.locator('[data-ai-proposal]')).toHaveCount(0);await expect(page.locator('[data-ai-send]')).toBeVisible();await expect(page.locator('#revision')).toHaveText('r0');
 });

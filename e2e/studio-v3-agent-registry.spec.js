@@ -3,7 +3,7 @@ test.use({workInSteps:true});
 const ready=page=>expect(page.locator('[data-action=export]')).toBeEnabled({timeout:30000});
 
 const EDIT=[['get_capabilities'],['read_skill',{id:'form-authoring'}],['get_context'],
-  ['apply_operations',{summary:'Navy accents',operations:[{type:'set_style',patch:{color:'#163a65'}}]}],['inspect_draft'],['finish',{summary:'Navy accents'}]];
+  ['apply_operations',{summary:'Navy accents and Tax Invoice heading',operations:[{type:'set_style',patch:{color:'#163a65'}},{type:'set_heading',value:'Tax Invoice'}]}],['inspect_draft'],['finish',{summary:'Navy accents and Tax Invoice heading'}]];
 async function gateway(page,steps=EDIT) {
   await page.addInitScript(steps=> {
     const original=window.fetch.bind(window),json=(body,status=200)=>new Response(JSON.stringify(body),{status,headers:{'content-type':'application/json'}});

@@ -1,3 +1,4 @@
+import {expectApplied} from './ai-applied.js';
 import { isInference, responsesReply, userText } from './demo-gateway-fixture.js';
 import { test, expect } from './studio-v3-test.js';
 import { keepStructureOpen } from './studio-v3-structure.js';
@@ -94,7 +95,7 @@ test('mobile Add from the inspector opens the composer and clicking a chip retur
   expect(calls).toHaveLength(0); await expect(page.locator('#revision')).toHaveText('r0');
 });
 
-test('plain-language selected label request supplies its exact target and stays label-only through Apply and Undo',async({page})=>{
+test('plain-language selected label request supplies its exact target and stays label-only through automatic apply and Undo',async({page})=>{
  const wording='Only make the Ship to label 12pt bold.';let captured;
  await page.route('https://gpt.yapweijun1996.com/demo/**',async route=>{
   const path=new URL(route.request().url()).pathname;let body;
@@ -110,8 +111,7 @@ test('plain-language selected label request supplies its exact target and stays 
  });
  const valueBefore=await frame(page).locator('[data-v3-id=customer-ship]').first().textContent();
  await clickPaper(page,frame(page).locator('[data-v3-id=label-customer-ship]').first());await page.locator('.paper-toolbar [data-ai-add]').click();
- await page.locator('#ai-prompt').fill(wording);await page.locator('[data-ai-send]').click();await expect(page.locator('[data-ai-proposal]')).toBeVisible();
- await page.locator('[data-ai=preview]').click();await expect(page.locator('[data-ai=apply]')).toBeEnabled();await page.locator('[data-ai=apply]').click();
+ await page.locator('#ai-prompt').fill(wording);await page.locator('[data-ai-send]').click();await expectApplied(page,1);await ready(page);
  await expect(frame(page).locator('[data-v3-id=label-customer-ship]').first()).toHaveCSS('font-size','16px');await expect(frame(page).locator('[data-v3-id=label-customer-ship]').first()).toHaveCSS('font-weight','700');
  expect(await frame(page).locator('[data-v3-id=customer-ship]').first().textContent()).toBe(valueBefore);await page.locator('[data-ai=undo]').click();await ready(page);await expect(page.locator('#revision')).toContainText('r2');
 });

@@ -1,6 +1,7 @@
+import {expectApplied} from './ai-applied.js';
 import { responsesReply, userText } from './demo-gateway-fixture.js';
 import { test, expect } from './studio-v3-test.js';
-import { limitToSelection, reviewCandidate } from './studio-v3-scope.js';
+import { limitToSelection } from './studio-v3-scope.js';
 import { clickPaper } from './studio-v3-paper-click.js';
 
 const ready=page=>expect(page.locator('[data-action=export]')).toBeEnabled({timeout:30000});
@@ -19,7 +20,7 @@ async function gateway(page,replies) {
 }
 async function send(page,text) {await page.locator('#ai-prompt').fill(text);await page.locator('[data-ai-send]').click();}
 test.beforeEach(async({page})=>{page.on('dialog',d=>d.accept());await page.goto('/studio-v3/');await ready(page);});
-test('screenshot request changes selected label to 12pt bold without changing its value, ERP total or paper size; one Apply and Undo',async({page},info)=> {
+test('screenshot request changes selected label to 12pt bold without changing its value, ERP total or paper size; one automatic apply and Undo',async({page},info)=> {
   const wire=await gateway(page,[plan([label])]);
   const value=frame(page).locator('[data-v3-id=customer-ship]').first(),node=frame(page).locator('[data-v3-id=label-customer-ship]').first();
   const beforeValue=await value.evaluate(n=>({text:n.textContent,font:getComputedStyle(n).fontSize,weight:getComputedStyle(n).fontWeight}));
@@ -27,23 +28,22 @@ test('screenshot request changes selected label to 12pt bold without changing it
   const total=await frame(page).locator('[data-v3-id=totals-total]').textContent();
   await clickPaper(page,node);await page.locator('[data-ai-toggle]').click();await limitToSelection(page);
   await expect(page.locator('#ai-consent')).toHaveCount(0);await send(page,'Change this label to 12pt bold.');
-  await expect(page.locator('[data-ai-proposal]')).toBeVisible();
-  await expect(page.locator('#revision')).toHaveText('r0');await expect(page.locator('#ai-preview-banner')).toBeVisible();
+  await expectApplied(page,1);await ready(page);await expect(page.locator('#ai-preview-banner')).toBeHidden();
   expect(wire).toHaveLength(1);const payload=JSON.parse(userText(wire[0]));expect(payload.scope.id).toBe('label-customer-ship');expect(JSON.stringify(payload)).not.toMatch(/Sterling Manufacturing|ACME Industrial|RM 125|sampleData/);
-  await reviewCandidate(page);
+  await expect(page.locator('[data-ai=apply]')).toHaveCount(0);
   expect(await node.evaluate(n=>({font:getComputedStyle(n).fontSize,weight:getComputedStyle(n).fontWeight}))).toEqual({font:'16px',weight:'700'});
   expect(await value.evaluate(n=>({text:n.textContent,font:getComputedStyle(n).fontSize,weight:getComputedStyle(n).fontWeight}))).toEqual(beforeValue);
   await page.screenshot({path:info.outputPath('selected-label-12pt-bold-preview.png')});
-  await page.locator('[data-ai=apply]').click();await ready(page);await expect(page.locator('#revision')).toContainText('r1');expect(await frame(page).locator('[data-v3-id=totals-total]').textContent()).toBe(total);
-  await page.locator('[data-ai=undo]').click();await ready(page);expect(await node.evaluate(n=>({font:getComputedStyle(n).fontSize,weight:getComputedStyle(n).fontWeight}))).toEqual(beforeLabel);
+  await ready(page);await expect(page.locator('#revision')).toContainText('r1');expect(await frame(page).locator('[data-v3-id=totals-total]').textContent()).toBe(total);
+  await page.locator('[data-ai=undo]').click();await ready(page);await expect(page.locator('#revision')).toHaveText(/^r2\b/);expect(await node.evaluate(n=>({font:getComputedStyle(n).fontSize,weight:getComputedStyle(n).fontWeight}))).toEqual(beforeLabel);
 });
 test('Pi inspects actual oversized paper and repairs within the disclosed run using only code/geometry diagnostics',async({page})=> {
   const oversized={type:'add_field',section:'header',field:{id:'oversized-note',label:'Synthetic note',kind:'static',text:'Synthetic overflow note '.repeat(160),format:'',valueStyle:{fontSize:72}}};
   const requests=await gateway(page,[plan([oversized]),plan([label])]);await page.locator('[data-ai-toggle]').click();await send(page,'Make the Ship to label 12pt bold.');
-  await expect(page.locator('[data-ai-proposal]')).toBeVisible({timeout:45000});expect(requests).toHaveLength(2);
+  await expectApplied(page,1,{timeout:45000});expect(requests).toHaveLength(2);
   const repair=JSON.parse(userText(requests[1])).repair;expect(repair.diagnostics.ready).toBe(false);expect(repair.diagnostics.errors.length).toBeGreaterThan(0);expect(JSON.stringify(repair.diagnostics)).not.toMatch(/ACME|Sterling|Synthetic|RM|text|selector|message/);
-  await expect(page.locator('[data-ai-status]')).toContainText('2 inspection round(s)');await expect(page.locator('#revision')).toHaveText('r0');
-  await page.locator('[data-ai=preview]').click();await expect(page.locator('[data-ai=apply]')).toBeEnabled();
+  await expect(page.locator('#revision')).toHaveText(/^r1\b/);await ready(page);
+  await expect(frame(page).locator('[data-v3-id=label-customer-ship]').first()).toHaveCSS('font-size','16px');await expect(frame(page).locator('[data-v3-id=label-customer-ship]').first()).toHaveCSS('font-weight','700');
   await expect(frame(page).locator('[data-v3-id=header-oversized-note]')).toHaveCount(0);
 });
 test('typed structural proposal adds static text, reorders columns and preserves supplied amounts after Apply',async({page})=> {

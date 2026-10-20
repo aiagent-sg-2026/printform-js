@@ -5,7 +5,7 @@ import { keepStructureOpen } from './studio-v3-structure.js';
 // These deterministic transport tests need interception before a worker claims
 // the client; real worker+AI recovery is covered in the upgrade tests.
 
-const proposal = {summary:'Use navy and compact spacing',edits:[{target:'style',property:'color',value:'#163a65'},{target:'style',property:'padding',value:5}]};
+const proposal = {summary:'Use navy and compact spacing with a Tax Invoice heading',operations:[{type:'set_style',patch:{color:'#163a65',padding:5}},{type:'set_heading',value:'Tax Invoice'}]};
 const frame = page=>page.frameLocator('#preview-frame');
 const ready = page=>expect(page.locator('[data-action=export]')).toBeEnabled({timeout:30000});
 async function openAI(page) { await page.locator('[data-ai-toggle]').click(); await page.locator('#ai-prompt').fill('Use navy #163a65 and padding 5 px.'); }
@@ -115,7 +115,7 @@ test('coherent accessible SVG controls and keyboard/mobile AI sidepanel',async({
   await page.keyboard.press('Escape'); await expect(page.locator('[data-ai-toggle]')).toBeFocused();
   await page.setViewportSize({width:390,height:844}); await page.locator('[data-ai-toggle]').click();
   const box = await page.locator('#ai-panel').boundingBox(); expect(box.x).toBeGreaterThanOrEqual(0); expect(box.x+box.width).toBeLessThanOrEqual(390);
-  await page.locator('#ai-panel .ai-settings > summary').focus(); await page.keyboard.press('Shift+Tab'); await expect(page.locator('[data-ai-send]')).toBeFocused();
+  await page.locator('#ai-scope').focus(); await page.keyboard.press('Tab'); await expect(page.locator('[data-ai-send]')).toBeFocused();
   await page.screenshot({path:info.outputPath('ai-mobile.png')});
   await page.keyboard.press('Escape'); await expect(page.locator('[data-ai-toggle]')).toBeFocused();
 });
