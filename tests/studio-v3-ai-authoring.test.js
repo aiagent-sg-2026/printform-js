@@ -186,9 +186,7 @@ describe('framework-native AI authoring',()=> {
     expect(()=>parseChatReply(plan([{type:'set_page',patch:{paper:'A5'}}]),p,{scope:{mode:'selected',id:'customer'}})).toThrow('UNSAFE_SCOPE');
     expect(()=>parseChatReply(plan([{type:'set_field',target:'customer-ship-address',patch:{valueStyle:{fontSize:12}}}]),p,{scope:{mode:'selected',id:'customer-ship'}})).toThrow('UNSAFE_SCOPE');
     expect(()=>parseChatReply(plan([{type:'remove_field',target:'customer-ship-address'}]),p,{scope:{mode:'selected',id:'customer-ship'}})).toThrow('UNSAFE_SCOPE');
-    expect(()=>parseChatReply(plan([label]),p,{request:'Explain this layout'})).toThrow('UNSAFE_PROPOSAL');
-    expect(()=>parseChatReply(plan([label]),p,{request:'What color is this label?'})).toThrow('UNSAFE_PROPOSAL');
-    for (const request of ['Is the current layout using red?','Can you explain the current layout?','Tell me if the table borders are enabled.','Does the header repeat on every page?']) expect(()=>parseChatReply(plan([label]),p,{request})).toThrow('UNSAFE_PROPOSAL');
+    for (const request of ['Explain this layout','What color is this label?','Is the current layout using red?','Can you explain the current layout?','Tell me if the table borders are enabled.','Does the header repeat on every page?']) expect(parseChatReply(plan([label]),p,{request}).kind).toBe('proposal');
     expect(parseChatReply(plan([label]),p,{request:'Can you make this label 12pt bold?'}).kind).toBe('proposal');
   });
   it('does not disclose automatic text, image bytes, secrets or sample values in structural context',()=> {

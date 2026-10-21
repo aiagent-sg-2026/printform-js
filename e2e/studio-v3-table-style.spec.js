@@ -11,7 +11,6 @@ const ready=page=>expect(page.locator('[data-action=export]')).toBeEnabled({time
 const paper=page=>page.frameLocator('#preview-frame');
 const request='row data table bg style use yellow';
 const fill={kind:'proposal',summary:'Yellow table data row backgrounds',operations:[{type:'set_table_style',target:'items',patch:{rowBackground:'#ffff00'}}]};
-const wrong={kind:'proposal',summary:'Yellow table-row design',edits:[{target:'style',property:'color',value:'#d4a017'}]};
 async function mock(page,replies){
   const calls=[];
   await page.route('https://gpt.yapweijun1996.com/demo/**',async route=>{
@@ -35,12 +34,12 @@ async function expectYellow(locator){
 }
 test.beforeEach(async({page})=>{page.on('dialog',dialog=>dialog.accept());await keepStructureOpen(page);await page.goto('/studio-v3/');await ready(page);});
 test('yellow rows are rendered across pages; automatic apply, Undo and save/reopen retain data and template identity',async({page,context,browserName},info)=>{
-  const calls=await mock(page,[wrong,fill]);const before=await save(page,info,'before-row-fill.printform.json');
+  const calls=await mock(page,[fill]);const before=await save(page,info,'before-row-fill.printform.json');
   const totals=await paper(page).locator('[data-v3-id=totals-total]').allTextContents();
   const originalColors=await paper(page).locator('.prowitem_processed tr').evaluateAll(nodes=>nodes.map(node=>getComputedStyle(node).backgroundColor));
   expect(await paper(page).locator('.printform_page').count()).toBeGreaterThan(1);
   await page.locator('[data-ai-toggle]').click();await page.locator('#ai-prompt').fill(request);await page.locator('[data-ai-send]').click();
-  await expectApplied(page,1);expect(calls).toHaveLength(2);expect(JSON.stringify(calls[1])).toContain('TABLE_BACKGROUND_INTENT');
+  await expectApplied(page,1);expect(calls).toHaveLength(1);
   await expect(page.locator('.ai-diff')).toContainText('tableStyle.rowBackground');
   await expectYellow(paper(page).locator('.prowitem_processed'));await expectYellow(paper(page).locator('.prowitem_processed tr'));await expectYellow(paper(page).locator('.prowitem_processed td'));
   await page.screenshot({path:info.outputPath('yellow-table-row-applied.png')});
@@ -74,24 +73,23 @@ test('table selection permits row fill; manual property clearing restores existi
   await page.locator('[data-action=go-style]').click();await expect(page.getByLabel('Table row background',{exact:true})).toHaveValue('');
   await page.getByLabel('Table row background',{exact:true}).fill('#ffff00');await page.getByRole('button',{name:'Apply style',exact:true}).click();await ready(page);await expectYellow(paper(page).locator('.prowitem_processed td'));
 });
-test('padding-only and wrong-color results are repaired before a natural yellow-row request auto-applies',async({page})=>{
- const padding={kind:'proposal',summary:'Made data rows yellow',operations:[{type:'set_style',patch:{padding:12}}]};
- const blue={kind:'proposal',summary:'Made data rows yellow',operations:[{type:'set_table_style',target:'items',patch:{rowBackground:'#0000ff'}}]};
- const calls=await mock(page,[padding,blue,fill]);await page.locator('[data-ai-toggle]').click();
+test('schema-valid model fill is not repaired by host request-color interpretation and remains undoable',async({page})=>{
+ const blue={kind:'proposal',summary:'Light blue data rows',operations:[{type:'set_table_style',target:'items',patch:{rowBackground:'#dbeafe'}}]};
+ const original=await paper(page).locator('.prowitem_processed td').first().evaluate(node=>getComputedStyle(node).backgroundColor);
+ const calls=await mock(page,[blue]);await page.locator('[data-ai-toggle]').click();
  await page.locator('#ai-prompt').fill('Make every data row yellow.');await page.locator('[data-ai-send]').click();
- await expectApplied(page,1);expect(calls).toHaveLength(3);
- expect(JSON.stringify(calls[1])).toContain('TABLE_BACKGROUND_INTENT');expect(JSON.stringify(calls[2])).toContain('TABLE_BACKGROUND_INTENT');
- await expect(page.locator('.ai-diff')).toContainText('tableStyle.rowBackground');await expect(page.locator('.ai-diff')).not.toContainText('padding');
- await expect(page.locator('#revision')).toHaveText('r1 · unsaved template');
- await expectYellow(paper(page).locator('.prowitem_processed td'));await ready(page);
- await expect(page.locator('#revision')).toHaveText('r1 · unsaved template');await expectYellow(paper(page).locator('.prowitem_processed td'));
+ await expectApplied(page,1);expect(calls).toHaveLength(1);
+ await expect(page.locator('.ai-diff')).toContainText('tableStyle.rowBackground');
+ await expect(page.locator('#revision')).toHaveText('r1 · unsaved template');await ready(page);
+ await expect(paper(page).locator('.prowitem_processed td').first()).toHaveCSS('background-color','rgb(219, 234, 254)');
+ await page.locator('[data-ai=undo]').click();await ready(page);await expect(page.locator('#revision')).toHaveText('r2 · unsaved template');
+ await expect(paper(page).locator('.prowitem_processed td').first()).toHaveCSS('background-color',original);
 });
-test('comments-only table requests reject unrelated field styling before automatically applying the requested fill',async({page})=>{
- const unrelated={kind:'proposal',summary:'Made data rows yellow',operations:[{type:'set_field',target:'items-description',patch:{valueStyle:{fontSize:12}}}]};
- const calls=await mock(page,[unrelated,fill]);await page.locator('#left-panel [data-select=items]').click();await page.locator('#left-panel [data-ai-add]').click();
+test('comments-only table requests share comments with the model and apply its inspected fill',async({page})=>{
+ const calls=await mock(page,[fill]);await page.locator('#left-panel [data-select=items]').click();await page.locator('#left-panel [data-ai-add]').click();
  await page.getByLabel('Comment for items',{exact:true}).fill('Make this background yellow');
  await expect(page.locator('#ai-prompt')).toHaveValue('');await page.locator('[data-ai-send]').click();
- await expectApplied(page,1);expect(calls).toHaveLength(2);expect(JSON.stringify(calls[1])).toContain('TABLE_BACKGROUND_INTENT');
+ await expectApplied(page,1);expect(calls).toHaveLength(1);expect(JSON.stringify(calls[0])).toContain('Make this background yellow');
  await expect(page.locator('.ai-diff')).toContainText('tableStyle.rowBackground');await expect(page.locator('#revision')).toHaveText('r1 · unsaved template');
  await expectYellow(paper(page).locator('.prowitem_processed td'));
  await ready(page);await expect(page.locator('#revision')).toHaveText('r1 · unsaved template');await expectYellow(paper(page).locator('.prowitem_processed td'));

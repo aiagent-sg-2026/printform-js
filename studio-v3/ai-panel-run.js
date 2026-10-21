@@ -6,7 +6,6 @@ import { inspectProject } from './validation.js';
 import { errorMessage } from './ai-messages.js';
 import { DEMO_CONFIG } from './ai-gateway-config.js';
 import { newIntentKey } from './intent-ledger.js';
-import { taskOutcomeNotice } from './ai-task-outcome.js';
 import { autoApplicable } from './ai-auto-apply-policy.js';
 
 // Same conversation/proposal lifecycle; extraction keeps AIPanel below300 lines.
@@ -31,7 +30,7 @@ export async function sendPanelMessage() {
   this.pendingMessage = payload.request; this.conversation.add('user',[payload.request,...payload.references.filter(r=>r.comment).map(r=>`${r.id}: ${r.comment}`)].join('\n'),'answer',{documentKey:this.documentKey()}); this.node('#ai-prompt').value = ''; this.share(); this.update();
   try {
     const runId = crypto.randomUUID(), readObservationHost = ()=>this.observationAccess.state(runId), baseProfile = this.grantProfile(payload);
-    workspace = this.sourceWorkspace?.consume(baseProfile);
+    workspace = this.sourceWorkspace?.consume();
     const sourceBound = Boolean(workspace) || [workspace?.profile,baseProfile].some(profile=>profile?.startsWith('coding'));
     const observationAuthorization = await this.observationAccess.consume(runId); assertContext(); signal.throwIfAborted();
     if (this.viewing) { await this.restore(); this.viewing = false; }
@@ -66,15 +65,14 @@ export async function sendPanelMessage() {
     if (id !== this.generation) return;
     assertContext();
     if (result.kind === 'answer' && this.viewing) { await this.restoreUnapplied(); if (id !== this.generation) return; assertContext(); }
-    const incomplete = result.taskOutcome === 'draft-not-produced';
-    const card = this.conversation.add('assistant',result.kind === 'answer' ? result.message : result.summary,incomplete ? 'error' : result.kind === 'answer' ? 'answer' : 'ready',{documentKey:this.documentKey(),...(result.taskOutcome ? {taskOutcome:result.taskOutcome} : {}),...(incomplete ? {request:payload.request} : {}),observationProtected:observationAuthorization.text || observationAuthorization.values,...(result.kind === 'answer' && result.observation ? {observation:result.observation} : {}),...(result.diff ? {diff:result.diff} : {})});
+    const card = this.conversation.add('assistant',result.kind === 'answer' ? result.message : result.summary,result.kind === 'answer' ? 'answer' : 'ready',{documentKey:this.documentKey(),...(result.taskOutcome ? {taskOutcome:result.taskOutcome} : {}),observationProtected:observationAuthorization.text || observationAuthorization.values,...(result.kind === 'answer' && result.observation ? {observation:result.observation} : {}),...(result.diff ? {diff:result.diff} : {})});
     if (result.kind === 'proposal') this.proposal = {...result,bus,revision,baseDesign,epoch,selection,scope,cardId:card.id,intentKey:newIntentKey(),sourceBound};
     if (result.kind === 'answer' && this.viewing) return;
     // Layout/static-content edits (see ai-auto-apply-policy.js) are previewed at any width and applied once the checks pass.
     const direct = result.kind === 'proposal' && result.inspection?.ready && !sourceBound && autoApplicable(result,{workspace});
     const auto = result.kind === 'proposal' && (direct || innerWidth > 900), next = direct ? 'Applying to the form…' : auto && result.inspection?.ready ? 'Review the paper preview, then Apply.' : 'Preview before Apply.';
     const details = `${alias} · ${result.kind === 'answer' ? '' : `r${revision} · ${result.mode === 'steps' ? `${result.turns} steps` : `${result.iterations} inspection round(s)`} · `}Tokens: ${result.usage?.total ?? 'unavailable'}`;
-    this.message(`${incomplete ? taskOutcomeNotice(result.taskOutcome) : result.kind === 'answer' ? 'Read-only answer; form unchanged.' : `${result.inspection?.ready ? 'Local checks passed.' : 'Local checks blocked.'} ${next}`} (${details})`);
+    this.message(`${result.kind === 'answer' ? 'Answer ready; form unchanged.' : `${result.inspection?.ready ? 'Local checks passed.' : 'Local checks blocked.'} ${next}`} (${details})`);
     if (auto) await this.preview(true,{keepOpen:direct}).catch(error=>this.error(error));
     // Apply runs after the run is finished (busy is cleared in finally) and only if the same checked proposal is still current.
     if (direct && this.checked && id === this.generation) applyNow = this.proposal;

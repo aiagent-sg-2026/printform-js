@@ -7,7 +7,6 @@ import { runScenarioMatrix, canonicalScenario } from './scenario-matrix.js';
 import { semanticObservation } from './observation-context.js';
 import { ANSWER_MAX } from './agent-contracts.js';
 import { sourceToolHandlers } from './agent-source-handlers.js';
-import { answerTaskOutcome } from './ai-task-outcome.js';
 
 export const reply = (value,extra = {}) => ({content:[{type:'text',text:typeof value === 'string' ? value : JSON.stringify(value)}],details:{},...extra});
 // Trusted, compiled handlers keyed by tool name. A feature adds its handler here next to its registry descriptor;
@@ -89,13 +88,12 @@ export const TOOL_HANDLERS = Object.freeze({
     if (!run.evidence) throw fail('AGENT_EVIDENCE_REQUIRED');
     const observed = run.observations.current();
     if (observationId && observationId !== observed?.receipt.id) throw fail('EVIDENCE_STALE');
-    const text = run.finalizeAnswer ? run.finalizeAnswer(message) : message;
-    // Presentation metadata must never alter the finalized answer (including exact JSON).
-    if (typeof text !== 'string' || text.length > ANSWER_MAX) throw fail('AGENT_ANSWER_LIMIT');
+    // Presentation metadata never alters the model's exact answer (including JSON).
+    if (typeof message !== 'string' || message.length > ANSWER_MAX) throw fail('AGENT_ANSWER_LIMIT');
     if (observed) run.observations.requireLatest(observed.receipt.id);
-    const taskOutcome = answerTaskOutcome(run.intent);
-    run.outcome.answer = {message:text,taskOutcome,identity:run.identity,...(observed ? {observation:observed.receipt} : {})};
-    return reply(taskOutcome === 'draft-not-produced' ? 'Draft request not completed. No inspected proposal was delivered; the answer is retained separately. The form is unchanged.' : 'Done. The answer is shown to the person.',{terminate:true,details:{taskOutcome}});
+    const taskOutcome = 'answered';
+    run.outcome.answer = {message,taskOutcome,identity:run.identity,...(observed ? {observation:observed.receipt} : {})};
+    return reply('Done. The answer is shown to the person.',{terminate:true,details:{taskOutcome}});
   },
   report_blocked:async ({reason},run) => { run.outcome.blocked = {code:'AGENT_BLOCKED',reason}; return reply('Reported.',{terminate:true}); }
 });

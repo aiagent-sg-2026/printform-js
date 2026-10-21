@@ -4,7 +4,7 @@ const CODES = new Set(['MONETARY_TOKEN_UNREADABLE','LOGO_ASSET_UNAVAILABLE','TAB
 // Exact producer codes only; source paths, values and error messages stay local.
 for (const diagnostic of ['SOURCE_CURRENCY_MISMATCH','MISSING_BINDING','BARCODE_CONFIG','BARCODE_FORMAT','BARCODE_VALUE','BARCODE_CHECKSUM','BARCODE_ENCODING','BARCODE_INVALID','BARCODE_CONTENT_OVERFLOW']) CODES.add(diagnostic);
 const numbers = (value,keys) => Object.fromEntries(keys.filter(key=>Number.isFinite(value?.[key]) && value[key] >= 0 && value[key] <= 1000000).map(key=>[key,Math.round(value[key]*100)/100]));
-const code = value => CODES.has(value) || value === 'TABLE_BACKGROUND_INTENT' ? value : 'VALIDATION_BLOCKED';
+const code = value => CODES.has(value) ? value : 'VALIDATION_BLOCKED';
 export function safeRunDiagnostics(result,project) {
   const report = result?.report || result, quality = result?.quality || result;
   const ids = new Set((project?.spec?.components || []).map(c=>c.id));

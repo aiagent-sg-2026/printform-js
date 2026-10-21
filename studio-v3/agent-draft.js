@@ -1,7 +1,6 @@
 import { parseProposal, fail } from './ai-edits.js';
 import { assertScope } from './ai-chat-protocol.js';
 import { explicitBindingPointers } from './ai-authoring.js';
-import { missesTableBackgroundIntent } from './table-background-intent.js';
 import { labelSelection } from './design-authoring.js';
 import { protectedBindings, assertProtectedBindings } from './agent-binding-invariants.js';
 
@@ -43,8 +42,6 @@ export function createDraft(project,{scope = {mode:'whole'},request = '',referen
       const diff = mergeDiff(steps.flatMap(step=>step.diff)), last = steps.at(-1);
       if (!last || !diff.length) throw fail('NO_CHANGES');
       assertProtectedBindings(baseline,last.design);
-      // Judged once on the net result: a single step is not expected to satisfy the whole request.
-      if (missesTableBackgroundIntent(request,last.design,diff,references)) throw fail('TABLE_BACKGROUND_INTENT');
       return {
         kind:'proposal',summary,diff,targets:[...new Set(steps.flatMap(step=>step.targets))],
         ownership:Object.assign({},...steps.map(step=>step.ownership)),operations:steps.flatMap(step=>step.operations),

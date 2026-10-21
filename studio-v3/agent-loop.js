@@ -9,7 +9,6 @@ import { AGENT_TOOL_DEFINITIONS } from './agent-registry.js';
 import { fail } from './ai-edits.js';
 import { assertImageParts } from './ai-responses-wire.js';
 import { verifyAgentRelease } from './agent-release.js';
-import { requestIntent } from './ai-request-intent.js';
 import { blockedError } from './agent-blocked.js';
 
 // Stable orchestration instructions per effect grant; product semantics live in the feature registry and versioned guides.
@@ -29,7 +28,7 @@ export const AGENT_PROMPT = promptFor(createGrant('design'));
 
 // Runs one authoring task as a tool loop on a draft. Resolves to a proposal shaped like the single-step flow's, so
 // the existing Preview / Apply / Undo takes it unchanged; rejects with a coded error otherwise.
-export async function runAgentLoop({models,model,project,request,scope = {mode:'whole'},references = [],context,inspect,signal,media = [],memory = createAgentMemory(),failure = () => null,onStep = () => {},limits = DEMO_CONFIG.agent,profile = 'design',systemPrompt,finalizeAnswer,verifyRelease = verifyAgentRelease,baseRevision = 0,assertCurrent = () => {},runId = crypto.randomUUID(),observationAuthorization,readObservationHost,capturePixels,workspace}) {
+export async function runAgentLoop({models,model,project,request,scope = {mode:'whole'},references = [],context,inspect,signal,media = [],memory = createAgentMemory(),failure = () => null,onStep = () => {},limits = DEMO_CONFIG.agent,profile = 'design',systemPrompt,verifyRelease = verifyAgentRelease,baseRevision = 0,assertCurrent = () => {},runId = crypto.randomUUID(),observationAuthorization,readObservationHost,capturePixels,workspace}) {
   signal.throwIfAborted(); assertCurrent(); assertImageParts(media);
   const images = media.map(part=> { const [,mimeType,data] = /^data:(image\/[a-z]+);base64,(.+)$/.exec(part.image_url); return {type:'image',data,mimeType}; });
   const halt = new AbortController();
@@ -38,16 +37,13 @@ export async function runAgentLoop({models,model,project,request,scope = {mode:'
   stop.throwIfAborted(); assertCurrent();
   let harness;
   try {
-    const intent = requestIntent(request);
-    // A caller's profile is a ceiling. Question/source-quoted/ambiguous requests can only narrow it.
-    const effectiveProfile = intent.kind === 'draft' ? profile : profile === 'coding' ? 'coding-read-only' : profile === 'design' ? 'read-only' : profile;
-    const grant = createGrant(effectiveProfile,{scope,workspace,intent});
+    const grant = createGrant(profile,{scope,workspace});
     if (workspace) {
       if (workspace.profile !== profile) throw fail('WORKSPACE_DISCLOSURE_REQUIRED');
       await workspace.open({identity,project,baseRevision,runId},stop);
     }
     stop.throwIfAborted(); assertCurrent();
-    const tools = createAgentTools({draft,context:(current,info)=>context(current,{...info,source:grant.profile.startsWith('coding')}),inspect,signal:stop,outcome,limits,identity,stopRun:()=>halt.abort(),memory,onStep,grant,intent,finalizeAnswer,baseRevision,assertCurrent,runId,observationAuthorization,readObservationHost,capturePixels,workspace});
+    const tools = createAgentTools({draft,context:(current,info)=>context(current,{...info,source:grant.profile.startsWith('coding')}),inspect,signal:stop,outcome,limits,identity,stopRun:()=>halt.abort(),memory,onStep,grant,baseRevision,assertCurrent,runId,observationAuthorization,readObservationHost,capturePixels,workspace});
     const shown = new Set(grantedDefinitions(grant,AGENT_TOOL_DEFINITIONS).map(tool=>tool.name));
     const ctx = withAbortSignal(stop,BACKGROUND_CONTEXT);
     const session = await new MemorySessionRepo().create({},ctx);

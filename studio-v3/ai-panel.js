@@ -4,8 +4,7 @@ import { agentEnabled,setAgentEnabled } from './agent-preference.js';
 import { stepLabel } from './agent-step-labels.js';
 import { createDemoTransport } from './ai-demo-transport.js';
 import { assertProposalCurrent, fail } from './ai-edits.js';
-import { chatRequest,readOnlyRequest } from './ai-chat-protocol.js';
-import { profileFor } from './agent-effects.js';
+import { chatRequest } from './ai-chat-protocol.js';
 import { createIntentLedger } from './intent-ledger.js';
 import { Conversation, cleanMessages } from './ai-conversation.js';
 import { renderConversation, setupPanelLayout } from './ai-chat-view.js';
@@ -152,11 +151,9 @@ export class AIPanel {
   setModels(aliases) { const kept = fillModels(this.node('#ai-model'),aliases); this.referenceFiles?.capabilityChanged(); return kept; }
   restoreAlias(alias) { const valid = isDemoAlias(alias) ? alias : DEMO_CONFIG.defaultAlias; showAlias(this.node('#ai-model'),valid); this.modelChosen = valid !== DEMO_CONFIG.defaultAlias; }
   finish() { this.observationAccess?.end(); clearTimeout(this.timer); this.controller = null; this.busy = false; this.pendingMessage = null; this.agentSteps = []; this.update(); }
-  // Work in steps unless it is off, known to be unavailable, or images lack confirmed support. A question runs the same
-  // way under a read-only grant (see grantProfile); with steps unavailable it keeps the single-step answer flow.
+  // Work in steps unless it is off, unavailable, or images lack confirmed support.
   useSteps(payload,media,alias) { return agentEnabled() && !this.agentUnavailable && (!media.length || this.transport.supportsImages?.(alias) === true) && typeof this.transport.agentTurn === 'function'; }
-  // The effect grant comes from host state. The question check can only narrow it to read-only, never widen it.
-  grantProfile(payload) { return profileFor({question:readOnlyRequest(payload.request,payload.conversation)}); }
+  grantProfile() { return 'design'; }
   stepDone(step,id) { if (id === this.generation) { this.agentSteps.push({text:stepLabel(step),ok:step.ok,code:step.code}); this.update(); } }
   async send() { return sendPanelMessage.call(this); }
   present() { this.update(); }

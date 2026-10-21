@@ -30,11 +30,11 @@ export class AISourceWorkspace {
     } catch (error) { this.status.textContent = errorMessage(error); }
     finally { this.code.value = ''; this.pairing = false; this.panel.update(); }
   }
-  consume(baseProfile) {
+  consume() {
     if (!this.consent.checked) return undefined;
     this.resetConsent();
     if (this.closing || this.cleanupFailed || !agentEnabled() || this.panel.agentUnavailable) throw sourceFailure('ENVIRONMENT_UNSUPPORTED');
-    const run = authorizeSourceWorkspace(this.connection,{fictionalSource:true,readOnly:baseProfile === 'read-only'});
+    const run = authorizeSourceWorkspace(this.connection,{fictionalSource:true});
     this.active = run; this.panel.update(); return run;
   }
   async release(run) {

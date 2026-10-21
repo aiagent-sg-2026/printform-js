@@ -18,7 +18,7 @@ anything outside the references is rejected (`UNSAFE_SCOPE`).
 ## Panel layout
 
 - **Empty conversation.** Four general-form starters fill the input without sending.
-  The review starter asks for advice and receives a read-only grant; the others request edits.
+  The agent chooses an answer or an edit; every normal panel request receives the design grant.
   The visible sequence is Ask → Preview → Apply → Undo if needed; inspected layout and static-content edits skip manual Preview and Apply (see Automatic apply).
 - **Scope.** Neutral Whole form or explicitly referenced elements. Choosing Whole form removes
   references; selected scope cannot be chosen without references. Scope is locked while busy.
@@ -93,7 +93,7 @@ turn; older tool results are folded and the request has a size limit. A fresh ga
 requests. This needs the gateway to allow client-executed function tools for the project (`agent_tools_enabled`) and a
 native OpenAI route. If the gateway refuses tools, the panel says so once, uses the single-step flow, and does not ask
 again until the page is reloaded or the setting is switched. Disabling "Work in steps (beta)" in the settings menu uses
-the single-step flow. Questions also run in steps, under a read-only effect grant, unless steps are off or unavailable.
+the single-step flow. Questions also run in steps under the design grant unless steps are off or unavailable.
 The setting is on by default and remembered in the browser. Confirmed image
 support permits image-bearing agent runs; otherwise their pixels cannot be sent.
 
@@ -114,19 +114,21 @@ notes. They need the same confirmed image support as the single-step flow. A PDF
 the agent through `get_context`. Designing a new form from an image or PDF is not done here: the agent amends the
 current form.
 
-## Authoring and questions
+## AI first (owner decision 2026-10-21)
 
-A request that reads like a question is read-only: any proposal returned for it is rejected
-(`UNSAFE_PROPOSAL`). Advice requests such as “How should I…”, “Should I…” and “Please explain…”
-remain questions; an explicit “Can you improve…” request remains an edit. Ambiguous verbs `put`, `highlight` and `narrow` do not grant drafting; `move` remains an edit. Starter wording is not a test contract: the host enforces the request's effect grant, not a button label.
-- **Known limitation.** Request intent is a conservative pattern classifier, not a semantic one. Some assessment-style requests phrased as commands (for example, “Make a color contrast assessment of this layout.”) receive an edit grant; the agent may then propose a change, which the person can Undo or Discard.
+The host no longer classifies request text with regexes, narrows grants from wording,
+checks requested table colors, or substitutes host typography prose for the model's answer.
+The normal panel always grants design, including both answer and proposal abilities.
+The agent chooses `finish_answer` for questions (`answered`) or edits with
+`apply_operations`, inspects the final draft and hands it over with `finish`.
+An answer alone never delivers or applies a proposal. Legacy `draft-not-produced`
+metadata remains readable only for stored conversation recovery.
 
-In a step run the host builds a frozen effect grant before the first model call. A question gets the read-only grant:
-the model is shown only the read, notes, `finish_answer` and `report_blocked` tools, so it cannot change a draft or
-propose a change, and an answer needs a prior read of a guide, the form context or an inspection. Any other request
-gets the design grant (private draft plus a proposal for Preview and Apply). The question check can only narrow the
-grant; it never widens it, and no argument, model text or reference text can change it. Data and coding grants exist
-by name only and fail as unavailable until their tools are added.
+Deterministic guards remain: operation schemas, selected-element scope, protected
+bindings, final inspection, release/identity checks and Undo. The operation-type
+auto-apply allowlist is unchanged; bindings, collection, page setup and source work
+still require manual Preview/Apply. Source access needs its separate host authorization.
+Explicit read-only profiles remain valid for callers, but request text never selects them.
 
 General forms reuse the supported section slots. The agent can create nonfinancial static
 write-in fields, relabel sections, set the heading and hide irrelevant invoice tables/totals.
@@ -139,10 +141,8 @@ more, so there is one commit and no error for the harmless repeat. The same key 
 (`INTENT_CONFLICT`); a new proposal gets a new key. A failed outcome is replayed, never retried blindly. The ledger keeps
 the last 64 keys in memory only.
 
-Ordinary questions use a closed answer envelope in the single-step flow and remain read-only. Font
-questions use measured computed typography in the committed sandbox preview,
-with stable label/value/title/page-number IDs. Zoom is separate from print size.
-Missing measurements are explicitly unavailable.
+Single-step answers use a closed envelope and preserve the model's exact message.
+Measured typography facts remain available to the model; Zoom is separate from print size.
 
 Edits use a proposal with either the legacy style/width edits or at most 24
 framework-native operations. The canonical design contract and capabilities are

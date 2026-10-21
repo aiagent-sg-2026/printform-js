@@ -59,8 +59,7 @@ async function runStepHarness({transport,alias,request,project,signal,chat={},me
     }
     catch (error) { toolError = error; throw error; }
     const taskOutcome = proposal.taskOutcome || (inspection?.ready ? 'draft-ready' : undefined);
-    const text = taskOutcome === 'draft-not-produced' ? 'Draft request not completed; model answer retained. No inspected proposal was delivered.'
-      : proposal.kind === 'answer' ? 'Read-only answer ready.' : `${inspection?.ready ? 'Candidate authored and locally inspected.' : 'Candidate requires successful inspection and paper preview before any commit.'} ${COMMIT_POLICY_SHORT}`;
+    const text = proposal.kind === 'answer' ? 'Answer ready.' : `${inspection?.ready ? 'Candidate authored and locally inspected.' : 'Candidate requires successful inspection and paper preview before any commit.'} ${COMMIT_POLICY_SHORT}`;
     return {content:[{type:'text',text}],details:{terminal:true,...(taskOutcome ? {taskOutcome} : {}),...(inspection ? {inspection} : {})},terminate:true};
   }}));
   const created = await AgentHarness.create({session,models,model,tools,activeToolNames:tools.map(t=>t.name),systemPrompt:'Use one local answer or preview tool and stop.',toolExecution:'sequential',retry:{enabled:false,maxRetries:0,baseDelayMs:0}},context);
@@ -102,7 +101,7 @@ export async function runLayoutHarness(options) {
         return {...result,iterations:attempt,usage:Object.fromEntries(Object.keys(totals).map(key=>[key,unknown.has(key) ? null : totals[key]]))};
       }
     } catch (error) {
-      if (signal.aborted || !['LOGO_ASSET_UNAVAILABLE','TABLE_SECTION_GRID_UNSUPPORTED','FIELD_WIDTH_UNSUPPORTED','AUTHORING_OPERATION_LIMIT','GLOBAL_FONT_PROPERTY_UNSUPPORTED','MALFORMED_PROPOSAL','UNSAFE_PROPOSAL','UNSAFE_SCOPE','COLUMN_WIDTH_LIMIT','NO_CHANGES','TABLE_BACKGROUND_INTENT'].includes(error.code) || attempt === limit) throw error;
+      if (signal.aborted || !['LOGO_ASSET_UNAVAILABLE','TABLE_SECTION_GRID_UNSUPPORTED','FIELD_WIDTH_UNSUPPORTED','AUTHORING_OPERATION_LIMIT','GLOBAL_FONT_PROPERTY_UNSUPPORTED','MALFORMED_PROPOSAL','UNSAFE_PROPOSAL','UNSAFE_SCOPE','COLUMN_WIDTH_LIMIT','NO_CHANGES'].includes(error.code) || attempt === limit) throw error;
       // Failed completions have unavailable usage; never report zero consumption.
       for (const key of Object.keys(totals)) unknown.add(key);
       previous = {envelope:error.proposalEnvelope};

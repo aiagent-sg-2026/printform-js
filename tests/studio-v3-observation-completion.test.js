@@ -5,9 +5,9 @@ import {staticProject,pixelRun} from './support/pixel-observation.js';
 import {Conversation} from '../studio-v3/ai-conversation.js';
 import {renderConversation} from '../studio-v3/ai-chat-view.js';
 
-function setup({finalizeAnswer}={}) {
+function setup() {
   const project=staticProject(),draft=createDraft(project),outcome={},state={revision:4};
-  const tools=createAgentTools({draft,outcome,context:()=>'',inspect:async()=>({report:{status:'ready'}}),finalizeAnswer,
+  const tools=createAgentTools({draft,outcome,context:()=>'',inspect:async()=>({report:{status:'ready'}}),
     baseRevision:4,identity:{release:'completion-test',verified:true},signal:new AbortController().signal,
     assertCurrent:()=> {if(state.revision!==4)throw Object.assign(new Error(),{code:'STALE_PROPOSAL'});},limits:{maxTurns:100,maxRepeatedFailures:20}});
   const execute=async(name,args={})=> {const tool=tools.find(t=>t.name===name);tool.prepareArguments(args);return tool.execute(name,args);};
@@ -74,11 +74,9 @@ describe('OBS-05 latest observation at the actual completion owner',()=> {
     await run.execute('finish_answer',{message:'Latest page.',observationId:latest.observation.id});
     expect(run.outcome.answer.observation).toEqual(latest.observation);
   });
-  it('rechecks finalizer changes and bounds only the verbatim answer without truncation',async()=> {
-    let run;run=setup({finalizeAnswer:()=> {run.project.sampleData.changed=true;return 'Changed.';}});await run.inspect();
-    await expect(run.execute('finish_answer',{message:'Compare.'})).rejects.toMatchObject({code:'EVIDENCE_STALE'});expect(run.outcome.answer).toBeUndefined();
-    const expanded=setup({finalizeAnswer:()=> 'x'.repeat(4001)});await expanded.inspect();
-    await expect(expanded.execute('finish_answer',{message:'Bounded model answer.'})).rejects.toMatchObject({code:'AGENT_ANSWER_LIMIT'});
+  it('bounds the verbatim answer without truncation',async()=> {
+    const expanded=setup();await expanded.inspect();
+    await expect(expanded.execute('finish_answer',{message:'x'.repeat(4001)})).rejects.toMatchObject({code:'AGENT_ARGUMENTS_INVALID'});
     expect(expanded.outcome.answer).toBeUndefined();
     const long=setup(),latest=await long.inspect();
     await long.execute('finish_answer',{message:'x'.repeat(4000)});expect(long.outcome.answer.message).toBe('x'.repeat(4000));

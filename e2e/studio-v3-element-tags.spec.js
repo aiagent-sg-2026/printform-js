@@ -38,7 +38,7 @@ test('canvas label and structure value become removable composer references; onl
   expect(calls).toHaveLength(0);
   await expect(page.locator('#ai-consent')).toHaveCount(0);
   await page.locator('[data-ai-send]').click();
-  await expect(page.locator('.ai-assistant[data-state=error]')).toBeVisible();
+  await expect(page.locator('.ai-assistant')).toContainText('Referenced elements received. The form is unchanged.');
   await expect(page.locator('[data-ai-proposal]')).toHaveCount(0);
   await expect(page.locator('[data-ai=apply]')).toHaveCount(0);
   expect(calls.filter(call=>isInference(call.path))).toHaveLength(1);

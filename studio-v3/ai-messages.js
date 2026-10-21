@@ -32,7 +32,6 @@ export const AI_MESSAGES = {
   GLOBAL_FONT_PROPERTY_UNSUPPORTED:'The suggestion used an unsupported global font property. Nothing changed.',
   MALFORMED_PROPOSAL:'The model did not return a complete supported answer or proposal. Nothing changed.',
   UNSAFE_PROPOSAL:'The model proposed an unsupported or unsafe edit. Nothing changed.',
-  TABLE_BACKGROUND_INTENT:'The suggestion did not match the requested table row background. Ask for the intended row fill or exact hex color. Nothing changed.',
   UNSAFE_SCOPE:'The suggestion exceeds the selected scope. Choose Whole template for global styles. Nothing changed.',
   COLUMN_WIDTH_LIMIT:'Proposed column widths exceed 100%. Nothing changed.',
   NO_CHANGES:'The suggestion contains no layout changes. Nothing changed.',

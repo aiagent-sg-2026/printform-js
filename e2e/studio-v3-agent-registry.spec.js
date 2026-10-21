@@ -50,7 +50,7 @@ test('inspected page setup preserves manual Preview/Apply/Undo',async({page})=> 
   expect(await margin()).toBeCloseTo(before,0);
 });
 
-test('answers a question in steps under a read-only grant with no proposal and no revision change',async({page})=> {
+test('answers a question in steps under a design grant with no proposal and no revision change',async({page})=> {
   const errors=[];page.on('pageerror',e=>errors.push(e.message));page.on('console',m=>{if(m.type()==='error')errors.push(m.text());});
   await gateway(page,[['get_capabilities'],['read_skill',{id:'form-authoring'}],['finish_answer',{message:'The footer holds the notes and the signature.'}]]);
   await open(page);
@@ -60,9 +60,9 @@ test('answers a question in steps under a read-only grant with no proposal and n
   const bodies=await page.evaluate(()=>window.__registryWire);expect(bodies).toHaveLength(3);
   const shown=bodies[0].tools.map(t=>t.name);
   expect(shown).toEqual(expect.arrayContaining(['get_capabilities','read_skill','get_context','inspect_draft','finish_answer']));
-  for(const name of ['apply_operations','undo_step','finish'])expect(shown).not.toContain(name);
+  expect(shown).toEqual(expect.arrayContaining(['apply_operations','undo_step','finish']));
   const catalog=bodies.flatMap(b=>b.input).filter(i=>i.type==='function_call_output').map(i=>{try{return JSON.parse(i.output);}catch{return null;}}).find(v=>v?.tools);
-  expect(catalog.run.profile).toBe('read-only');expect(catalog.tools.map(t=>t.name)).not.toContain('apply_operations');expect(errors).toEqual([]);
+  expect(catalog.run.profile).toBe('design');expect(catalog.tools.map(t=>t.name)).toContain('apply_operations');expect(errors).toEqual([]);
 });
 
 test('rejects a mixed-release manifest before sending model content',async({page})=> {

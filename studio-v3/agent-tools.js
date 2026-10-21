@@ -15,10 +15,10 @@ export { AGENT_TOOL_NAMES } from './agent-registry.js';
 // `grant` is host-built and frozen. Every registered tool is wrapped so its handler re-checks the grant, even though
 // the model is only shown the granted ones (`visible`); a hidden tool never reaches a handler.
 export function createAgentTools({draft,context,inspect,signal,outcome,limits,identity,stopRun=()=>{},memory = createAgentMemory(),onStep = () => {},
-  definitions = AGENT_TOOL_DEFINITIONS,handlers = TOOL_HANDLERS,intent,grant = createGrant('design',{intent}),finalizeAnswer,
+  definitions = AGENT_TOOL_DEFINITIONS,handlers = TOOL_HANDLERS,grant = createGrant('design'),
   runId = crypto.randomUUID(),baseRevision = 0,assertCurrent = () => {},observationAuthorization,readObservationHost = () => ({dataPolicy:null,selectedTargets:[]}),capturePixels,workspace}) {
   const visible = grantedDefinitions(grant,definitions);
-  const run = {calls:0,failure:'',repeats:0,inspected:null,evidence:false,draft,context,inspect,signal,outcome,limits,identity,memory,definitions,visible,grant,intent,finalizeAnswer,runId,baseRevision,workspace,assertCurrent};
+  const run = {calls:0,failure:'',repeats:0,inspected:null,evidence:false,draft,context,inspect,signal,outcome,limits,identity,memory,definitions,visible,grant,runId,baseRevision,workspace,assertCurrent};
   const releaseIdentity = Object.freeze(structuredClone(identity || {release:'development',verified:false}));
   run.observationKind = 'print-diagnostics'; run.authorization = observationAuthorization; run.readObservationHost = readObservationHost;
   run.observations = createObservationRecords({assertCurrent,readState:()=> {
@@ -69,7 +69,7 @@ export function createAgentTools({draft,context,inspect,signal,outcome,limits,id
           const result = await handlers[name](args || {},run);
           assertCurrent(); signal.throwIfAborted();
           const taskOutcome = result.details?.taskOutcome;
-          run.failure = ''; run.repeats = 0; onStep({name,ok:taskOutcome !== 'draft-not-produced',detail:result.details?.detail,...(taskOutcome ? {taskOutcome} : {})}); return result;
+          run.failure = ''; run.repeats = 0; onStep({name,ok:true,detail:result.details?.detail,...(taskOutcome ? {taskOutcome} : {})}); return result;
         } catch (error) { return rejected(name,args,error); }
       }
     };

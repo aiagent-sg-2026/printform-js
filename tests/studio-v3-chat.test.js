@@ -1,41 +1,20 @@
 import { describe,it,expect } from 'vitest';
 import { newProject } from '../studio-v3/model.js';
-import { parseChatReply,typographyAnswer,chatRequest,readOnlyRequest } from '../studio-v3/ai-chat-protocol.js';
+import { parseChatReply,chatRequest } from '../studio-v3/ai-chat-protocol.js';
 import { Conversation,cleanMessages } from '../studio-v3/ai-conversation.js';
 import { runLayoutHarness } from '../studio-v3/ai-harness.js';
 const project = newProject(), color = {target:'style',property:'color',value:'#163a65'};
 const reply = value=>JSON.stringify(value);
 describe('closed browser chat protocol',()=> {
-  it('answers current font questions from measured facts, never invented model values',()=> {
-    const typography = [{id:'header',role:'title',pt:18},{id:'header-company',role:'value',pt:12},{id:'items',role:'table cell',pt:9}];
-    const answer = parseChatReply(reply({kind:'answer',message:'Everything is 80 pt'}),project,{request:'What are the current font sizes?',typography});
-    expect(answer.kind).toBe('answer'); expect(answer.message).toContain('title: 18 pt'); expect(answer.message).toContain('value: 12 pt'); expect(answer.message).not.toContain('80'); expect(answer.candidate).toBeUndefined();
-    expect(typographyAnswer([], {mode:'whole'})).toContain('unavailable');
-    expect(typographyAnswer(typography,{mode:'selected',id:'header-company'})).not.toContain('table cell');
+  it('preserves the model answer instead of substituting host typography text',()=> {
+    const message = '{"headingPt":18}', typography = [{id:'header',role:'title',pt:12}];
+    const answer = parseChatReply(reply({kind:'answer',message}),project,{request:'What is the current heading font size?',typography});
+    expect(answer).toEqual({kind:'answer',message,taskOutcome:'answered'}); expect(answer.candidate).toBeUndefined();
   });
   it.each([{kind:'answer',message:'x',edits:[color]},{kind:'answer',message:''},{kind:'answer',message:'x',code:'eval(1)'},{kind:'proposal',summary:'x',edits:[color],message:'x'},{kind:'tool',message:'x'}])('rejects mixed/unsafe envelope %j',value=>expect(()=>parseChatReply(reply(value),project)).toThrow());
-  it('cannot convert a read-only font question into an edit',()=>expect(()=>parseChatReply(reply({kind:'proposal',summary:'x',edits:[color]}),project,{request:'Current font size how much?'})).toThrow());
-  it.each(['How should I bind an attendance field?','How many pages does this form have?','Should I add a signature field?','May I change the paper size?','Tell me how to add a field.','Please explain the binding options.','如何绑定签到人姓名？','应该如何调整表格？','请问怎么添加签名栏？'])('keeps advice question read-only: %s',request=> {
-    expect(readOnlyRequest(request)).toBe(true);
-    expect(()=>parseChatReply(reply({kind:'proposal',summary:'Unrequested edit',edits:[color]}),project,{request})).toThrow('UNSAFE_PROPOSAL');
-  });
-  it.each(['Create a visitor registration form.','Please add a signature field.','Can you create an attendance form?','Could you please bind this field?'])('retains deliberate authoring request: %s',request=> {
-    expect(readOnlyRequest(request)).toBe(false);
-  });
-  it.each([
-    '只读：当前全局字号是多少 pt？只回答 JSON {"fontPt":数字}，不要修改任何内容。',
-    '唯讀模式：說明如何修改標題，但不要執行。',
-    'Read-only: explain how I could change the font; do not modify the form.',
-    'READ ONLY: make the heading blue.'
-  ])('honors an explicit read-only restriction even when the request mentions an edit: %s',request=> {
-    const before = structuredClone(project);
-    expect(readOnlyRequest(request)).toBe(true);
-    expect(()=>parseChatReply(reply({kind:'proposal',summary:'Unrequested edit',operations:[{type:'set_style',patch:{font:10}}]}),project,{request})).toThrow('UNSAFE_PROPOSAL');
-    expect(project).toEqual(before);
-  });
-  it('does not mistake negating read-only for granting read-only',()=> {
-    expect(readOnlyRequest('不要只读，请修改标题。')).toBe(false);
-    expect(readOnlyRequest('Please add a field; this is not a read-only request.')).toBe(false);
+  it.each(['What is the current heading font size?','Should I add a signature field?','Read-only: make the heading blue.'])('leaves response selection to the agent: %s',request=> {
+    const before = structuredClone(project), result = parseChatReply(reply({kind:'proposal',summary:'Navy',edits:[color]}),project,{request});
+    expect(result.kind).toBe('proposal'); expect(result.design.color).toBe('#163a65'); expect(project).toEqual(before);
   });
   it.each(['reply','inspection'])('rejects context changed during %s before delivering a result',async phase=> {
     let stale = false, calls = 0;

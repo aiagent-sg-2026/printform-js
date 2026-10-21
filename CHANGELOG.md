@@ -6,12 +6,12 @@ Studio v2, the single-HTML protocol, and the Agent Contract version separately â
 See [TASK.md](TASK.md) for the full engineering log, commit hashes, test counts and verification detail; this file only lists reader-facing changes.
 ## [Unreleased]
 
+### Batch 14, 2026-10-21
+- AI first: remove request-text intent/color classifiers and host answer replacement. Design/coding grants retain answer and proposal abilities; `finish_answer` is answered. Keep schema, scope, inspection, identity, Undo and the existing automatic/manual apply boundary.
 ### Batch 13, 2026-10-20
-- Recognize direct visual-edit verbs while keeping explanation requests and explicit read-only restrictions read-only. Exclude ambiguous added verbs `put`, `highlight` and `narrow` from drafting grants; retain original `move`.
-- Clarify that manual-only edits still receive proposals awaiting Preview and Apply, rather than being reported as blocked.
+- Recognize direct visual-edit verbs with conservative read-only interpretation (superseded by Batch 14); manual-only edits still receive proposals awaiting Preview and Apply.
 ### Batch 12, 2026-10-20
-- Keep the AI composer scope pill at 16px without widening its bound or wrapping the toolbar.
-- Scroll opened reference notices into the conversation viewport while keeping the composer anchored.
+- Keep the AI composer scope pill at 16px without widening its bound or wrapping the toolbar; scroll opened reference notices into the conversation viewport.
 - Clarify that approval covers data bindings, the data collection, page setup and source code; policy authority is unchanged.
 ### AI Assistant layout and static-content automatic apply â€” 2026-10-20
 - Show a plain conversation and activity lines in the AI panel; move the raw setting table and its JSON into a collapsed Details block; rewrite step labels without internal words.

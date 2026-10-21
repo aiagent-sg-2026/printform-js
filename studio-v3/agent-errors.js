@@ -16,7 +16,6 @@ export const TOOL_ERRORS = Object.freeze({
   UNSAFE_SCOPE:entry('SCOPE_DENIED','rejected',true,'Edit only the selected targets, or report_blocked if the request needs more.'),
   COLUMN_WIDTH_LIMIT:entry(null,'rejected',true,'Keep item column widths between 1 and 100 and their total at or below 100.'),
   NO_CHANGES:entry(null,'rejected',true,'Choose a value that differs from the current draft, or finish if the work is done.'),
-  TABLE_BACKGROUND_INTENT:entry('SCOPE_DENIED','rejected',true,'Change the table background only when the request asks for it.'),
   AGENT_SKILL_UNAVAILABLE:entry('CAPABILITY_UNAVAILABLE','unavailable',true,'Use a guide id listed by get_capabilities.'),
   AGENT_INSPECTION_REQUIRED:entry('EVIDENCE_STALE','evidence',true,'Call inspect_draft on the exact final draft before finish.'),
   EVIDENCE_STALE:entry('EVIDENCE_STALE','evidence',true,'The observed state changed. Inspect the current candidate again; start a new run if the host revision changed.'),

@@ -1,7 +1,7 @@
 import {describe,it,expect} from 'vitest';
 import {newProject,designOf,compileProject} from '../studio-v3/model.js';
 import {validateDesign} from '../studio-v3/design-validation.js';
-import {parseChatReply,chatRequest,CHAT_PROMPT} from '../studio-v3/ai-chat-protocol.js';
+import {parseChatReply,chatRequest} from '../studio-v3/ai-chat-protocol.js';
 import {createBus,editProject,designOperations,formDesign} from '../studio-v3/controller.js';
 import {saveProject,readProject} from '../studio-v3/file-io.js';
 import {cleanMessages} from '../studio-v3/ai-conversation.js';
@@ -47,6 +47,10 @@ describe('closed table body background',()=>{
     expect(parseChatReply(proposal(),newProject(),{scope:{mode:'selected',ids:['items','footer']}}).kind).toBe('proposal');
     expect(()=>parseChatReply(accent,newProject(),{scope:{mode:'selected',id:'items'},request})).toThrow('UNSAFE_SCOPE');
   });
+  it('does not let element comments authorize fill outside the selected table scope',()=>{
+    const project=newProject(),references=[{documentId:project.manifest.documentId,revision:0,id:'items-description',kind:'column',block:'items',role:'value',comment:'Make table rows yellow'}];
+    expect(()=>parseChatReply(proposal(),project,{request:'Apply the comments on the referenced elements.',references,scope:{mode:'selected',id:'items-description'}})).toThrow('UNSAFE_SCOPE');
+  });
   it.each(['yellow','#ff0','#ffff00;display:none','url(https://example.com/a)',17,false,{},[]])('rejects unsafe fill %j',value=>{
     const project=newProject();expect(()=>parseChatReply(proposal([{...operation,patch:{rowBackground:value}}]),project)).toThrow('UNSAFE_PROPOSAL');
     const design=designOf(project);design.tableStyle={rowBackground:value};expect(()=>validateDesign(design)).toThrow();
@@ -68,18 +72,13 @@ describe('closed table body background',()=>{
     const wire=JSON.parse(chatRequest(project,{request,scope:{mode:'selected',id:'items'},typography:[],conversation:[]}));
     expect(wire.layout.table).toEqual({target:'items',rowBackground:'#ffff00'});
     expect(wire.scopeAuthoringTargets[0]).toMatchObject({styleOperation:'set_table_style',allowedStylePatchKeys:['rowBackground']});
-    expect(JSON.stringify(wire)).not.toContain('ACME');expect(CHAT_PROMPT).toContain('NOT a table background');
+    expect(JSON.stringify(wire)).not.toContain('ACME');
   });
-  it('rejects an accent-only substitute and allows ordinary accent requests',()=>{
-    for(const text of [request,'Make table row background yellow','把表格数据行背景改成黄色'])expect(()=>parseChatReply(accent,newProject(),{request:text})).toThrow('TABLE_BACKGROUND_INTENT');
-    expect(parseChatReply(accent,newProject(),{request:'Use yellow brand accents'}).kind).toBe('proposal');
-  });
-  it('repairs the wrong accent intent through the bounded harness without applying it',async()=>{
-    const project=newProject(),sent=[];
+  it('does not interpret request colors or reject a schema-valid accent proposal',async()=>{
+    const project=newProject(),before=structuredClone(project),sent=[];
     const result=await runLayoutHarness({project,alias:'demo-fast',request:chatRequest(project,{request,scope:{mode:'whole'},typography:[],conversation:[]}),chat:{request},signal:new AbortController().signal,
-      transport:{plan:async(_alias,wire)=>{sent.push(wire);return{text:sent.length===1?accent:proposal()};}},inspectCandidate:async()=>({ready:true})});
-    expect(sent).toHaveLength(2);expect(sent[1]).toContain('TABLE_BACKGROUND_INTENT');expect(result.design.tableStyle.rowBackground).toBe('#ffff00');
-    expect(project.manifest.studioV3.tableStyle).toBeUndefined();expect(project.revision).toBe(0);
+      transport:{plan:async(_alias,wire)=>{sent.push(wire);return{text:accent};}},inspectCandidate:async()=>({ready:true})});
+    expect(sent).toHaveLength(1);expect(result.design.color).toBe('#d4a017');expect(result.design.tableStyle).toBeUndefined();expect(project).toEqual(before);
   });
   it('provides fill/reset in existing global and table property forms, respecting staged changes',()=>{
     const project=newProject();

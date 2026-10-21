@@ -60,14 +60,12 @@ describe('the panel working in steps',()=> {
     expect(panel.node('[data-ai-status]').textContent).toContain('before printing'); expect(panel.getBus().revision).toBe(0);
   });
 
-  it('keeps general how-to questions in the read-only tool lane',async()=> {
+  it('lets the agent answer general how-to questions under the design grant',async()=> {
     const gateway = scriptedGateway({agent:[turn([reasoning(1),fn(1,'get_context',{})]),turn([reasoning(2),fn(2,'finish_answer',{message:'Select the field, then choose an available binding.'})])]}), {panel} = setup({transport:gateway.transport});
     ask(panel,'How should I bind an attendance field?'); await panel.send();
     expect(lastCard(panel).status).toBe('answer'); expect(panel.proposal).toBeNull(); expect(panel.getBus().revision).toBe(0);
     for (const body of gateway.bodies.filter(body=>body.tools)) {
-      expect(body.tools.map(tool=>tool.name)).toContain('finish_answer');
-      expect(body.tools.map(tool=>tool.name)).not.toContain('apply_operations');
-      expect(body.tools.map(tool=>tool.name)).not.toContain('finish');
+      expect(body.tools.map(tool=>tool.name)).toEqual(expect.arrayContaining(['finish_answer','apply_operations','finish']));
     }
   });
 
@@ -81,7 +79,7 @@ describe('the panel working in steps',()=> {
     expect(panel.conversation.messages.some(card=>card.text==='Answer from previous document')).toBe(false);
     expect(old.project).toEqual(before); expect(old.revision).toBe(0); expect(current.revision).toBe(0); expect(panel.proposal).toBeNull();
   });
-  it('runs a question in steps under a read-only grant, and keeps the single-step flow when steps are off or unavailable',async()=> {
+  it('runs a question in steps under design, and keeps the single-step flow when steps are off or unavailable',async()=> {
     const question = scriptedGateway({agent:[turn([reasoning(1),fn(1,'get_context',{})]),turn([reasoning(2),fn(2,'finish_answer',{message:'The footer holds the notes.'})])]}), asked = setup({transport:question.transport});
     ask(asked.panel,'What is in the footer?'); await asked.panel.send();
     expect(question.agentCalls()).toBe(2); expect(question.singleCalls()).toBe(0);

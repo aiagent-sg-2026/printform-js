@@ -26,7 +26,7 @@ test('grounded font Q&A and follow-up proposal form a real conversation with exp
   const requests=await mock(page,[answer,proposal]);
   const original=await page.frameLocator('#preview-frame').locator('[data-v3-id=totals-total]').textContent();
   await page.locator('[data-ai-toggle]').click();await send(page,'What are the current font sizes?');
-  const log=page.locator('[data-ai-log]');await expect(log).toContainText('header-title · title: 18 pt');await expect(log).toContainText('header-company · value: 12 pt');await expect(log).toContainText('items · column heading: 8 pt');await expect(log).toContainText('computed styles');
+  const log=page.locator('[data-ai-log]');await expect(log.locator('.ai-assistant .ai-message-text').last()).toHaveText(answer.message);
   await expect(page.locator('#revision')).toHaveText('r0');await expect(page.locator('[data-ai=apply]')).toHaveCount(0);
   const context=JSON.parse(userText(requests[0]));expect(context.typography.length).toBeGreaterThan(5);expect(context.typography.every(f=>Object.keys(f).sort().join(',')==='id,pt,role')).toBe(true);expect(JSON.stringify(context)).not.toMatch(/ACME|125|sampleData/);
   await page.locator('#ai-prompt').fill('Use navy accents #163a65 instead.');await expect(page.locator('#ai-consent')).toHaveCount(0);
@@ -44,11 +44,11 @@ test('a referenced scope rejects global styles, the hint tracks scope and an ear
   await page.locator('#left-panel [data-select=customer]').click();await expect(page.locator('[data-ai-proposal]')).toHaveCount(0);await expect(page.locator('[data-ai-log]')).toContainText('Expired');await expect(page.locator('[data-ai=apply]')).toHaveCount(0);
   await page.locator('#left-panel [data-select=items]').click();await expect(page.locator('[data-ai=apply]')).toHaveCount(0);
 });
-test('font answers use selected field facts, remain plain text and do not treat Shift+Enter or IME Enter as Send',async({page})=> {
+test('font answers preserve model text inertly and do not treat Shift+Enter or IME Enter as Send',async({page})=> {
   const requests=await mock(page,[{kind:'answer',message:'<img src=x onerror=alert(1)>'}]);await page.locator('#left-panel [data-select=header-company]').click();await page.locator('[data-ai-toggle]').click();await limitToSelection(page);
   await page.locator('#ai-prompt').fill('What is the current font size?');await page.locator('#ai-prompt').press('Shift+Enter');expect(requests).toHaveLength(0);
   await page.locator('#ai-prompt').evaluate(n=>n.dispatchEvent(new KeyboardEvent('keydown',{key:'Enter',isComposing:true,bubbles:true})));expect(requests).toHaveLength(0);
-  await page.locator('[data-ai-send]').click();await expect(page.locator('[data-ai-log]')).toContainText('header-company · value: 12 pt');await expect(page.locator('[data-ai-log] img')).toHaveCount(0);await expect(page.locator('#revision')).toHaveText('r0');
+  await page.locator('[data-ai-send]').click();await expect(page.locator('[data-ai-log] .ai-assistant .ai-message-text').last()).toHaveText('<img src=x onerror=alert(1)>');await expect(page.locator('[data-ai-log] img')).toHaveCount(0);await expect(page.locator('#revision')).toHaveText('r0');
 });
 test('desktop panel resizing validates reload preference and refits paper without revision changes',async({page})=> {
   await page.setViewportSize({width:1440,height:900});await page.locator('[data-ai-toggle]').click();await page.locator('#zoom').selectOption('width');await expect(page.locator('#zoom')).toHaveValue('width');const separator=page.getByRole('separator',{name:'Resize AI panel'});await separator.focus();const before=await page.locator('#preview-frame').getAttribute('data-zoom');
@@ -81,7 +81,7 @@ test('timeout stops a held request and retry requires another deliberate Send',a
 test.describe('normal browser context',()=> {
   test.use({blockServiceWorkers:false});
   test('read-only chat and print renders have no page errors with normal service-worker permissions',async({page,context})=> {
-    const errors=[];page.on('pageerror',e=>errors.push(e.message));const transport=await syntheticDemoTransport(context,[answer,proposal]);await page.reload();await ready(page);await page.locator('[data-ai-toggle]').click();await send(page,'What are the current font sizes?');await expect(page.locator('[data-ai-status]')).toContainText('Read-only answer');
+    const errors=[];page.on('pageerror',e=>errors.push(e.message));const transport=await syntheticDemoTransport(context,[answer,proposal]);await page.reload();await ready(page);await page.locator('[data-ai-toggle]').click();await send(page,'What are the current font sizes?');await expect(page.locator('.ai-assistant[data-state=answer]')).toBeVisible();
     await send(page,'Use navy accents.');await expectApplied(page,1);await ready(page);await page.locator('[data-ai=undo]').click();await ready(page);await expect(page.locator('#revision')).toHaveText(/^r2\b/);expect(errors).toEqual([]);expect(transport.requests).toHaveLength(2);expect(transport.unexpected).toEqual([]);
   });
 });
