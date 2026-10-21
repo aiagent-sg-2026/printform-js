@@ -41,7 +41,7 @@ test('the Validate panel and the agent tool report the same result for every sce
   await expect(page.locator('.ai-message').filter({hasText:'Every scenario was checked.'})).toBeVisible({timeout:120000});
   const wire = await page.evaluate(() => window.__wire);
   expect(wire).toHaveLength(2); expect(wire[0].tools.map(t=>t.name)).toContain('validate_scenarios');
-  for (const name of ['apply_operations','undo_step','finish']) expect(wire[0].tools.map(t=>t.name)).not.toContain(name);
+  expect(wire[0].tools.map(t=>t.name)).toEqual(expect.arrayContaining(['validate_scenarios','apply_operations','undo_step','finish','finish_answer']));
   const result = JSON.parse(wire[1].input.filter(i=>i.type === 'function_call_output').at(-1).output);
   expect(result.scenarios.map(s=>s.id)).toEqual(Object.keys(LABELS));
   for (const scenario of result.scenarios) {
