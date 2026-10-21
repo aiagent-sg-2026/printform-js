@@ -1,6 +1,15 @@
 import {test,expect} from '@playwright/test';
-async function expectToolbarFits(page) {
-  const geometry=await page.locator('.paper-toolbar').evaluate(toolbar=>({toolbarWidth:toolbar.clientWidth,toolbarScrollWidth:toolbar.scrollWidth,documentWidth:document.documentElement.scrollWidth,viewportWidth:innerWidth,nextRight:toolbar.querySelector('[data-action=next]').getBoundingClientRect().right,buttons:[...toolbar.querySelectorAll('button')].filter(button=>button.getClientRects().length).map(button=>({width:button.getBoundingClientRect().width,height:button.getBoundingClientRect().height}))}));
+async function expectToolbarFits(page,{rendering=false}={}) {
+  const geometry=await page.locator('.paper-toolbar').evaluate((toolbar,rendering)=>{
+    const label=toolbar.querySelector('#page-count'), html=label.innerHTML, accessibleName=label.getAttribute('aria-label');
+    try {
+      if (rendering) { label.textContent='Rendering…'; label.removeAttribute('aria-label'); }
+      return {labelText:label.textContent,toolbarWidth:toolbar.clientWidth,toolbarScrollWidth:toolbar.scrollWidth,documentWidth:document.documentElement.scrollWidth,viewportWidth:innerWidth,nextRight:toolbar.querySelector('[data-action=next]').getBoundingClientRect().right,buttons:[...toolbar.querySelectorAll('button')].filter(button=>button.getClientRects().length).map(button=>({width:button.getBoundingClientRect().width,height:button.getBoundingClientRect().height}))};
+    } finally {
+      if (rendering) { label.innerHTML=html; if (accessibleName===null) label.removeAttribute('aria-label'); else label.setAttribute('aria-label',accessibleName); }
+    }
+  },rendering);
+  if (rendering) expect(geometry.labelText).toBe('Rendering…');
   expect(geometry.toolbarScrollWidth).toBeLessThanOrEqual(geometry.toolbarWidth);
   expect(geometry.documentWidth).toBeLessThanOrEqual(geometry.viewportWidth);
   expect(geometry.nextRight).toBeLessThanOrEqual(geometry.viewportWidth);
@@ -9,17 +18,12 @@ async function expectToolbarFits(page) {
 for (const [width,height] of [[390,844],[360,640]]) {
   test(`mobile paper-first shell ${width}x${height}`,async({page},info)=> {
     await page.setViewportSize({width,height});
-    let releaseApp; const appGate=new Promise(resolve=>{releaseApp=resolve;});
-    await page.route('**/studio-v3/app.js',async route=>{await appGate; await route.continue();});
-    await page.goto('/studio-v3/',{waitUntil:'commit'});
-    await page.locator('.paper-toolbar').waitFor({state:'attached'});
-    try {
-      await expect(page.locator('.paper-toolbar')).toHaveCSS('height','52px');
-      await expect(page.locator('#page-count')).not.toHaveAttribute('aria-label',/.+/);
-      await expectToolbarFits(page);
-    } finally { releaseApp(); }
+    await page.goto('/studio-v3/');
     await expect(page.locator('body')).toHaveAttribute('aria-busy','false');
     await expect(page.locator('[data-action=export]')).toBeEnabled({timeout:30000});
+    await expect(page.locator('.paper-toolbar')).toHaveCSS('height','52px');
+    // Measure the initial label synchronously so completed renders cannot race the geometry check.
+    await expectToolbarFits(page,{rendering:true});
     await expectToolbarFits(page);
     for (const selector of ['.app-header','.workspace-bar','.paper-toolbar']) expect((await page.locator(selector).boundingBox()).height).toBeLessThanOrEqual(52);
     expect((await page.locator('.status-bar').boundingBox()).height).toBeLessThanOrEqual(32);
@@ -39,13 +43,22 @@ for (const [width,height] of [[390,844],[360,640]]) {
     await expect(pages).toHaveAttribute('aria-expanded','false'); await expect(page.locator('#thumbnails')).toBeHidden();
     await pages.click(); await expect(pages).toHaveAttribute('aria-expanded','true'); await expect(page.locator('#thumbnails')).toBeVisible();
     await pages.click(); await expect(page.locator('#thumbnails')).toBeHidden();
-    await more.click(); await page.locator('#paper-scroll').click({position:{x:4,y:4}}); await expect(menu).toBeHidden(); await expect(more).toBeFocused();
+    await more.click(); const paper=await page.locator('#preview-frame').boundingBox();
+    await page.locator('#mobile-menu-backdrop').click({position:{x:paper.x+paper.width/2,y:Math.min(paper.y+paper.height/2,height-60)}});
+    await expect(menu).toBeHidden(); await expect(more).toBeFocused(); await expect(page.locator('#mobile-menu-backdrop')).toBeHidden();
+    await page.locator('[data-mode=data]').click(); await expect(page.locator('#database-workbench')).toBeVisible();
+    await page.locator('#database-workbench [data-db-action=preview]').click(); await expect(page.locator('#database-workbench')).toBeHidden();
+    await expect(page.locator('#show-database')).toBeVisible(); await expect(page.locator('#show-database')).toHaveAccessibleName('Sample database'); await expectToolbarFits(page);
+    await expect(pages).toBeHidden();
+    await page.locator('#show-database').click(); await expect(page.locator('#database-workbench')).toBeVisible();
+    await page.locator('[data-mode=design]').click(); await expect(pages).toBeVisible(); await pages.click(); await expect(pages).toHaveAttribute('aria-expanded','true'); await pages.click();
     await page.screenshot({path:info.outputPath(`mobile-shell-${width}.png`)});
   });
 }
 test('desktop preserves header and workspace controls',async({page},info)=> {
   await page.setViewportSize({width:1440,height:900}); await page.goto('/studio-v3/'); await expect(page.locator('body')).toHaveAttribute('aria-busy','false');
   await expect(page.locator('#mobile-more')).toBeHidden(); await expect(page.locator('#mobile-actions')).toBeHidden();
+  await expect(page.locator('#mobile-menu-backdrop')).toBeHidden();
   for (const action of ['new','open','save','export','share','undo','redo','print']) await expect(page.locator(`.header-actions [data-action=${action}]`)).toBeVisible();
   await expect(page.locator('.workspace-bar [data-ai-toggle]')).toBeVisible();
   expect(await page.locator('[data-ai-toggle]').evaluate(node=>getComputedStyle(node).position)).not.toBe('fixed');
