@@ -4,7 +4,7 @@
   .app-header .brand { display:inline-flex; align-items:center; min-height:44px; font-size:18px; }
   .header-actions { flex-wrap:nowrap; gap:2px; }
   .header-actions button,#mobile-more { display:inline-flex; min-width:44px; width:44px; height:44px; min-height:44px; padding:10px; font-size:0; }
-  #mobile-actions { display:block; position:fixed; z-index:8; top:calc(52px + env(safe-area-inset-top,0px)); right:max(8px,env(safe-area-inset-right)); width:min(320px,calc(100vw - 16px)); max-height:calc(100dvh - 80px - env(safe-area-inset-bottom,0px)); overflow:auto; overscroll-behavior:contain; padding:8px; border:1px solid var(--line); border-radius:var(--radius); background:var(--surface); color:var(--ink); box-shadow:var(--shadow); }
+  #mobile-actions { display:block; position:fixed; z-index:8; top:calc(52px + env(safe-area-inset-top,0px)); right:max(8px,env(safe-area-inset-right)); width:min(320px,calc(100vw - 48px)); max-height:calc(100dvh - 52px - env(safe-area-inset-top,0px) - 72px - env(safe-area-inset-bottom,0px)); overflow-y:auto; overscroll-behavior:contain; padding:8px; border:1px solid var(--line); border-radius:var(--radius); background:var(--surface); color:var(--ink); box-shadow:var(--shadow); }
   #mobile-menu-backdrop:not([hidden]) { display:block; position:fixed; inset:0; z-index:7; background:transparent; }
   #mobile-actions > div { display:flex; flex-direction:column; gap:4px; }
   #mobile-actions button,#mobile-actions a { min-height:44px; width:100%; justify-content:flex-start; text-align:left; font-size:14px; padding:10px; }
@@ -41,5 +41,10 @@
   #status { font-size:12px; line-height:20px; }
   input,select,textarea { font-size:16px; }
   button,a { touch-action:manipulation; }
+}
+@media(max-width:360px) {
+  .paper-toolbar { padding-inline:4px; gap:0; }
+  .paper-toolbar label select { width:60px; }
+  .page-navigation { flex-basis:132px; width:132px; gap:0; }
 }
 @media(max-width:680px) and (prefers-reduced-motion:reduce) { *,*::before,*::after { scroll-behavior:auto!important; transition:none!important; animation:none!important; } }

@@ -1,3 +1,4 @@
+import {clickHeaderAction} from './header-action.js';
 import { test, expect } from './studio-v3-test.js';
 import { fictionalErpNextPayment, paymentEntryCases } from '../tests/fixtures/erpnext-payment.js';
 import { saveProject, readProject } from '../studio-v3/file-io.js';
@@ -65,12 +66,12 @@ for (const [name, type, advance, foreignInvoice] of paymentEntryCases) test(`${n
   await page.locator('#open-file').setInputFiles({ name: `${name}.printform.json`, mimeType: 'application/json', buffer: Buffer.from(saveProject(project)) });
   await ready(page); await expect(page.locator('#document-name')).toHaveValue(project.manifest.title);
   await assertFacts(page.frameLocator('#preview-frame'), sample);
-  const saving = page.waitForEvent('download'); await page.locator('[data-action=save]').click();
+  const saving = page.waitForEvent('download'); await clickHeaderAction(page,'save');
   const savedPath = info.outputPath(`${name}.printform.json`); await (await saving).saveAs(savedPath);
   expect(readProject(await readFile(savedPath, 'utf8')).sampleData).toEqual(sample);
   await page.locator('#open-file').setInputFiles(savedPath); await ready(page);
   await assertFacts(page.frameLocator('#preview-frame'), sample);
-  const exporting = page.waitForEvent('download'); await page.locator('[data-action=export]').click();
+  const exporting = page.waitForEvent('download'); await clickHeaderAction(page,'export');
   const offlinePath = info.outputPath(`${name}.html`); await (await exporting).saveAs(offlinePath);
   const offline = await context.newPage(); await offline.route(/^https?:/, route => route.abort());
   try {

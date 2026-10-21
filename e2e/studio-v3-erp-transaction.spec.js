@@ -1,3 +1,4 @@
+import {clickHeaderAction} from './header-action.js';
 import { test, expect } from './studio-v3-test.js';
 import { createErpTransactionProject } from '../studio-v3/erp-transaction-project.js';
 import { transactionJourneyCases } from '../tests/fixtures/erp-transaction.js';
@@ -95,12 +96,12 @@ for (const [name, fixture] of transactionJourneyCases) test(`${name}: real facts
   await page.locator('#open-file').setInputFiles({ name: `${name}.printform.json`, mimeType: 'application/json', buffer: Buffer.from(saveProject(project)) });
   await expect(page.locator('#document-name')).toHaveValue(project.manifest.title); await ready(page);
   await assertFacts(page.frameLocator('#preview-frame'), project);
-  const savePromise = page.waitForEvent('download'); await page.locator('[data-action=save]').click();
+  const savePromise = page.waitForEvent('download'); await clickHeaderAction(page,'save');
   const saved = await savePromise, savedPath = info.outputPath(`${name}.printform.json`); await saved.saveAs(savedPath);
   expect(readProject(await readFile(savedPath, 'utf8')).sampleData).toEqual(project.sampleData);
   await page.locator('#open-file').setInputFiles(savedPath); await ready(page);
   await assertFacts(page.frameLocator('#preview-frame'), project);
-  const exportPromise = page.waitForEvent('download'); await page.locator('[data-action=export]').click();
+  const exportPromise = page.waitForEvent('download'); await clickHeaderAction(page,'export');
   const exported = await exportPromise, exportedPath = info.outputPath(`${name}.html`); await exported.saveAs(exportedPath);
   const printed = await context.newPage();
   await printed.route(/^https?:/, route => route.abort());

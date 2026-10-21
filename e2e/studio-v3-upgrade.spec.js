@@ -1,3 +1,4 @@
+import {clickHeaderAction} from './header-action.js';
 import {test,expect} from '@playwright/test';
 import {AGENT_KEY} from '../studio-v3/agent-preference.js';
 import { keepStructureOpen } from './studio-v3-structure.js';
@@ -9,17 +10,16 @@ const version = (page,value)=>expect(page.locator('#app-version')).toHaveText(`v
 async function controlled(page) { await page.waitForFunction(()=>Boolean(navigator.serviceWorker?.controller)); }
 async function open(page,url) { await keepStructureOpen(page); await page.goto(url); await ready(page); await controlled(page); }
 async function showUpdate(page) { if (page.viewportSize().width<=680 && !await page.locator('#mobile-actions').isVisible()) await page.locator('#mobile-more').click(); }
-async function clickUpdate(page) { await showUpdate(page); await page.locator('#update-button').click(); }
 async function offer(page) {
   const button = page.locator('#update-button'), dialog = page.locator('#update-dialog');
   // The browser may already have noticed the build (the approval dialog then opens by itself and the button is
   // disabled); otherwise a check asks it to look. These tests hold unsaved work, so the dialog always appears.
-  if (!await dialog.isVisible() && await button.isEnabled() && !(await button.textContent()).startsWith('Update to')) await clickUpdate(page);
+  if (!await dialog.isVisible() && await button.isEnabled() && !(await button.textContent()).startsWith('Update to')) await clickHeaderAction(page,'update');
   await expect(dialog).toBeVisible({timeout:30000}); await page.locator('[data-update-choice=stay]').click();
   await expect(button).toHaveText(`Update to ${NEXT.slice(0,12)}`,{timeout:30000});
   await expect(button).toBeEnabled();
 }
-async function choose(page,value) { await clickUpdate(page); await expect(page.locator('#update-dialog')).toBeVisible(); await page.locator(`[data-update-choice=${value}]`).click(); }
+async function choose(page,value) { await clickHeaderAction(page,'update'); await expect(page.locator('#update-dialog')).toBeVisible(); await page.locator(`[data-update-choice=${value}]`).click(); }
 
 for (const [name,width,height] of [['desktop',1440,900],['tablet',768,1024],['mobile',390,844]]) {
   test(`two real builds: ${name} protects work offline, keeps drafts/history/data/zoom on update and updates a tab without unsaved work by itself`,async({page,context},info)=> {
@@ -41,8 +41,8 @@ for (const [name,width,height] of [['desktop',1440,900],['tablet',768,1024],['mo
       const revision = await page.locator('#revision').textContent();
       server.publish(); await offer(page); await version(page,OLD);
       await choose(page,'stay'); await expect(page.getByLabel('Label',{exact:true})).toHaveValue('Synthetic unapplied heading');
-      await clickUpdate(page); await page.keyboard.press('Escape'); await version(page,OLD);
-      await clickUpdate(page); await context.setOffline(true);
+      await clickHeaderAction(page,'update'); await page.keyboard.press('Escape'); await version(page,OLD);
+      await clickHeaderAction(page,'update'); await context.setOffline(true);
       await page.locator('[data-update-choice=keep]').click(); await ready(page); await version(page,OLD);
       await expect(page.locator('#update-status')).toContainText('Reconnect');
       await expect(page.getByLabel('Label',{exact:true})).toHaveValue('Synthetic unapplied heading');
@@ -73,10 +73,10 @@ test('failed integrity download and offline check retain old build; explicit dis
   const server=await upgradeServer();
   try {
     await open(page,server.url); await page.locator('[data-ai-toggle]').click(); await page.locator('#ai-prompt').fill('Fictional draft only');
-    server.publish({broken:true}); await page.locator('#update-button').click();
+    server.publish({broken:true}); await clickHeaderAction(page,'update');
     await expect(page.locator('#update-button')).toBeEnabled();
     await version(page,OLD); await expect(page.locator('#update-button')).toHaveText('Check for updates');
-    await context.setOffline(true); await page.locator('#update-button').click();
+    await context.setOffline(true); await clickHeaderAction(page,'update');
     await expect(page.locator('#update-button')).toBeEnabled(); await version(page,OLD); await ready(page);
     await context.setOffline(false); server.publish(); await offer(page);
     await choose(page,'discard'); await version(page,NEXT); await ready(page);
@@ -107,7 +107,7 @@ test('without unsaved work a verified new build updates by itself: no click, no 
     await open(page,server.url); await version(page,OLD);
     const shown=[]; await page.exposeFunction('seen',()=>shown.push(1));
     await page.evaluate(()=>new MutationObserver(()=>{ if(document.querySelector('#update-dialog').open)globalThis.seen(); }).observe(document.querySelector('#update-dialog'),{attributes:true}));
-    server.publish(); await page.locator('#update-button').click();   // only asks the browser to look; it never chooses Update
+    server.publish(); await clickHeaderAction(page,'update');   // only asks the browser to look; it never chooses Update
     await version(page,NEXT); await ready(page);
     expect(await page.evaluate(()=>globalThis.__upgradeFixtureBuild)).toBe(NEXT);
     expect(shown).toHaveLength(0);
@@ -119,13 +119,13 @@ test('with unsaved work the approval dialog opens by itself; Stay keeps the tab 
   const server=await upgradeServer();
   try {
     await open(page,server.url); await page.locator('[data-ai-toggle]').click(); await page.locator('#ai-prompt').fill('Fictional draft only');
-    server.publish(); await page.locator('#update-button').click();
+    server.publish(); await clickHeaderAction(page,'update');
     await expect(page.locator('#update-dialog')).toBeVisible({timeout:30000});
     await expect(page.locator('[data-update-summary]')).toContainText('unsaved work');
     await page.locator('[data-update-choice=stay]').click();
     await version(page,OLD); await expect(page.locator('#ai-prompt')).toHaveValue('Fictional draft only');
     await expect(page.locator('#update-button')).toHaveText(`Update to ${NEXT.slice(0,12)}`);
-    await page.locator('#update-button').click(); await page.locator('[data-update-choice=keep]').click();
+    await clickHeaderAction(page,'update'); await page.locator('[data-update-choice=keep]').click();
     await version(page,NEXT); await ready(page);
     await expect(page.locator('#ai-prompt')).toHaveValue('Fictional draft only');
   } finally { await server.close(); }

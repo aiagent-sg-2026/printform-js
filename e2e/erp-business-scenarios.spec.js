@@ -1,3 +1,4 @@
+import {clickHeaderAction} from './header-action.js';
 import {test,expect} from '@playwright/test';
 import {demoDataForKind} from '../studio-v3/demo-catalog.js';
 
@@ -111,7 +112,7 @@ for(const kind of ['BankPayment','BankReceipt','PCAR','CCAR']) {
     page.on('dialog',dialog=>dialog.accept());
     await page.goto('/studio-v3/');
     await expect(page.locator('[data-action=export]')).toBeEnabled({timeout:30000});
-    await page.locator('[data-action=new]').click();
+    await clickHeaderAction(page,'new');
     const details=page.locator('#new-dialog details');
     if(await details.getAttribute('open')===null)await details.locator('summary').click();
     await page.locator(`[data-demo-template=${kind}]`).click();

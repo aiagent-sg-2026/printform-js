@@ -4,6 +4,12 @@ Status: **2026-10-15 implementation authorized by the user**, following the earl
 
 Evidence tags: **[code]** the string or behavior was found in the source; **[shot]** seen only in the screenshot, not reproduced in a browser run.
 
+## Batch 25f mobile shell regressions (2026-10-21)
+- At widths up to 360px, the one-row paper toolbar uses 4px inline padding, no inter-control gaps, a 60px zoom select and a 132px page-navigation group. Three 40px controls plus zoom, navigation and padding budget exactly 320px; buttons remain 40px by 44px and the select remains 16px text. Desktop rules are unchanged.
+- E2E header actions share `e2e/header-action.js`: click the visible action directly, otherwise open More actions first; an already-open menu is not toggled closed. Download/filechooser listeners remain registered before clicks. The inert-startup forced-click assertion intentionally bypasses this helper.
+- Mobile-shell coverage includes 320x568, header/workspace bounds and scroll widths, initial rendering and completed toolbar geometry. The expanded chooser regression now asserts the navigation controls stay together and fully visible, rather than prescribing a wrapped second row.
+- Unverified: source width budgeting is not browser measurement. Manager must run the four reported regression specs and full Chromium suite, inspect 320x568/320x720 screenshots and check zoom option readability, focus and desktop behavior. No shell, git, tests or builds were run in this edit-only batch.
+
 - Batch 21 (2026-10-21): use shared inline SVG icons for steps, applied checks and reference removal, a line-spacing SVG for Improve spacing, CSS-shaped activity dots, a hidden Failed: prefix and the More settings menu name; edit-only, runtime and visual checks remain unverified.
 ## Batch 20 unreachable suggestions cleanup (2026-10-21)
 - Removed the always-hidden suggestions module, layout/render calls and dedicated styles; no replacement suggestion bar is mounted. Welcome starters retain prompt-fill-only behavior and their existing busy-state guards.

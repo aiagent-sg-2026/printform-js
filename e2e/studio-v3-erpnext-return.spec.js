@@ -1,3 +1,4 @@
+import {clickHeaderAction} from './header-action.js';
 import { test, expect } from './studio-v3-test.js';
 import { fictionalErpNextReturn, erpnextCases } from '../tests/fixtures/erpnext-return.js';
 import { saveProject, readProject } from '../studio-v3/file-io.js';
@@ -61,12 +62,12 @@ for (const [name, doctype, stock, kind, inventory, accounting] of erpnextCases) 
   await page.locator('#open-file').setInputFiles({ name: `${name}.printform.json`, mimeType: 'application/json', buffer: Buffer.from(saveProject(project)) });
   await expect(page.locator('#document-name')).toHaveValue(project.manifest.title); await ready(page);
   await facts(page.frameLocator('#preview-frame'), prefix, kind, inventory, accounting);
-  const savePromise = page.waitForEvent('download'); await page.locator('[data-action=save]').click();
+  const savePromise = page.waitForEvent('download'); await clickHeaderAction(page,'save');
   const saved = await savePromise, savedPath = info.outputPath(`${name}.printform.json`); await saved.saveAs(savedPath);
   expect(readProject(await readFile(savedPath, 'utf8')).sampleData).toEqual(project.sampleData);
   await page.locator('#open-file').setInputFiles(savedPath); await ready(page);
   await facts(page.frameLocator('#preview-frame'), prefix, kind, inventory, accounting);
-  const exportPromise = page.waitForEvent('download'); await page.locator('[data-action=export]').click();
+  const exportPromise = page.waitForEvent('download'); await clickHeaderAction(page,'export');
   const exported = await exportPromise, exportedPath = info.outputPath(`${name}.html`); await exported.saveAs(exportedPath);
   const printed = await context.newPage(); await printed.route(/^https?:/, route => route.abort());
   await printed.goto(pathToFileURL(exportedPath).href);

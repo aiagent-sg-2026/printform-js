@@ -1,3 +1,4 @@
+import {clickHeaderAction} from './header-action.js';
 import { test,expect } from './studio-v3-test.js';
 import { readFile } from 'node:fs/promises';
 import { pathToFileURL } from 'node:url';
@@ -45,14 +46,14 @@ test('human independent table + exact EAN13 + supported currency persist and pri
   await page.locator('[data-mode=data]').click();
   const locale=page.locator('[data-form=locale]'); await locale.locator('..').locator('..').locator('summary').click();
   await locale.locator('[name=currency]').selectOption('GBP'); await locale.getByRole('button',{name:'Apply locale',exact:true}).click(); await ready(page);
-  const saving=page.waitForEvent('download'); await page.locator('[data-action=save]').click();
+  const saving=page.waitForEvent('download'); await clickHeaderAction(page,'save');
   const jsonPath=info.outputPath('capabilities.printform.json'); await (await saving).saveAs(jsonPath);
   const source=await readFile(jsonPath,'utf8'), saved=readProject(source);
   expect(saved.manifest.currency).toBe('GBP'); expect(saved.sampleData).toEqual(initial.sampleData);
   expect(saved.manifest.studioV3.additionalTables[0].collection).toBe('/operations');
   const barcode=saved.manifest.studioV3.footer.find(field=>field.kind==='barcode'); expect(barcode.pointer).toBe('/identifiers/ean');
   await open(page,source); await expect(frame.locator('[data-pf-barcode-svg]')).toHaveCount(1);
-  const downloading=page.waitForEvent('download'); await page.locator('[data-action=export]').click();
+  const downloading=page.waitForEvent('download'); await clickHeaderAction(page,'export');
   const htmlPath=info.outputPath('capabilities.html'); await (await downloading).saveAs(htmlPath);
   const standalone=await context.newPage(); await standalone.route('http**/*',route=>route.abort());
   await standalone.goto(pathToFileURL(htmlPath).href);

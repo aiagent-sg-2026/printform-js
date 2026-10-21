@@ -1,3 +1,4 @@
+import {clickHeaderAction} from './header-action.js';
 import { test, expect } from '@playwright/test';
 import fs from 'node:fs/promises';
 import { pathToFileURL } from 'node:url';
@@ -67,7 +68,7 @@ test('fictional CSV review explicitly converts typed fields, changes real print 
   expect(imported.summary).toEqual(original.summary); expect(await stored(page)).toEqual(records);
   await page.locator('[data-action="undo"]').click(); await ready(page); expect(await currentData(page)).toEqual(original);
   await page.locator('[data-action="redo"]').click(); await ready(page); expect(await currentData(page)).toEqual(imported);
-  const download = page.waitForEvent('download'); await page.locator('[data-action="save"]').click();
+  const download = page.waitForEvent('download'); await clickHeaderAction(page,'save');
   const path = info.outputPath('fictional-local.printform.json'); await (await download).saveAs(path);
   const portable = JSON.parse(await fs.readFile(path,'utf8'));
   expect(portable.project.manifest.localImport.sourceText).toBe(csv);
@@ -75,7 +76,7 @@ test('fictional CSV review explicitly converts typed fields, changes real print 
   await action(page,'copy').click(); await ready(page);
   const saved = (await stored(page)).find(record=>record.localImport?.filename === 'fictional-local.csv');
   expect(saved.data.items).toEqual(imported.items); expect(saved.localImport.sourceText).toBe(csv);
-  const chooser = page.waitForEvent('filechooser'); await page.locator('[data-action="open"]').click(); await (await chooser).setFiles(path); await ready(page);
+  const chooser = page.waitForEvent('filechooser'); await clickHeaderAction(page,'open'); await (await chooser).setFiles(path); await ready(page);
   expect(await currentData(page)).toEqual(imported);
   await expect(page.locator('#database-workbench')).toContainText('local file: fictional-local.csv (unverified)');
   await page.screenshot({path:info.outputPath('local-import-reopened.png')});
@@ -117,12 +118,12 @@ test('invalid UTF-8 is rejected before decoding can replace source identifiers',
   expect(await currentData(page)).toEqual(original); expect(await stored(page)).toEqual(records);
 });
 async function openGeneral(page,project) {
-  const chooser = page.waitForEvent('filechooser'); await page.locator('[data-action="open"]').click();
+  const chooser = page.waitForEvent('filechooser'); await clickHeaderAction(page,'open');
   await (await chooser).setFiles({name:'fictional-general.printform.json',mimeType:'application/json',buffer:Buffer.from(saveProject(project))});
   await expect(page.locator('#document-name')).toHaveValue(project.manifest.title); await ready(page);
 }
 async function saveGeneral(page,info,name) {
-  const download = page.waitForEvent('download'); await page.locator('[data-action="save"]').click();
+  const download = page.waitForEvent('download'); await clickHeaderAction(page,'save');
   const path = info.outputPath(name); await (await download).saveAs(path);
   return {path,portable:JSON.parse(await fs.readFile(path,'utf8'))};
 }
@@ -147,10 +148,10 @@ test('human-opened strict generic /records form imports exact string quantity wi
   await page.locator('[data-action="redo"]').click(); await ready(page);
   const {path,portable} = await saveGeneral(page,info,'generic-records.printform.json');
   expect(portable.project.schema).toEqual(fixture.schema); expect(portable.project.manifest.localImport.sourceText).toBe(source);
-  const chooser = page.waitForEvent('filechooser'); await page.locator('[data-action="open"]').click(); await (await chooser).setFiles(path); await ready(page);
+  const chooser = page.waitForEvent('filechooser'); await clickHeaderAction(page,'open'); await (await chooser).setFiles(path); await ready(page);
   expect(await currentData(page)).toEqual(imported);
   await expect(action(page,'copy')).toBeDisabled(); await expect(action(page,'export')).toBeDisabled();
-  const exported = page.waitForEvent('download'); await page.locator('[data-action="export"]').click();
+  const exported = page.waitForEvent('download'); await clickHeaderAction(page,'export');
   const htmlPath = info.outputPath('generic-records.html'); await (await exported).saveAs(htmlPath);
   const printed = await context.newPage(); await printed.goto(pathToFileURL(htmlPath).href);
   await expect(printed.locator('html')).toHaveAttribute('data-printform-status','ready');
@@ -172,7 +173,7 @@ test('human-opened no-table work order defaults to global fields, applies CSV th
   await page.locator('[data-action="redo"]').click(); await ready(page);
   const {path,portable} = await saveGeneral(page,info,'generic-work-order.printform.json');
   expect(portable.project.schema).toEqual(fixture.schema); expect(portable.project.manifest.localImport.sourceText).toBe(source);
-  const chooser = page.waitForEvent('filechooser'); await page.locator('[data-action="open"]').click(); await (await chooser).setFiles(path); await ready(page);
+  const chooser = page.waitForEvent('filechooser'); await clickHeaderAction(page,'open'); await (await chooser).setFiles(path); await ready(page);
   expect(await currentData(page)).toEqual(imported); expect(await stored(page)).toEqual(storedBefore);
   await expect(action(page,'copy')).toBeDisabled(); await expect(page.locator('#database-workbench')).not.toContainText('Repair it in Advanced JSON');
 });

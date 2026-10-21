@@ -1,3 +1,4 @@
+import {clickHeaderAction} from './header-action.js';
 import { test, expect } from './studio-v3-test.js';
 import { createGlobe3RawProgressClaimProject } from '../studio-v3/globe3-progress-claim-project.js';
 import { rawProgressClaimInput, fractionalProgressClaimInput } from '../tests/fixtures/globe3-progress-claim.js';
@@ -18,10 +19,10 @@ for (const mode of ['quantity-certified', 'fraction-last-claim']) test(`raw PCAR
   await expect(paper.locator('[data-v3-id=items-current-measure]')).toHaveText(expected.valuations.map(row => row.display.currentMeasure));
   await expect(paper.locator('[data-v3-id=footer-credit-terms]').last()).toHaveText('Fictional claim-snapshot terms');
   await expect(paper.locator('[data-v3-id=totals-header-amount-1]').last()).toHaveText('SGD 271.471');
-  const savedPromise = page.waitForEvent('download'); await page.locator('[data-action=save]').click();
+  const savedPromise = page.waitForEvent('download'); await clickHeaderAction(page,'save');
   const saved = await savedPromise, savedPath = info.outputPath(`${mode}.printform.json`); await saved.saveAs(savedPath);
   await page.locator('#open-file').setInputFiles(savedPath); await ready(page);
-  const exportedPromise = page.waitForEvent('download'); await page.locator('[data-action=export]').click();
+  const exportedPromise = page.waitForEvent('download'); await clickHeaderAction(page,'export');
   const exported = await exportedPromise, htmlPath = info.outputPath(`${mode}.html`); await exported.saveAs(htmlPath);
   const printed = await context.newPage(); await printed.goto(pathToFileURL(htmlPath).href);
   await expect(printed.locator('html')).toHaveAttribute('data-printform-status', 'ready');

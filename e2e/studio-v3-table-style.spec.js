@@ -1,3 +1,4 @@
+import {clickHeaderAction} from './header-action.js';
 import {expectApplied} from './ai-applied.js';
 import { responsesReply } from './demo-gateway-fixture.js';
 import { test, expect } from './studio-v3-test.js';
@@ -23,7 +24,7 @@ async function mock(page,replies){
 }
 async function save(page,info,name){
   const revision=(await page.locator('#revision').innerText()).match(/^r(\d+)(?: · unsaved template)?$/);expect(revision).not.toBeNull();
-  const pending=page.waitForEvent('download');await page.locator('[data-action=save]').click();
+  const pending=page.waitForEvent('download');await clickHeaderAction(page,'save');
   const download=await pending,path=info.outputPath(name);await download.saveAs(path);
   await expect(page.locator('#revision')).toHaveText(`r${revision[1]}`);
   return {path,project:JSON.parse(await fs.readFile(path,'utf8')).project};
@@ -51,7 +52,7 @@ test('yellow rows are rendered across pages; automatic apply, Undo and save/reop
   const authored=await save(page,info,'yellow-row-fill.printform.json');
   expect(authored.project.manifest.documentId).toBe(before.project.manifest.documentId);expect(authored.project.sampleData).toEqual(before.project.sampleData);
   expect(authored.project.manifest.studioV3).toEqual({...before.project.manifest.studioV3,tableStyle:{rowBackground:'#ffff00'}});
-  const pending=page.waitForEvent('download');await page.locator('[data-action=export]').click();const exported=await pending,exportPath=info.outputPath('yellow-row-fill.html');await exported.saveAs(exportPath);
+  const pending=page.waitForEvent('download');await clickHeaderAction(page,'export');const exported=await pending,exportPath=info.outputPath('yellow-row-fill.html');await exported.saveAs(exportPath);
   const printed=await context.newPage();await printed.goto(pathToFileURL(exportPath).href);await expect(printed.locator('html')).toHaveAttribute('data-printform-status','ready');
   await expectYellow(printed.locator('.prowitem_processed'));await expectYellow(printed.locator('.prowitem_processed tr'));await expectYellow(printed.locator('.prowitem_processed td'));
   await expect(printed.locator('.prowitem_processed')).toHaveCount(before.project.sampleData.items.length);
@@ -59,7 +60,7 @@ test('yellow rows are rendered across pages; automatic apply, Undo and save/reop
   await page.locator('[data-ai=undo]').click();await ready(page);await expect(page.locator('#revision')).toHaveText('r2 · unsaved template');
   expect(await paper(page).locator('.prowitem_processed tr').evaluateAll(nodes=>nodes.map(node=>getComputedStyle(node).backgroundColor))).toEqual(originalColors);
   const undone=await save(page,info,'undo-row-fill.printform.json');expect(undone.project.manifest.studioV3).toEqual(before.project.manifest.studioV3);expect(undone.project.sampleData).toEqual(before.project.sampleData);
-  const chooser=page.waitForEvent('filechooser');await page.locator('[data-action=open]').click();await(await chooser).setFiles(authored.path);await ready(page);
+  const chooser=page.waitForEvent('filechooser');await clickHeaderAction(page,'open');await(await chooser).setFiles(authored.path);await ready(page);
   await expectYellow(paper(page).locator('.prowitem_processed tr'));const reopened=await save(page,info,'reopened-row-fill.printform.json');
   expect(reopened.project.manifest.studioV3).toEqual(authored.project.manifest.studioV3);expect(reopened.project.manifest.title).toBe(authored.project.manifest.title);expect(reopened.project.sampleData).toEqual(authored.project.sampleData);
 });
@@ -113,7 +114,7 @@ test('header colors auto-apply on every page, undo, persist and support inspecto
   await expectApplied(page,1);await ready(page);await check();
   const authored=await save(page,info,'header-colors.printform.json');
   await page.locator('[data-ai=undo]').click();await ready(page);expect(await colors(headers())).toEqual(original);
-  const chooser=page.waitForEvent('filechooser');await page.locator('[data-action=open]').click();await(await chooser).setFiles(authored.path);await ready(page);await check();
+  const chooser=page.waitForEvent('filechooser');await clickHeaderAction(page,'open');await(await chooser).setFiles(authored.path);await ready(page);await check();
   await page.locator('[data-ai=close]').click();await page.locator('#left-panel [data-select=items]').click();
   const background=page.getByLabel('Table header background',{exact:true}),text=page.getByLabel('Table header text',{exact:true});
   await expect(background).toHaveValue('#dbeafe');await expect(text).toHaveValue('#1e293b');

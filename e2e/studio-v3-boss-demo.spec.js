@@ -1,3 +1,4 @@
+import {clickHeaderAction} from './header-action.js';
 import {expectApplied} from './ai-applied.js';
 import { isInference, responsesReply, userText } from './demo-gateway-fixture.js';
 import { test, expect } from './studio-v3-test.js';
@@ -22,24 +23,24 @@ async function openReferences(page){await page.locator('[data-ai-toggle]').click
 async function attach(page,fixture){await page.getByLabel('Add reference PDF or image',{exact:true}).setInputFiles(fixture);await expect(page.locator('.ai-reference-card')).toHaveCount(1,{timeout:30000});await expect(page.locator('.ai-reference-files')).toContainText('Ready locally');await page.locator('.ai-reference-files>summary').click();}
 test.beforeEach(async({page})=>{page.on('dialog',d=>d.accept());await page.goto('/studio-v3/');await ready(page);});
 test('catalogue, exact dataset kind, USD switch and editable save preserve v3 layout',async({page},info)=>{
- await page.locator('[data-action=new]').click();await page.getByText('Business demo templates',{exact:true}).click();await page.locator('[data-demo-template=SalesQuotation]').click();await ready(page);
+ await clickHeaderAction(page,'new');await page.getByText('Business demo templates',{exact:true}).click();await page.locator('[data-demo-template=SalesQuotation]').click();await ready(page);
  await expect(paper(page).locator('[data-v3-id=header-title]').first()).toHaveText('SALES QUOTATION');
  await page.locator('[data-mode=data]').click();
  const options=await page.locator('#database-choice option').allTextContents();expect(options.filter(text=>text.includes('Sales quotation')).length).toBeGreaterThanOrEqual(5);expect(options.some(text=>text.includes('Bank receipt'))).toBe(false);
  await page.locator('#database-choice').selectOption('demo:SalesQuotation:usd-independent');await ready(page);
  await expect(paper(page).locator('[data-v3-id=totals-total]').last()).toContainText('1,811.60');
- const saved=page.waitForEvent('download');await page.locator('[data-action=save]').click();const download=await saved,path=info.outputPath('quotation.printform.json');await download.saveAs(path);
+ const saved=page.waitForEvent('download');await clickHeaderAction(page,'save');const download=await saved,path=info.outputPath('quotation.printform.json');await download.saveAs(path);
  const data=JSON.parse(await fs.readFile(path,'utf8')).project;expect(data.manifest.currency).toBe('USD');expect(data.sampleData.document.kind).toBe('SalesQuotation');expect(data.sampleData.demo.fictional).toBe(true);
 });
 test('all business templates render and long scenario paginates without missing bindings',async({page,context,browserName},info)=>{
  test.setTimeout(180000);
  for(const kind of ['SalesOrder','SalesOrderConfirmation','DeliveryOrder','DeliveryOrderConfirmation','SalesInvoice','PurchaseOrder','PurchaseInvoice','BankReceipt','BankPayment','EnterpriseProject','ProgressClaim','CertifiedClaim','PCAR','CCAR','AccountsReceivableClaim','AccountsPayableClaim']) {
-  await page.locator('[data-action=new]').click();const details=page.locator('#new-dialog details');if((await details.getAttribute('open'))===null)await details.locator('summary').click();await page.locator(`[data-demo-template=${kind}]`).click();await ready(page);
+  await clickHeaderAction(page,'new');const details=page.locator('#new-dialog details');if((await details.getAttribute('open'))===null)await details.locator('summary').click();await page.locator(`[data-demo-template=${kind}]`).click();await ready(page);
   await expect(page.locator('#status')).toContainText('current layout passed');
  }
- await page.locator('[data-action=new]').click();await page.locator('[data-demo-template=SalesInvoice]').click();await ready(page);await page.locator('[data-mode=data]').click();await page.locator('#database-choice').selectOption('demo:SalesInvoice:campus');await ready(page);
+ await clickHeaderAction(page,'new');await page.locator('[data-demo-template=SalesInvoice]').click();await ready(page);await page.locator('[data-mode=data]').click();await page.locator('#database-choice').selectOption('demo:SalesInvoice:campus');await ready(page);
  expect(await paper(page).locator('.printform_page').count()).toBeGreaterThan(1);await expect(paper(page).locator('.prowitem_processed')).toHaveCount(64);
- const downloadPromise=page.waitForEvent('download');await page.locator('[data-action=export]').click();const downloaded=await downloadPromise,path=info.outputPath('fictional-campus-invoice.html');await downloaded.saveAs(path);
+ const downloadPromise=page.waitForEvent('download');await clickHeaderAction(page,'export');const downloaded=await downloadPromise,path=info.outputPath('fictional-campus-invoice.html');await downloaded.saveAs(path);
  const printed=await context.newPage();await printed.goto(pathToFileURL(path).href);await expect(printed.locator('html')).toHaveAttribute('data-printform-status','ready');await expect(printed.locator('.prowitem_processed')).toHaveCount(64);
  if(browserName==='chromium')await printed.pdf({path:info.outputPath('fictional-campus-invoice-A4.pdf'),preferCSSPageSize:true,printBackground:true});await printed.screenshot({path:info.outputPath('fictional-campus-invoice.png'),fullPage:true});await printed.close();
 });
@@ -49,13 +50,13 @@ test('real PDF parsing -> explicit text-only sharing -> mocked AI automatic appl
  await page.locator('#ai-prompt').fill('Use navy #163a65 based on the reference structure.');await page.locator('[data-ai-send]').click();await expectApplied(page,1);
  const wire=calls.find(c=>isInference(c.path)).payload;expect(userText(wire)).toContain('DEMO-REF-001');expect(JSON.stringify(wire)).toContain('FICTIONAL REFERENCE');expect(JSON.stringify(wire)).toContain('extracted-text-and-positions');expect(JSON.stringify(wire)).not.toContain('base64');expect(JSON.stringify(wire)).not.toContain('ACME Industrial');
  await ready(page);await expect(page.locator('#revision')).toContainText('r1');
- const savePromise=page.waitForEvent('download');await page.locator('[data-action=save]').click();const saved=await savePromise,savedPath=info.outputPath('pdf-authored.printform.json');await saved.saveAs(savedPath);
+ const savePromise=page.waitForEvent('download');await clickHeaderAction(page,'save');const saved=await savePromise,savedPath=info.outputPath('pdf-authored.printform.json');await saved.saveAs(savedPath);
  const authored=JSON.parse(await fs.readFile(savedPath,'utf8')).project;expect(authored.manifest.studioV3.color).toBe('#163a65');expect(authored.manifest.currency).toBe('MYR');expect(authored.sampleData.summary.total).toBe(12150);expect(authored.manifest.studioV3.columns.find(f=>f.id==='amount').pointer).toBe('./amount');
  await page.locator('[data-ai=undo]').click();await expect(page.locator('#revision')).toContainText('r2');await ready(page);
- const chooser=page.waitForEvent('filechooser');await page.locator('[data-action=open]').click();await (await chooser).setFiles(savedPath);await ready(page);await expect(page.locator('.ai-reference-card')).toHaveCount(0);
- const againPromise=page.waitForEvent('download');await page.locator('[data-action=save]').click();const again=await againPromise,againPath=info.outputPath('pdf-authored-reopened.printform.json');await again.saveAs(againPath);const reopened=JSON.parse(await fs.readFile(againPath,'utf8')).project;
+ const chooser=page.waitForEvent('filechooser');await clickHeaderAction(page,'open');await (await chooser).setFiles(savedPath);await ready(page);await expect(page.locator('.ai-reference-card')).toHaveCount(0);
+ const againPromise=page.waitForEvent('download');await clickHeaderAction(page,'save');const again=await againPromise,againPath=info.outputPath('pdf-authored-reopened.printform.json');await again.saveAs(againPath);const reopened=JSON.parse(await fs.readFile(againPath,'utf8')).project;
  expect(reopened.sampleData).toEqual(authored.sampleData);expect(reopened.manifest.studioV3).toEqual(authored.manifest.studioV3);expect(reopened.manifest.currency).toBe(authored.manifest.currency);
- const downloaded=page.waitForEvent('download');await page.locator('[data-action=export]').click();const result=await downloaded;await result.saveAs(info.outputPath('reference-demo-export.html'));
+ const downloaded=page.waitForEvent('download');await clickHeaderAction(page,'export');const result=await downloaded;await result.saveAs(info.outputPath('reference-demo-export.html'));
  await page.reload();await ready(page);await openReferences(page);await expect(page.locator('.ai-reference-card')).toHaveCount(0);
 });
 test('unknown capability schema keeps images blocked while normal model diagnostics expose safe facts',async({page})=>{
@@ -67,7 +68,7 @@ test('unknown capability schema keeps images blocked while normal model diagnost
 test('oversized page count and corrupt references fail locally; changing forms drops attachments',async({page})=>{
  const calls=await mockProvider(page);await openReferences(page);await page.getByLabel('Add reference PDF or image',{exact:true}).setInputFiles({name:'broken.png',mimeType:'image/png',buffer:Buffer.from('not a raster')});await expect(page.locator('.ai-reference-files')).toContainText('Only PDF, PNG, JPEG and WebP');await page.getByLabel('Add reference PDF or image',{exact:true}).setInputFiles(syntheticPdf({pages:7}));await expect(page.locator('.ai-reference-files')).toContainText('no more than 4 pages');await expect(page.locator('.ai-reference-card')).toHaveCount(0);
  await page.getByLabel('Add reference PDF or image',{exact:true}).setInputFiles(syntheticPdf({text:false,pages:1}));await expect(page.locator('.ai-reference-files')).toContainText('No extractable PDF text');await expect(page.locator('.ai-reference-card')).toHaveCount(0);await attach(page,syntheticPdf());
- await page.locator('[data-action=new]').click();await page.locator('[data-template=purchase]').click();await ready(page);await expect(page.locator('.ai-reference-card')).toHaveCount(0);expect(calls).toHaveLength(0);
+ await clickHeaderAction(page,'new');await page.locator('[data-template=purchase]').click();await ready(page);await expect(page.locator('.ai-reference-card')).toHaveCount(0);expect(calls).toHaveLength(0);
 });
 
 
@@ -88,16 +89,16 @@ test('catalogue seed migration adds missing fixtures without overwriting a retai
   });db.close();
  });
  await page.reload();await ready(page);await expect(paper(page).locator('[data-v3-id=customer-bill]').first()).toContainText('Retained fictional owner edit');
- await page.locator('[data-action=new]').click();await page.getByText('Business demo templates',{exact:true}).click();await page.locator('[data-demo-template=SalesQuotation]').click();await ready(page);await page.locator('[data-mode=data]').click();expect(await page.locator('#database-choice option').count()).toBe(6);
+ await clickHeaderAction(page,'new');await page.getByText('Business demo templates',{exact:true}).click();await page.locator('[data-demo-template=SalesQuotation]').click();await ready(page);await page.locator('[data-mode=data]').click();expect(await page.locator('#database-choice option').count()).toBe(6);
 });
 
 test('explicit compact A5 preset retains all 45 rows, fields and totals in at most six readable pages',async({page,context,browserName},info)=>{
- await page.locator('[data-action=new]').click();await page.getByText('Business demo templates',{exact:true}).click();await page.locator('[data-demo-template=CompactA5Invoice]').click();await ready(page);
+ await clickHeaderAction(page,'new');await page.getByText('Business demo templates',{exact:true}).click();await page.locator('[data-demo-template=CompactA5Invoice]').click();await ready(page);
  const pages=paper(page).locator('.printform_page');expect(await pages.count()).toBeLessThanOrEqual(6);expect(await pages.count()).toBeGreaterThan(1);
  await expect(paper(page).locator('.prowitem_processed')).toHaveCount(45);expect(await pages.first().locator('.prowitem_processed').count()).toBeGreaterThanOrEqual(2);
  const text=await paper(page).locator('#pf-mount').textContent();for(const value of ['ACME Industrial Supply','202601234567','123 Innovation Drive','2026-10-01','2026-10-31','PO-2026-0087','Alicia Tan','12,150.00'])expect(text).toContain(value);
  const font=await paper(page).locator('.prowitem_processed td').first().evaluate(node=>getComputedStyle(node).fontSize);expect(parseFloat(font)).toBeGreaterThanOrEqual(12);
- const downloadPromise=page.waitForEvent('download');await page.locator('[data-action=export]').click();const downloaded=await downloadPromise,path=info.outputPath('compact-a5-45.html');await downloaded.saveAs(path);
+ const downloadPromise=page.waitForEvent('download');await clickHeaderAction(page,'export');const downloaded=await downloadPromise,path=info.outputPath('compact-a5-45.html');await downloaded.saveAs(path);
  const printed=await context.newPage();await printed.goto(pathToFileURL(path).href);await expect(printed.locator('html')).toHaveAttribute('data-printform-status','ready');await expect(printed.locator('.prowitem_processed')).toHaveCount(45);expect(await printed.locator('.printform_page').count()).toBeLessThanOrEqual(6);
  await printed.screenshot({path:info.outputPath('compact-a5-45.png'),fullPage:true});if(browserName==='chromium')await printed.pdf({path:info.outputPath('compact-a5-45.pdf'),preferCSSPageSize:true,printBackground:true});await printed.close();
 });

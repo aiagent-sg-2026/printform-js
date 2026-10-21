@@ -1,3 +1,4 @@
+import {clickHeaderAction} from './header-action.js';
 import { test,expect } from './studio-v3-test.js';
 import { keepStructureOpen } from './studio-v3-structure.js';
 import { nestedDatasetFixture } from '../tests/fixtures/nested-dataset.js';
@@ -15,7 +16,7 @@ async function change(page,action) {
   await action(); await expect(page.locator('#revision')).not.toHaveText(revision);
 }
 async function save(page,info,name) {
-  const pending = page.waitForEvent('download'); await page.locator('[data-action=save]').click();
+  const pending = page.waitForEvent('download'); await clickHeaderAction(page,'save');
   const file = await pending, path = info.outputPath(name); await file.saveAs(path);
   return {path,project:readProject(await readFile(path,'utf8'))};
 }
@@ -79,7 +80,7 @@ test('explicit empty schema survives real nested binding/save/reopen/later input
   expect(saved.project.sampleData.parentDocuments[1].allocations[0]['amount~raw']).toBe('999.000');
   expect(saved.project.sampleData.custom).toEqual(full.data.custom);
   await page.locator('#open-file').setInputFiles(saved.path); await ready(page); await exactRows(paper(page),'-009.875');
-  const pending = page.waitForEvent('download'); await page.locator('[data-action=export]').click();
+  const pending = page.waitForEvent('download'); await clickHeaderAction(page,'export');
   const exported = await pending, path = info.outputPath('nested.html'); await exported.saveAs(path);
   const html = await readFile(path,'utf8');
   const reopened = readProject(html,'nested.html');

@@ -1,3 +1,4 @@
+import {clickHeaderAction} from './header-action.js';
 import { test, expect } from './studio-v3-test.js';
 import { fictionalOdooMaintenanceRequest } from '../tests/fixtures/odoo-maintenance-request.js';
 import { saveProject, readProject } from '../studio-v3/file-io.js';
@@ -34,14 +35,14 @@ test('repository Node Odoo SDK feeds real Studio Open/save/reopen/export and off
   await page.locator('#open-file').setInputFiles({ name: 'odoo-request.printform.json', mimeType: 'application/json', buffer: Buffer.from(serialized) });
   await ready(page); await expect(page.locator('#document-name')).toHaveValue(project.manifest.title);
   await assertFacts(page.frameLocator('#preview-frame'), sample);
-  const saving = page.waitForEvent('download'); await page.locator('[data-action=save]').click();
+  const saving = page.waitForEvent('download'); await clickHeaderAction(page,'save');
   const savedPath = info.outputPath('odoo-request.printform.json'); await (await saving).saveAs(savedPath);
   const saved = readProject(await readFile(savedPath, 'utf8'));
   expect(saved.sampleData).toEqual(sample);
   expect(Buffer.from(saved.sampleData.odooEvidence.snapshotJson, 'utf8')).toEqual(originalBytes);
   await page.locator('#open-file').setInputFiles(savedPath); await ready(page);
   await assertFacts(page.frameLocator('#preview-frame'), sample);
-  const exporting = page.waitForEvent('download'); await page.locator('[data-action=export]').click();
+  const exporting = page.waitForEvent('download'); await clickHeaderAction(page,'export');
   const htmlPath = info.outputPath('odoo-request.html'); await (await exporting).saveAs(htmlPath);
   expect((await readFile(htmlPath, 'utf8')).startsWith('<!doctype html>')).toBe(true);
   const offline = await context.newPage(); await offline.route(/^https?:/, route => route.abort());
@@ -62,7 +63,7 @@ test('repository Node Odoo SDK feeds real Studio Open/save/reopen/export and off
   await page.locator('#open-file').setInputFiles(htmlPath); await ready(page);
   await assertFacts(page.frameLocator('#preview-frame'), sample);
   // Re-save the reimported standalone HTML to prove its unprinted evidence still exists.
-  const resaving = page.waitForEvent('download'); await page.locator('[data-action=save]').click();
+  const resaving = page.waitForEvent('download'); await clickHeaderAction(page,'save');
   const reopenedPath = info.outputPath('odoo-reopened.printform.json'); await (await resaving).saveAs(reopenedPath);
   expect(readProject(await readFile(reopenedPath, 'utf8')).sampleData.odooEvidence).toEqual(input);
   expect(input).toEqual(before);

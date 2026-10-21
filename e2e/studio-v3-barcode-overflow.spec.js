@@ -1,3 +1,4 @@
+import {clickHeaderAction} from './header-action.js';
 import {test,expect} from './studio-v3-test.js';
 import {readFile,writeFile} from 'node:fs/promises';
 import {pathToFileURL} from 'node:url';
@@ -20,7 +21,7 @@ async function renderedAfter(page,action) {
   return lastReport(page);
 }
 async function save(page,info,name) {
-  const pending = page.waitForEvent('download'); await page.locator('[data-action=save]').click();
+  const pending = page.waitForEvent('download'); await clickHeaderAction(page,'save');
   const path = info.outputPath(`${name}.printform.json`); await (await pending).saveAs(path);
   return readFile(path,'utf8');
 }
@@ -90,7 +91,7 @@ async function runtimeReport(page,media='screen') {
   return page.evaluate(()=>window.PrintFormDocument.render());
 }
 async function actualExport(page,context,info,name) {
-  const downloading = page.waitForEvent('download'); await page.locator('[data-action=export]').click();
+  const downloading = page.waitForEvent('download'); await clickHeaderAction(page,'export');
   const path = info.outputPath(`${name}.html`); await (await downloading).saveAs(path);
   const offline = await context.newPage(); await offline.route(/^https?:/,route=>route.abort());
   await offline.goto(pathToFileURL(path).href);

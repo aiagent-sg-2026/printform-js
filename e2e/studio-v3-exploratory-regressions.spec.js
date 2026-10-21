@@ -1,24 +1,27 @@
+import {clickHeaderAction} from './header-action.js';
 import { test, expect } from './studio-v3-test.js';
 test.setTimeout(90000);
 const ready=page=>expect(page.locator('[data-action=export]')).toBeEnabled({timeout:30000});
 test('remembered quotation data never silently becomes an invoice on reload or New',async({page})=>{
- await page.goto('/studio-v3/');await ready(page);await page.locator('[data-action=new]').click();
+ await page.goto('/studio-v3/');await ready(page);await clickHeaderAction(page,'new');
  await page.getByText('Business demo templates',{exact:true}).click();await page.locator('[data-demo-template=SalesQuotation]').click();await ready(page);
  await page.locator('[data-mode=data]').click();await page.locator('#database-choice').selectOption('demo:SalesQuotation:canopy');await ready(page);
  await page.reload();await ready(page);
  const paper=page.frameLocator('#preview-frame');await expect(paper.locator('[data-v3-id=header-title]').first()).toHaveText('INVOICE');
  await expect(paper.locator('[data-v3-id=header-number]').first()).toContainText('INV-');
  await expect(paper.locator('#pf-mount')).not.toContainText('SQ-DEMO-2026-CANOPY');
- await page.locator('[data-action=new]').click();await page.locator('[data-template=invoice]').click();await ready(page);
+ await clickHeaderAction(page,'new');await page.locator('[data-template=invoice]').click();await ready(page);
  await expect(paper.locator('[data-v3-id=header-number]').first()).toContainText('INV-');
  await page.locator('[data-mode=data]').click();expect((await page.locator('#database-choice option').allTextContents()).some(text=>text.includes('Sales quotation'))).toBe(false);
 });
-test('expanded template chooser keeps Cancel visible and page navigation wraps as one group',async({page},info)=>{
- for(const size of [{width:1180,height:757},{width:768,height:1024},{width:390,height:844}]) {
+test('expanded template chooser keeps Cancel visible and page navigation stays together and visible',async({page},info)=>{
+ for(const size of [{width:1180,height:757},{width:768,height:1024},{width:390,height:844},{width:320,height:568}]) {
   await page.setViewportSize(size);await page.goto('/studio-v3/');await ready(page);
   const previous=await page.getByRole('button',{name:'Previous page',exact:true}).boundingBox(),next=await page.getByRole('button',{name:'Next page',exact:true}).boundingBox();
   expect(Math.abs(previous.y-next.y)).toBeLessThan(2);
-  await page.locator('[data-action=new]').click();await page.getByText('Business demo templates',{exact:true}).click();
+  for (const name of ['Previous page','Next page']) await expect(page.getByRole('button',{name,exact:true})).toBeInViewport({ratio:1});
+  const navigation=await page.locator('.page-navigation').boundingBox();expect(navigation.x).toBeGreaterThanOrEqual(0);expect(navigation.x+navigation.width).toBeLessThanOrEqual(size.width);
+  await clickHeaderAction(page,'new');await page.getByText('Business demo templates',{exact:true}).click();
   await expect(page.locator('[data-action=cancel-new]')).toBeInViewport({ratio:1});
   const bounds=await page.locator('#new-dialog').boundingBox();expect(bounds.y).toBeGreaterThanOrEqual(0);expect(bounds.y+bounds.height).toBeLessThanOrEqual(size.height);
   await page.screenshot({path:info.outputPath(`template-chooser-${size.width}.png`)});

@@ -1,3 +1,4 @@
+import {clickHeaderAction} from './header-action.js';
 import { replyText, responsesReply, userText } from './demo-gateway-fixture.js';
 import { expect } from '@playwright/test';
 import { reviewCandidate } from './studio-v3-scope.js';
@@ -89,7 +90,7 @@ export async function runRedesignLifecycle({page,context},info,fixtures) {
   });
   await page.goto('/studio-v3/'); await ready(page);
   const baseline = await inspect(page), total = await frame(page).locator('[data-v3-id=totals-total]').textContent();
-  const initialDownload=page.waitForEvent('download'); await page.locator('[data-action=save]').click();
+  const initialDownload=page.waitForEvent('download'); await clickHeaderAction(page,'save');
   const initialPath=info.outputPath('baseline.printform.json'); await (await initialDownload).saveAs(initialPath);
   const baselineProject=JSON.parse(await fs.readFile(initialPath,'utf8'));
   await page.locator('[data-ai-toggle]').click();
@@ -129,19 +130,19 @@ export async function runRedesignLifecycle({page,context},info,fixtures) {
   expect(await inspect(page)).toEqual(evidence.rounds.length > 1 ? evidence.rounds.at(-2).applied : baseline);
   await page.locator('[data-action=redo]').click(); await ready(page);
   const final = await inspect(page); expect(final).toEqual(evidence.rounds.at(-1).applied);
-  const pending = page.waitForEvent('download'); await page.locator('[data-action=save]').click();
+  const pending = page.waitForEvent('download'); await clickHeaderAction(page,'save');
   const download = await pending, saved = info.outputPath('redesign.printform.json'); await download.saveAs(saved);
   const savedProject=JSON.parse(await fs.readFile(saved,'utf8'));
   expect(savedProject.project.sampleData).toEqual(baselineProject.project.sampleData);
-  await page.locator('[data-action=new]').click(); await page.locator('[data-template=purchase]').click(); await ready(page);
-  const chooser = page.waitForEvent('filechooser'); await page.locator('[data-action=open]').click(); await (await chooser).setFiles(saved);
+  await clickHeaderAction(page,'new'); await page.locator('[data-template=purchase]').click(); await ready(page);
+  const chooser = page.waitForEvent('filechooser'); await clickHeaderAction(page,'open'); await (await chooser).setFiles(saved);
   await expect(page.locator('#document-name')).toHaveValue(savedProject.project.manifest.title);
   await expect(page.locator('#revision')).toContainText(`r${savedProject.project.revision}`);
   await ready(page);
   expect(await inspect(page)).toEqual(final);
   await page.locator('[data-mode=validate]').click();
   await expect(page.locator('#right-panel')).toContainText('Current browser layout passed.');
-  const exportDownload=page.waitForEvent('download'); await page.locator('[data-action=export]').click();
+  const exportDownload=page.waitForEvent('download'); await clickHeaderAction(page,'export');
   const exportedPath=info.outputPath('redesigned-standalone.html'); await (await exportDownload).saveAs(exportedPath);
   const exported=await context.newPage(), outbound=[]; exported.on('request',r=>{if(/^https?:/.test(r.url()))outbound.push(r.url());});
   await exported.goto(pathToFileURL(exportedPath).href);

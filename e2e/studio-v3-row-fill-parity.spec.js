@@ -1,3 +1,4 @@
+import {clickHeaderAction} from './header-action.js';
 import {expectApplied} from './ai-applied.js';
 import {test,expect} from './studio-v3-test.js';
 import {keepStructureOpen} from './studio-v3-structure.js';
@@ -46,7 +47,7 @@ async function gateway(page,steps) {
 }
 async function save(page,info,name) {
   const revision = await page.locator('#revision').innerText(), pending = page.waitForEvent('download');
-  await page.locator('[data-action=save]').click(); const download = await pending, path = info.outputPath(name);
+  await clickHeaderAction(page,'save'); const download = await pending, path = info.outputPath(name);
   await download.saveAs(path); await expect(page.locator('#revision')).toHaveText(revision.split(' ·')[0]);
   return {path,project:JSON.parse(await fs.readFile(path,'utf8')).project};
 }

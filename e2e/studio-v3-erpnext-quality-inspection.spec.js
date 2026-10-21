@@ -1,3 +1,4 @@
+import {clickHeaderAction} from './header-action.js';
 import { test, expect } from './studio-v3-test.js';
 import { fictionalErpNextQualityInspection, changeQualitySnapshot } from '../tests/fixtures/erpnext-quality-inspection.js';
 import { createErpNextQualityInspectionProject, adaptErpNextQualityInspection } from '../studio-v3/erpnext-quality-inspection-adapter.js';
@@ -22,7 +23,7 @@ async function assertFacts(surface, sample) {
   await expect(surface.locator('[data-v3-id=items-description] not,[data-v3-id=items-description] script')).toHaveCount(0);
 }
 async function saveUi(page, info, name) {
-  const downloading = page.waitForEvent('download'); await page.locator('[data-action=save]').click();
+  const downloading = page.waitForEvent('download'); await clickHeaderAction(page,'save');
   const path = info.outputPath(name); await (await downloading).saveAs(path);
   return { path, project: readProject(await readFile(path, 'utf8')) };
 }
@@ -47,7 +48,7 @@ test('real repository Node Quality Inspection SDK survives Open/save/export/offl
   expect(Buffer.from(saved.project.sampleData.erpnextEvidence.snapshotJson, 'utf8')).toEqual(originalBytes);
   await page.locator('#open-file').setInputFiles(saved.path); await ready(page);
   await assertFacts(page.frameLocator('#preview-frame'), sample);
-  const exporting = page.waitForEvent('download'); await page.locator('[data-action=export]').click();
+  const exporting = page.waitForEvent('download'); await clickHeaderAction(page,'export');
   const htmlPath = info.outputPath('quality.html'); await (await exporting).saveAs(htmlPath);
   const offline = await context.newPage(); await offline.route(/^https?:/, route => route.abort());
   try {

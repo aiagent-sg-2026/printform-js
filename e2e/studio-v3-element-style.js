@@ -1,3 +1,4 @@
+import {clickHeaderAction} from './header-action.js';
 import fs from 'node:fs/promises';
 import {JSDOM} from 'jsdom';
 import {validatePaperReport,inspectProject} from '../studio-v3/validation.js';
@@ -37,7 +38,7 @@ export async function gateway(page,steps) {
 }
 export async function save(page,info,name) {
   const revision = await page.locator('#revision').innerText(), pending = page.waitForEvent('download');
-  await page.locator('[data-action=save]').click(); const download = await pending, path = info.outputPath(name);
+  await clickHeaderAction(page,'save'); const download = await pending, path = info.outputPath(name);
   await download.saveAs(path);
   if ((await page.locator('#revision').innerText()).split(' ·')[0] !== revision.split(' ·')[0]) throw new Error('Save changed the revision.');
   return {path,project:JSON.parse(await fs.readFile(path,'utf8')).project};

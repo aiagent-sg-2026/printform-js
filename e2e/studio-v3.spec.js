@@ -1,3 +1,4 @@
+import {clickHeaderAction} from './header-action.js';
 import { test, expect } from '@playwright/test';
 import { keepStructureOpen } from './studio-v3-structure.js';
 import fs from 'node:fs/promises';
@@ -19,7 +20,7 @@ async function sample(page, id) {
   await expect.poll(()=>page.evaluate(before=>window.sampleRender?.token !== before ? window.sampleRender?.rows : null,token)).toBe(id === 'long' ? 45 : Number(id));
 }
 async function newForm(page,type) {
-  await page.locator('[data-action=new]').click();
+  await clickHeaderAction(page,'new');
   await page.locator(`[data-template=${type}]`).click();
   await ready(page);
 }
@@ -76,19 +77,19 @@ test('fresh blank -> structure -> bind -> save -> reopen -> validate -> export',
   await page.locator('#document-name').fill('My invoice'); await page.locator('#document-name').press('Tab');
   await expect(page.locator('#revision')).toContainText('unsaved');
   await ready(page);
-  const savedPromise = page.waitForEvent('download'); await page.locator('[data-action=save]').click();
+  const savedPromise = page.waitForEvent('download'); await clickHeaderAction(page,'save');
   const saved = await savedPromise; const savePath = info.outputPath('editable-invoice.printform.json'); await saved.saveAs(savePath);
   const savedData = JSON.parse(await fs.readFile(savePath,'utf8'));
   expect(savedData.project.manifest.studioV3.columns[2].label).toBe('Item / 项目');
   await newForm(page,'purchase');
-  const chooserPromise = page.waitForEvent('filechooser'); await page.locator('[data-action=open]').click();
+  const chooserPromise = page.waitForEvent('filechooser'); await clickHeaderAction(page,'open');
   await (await chooserPromise).setFiles(savePath);
   await expect(page.locator('#document-name')).toHaveValue('My invoice'); await ready(page);
   await expect(frame(page).locator('h1').first()).toHaveText('ACME INVOICE');
   await page.locator('[data-mode=validate]').click();
   await expect(page.locator('#right-panel')).toContainText('Current browser layout passed.');
   const preview = await frame(page).locator('.printform_page').evaluateAll(pages => pages.map(p => ({text:p.innerText.replace(/\s+/g,' ').trim(),rows:[...p.querySelectorAll('.prowitem_processed')].map(r=>r.dataset.pfRowIndex),width:Math.round(p.getBoundingClientRect().width),height:Math.round(p.getBoundingClientRect().height)})));
-  const exportPromise = page.waitForEvent('download'); await page.locator('[data-action=export]').click();
+  const exportPromise = page.waitForEvent('download'); await clickHeaderAction(page,'export');
   const exported = await exportPromise; const htmlPath = info.outputPath('invoice.html'); await exported.saveAs(htmlPath);
   const html = await fs.readFile(htmlPath,'utf8');
   expect(html).not.toContain('data-v3-selection');
@@ -177,7 +178,7 @@ test('undo/redo, column operations, repeat header, explicit break and interrupte
   expect(await frame(page).locator('.printform_page').count()).toBeLessThan(10);
   await page.locator('[data-mode=validate]').click();
   await page.getByRole('button',{name:'Run all synthetic samples',exact:true}).click();
-  await page.locator('[data-action=new]').click();
+  await clickHeaderAction(page,'new');
   await page.locator('[data-template=delivery]').click(); await ready(page);
   await expect(frame(page).locator('h1').first()).toHaveText('DELIVERY NOTE');
   await expect(frame(page).locator('.prowitem_processed')).toHaveCount(45);
@@ -244,14 +245,14 @@ test('remaining authoring controls, completed matrix, page navigation and HTML r
   await page.getByRole('button',{name:'Run all synthetic samples',exact:true}).click();
   await expect(page.getByRole('button',{name:'Run all synthetic samples',exact:true})).toBeVisible({timeout:45000}); await ready(page);
   await expect(page.locator('#right-panel')).not.toContainText('Not checked');
-  const downloadPromise = page.waitForEvent('download'); await page.locator('[data-action=export]').click();
+  const downloadPromise = page.waitForEvent('download'); await clickHeaderAction(page,'export');
   const exported = await downloadPromise, file = info.outputPath('custom.html'); await exported.saveAs(file);
-  const chooser = page.waitForEvent('filechooser'); await page.locator('[data-action=open]').click(); await (await chooser).setFiles(file); await ready(page);
+  const chooser = page.waitForEvent('filechooser'); await clickHeaderAction(page,'open'); await (await chooser).setFiles(file); await ready(page);
   await expect(frame(page).locator('[data-v3-id=header-company]').first()).toHaveText('My own company');
   await expect(frame(page).locator('html')).toHaveAttribute('lang','zh-CN');
-  await page.locator('[data-action=preview]').click();
+  await clickHeaderAction(page,'preview');
   await expect(page.locator('#left-panel')).toBeHidden();
-  await page.locator('[data-action=preview]').click(); await expect(page.locator('#left-panel')).toBeVisible();
+  await clickHeaderAction(page,'preview'); await expect(page.locator('#left-panel')).toBeVisible();
 });
 
 test('ERP import and sample selection remain coherent through undo/redo and multiple imports', async ({page}) => {
@@ -286,7 +287,7 @@ test('hidden header removes printed content and space in preview and standalone 
   await expect(frame(page).locator('.pheader_processed')).toHaveCount(0);
   await expect(frame(page).locator('#pf-mount')).not.toContainText('Untitled form');
   expect(await frame(page).locator('.pdocinfo_processed').evaluate(n=>n.getBoundingClientRect().top-n.closest('.printform_page').getBoundingClientRect().top)).toBeLessThan(5);
-  const promise = page.waitForEvent('download'); await page.locator('[data-action=export]').click();
+  const promise = page.waitForEvent('download'); await clickHeaderAction(page,'export');
   const downloaded = await promise, file = info.outputPath('hidden-header.html'); await downloaded.saveAs(file);
   const exported = await context.newPage(); await exported.goto(pathToFileURL(file).href);
   await expect(exported.locator('html')).toHaveAttribute('data-printform-status','ready');

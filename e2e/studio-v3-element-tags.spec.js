@@ -1,3 +1,4 @@
+import {clickHeaderAction} from './header-action.js';
 import {expectApplied} from './ai-applied.js';
 import { isInference, responsesReply, userText } from './demo-gateway-fixture.js';
 import { test, expect } from './studio-v3-test.js';
@@ -75,7 +76,7 @@ test('deleted and cross-document references never target a neighboring field wit
   await page.locator('[data-ai-toggle]').click(); await expect(page.locator('[data-ai-element-tags]')).toContainText('Deleted element');
   await page.locator('#ai-prompt').fill('Amend this referenced field.'); await page.locator('[data-ai-send]').click(); expect(calls).toHaveLength(0);
   await page.getByRole('button',{name:'Remove all',exact:true}).click(); await add(page,'header-company');
-  await page.locator('[data-action=new]').click(); await page.locator('[data-template=delivery]').click(); await ready(page);
+  await clickHeaderAction(page,'new'); await page.locator('[data-template=delivery]').click(); await ready(page);
   await expect(page.locator('[data-ai-element-tags]')).toContainText('Another document');
   await page.locator('[data-ai-send]').click(); expect(calls).toHaveLength(0);
   expect(await page.locator('[data-ai-tag-id="header-company"] .ai-tag-meta').textContent()).toContain('r1');

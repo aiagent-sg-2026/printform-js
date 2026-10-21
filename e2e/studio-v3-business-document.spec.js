@@ -1,3 +1,4 @@
+import {clickHeaderAction} from './header-action.js';
 import { test, expect } from './studio-v3-test.js';
 import { BUSINESS_DEMO_TEMPLATES, businessDemoInput } from '../studio-v3/business-document-demos.js';
 import { createBusinessDocumentProject } from '../studio-v3/business-document-project.js';
@@ -140,7 +141,7 @@ for (const entry of BUSINESS_DEMO_TEMPLATES) test(`${entry.documentKind}: no-cod
     });
   });
   await page.goto('/studio-v3/'); await ready(page);
-  await page.locator('[data-action=new]').click();
+  await clickHeaderAction(page,'new');
   await page.locator('#new-dialog details').filter({ has: page.locator(`[data-demo-template="${entry.documentKind}"]`) }).locator('summary').click();
   let paper = await changeDocument(page, () => page.locator(`[data-demo-template="${entry.documentKind}"]`).click());
   await assertFacts(paper, businessDemoInput(entry.documentKind));
@@ -170,12 +171,12 @@ for (const entry of BUSINESS_DEMO_TEMPLATES) test(`${entry.documentKind}: no-cod
   const project = createBusinessDocumentProject(input);
   paper = await changeDocument(page, () => page.locator('#open-file').setInputFiles({ name: `${entry.documentKind}.printform.json`, mimeType: 'application/json', buffer: Buffer.from(saveProject(project)) }));
   await assertFacts(paper, input);
-  const saving = page.waitForEvent('download'); await page.locator('[data-action=save]').click();
+  const saving = page.waitForEvent('download'); await clickHeaderAction(page,'save');
   const saved = await saving, savedPath = info.outputPath(`${entry.documentKind}.printform.json`); await saved.saveAs(savedPath);
   expect(readProject(await readFile(savedPath, 'utf8')).sampleData).toEqual(project.sampleData);
   paper = await changeDocument(page, () => page.locator('#open-file').setInputFiles(savedPath));
   await assertFacts(paper, input);
-  const exporting = page.waitForEvent('download'); await page.locator('[data-action=export]').click();
+  const exporting = page.waitForEvent('download'); await clickHeaderAction(page,'export');
   const exported = await exporting, exportedPath = info.outputPath(`${entry.documentKind}.html`); await exported.saveAs(exportedPath);
   const offline = await context.newPage(); await offline.route(/^https?:/, route => route.abort());
   await offline.goto(pathToFileURL(exportedPath).href);

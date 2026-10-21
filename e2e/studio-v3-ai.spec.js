@@ -1,3 +1,4 @@
+import {clickHeaderAction} from './header-action.js';
 import { reviewCandidate } from './studio-v3-scope.js';
 import { isInference, responsesReply } from './demo-gateway-fixture.js';
 import { test, expect } from './studio-v3-test.js';
@@ -82,7 +83,7 @@ test('cancel and a changed revision reject late responses; replaced form gets fr
   await page.locator('#document-name').fill('Fictional renamed form'); await page.locator('#document-name').press('Tab'); release2();
   await expect(page.locator('#revision')).toContainText('r1'); await expect(page.locator('[data-ai-proposal]')).toBeHidden();
   await expect(page.locator('.ai-assistant .ai-message-text').last()).toContainText('Form changed'); await expect(page.locator('#ai-consent')).toHaveCount(0);
-  await page.locator('[data-action=new]').click(); await page.locator('[data-template=delivery]').click(); await ready(page);
+  await clickHeaderAction(page,'new'); await page.locator('[data-template=delivery]').click(); await ready(page);
   await page.locator('#ai-prompt').fill('Use navy.'); await send(page); await expect.poll(()=>m2.plans()).toBe(2);
   expect(JSON.stringify(m2.calls.at(-1).payload)).not.toContain('items-amount');
 });

@@ -1,3 +1,4 @@
+import {clickHeaderAction} from './header-action.js';
 import {test,expect} from '@playwright/test';
 import { keepStructureOpen } from './studio-v3-structure.js';
 import fs from 'node:fs/promises';
@@ -14,7 +15,7 @@ test.setTimeout(120000);
 const preview=page=>page.frameLocator('#preview-frame');
 const ready=page=>expect(page.locator('[data-action=export]')).toBeEnabled({timeout:30000});
 async function choose(page,kind) {
- await page.locator('[data-action=new]').click();
+ await clickHeaderAction(page,'new');
  const details=page.locator('#new-dialog details').filter({hasText:'Business demo templates'});
  if(await details.getAttribute('open')===null)await details.locator('summary').click();
  await page.locator(`[data-demo-template=${kind}]`).click();await ready(page);
@@ -29,7 +30,7 @@ async function save(page,info,name,record) {
  // Prove which dataset is active before downloading, then compare the complete saved data.
  await expect(page.locator('#database-choice')).toHaveValue(record.id);
  await expect(page.locator('#database-name')).toHaveValue(record.title);
- const downloading=page.waitForEvent('download');await page.locator('[data-action=save]').click();
+ const downloading=page.waitForEvent('download');await clickHeaderAction(page,'save');
  const download=await downloading,path=info.outputPath(`${name}.printform.json`);await download.saveAs(path);
  const source=JSON.parse(await fs.readFile(path,'utf8'));
  expect(JSON.stringify(source.project.sampleData)).toBe(JSON.stringify(record.data));
@@ -81,7 +82,7 @@ for(const preset of A4_PRESETS)test(`${preset.documentKind}: real data → edit 
  long.project.sampleData.customer.name+=' · Facilities procurement and project coordination department / 工程采购及项目协调部门';
  const longPath=info.outputPath(`${preset.id}-long-names.printform.json`);await fs.writeFile(longPath,JSON.stringify(long));
  // Opening another form first proves the imported layout identity survives a real reopen.
- await page.locator('[data-action=new]').click();await page.locator('[data-template=blank]').click();await ready(page);
+ await clickHeaderAction(page,'new');await page.locator('[data-template=blank]').click();await ready(page);
  // Upload from memory: the output path carries the test title (non-ASCII arrows), which some environments cannot hand to the file chooser.
  await page.locator('#open-file').setInputFiles({name:`${preset.id}-long-names.printform.json`,mimeType:'application/json',buffer:Buffer.from(JSON.stringify(long))});
  await expect(page.locator('#document-name')).toHaveValue(long.project.manifest.title);await ready(page);
@@ -101,7 +102,7 @@ for(const preset of A4_PRESETS)test(`${preset.documentKind}: real data → edit 
  await expect(preview(page).locator('[data-v3-id=footer]')).toHaveCount(1);
  const bodyOverflow=await preview(page).locator('.prowitem_processed td').evaluateAll(cells=>cells.filter(cell=>cell.scrollWidth>cell.clientWidth+1).length);
  expect(bodyOverflow).toBe(0);
- const exported=page.waitForEvent('download');await page.locator('[data-action=export]').click();
+ const exported=page.waitForEvent('download');await clickHeaderAction(page,'export');
  const html=await exported,htmlPath=info.outputPath(`${preset.id}.html`);await html.saveAs(htmlPath);
  const print=await context.newPage();await print.goto(pathToFileURL(htmlPath).href);
  await expect(print.locator('html')).toHaveAttribute('data-printform-status','ready');

@@ -1,3 +1,4 @@
+import {clickHeaderAction} from './header-action.js';
 import {test,expect} from '@playwright/test';
 async function expectToolbarFits(page,{rendering=false}={}) {
   const geometry=await page.locator('.paper-toolbar').evaluate((toolbar,rendering)=>{
@@ -15,7 +16,7 @@ async function expectToolbarFits(page,{rendering=false}={}) {
   expect(geometry.nextRight).toBeLessThanOrEqual(geometry.viewportWidth);
   for (const button of geometry.buttons) { expect(button.width).toBeGreaterThanOrEqual(40); expect(button.height).toBeGreaterThanOrEqual(44); }
 }
-for (const [width,height] of [[390,844],[360,640]]) {
+for (const [width,height] of [[390,844],[360,640],[320,568]]) {
   test(`mobile paper-first shell ${width}x${height}`,async({page},info)=> {
     await page.setViewportSize({width,height});
     await page.goto('/studio-v3/');
@@ -26,6 +27,10 @@ for (const [width,height] of [[390,844],[360,640]]) {
     await expectToolbarFits(page,{rendering:true});
     await expectToolbarFits(page);
     for (const selector of ['.app-header','.workspace-bar','.paper-toolbar']) expect((await page.locator(selector).boundingBox()).height).toBeLessThanOrEqual(52);
+    for (const selector of ['.app-header','.workspace-bar']) {
+      const geometry=await page.locator(selector).evaluate(node=>({width:node.clientWidth,scrollWidth:node.scrollWidth,left:node.getBoundingClientRect().left,right:node.getBoundingClientRect().right}));
+      expect(geometry.scrollWidth).toBeLessThanOrEqual(geometry.width); expect(geometry.left).toBeGreaterThanOrEqual(0); expect(geometry.right).toBeLessThanOrEqual(width);
+    }
     expect((await page.locator('.status-bar').boundingBox()).height).toBeLessThanOrEqual(32);
     expect((await page.locator('#paper-scroll').boundingBox()).height).toBeGreaterThanOrEqual(height*.6);
     expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
@@ -33,7 +38,7 @@ for (const [width,height] of [[390,844],[360,640]]) {
     await more.click(); await expect(more).toHaveAttribute('aria-expanded','true');
     for (const name of ['New','Open','Save with source','HTML with source','Share copy…','Preview','Check for updates']) await expect(menu.getByRole('button',{name,exact:true})).toBeVisible();
     await page.keyboard.press('Escape'); await expect(menu).toBeHidden(); await expect(more).toBeFocused();
-    await more.click(); await menu.getByRole('button',{name:'New',exact:true}).click();
+    await more.click(); await clickHeaderAction(page,'new');
     await expect(page.getByRole('dialog',{name:'Start a print form'})).toBeVisible(); await expect(menu).toBeHidden();
     await page.locator('[data-action=cancel-new]').click();
     const fab=page.getByRole('button',{name:'AI editor',exact:true}); await expect(fab).toBeVisible();
@@ -43,8 +48,17 @@ for (const [width,height] of [[390,844],[360,640]]) {
     await expect(pages).toHaveAttribute('aria-expanded','false'); await expect(page.locator('#thumbnails')).toBeHidden();
     await pages.click(); await expect(pages).toHaveAttribute('aria-expanded','true'); await expect(page.locator('#thumbnails')).toBeVisible();
     await pages.click(); await expect(page.locator('#thumbnails')).toBeHidden();
-    await more.click(); const paper=await page.locator('#preview-frame').boundingBox();
-    await page.locator('#mobile-menu-backdrop').click({position:{x:paper.x+paper.width/2,y:Math.min(paper.y+paper.height/2,height-60)}});
+    await more.click();
+    const menuRect=await menu.boundingBox(), backdrop=page.locator('#mobile-menu-backdrop'), backdropRect=await backdrop.boundingBox();
+    if (width===320 && height===568) {
+      const geometry=await menu.evaluate(node=>({bottom:node.getBoundingClientRect().bottom,viewportHeight:innerHeight,height:node.clientHeight,scrollHeight:node.scrollHeight,overflowY:getComputedStyle(node).overflowY}));
+      expect(geometry.bottom).toBeLessThanOrEqual(geometry.viewportHeight);
+      expect(geometry.overflowY).toBe('auto'); expect(geometry.scrollHeight).toBeGreaterThan(geometry.height);
+      await menu.evaluate(node=>{ node.scrollTop=44; }); expect(await menu.evaluate(node=>node.scrollTop)).toBeGreaterThan(0);
+    }
+    const point={x:(backdropRect.x+menuRect.x)/2,y:menuRect.y+menuRect.height/2};
+    expect(point.x).toBeLessThan(menuRect.x); expect(point.x).toBeGreaterThan(backdropRect.x);
+    await backdrop.click({position:{x:point.x-backdropRect.x,y:point.y-backdropRect.y}});
     await expect(menu).toBeHidden(); await expect(more).toBeFocused(); await expect(page.locator('#mobile-menu-backdrop')).toBeHidden();
     await page.locator('[data-mode=data]').click(); await expect(page.locator('#database-workbench')).toBeVisible();
     await page.locator('#database-workbench [data-db-action=preview]').click(); await expect(page.locator('#database-workbench')).toBeHidden();

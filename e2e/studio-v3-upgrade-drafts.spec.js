@@ -1,3 +1,4 @@
+import {clickHeaderAction} from './header-action.js';
 import { isInference, responsesReply } from './demo-gateway-fixture.js';
 import {test,expect} from '@playwright/test';
 import {AGENT_KEY} from '../studio-v3/agent-preference.js';
@@ -11,7 +12,7 @@ const ready = page=>expect(page.locator('[data-action=export]')).toBeEnabled({ti
 async function start(page,server) {page.on('dialog',d=>d.accept());await keepStructureOpen(page);await page.goto(server.url);await ready(page);await page.waitForFunction(()=>Boolean(navigator.serviceWorker?.controller));}
 async function update(page,server) {
   // The check finds the build and, because work is unsaved, the approval dialog opens by itself.
-  server.publish();await page.locator('#update-button').click();await expect(page.locator('#update-dialog')).toBeVisible({timeout:30000});
+  server.publish();await clickHeaderAction(page,'update');await expect(page.locator('#update-dialog')).toBeVisible({timeout:30000});
   await page.locator('[data-update-choice=keep]').click();
 }
 async function demoMock(page,reply) {
@@ -70,7 +71,7 @@ for(const target of ['open-file','dataset-file']) {
       await page.locator(`#${target}`).setInputFiles({name:target==='open-file'?'fictional.printform.json':'fictional-dataset.json',mimeType:'application/json',buffer:Buffer.from(target==='open-file'?saveProject(project):JSON.stringify(project.sampleData))});
       await expect.poll(()=>page.evaluate(()=>globalThis.fixtureRead.bytesReady)).toBe(true);
       const updateStatus=await page.locator('#update-status').innerText();
-      server.publish();await page.locator('#update-button').click();
+      server.publish();await clickHeaderAction(page,'update');
       await expect(page.locator('#update-status')).not.toHaveText(updateStatus);await expect(page.locator('#update-button')).toBeEnabled();
       await expect(page.locator('#update-dialog')).toBeHidden();await expect(page.locator('#app-version')).toContainText('aaaaaaaaaaaa');
       expect(await page.evaluate(()=>({settled:globalThis.fixtureRead.settled,sameController:navigator.serviceWorker.controller===globalThis.fixtureController,backup:sessionStorage.getItem('printform-studio-v3:update-recovery')}))).toEqual({settled:false,sameController:true,backup:null});
@@ -92,7 +93,7 @@ for(const target of ['open-file','dataset-file']) {
       }
       await expect(page.locator('#revision')).toHaveText('r0');
       expect(await page.evaluate(()=>({settled:globalThis.fixtureRead.settled,sameController:navigator.serviceWorker.controller===globalThis.fixtureController,backup:sessionStorage.getItem('printform-studio-v3:update-recovery')}))).toEqual({settled:true,sameController:true,backup:null});
-      await page.locator('#update-button').click();await expect(page.locator('#update-dialog')).toBeVisible();
+      await clickHeaderAction(page,'update');await expect(page.locator('#update-dialog')).toBeVisible();
       await page.locator('[data-update-choice=keep]').click();await ready(page);await expect(page.locator('#app-version')).toContainText(NEXT.slice(0,12));
       await expect(page.locator('#revision')).toHaveText('r0');
       if(target==='open-file') {
@@ -142,9 +143,9 @@ test('pending AI request is cancelled only on confirmed update and never resumes
     });
     await start(page,server);
     await page.locator('[data-ai-toggle]').click();await page.locator('#ai-prompt').fill('Fictional held request');await page.locator('[data-ai-send]').click();
-    await expect.poll(()=>requests).toBe(1);server.publish();await page.locator('#update-button').click();await expect(page.locator('#update-dialog')).toBeVisible({timeout:30000});
+    await expect.poll(()=>requests).toBe(1);server.publish();await clickHeaderAction(page,'update');await expect(page.locator('#update-dialog')).toBeVisible({timeout:30000});
     await page.locator('[data-update-choice=stay]').click();await expect(page.locator('[data-ai=cancel]')).toBeVisible();
-    await page.locator('#update-button').click();await page.locator('[data-update-choice=keep]').click();await expect(page.locator('#app-version')).toContainText(NEXT.slice(0,12));await ready(page);release();
+    await clickHeaderAction(page,'update');await page.locator('[data-update-choice=keep]').click();await expect(page.locator('#app-version')).toContainText(NEXT.slice(0,12));await ready(page);release();
     await expect(page.locator('#ai-prompt')).toHaveValue('Fictional held request');await expect(page.locator('[data-ai=cancel]')).toBeHidden();await expect(page.locator('[data-ai-proposal]')).toBeHidden();
     expect(requests).toBe(1);await expect(page.locator('#revision')).toHaveText('r0');
   }finally{release();await server.close();}
@@ -166,7 +167,7 @@ test('unsupported recovery is retained with a download and blocks another update
     await page.addInitScript(()=> {sessionStorage.setItem('printform-studio-v3:update-recovery','{"version":99}');Object.defineProperty(globalThis,'indexedDB',{value:undefined});});
     await start(page,server);await expect(page.locator('#recovery-download')).toBeVisible();
     expect(await page.evaluate(()=>sessionStorage.getItem('printform-studio-v3:update-recovery'))).toBe('{"version":99}');
-    server.publish();await page.locator('#update-button').click();await expect(page.locator('#update-button')).toBeEnabled();await page.locator('#update-button').click();
+    server.publish();await clickHeaderAction(page,'update');await expect(page.locator('#update-button')).toBeEnabled();await clickHeaderAction(page,'update');
     await expect(page.locator('#update-status')).toContainText('retained recovery backup');await expect(page.locator('#app-version')).toContainText('aaaaaaaaaaaa');
     const download=page.waitForEvent('download');await page.locator('#recovery-download').click();await download;
     expect(await page.evaluate(()=>sessionStorage.getItem('printform-studio-v3:update-recovery'))).toBe('{"version":99}');
@@ -193,7 +194,7 @@ test('tab-only saved datasets block update before reload and remain available to
   const server=await upgradeServer();
   try {
     await page.addInitScript(()=>Object.defineProperty(globalThis,'indexedDB',{value:undefined}));await start(page,server);
-    server.publish();await page.locator('#update-button').click();await expect(page.locator('#update-button')).toBeEnabled();await page.locator('#update-button').click();
+    server.publish();await clickHeaderAction(page,'update');await expect(page.locator('#update-button')).toBeEnabled();await clickHeaderAction(page,'update');
     await expect(page.locator('#update-status')).toContainText('Database storage is tab-only');await expect(page.locator('#app-version')).toContainText('aaaaaaaaaaaa');
     await expect(page.locator('#update-dialog')).toBeHidden();await ready(page);
   }finally{await server.close();}

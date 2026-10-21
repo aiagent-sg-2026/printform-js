@@ -1,3 +1,4 @@
+import {clickHeaderAction} from './header-action.js';
 import { test, expect } from './studio-v3-test.js';
 import { readFile } from 'node:fs/promises';
 import { pathToFileURL } from 'node:url';
@@ -74,7 +75,7 @@ for (const kind of ['SalesInvoice', 'PurchaseOrder', 'PurchaseInvoice']) {
         await expect(preview.locator('[data-v3-id=header-supplier-invoice]').first()).toHaveText(project.sampleData.document.supplierInvoiceNumber);
         await expect(preview.locator('[data-v3-id=customer-ship]')).toHaveCount(0);
       }
-      const saving = page.waitForEvent('download'); await page.locator('[data-action=save]').click();
+      const saving = page.waitForEvent('download'); await clickHeaderAction(page,'save');
       const saved = await saving, savedPath = info.outputPath(`${name}.printform.json`); await saved.saveAs(savedPath);
       const serialized = await readFile(savedPath, 'utf8'), restored = readProject(serialized);
       expect(restored.sampleData).toEqual(project.sampleData);
@@ -83,7 +84,7 @@ for (const kind of ['SalesInvoice', 'PurchaseOrder', 'PurchaseInvoice']) {
         name: `${name}-reopened.printform.json`, mimeType: 'application/json', buffer: Buffer.from(serialized)
       });
       await ready(page); await assertConsumer(preview, project);
-      const exporting = page.waitForEvent('download'); await page.locator('[data-action=export]').click();
+      const exporting = page.waitForEvent('download'); await clickHeaderAction(page,'export');
       const exported = await exporting, htmlPath = info.outputPath(`${name}.html`); await exported.saveAs(htmlPath);
       const printed = await context.newPage();
       await printed.route(/^https?:/, route => route.abort());

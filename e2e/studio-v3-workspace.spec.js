@@ -1,3 +1,4 @@
+import {clickHeaderAction} from './header-action.js';
 import { test, expect } from '@playwright/test';
 import { keepStructureOpen } from './studio-v3-structure.js';
 import fs from 'node:fs/promises';
@@ -6,7 +7,7 @@ const frame = page=>page.frameLocator('#preview-frame');
 async function ready(page) {await expect(page.locator('[data-action=export]')).toBeEnabled({timeout:30000});}
 async function edit(page,work) {const revision=await page.locator('#revision').innerText();await work();await expect(page.locator('#revision')).not.toHaveText(revision);await ready(page);}
 async function saved(page,info,name) {
-  const download=page.waitForEvent('download');await page.locator('[data-action=save]').click();const file=info.outputPath(name);await(await download).saveAs(file);return JSON.parse(await fs.readFile(file,'utf8'));
+  const download=page.waitForEvent('download');await clickHeaderAction(page,'save');const file=info.outputPath(name);await(await download).saveAs(file);return JSON.parse(await fs.readFile(file,'utf8'));
 }
 test.setTimeout(90000);
 test.beforeEach(async ({page})=>{page.on('dialog',d=>d.accept());await keepStructureOpen(page);await page.goto('/studio-v3/');await ready(page);});
@@ -28,8 +29,8 @@ test('canvas fitting, zoom, panels, thumbnails, preview and current page affect 
   await page.locator('[data-layout=thumbnails]').click();await expect(page.locator('#thumbnails')).toBeVisible();
   await page.locator('[data-layout=structure]').first().click();await page.locator('[data-layout=properties]').first().click();await page.locator('#zoom').selectOption('width');
   const narrow=Number(await page.locator('#preview-frame').getAttribute('data-zoom'));
-  await page.locator('[data-action=preview]').click();await expect.poll(async()=>Number(await page.locator('#preview-frame').getAttribute('data-zoom'))).toBeGreaterThan(narrow);
-  await page.locator('[data-action=preview]').click();
+  await clickHeaderAction(page,'preview');await expect.poll(async()=>Number(await page.locator('#preview-frame').getAttribute('data-zoom'))).toBeGreaterThan(narrow);
+  await clickHeaderAction(page,'preview');
   expect(await geometry()).toEqual(before);await expect(page.locator('#revision')).toHaveText(revision);
   expect(await saved(page,info,'after.printform.json')).toEqual(baseline);
   await page.screenshot({path:info.outputPath('canvas-fit-width.png')});

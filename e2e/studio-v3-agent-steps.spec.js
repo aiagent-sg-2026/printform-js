@@ -1,3 +1,4 @@
+import {clickHeaderAction} from './header-action.js';
 import { test, expect } from './studio-v3-test.js';
 import { syntheticPng } from './fixtures/reference-documents.js';
 import {upgradeServer,NEXT} from './studio-v3-upgrade-server.js';
@@ -75,7 +76,7 @@ test.describe('work-in-steps update recovery',()=> {
       const completed=page.locator('.ai-assistant .ai-change-details');
       await expect(completed).not.toHaveAttribute('open',''); await expect(completed.locator('.ai-run-steps li')).toHaveCount(4);
       // Conversation recovery is opt-in through Keep on update, not an ordinary reload.
-      server.publish(); await page.locator('#update-button').click(); await expect(page.locator('#update-dialog')).toBeVisible({timeout:30000});
+      server.publish(); await clickHeaderAction(page,'update'); await expect(page.locator('#update-dialog')).toBeVisible({timeout:30000});
       await page.locator('[data-update-choice=keep]').click();
       await expect(page.locator('#app-version')).toContainText(NEXT.slice(0,12)); await ready(page);
       const restored=page.locator('.ai-assistant .ai-change-details');

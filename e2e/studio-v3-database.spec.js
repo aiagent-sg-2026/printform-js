@@ -1,3 +1,4 @@
+import {clickHeaderAction} from './header-action.js';
 import { test, expect } from '@playwright/test';
 import fs from 'node:fs/promises';
 import { pathToFileURL } from 'node:url';
@@ -27,7 +28,7 @@ async function save(page,copy=false) {
   await expect(page.locator('#db-draft-status')).toHaveText('Form matches saved dataset');
 }
 async function newForm(page,type) {
-  await page.locator('[data-action=new]').click(); await page.locator(`[data-template=${type}]`).click(); await ready(page);
+  await clickHeaderAction(page,'new'); await page.locator(`[data-template=${type}]`).click(); await ready(page);
 }
 test.setTimeout(90000);
 test.beforeEach(async ({page}) => {
@@ -62,7 +63,7 @@ test('visible database edits persist, retain supplied totals, undo only form and
   await page.reload(); await ready(page); await enter(page,'summary');
   await expect(page.getByLabel('/summary/total',{exact:true})).toHaveValue('12001');
   const preview = await frame(page).locator('.printform_page').evaluateAll(ps=>ps.map(p=>({text:p.innerText.replace(/\s+/g,' ').trim(),rows:[...p.querySelectorAll('.prowitem_processed')].map(r=>r.dataset.pfRowIndex)})));
-  const promise = page.waitForEvent('download'); await page.locator('[data-action=export]').click();
+  const promise = page.waitForEvent('download'); await clickHeaderAction(page,'export');
   const filename = info.outputPath('database-invoice.html'); await (await promise).saveAs(filename);
   const printed = await context.newPage(); await printed.goto(pathToFileURL(filename).href);
   await expect(printed.locator('html')).toHaveAttribute('data-printform-status','ready');
@@ -82,14 +83,14 @@ test('advanced JSON and existing form imports remain drafts; datasets are isolat
   await expect(page.locator('#db-draft-status')).toContainText('not saved');
   expect((await records(page)).find(r=>r.id === 'starter:invoice').data.customer.name).toBe('Sterling Manufacturing Sdn. Bhd.');
   await page.locator('#database-name').fill('Imported invoice'); await save(page,true);
-  const savePromise = page.waitForEvent('download'); await page.locator('[data-action=save]').click();
+  const savePromise = page.waitForEvent('download'); await clickHeaderAction(page,'save');
   const file = info.outputPath('existing.printform.json'); await (await savePromise).saveAs(file);
   await newForm(page,'purchase'); await enter(page,'customer');
   await expect(page.getByLabel('/customer/name',{exact:true})).toHaveValue('Sterling Manufacturing Sdn. Bhd.');
   await page.getByLabel('/customer/name',{exact:true}).fill('PO supplier'); await page.locator('#database-name').fill('PO database'); await save(page,true);
   await newForm(page,'invoice'); await enter(page,'customer');
   await expect(page.getByLabel('/customer/name',{exact:true})).toHaveValue('Imported existing ERP');
-  const chooser = page.waitForEvent('filechooser'); await page.locator('[data-action=open]').click(); await (await chooser).setFiles(file); await ready(page);
+  const chooser = page.waitForEvent('filechooser'); await clickHeaderAction(page,'open'); await (await chooser).setFiles(file); await ready(page);
   await expect(page.locator('#db-draft-status')).toContainText('not saved');
   expect((await records(page)).filter(r=>r.type === 'purchase').find(r=>r.title === 'PO database').data.customer.name).toBe('PO supplier');
   for (const record of original) expect((await records(page)).find(r=>r.id === record.id).data).toEqual(record.data);
@@ -160,9 +161,9 @@ test('dataset name Apply/Discard/Stay retains metadata until explicit save and s
   await page.locator('#database-name').fill('Discarded name');await page.locator('[data-mode=design]').click();await page.locator('[data-draft-choice=discard]').click();
   await enter(page,'customer');await expect(page.locator('#database-name')).toHaveValue('Portable renamed dataset');
   await page.locator('#database-name').fill('Applied file-only name');await page.locator('[data-mode=design]').click();await page.locator('[data-draft-choice=apply]').click();await ready(page);
-  const pending=page.waitForEvent('download');await page.locator('[data-action=save]').click();const file=info.outputPath('named-dataset.printform.json');await(await pending).saveAs(file);
-  await page.locator('[data-action=new]').click();await page.locator('[data-template=delivery]').click();await ready(page);
-  const chooser=page.waitForEvent('filechooser');await page.locator('[data-action=open]').click();await(await chooser).setFiles(file);await ready(page);await enter(page,'customer');
+  const pending=page.waitForEvent('download');await clickHeaderAction(page,'save');const file=info.outputPath('named-dataset.printform.json');await(await pending).saveAs(file);
+  await clickHeaderAction(page,'new');await page.locator('[data-template=delivery]').click();await ready(page);
+  const chooser=page.waitForEvent('filechooser');await clickHeaderAction(page,'open');await(await chooser).setFiles(file);await ready(page);await enter(page,'customer');
   await expect(page.locator('#database-name')).toHaveValue('Applied file-only name');await expect(button(page,'save')).toBeDisabled();
   expect((await records(page)).find(r=>r.id==='starter:invoice').title).toBe('Portable renamed dataset');
 });

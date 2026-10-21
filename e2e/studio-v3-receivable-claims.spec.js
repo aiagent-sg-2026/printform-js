@@ -1,3 +1,4 @@
+import {clickHeaderAction} from './header-action.js';
 import { test, expect } from './studio-v3-test.js';
 import { demoRecordForKind } from '../studio-v3/demo-catalog.js';
 import { pathToFileURL } from 'node:url';
@@ -10,7 +11,7 @@ for (const kind of ['PCAR', 'CCAR']) {
     page.on('dialog', dialog => dialog.accept());
     await page.goto('/studio-v3/');
     await ready(page);
-    await page.locator('[data-action=new]').click();
+    await clickHeaderAction(page,'new');
     const details = page.locator('#new-dialog details');
     if (await details.getAttribute('open') === null) await details.locator('summary').click();
     await page.locator(`[data-demo-template=${kind}]`).click();
@@ -30,7 +31,7 @@ for (const kind of ['PCAR', 'CCAR']) {
       await expect(paper.locator('[data-v3-id=totals-certification-adjustment]').last()).toHaveText(money(record.data.summary.certificationAdjustmentAmount));
     }
     const downloadPromise = page.waitForEvent('download');
-    await page.locator('[data-action=export]').click();
+    await clickHeaderAction(page,'export');
     const download = await downloadPromise;
     const filename = info.outputPath(`${kind}-period-2.html`);
     await download.saveAs(filename);

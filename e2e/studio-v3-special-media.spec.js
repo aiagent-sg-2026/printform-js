@@ -1,3 +1,4 @@
+import {clickHeaderAction} from './header-action.js';
 import { test,expect } from './studio-v3-test.js';
 import { readFile } from 'node:fs/promises';
 import { pathToFileURL } from 'node:url';
@@ -29,7 +30,7 @@ async function load(page,source,name='media.printform.json') {
   await ready(page);
 }
 async function saveState(page,info,name) {
-  const saving = page.waitForEvent('download'); await page.locator('[data-action=save]').click();
+  const saving = page.waitForEvent('download'); await clickHeaderAction(page,'save');
   const path = info.outputPath(name); await (await saving).saveAs(path);
   return readProject(await readFile(path,'utf8'));
 }
@@ -95,13 +96,13 @@ for (const paper of PAPERS) {
     await form.getByRole('button',{name:'Apply style',exact:true}).click(); await ready(page);
     await expect(page.locator('#paper-kind')).toHaveText(paper);
     if (paper === 'CUSTOM') await expect(page.locator('#paper-dimensions')).toHaveText('133.2 × 82.5 mm');
-    const saving = page.waitForEvent('download'); await page.locator('[data-action=save]').click();
+    const saving = page.waitForEvent('download'); await clickHeaderAction(page,'save');
     const savedPath = info.outputPath('media.printform.json'); await (await saving).saveAs(savedPath);
     const source = await readFile(savedPath,'utf8'), restored = readProject(source), design = restored.manifest.studioV3;
     expect(restored.sampleData).toEqual(initial.sampleData); expect(design.page.paper).toBe(paper);
     const measured = await assertGeometry(page.frameLocator('#preview-frame'),design);
     await load(page,source); await assertGeometry(page.frameLocator('#preview-frame'),design);
-    const exporting = page.waitForEvent('download'); await page.locator('[data-action=export]').click();
+    const exporting = page.waitForEvent('download'); await clickHeaderAction(page,'export');
     const htmlPath = info.outputPath('media-offline.html'); await (await exporting).saveAs(htmlPath);
     const offlineSource = await readFile(htmlPath,'utf8');
     await load(page,offlineSource,'media.html');
@@ -141,11 +142,11 @@ test('local capability profile import is pending, contradictions reject Apply, a
   const profileDownload = page.waitForEvent('download'); await form.locator('[data-printer-profile-export]').click();
   const profilePath = info.outputPath('declared-profile.json'); await (await profileDownload).saveAs(profilePath);
   expect(JSON.parse(await readFile(profilePath,'utf8'))).toEqual(declarations);
-  const saving = page.waitForEvent('download'); await page.locator('[data-action=save]').click();
+  const saving = page.waitForEvent('download'); await clickHeaderAction(page,'save');
   const savedPath = info.outputPath('with-profile.printform.json'); await (await saving).saveAs(savedPath);
   const saved = readProject(await readFile(savedPath,'utf8'));
   expect(saved.manifest.studioV3.page.printerProfile).toEqual(declarations);
-  const exporting = page.waitForEvent('download'); await page.locator('[data-action=export]').click();
+  const exporting = page.waitForEvent('download'); await clickHeaderAction(page,'export');
   const htmlPath = info.outputPath('with-profile.html'); await (await exporting).saveAs(htmlPath);
   await load(page,await readFile(htmlPath,'utf8'),'with-profile.html');
   expect((await saveState(page,info,'profile-html-reopened.printform.json')).manifest.studioV3.page.printerProfile).toEqual(declarations);

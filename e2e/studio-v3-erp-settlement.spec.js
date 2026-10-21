@@ -1,3 +1,4 @@
+import {clickHeaderAction} from './header-action.js';
 import { test, expect } from './studio-v3-test.js';
 import { createErpSettlementProject } from '../studio-v3/erp-settlement-project.js';
 import { fictionalMixedReceipt, fictionalAdjustedPayment, fictionalAdvance } from '../tests/fixtures/erp-settlement.js';
@@ -30,13 +31,13 @@ for (const [name, fixture] of cases) test(`${name}: supplied settlement survives
     await expect(paper.locator('[data-v3-id=totals-remaining-balance],[data-v3-id=totals-cash-applied-amount],[data-v3-id=header-bank-status],[data-v3-id=footer-approval-status]')).toHaveCount(0);
   }
   await expect(paper.locator('[data-v3-id=items-sku],[data-v3-id=items-quantity],[data-v3-id=totals-tax],[data-v3-id=totals-invoice-cleared-amount]')).toHaveCount(0);
-  const savedPromise = page.waitForEvent('download'); await page.locator('[data-action=save]').click();
+  const savedPromise = page.waitForEvent('download'); await clickHeaderAction(page,'save');
   const saved = await savedPromise, savedPath = info.outputPath(`${name}.printform.json`); await saved.saveAs(savedPath);
   const restored = readProject(await readFile(savedPath, 'utf8'));
   expect(restored.sampleData).toEqual(project.sampleData);
   await page.locator('#open-file').setInputFiles(savedPath); await ready(page);
   await expect(paper.locator('[data-v3-id=totals-unapplied-amount]').last()).toHaveText(project.sampleData.summary.unappliedAmount.displayAmount);
-  const exportedPromise = page.waitForEvent('download'); await page.locator('[data-action=export]').click();
+  const exportedPromise = page.waitForEvent('download'); await clickHeaderAction(page,'export');
   const exported = await exportedPromise, exportedPath = info.outputPath(`${name}.html`); await exported.saveAs(exportedPath);
   const printed = await context.newPage();
   await printed.route(/^https?:/, route => route.abort());

@@ -1,3 +1,4 @@
+import {clickHeaderAction} from './header-action.js';
 import { test, expect } from '@playwright/test';
 
 const preview = page => page.frameLocator('#preview-frame').locator('[data-v3-id=customer-bill]').first();
@@ -72,7 +73,7 @@ test('stalled storage startup cannot overwrite an early template choice; fallbac
   await page.locator('[data-action=new]').click({force:true});await expect(page.locator('#new-dialog')).toBeHidden();
   await ready(page);await expect(page.locator('body')).not.toHaveAttribute('inert','');
   await expect(page.locator('body')).toHaveAttribute('aria-busy','false');
-  await page.locator('[data-action=new]').click();await page.locator('[data-template=delivery]').click();await ready(page);
+  await clickHeaderAction(page,'new');await page.locator('[data-template=delivery]').click();await ready(page);
   await expect(page.locator('#document-name')).toHaveValue('Delivery note template');
   await expect(page.frameLocator('#preview-frame').locator('h1').first()).toHaveText('DELIVERY NOTE');
   await page.locator('[data-mode=data]').click();await expect(page.locator('#database-workbench')).toContainText('Storage unavailable · this tab only');

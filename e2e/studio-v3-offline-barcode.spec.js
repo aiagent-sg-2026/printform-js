@@ -1,3 +1,4 @@
+import {clickHeaderAction} from './header-action.js';
 import {test,expect} from './studio-v3-test.js';
 import {readFile} from 'node:fs/promises';
 import {pathToFileURL} from 'node:url';
@@ -92,7 +93,7 @@ test('human barcode controls persist and independently decode preview, offline s
   const initial = sourceProject(); await load(page,saveProject(initial));
   await bindHumanBarcode(page,'code128','CODE128'); await bindHumanBarcode(page,'ean13','EAN13');
   await assertCodes(page,page.frameLocator('#preview-frame'),info,'preview');
-  const saving = page.waitForEvent('download'); await page.locator('[data-action=save]').click();
+  const saving = page.waitForEvent('download'); await clickHeaderAction(page,'save');
   const savedPath = info.outputPath('barcode.printform.json'); await (await saving).saveAs(savedPath);
   const source = await readFile(savedPath,'utf8'), restored = readProject(source);
   expect(restored.sampleData).toEqual(initial.sampleData);
@@ -100,7 +101,7 @@ test('human barcode controls persist and independently decode preview, offline s
     expect(restored.manifest.studioV3.footer.find(field=>field.id === id)).toMatchObject({kind:'barcode',pointer:`/codes/${id}`,barcode:{format,moduleWidth:2,height:48,displayValue:true}});
   }
   await load(page,source); await assertCodes(page,page.frameLocator('#preview-frame'),info,'json-reopened');
-  const exporting = page.waitForEvent('download'); await page.locator('[data-action=export]').click();
+  const exporting = page.waitForEvent('download'); await clickHeaderAction(page,'export');
   const htmlPath = info.outputPath('barcode-offline.html'); await (await exporting).saveAs(htmlPath);
   const html = await readFile(htmlPath,'utf8');
   await load(page,html,'barcode.html'); await assertCodes(page,page.frameLocator('#preview-frame'),info,'html-reopened');
