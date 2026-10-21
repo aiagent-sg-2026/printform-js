@@ -67,7 +67,7 @@ test('mobile full-screen conversation returns to paper preview and restores a re
 });
 test('explicit Clear removes conversation without changing the template or sending a request',async({page})=> {
   const requests=await mock(page);await page.locator('[data-ai-toggle]').click();await send(page,'Explain this layout.');await expect(page.locator('[data-ai-log] .ai-message')).toHaveCount(2);
-  await page.getByLabel('AI settings',{exact:true}).click();await page.locator('[data-ai=clear]').click();await expect(page.locator('[data-ai-log] .ai-message')).toHaveCount(0);await expect(page.locator('#revision')).toHaveText('r0');expect(requests).toHaveLength(1);await expect(page.locator('#ai-consent')).toHaveCount(0);
+  await page.getByLabel('More settings',{exact:true}).click();await page.locator('[data-ai=clear]').click();await expect(page.locator('[data-ai-log] .ai-message')).toHaveCount(0);await expect(page.locator('#revision')).toHaveText('r0');expect(requests).toHaveLength(1);await expect(page.locator('#ai-consent')).toHaveCount(0);
 });
 
 test('timeout stops a held request and retry requires another deliberate Send',async({page})=> {

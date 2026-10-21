@@ -12,7 +12,8 @@ describe('applied change card',()=> {
     expect(undo.title).toBe('Undo Revision 12'); expect(undo.getAttribute('aria-description')).toBe('Undo Revision 12');
     expect(details.open).toBe(false); expect(card.querySelectorAll('details')).toHaveLength(1);
     expect(details.querySelectorAll('.ai-activity li')).toHaveLength(1);
-    expect([...details.querySelectorAll('.ai-run-steps li')].map(item=>item.textContent)).toEqual(steps.map(step=>`✓ ${step.text}`));
+    expect([...details.querySelectorAll('.ai-run-steps li')].map(item=>item.textContent)).toEqual(steps.map(step=>step.text));
+    for (const item of details.querySelectorAll('.ai-run-steps li,.ai-activity li')) expect(item.querySelector('svg[aria-hidden="true"]')).not.toBeNull();
     expect(details.querySelector('.ai-diff-json').textContent).toBe(JSON.stringify(diff,null,2));
     expect(card.querySelector('.ai-card-footer')).toBeNull(); expect(card.querySelector('.ai-card-state')).toBeNull();
   });

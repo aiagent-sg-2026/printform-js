@@ -1,5 +1,5 @@
 import { activityLines } from './ai-activity.js';
-import { icon } from './icons.js';
+import { icon, renderIconStep } from './icons.js';
 
 // Style patches arrive as JSON text; show "fontSize 12 · bold" instead.
 const readable = value => {
@@ -21,12 +21,12 @@ function renderDetails(message) {
   const details = node('details','ai-change-details');
   details.append(node('summary','','Details'));
   const lines = node('ul','ai-activity');
-  for (const line of activityLines(diff)) lines.append(node('li','',line));
+  for (const line of activityLines(diff)) { const item = node('li','',line), image = node('span','ai-activity-icon'); image.innerHTML = icon('check'); item.prepend(image); lines.append(item); }
   details.append(lines);
   if (message.steps?.length) {
     const steps = node('section','ai-run-steps'), count = message.steps.length, list = node('ol','');
     steps.append(node('p','',`Worked in ${count} ${count === 1 ? 'step' : 'steps'}`));
-    for (const step of message.steps) list.append(node('li',step.ok ? '' : 'ai-step-failed',`${step.ok ? '✓' : '✗'} ${step.text}`));
+    for (const step of message.steps) list.append(renderIconStep(step));
     steps.append(list); details.append(steps);
   }
   details.append(table,json);

@@ -4,6 +4,7 @@ Status: **2026-10-15 implementation authorized by the user**, following the earl
 
 Evidence tags: **[code]** the string or behavior was found in the source; **[shot]** seen only in the screenshot, not reproduced in a browser run.
 
+- Batch 21 (2026-10-21): use shared inline SVG icons for steps, applied checks and reference removal, a line-spacing SVG for Improve spacing, CSS-shaped activity dots, a hidden Failed: prefix and the More settings menu name; edit-only, runtime and visual checks remain unverified.
 ## Batch 20 unreachable suggestions cleanup (2026-10-21)
 - Removed the always-hidden suggestions module, layout/render calls and dedicated styles; no replacement suggestion bar is mounted. Welcome starters retain prompt-fill-only behavior and their existing busy-state guards.
 - Removed obsolete hidden-bar assertions while retaining welcome lifecycle, prompt focus/no-send, form isolation and composer scope/send/stop coverage. E2e specs remain manager-owned and unchanged.

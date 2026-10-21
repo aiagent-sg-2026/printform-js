@@ -4,8 +4,28 @@ import {Conversation,cleanMessages} from '../studio-v3/ai-conversation.js';
 import {AIPanel} from '../studio-v3/ai-panel.js';
 import {formatMessageTime} from '../studio-v3/ai-message-time.js';
 import {editProject} from '../studio-v3/controller.js';
+import {icon} from '../studio-v3/icons.js';
 beforeEach(()=> {document.documentElement.innerHTML=html.replace(/<!doctype html>/i,'');document.body.inert=false;});
 describe('conversation timestamps and avatars',()=> {
+  it('uses SVG icons without standalone icon glyph text in welcome, history and live steps',()=> {
+    const {panel}=setup(), forbidden=/^[✓✗×•⋯→✔✕⚠]$/u;
+    const checkText=()=> { const walker=document.createTreeWalker(panel.root,NodeFilter.SHOW_TEXT); while(walker.nextNode()) expect(walker.currentNode.textContent.trim()).not.toMatch(forbidden); };
+    panel.update();
+    const chip=[...panel.root.querySelectorAll('[data-prompt]')].find(node=>node.textContent==='Improve spacing');
+    const template=document.createElement('span'); template.innerHTML=icon('spacing');
+    expect(chip.querySelector('svg').outerHTML).toBe(template.firstElementChild.outerHTML); checkText();
+    const steps=[{text:'Checked layout',ok:true},{text:'Layout check blocked',ok:false}];
+    panel.conversation.add('assistant','Result','answer',{steps});
+    panel.conversation.add('assistant','Proposal','ready',{steps,diff:[{target:'style',property:'color',before:'#111111',after:'#222222'}]});
+    panel.pendingMessage='Working'; panel.agentSteps=steps; panel.update(); checkText();
+    for(const selector of ['.ai-run-steps','.ai-steps']) {
+      for(const list of panel.root.querySelectorAll(selector)) {
+        const failed=list.querySelector('.ai-step-failed'); expect(failed.querySelector('svg[aria-hidden="true"]')).not.toBeNull();
+        expect(failed.querySelector('.sr-only').textContent).toBe('Failed: '); expect(failed.textContent).toContain('Layout check blocked');
+        expect(list.querySelector('li:not(.ai-step-failed) svg[aria-hidden="true"]')).not.toBeNull();
+      }
+    }
+  });
   it('stores and restores epoch milliseconds without adding time metadata to provider context',()=> {
     const at=Date.UTC(2026,9,20,15,40), clock=vi.spyOn(Date,'now').mockReturnValue(at), conversation=new Conversation();
     try { conversation.add('user','Change title','answer',{documentKey:'v3-demo'}); } finally { clock.mockRestore(); }
@@ -91,7 +111,8 @@ describe('retained run steps',()=> {
     panel.update();
     const details=panel.node('.ai-assistant details.ai-change-details'), retained=details.querySelector('.ai-run-steps');
     expect(details.open).toBe(false); expect(panel.root.querySelectorAll('.ai-assistant details')).toHaveLength(1);
-    expect([...retained.querySelectorAll('li')].map(n=>n.textContent)).toEqual(steps.map(s=>`${s.ok?'✓':'✗'} ${s.text}`));
+    expect([...retained.querySelectorAll('li')].map(n=>n.textContent)).toEqual(steps.map(s=>`${s.ok?'':'Failed: '}${s.text}`));
+    for(const item of retained.querySelectorAll('li')) expect(item.querySelector('svg[aria-hidden="true"]')).not.toBeNull();
     expect(retained.querySelectorAll('.ai-step-failed')).toHaveLength(1);
     expect(details.closest('.ai-change-card')).not.toBeNull();
     expect(panel.node('.ai-user .ai-run-steps')).toBeNull();

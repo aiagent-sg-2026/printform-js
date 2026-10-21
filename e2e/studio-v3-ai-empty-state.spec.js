@@ -21,6 +21,9 @@ for(const size of [{width:1440,height:900},{width:1024,height:768},{width:390,he
       expect(layout.scroll).toBeLessThanOrEqual(layout.width);expect(layout.rows).toBeGreaterThan(1);await expect(page.locator('.ai-composer')).toBeInViewport({ratio:1});
     }
     const chips=page.locator('[data-ai=prompt]');expect(await chips.count()).toBeGreaterThanOrEqual(3);
+    await expect(page.getByRole('button',{name:'Improve spacing',exact:true}).locator('svg[aria-hidden="true"]')).toHaveCount(1);
+    await expect(page.locator('.ai-settings>summary')).toHaveAccessibleName('More settings');
+    expect(await page.locator('#ai-panel').evaluate(root=>{const walker=document.createTreeWalker(root,NodeFilter.SHOW_TEXT);while(walker.nextNode())if(/^[✓✗×•⋯→✔✕⚠]$/u.test(walker.currentNode.textContent.trim()))return false;return true;})).toBe(true);
     for(const chip of await chips.all()) {
       await chip.scrollIntoViewIfNeeded();await expect(chip).toBeInViewport({ratio:1});
       const target=await chip.getAttribute('data-prompt');await chip.click();await expect(page.locator('#ai-prompt')).toHaveValue(target);

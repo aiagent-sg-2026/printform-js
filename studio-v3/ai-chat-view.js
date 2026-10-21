@@ -1,7 +1,7 @@
 import { renderWelcome } from './ai-welcome.js';
 import { taskOutcomeNotice } from './ai-task-outcome.js';
 import { renderChangeCard } from './ai-change-card.js';
-import { icon } from './icons.js';
+import { icon, renderIconStep } from './icons.js';
 import { formatMessageTime } from './ai-message-time.js';
 import { setupVersionHistory } from './ai-version-history.js';
 const node = (tag,className,text) => { const n = document.createElement(tag); n.className = className; if (text !== undefined) n.textContent = text; return n; };
@@ -39,7 +39,7 @@ export function renderConversation(panel) {
     if (message.role === 'assistant' && message.steps?.length && !message.diff) {
       const details = node('details','ai-run-steps'), count = message.steps.length, list = node('ol','');
       details.append(node('summary','',`Worked in ${count} ${count === 1 ? 'step' : 'steps'}`));
-      for (const step of message.steps) list.append(node('li',step.ok ? '' : 'ai-step-failed',`${step.ok ? '✓' : '✗'} ${step.text}`));
+      for (const step of message.steps) list.append(renderIconStep(step));
       details.append(list); article.append(details);
     }
     if (message.observation) {
@@ -61,7 +61,7 @@ export function renderConversation(panel) {
     // A run in steps shows its latest steps; a rejected one carries its code in the tooltip only.
     if (panel.agentSteps?.length) {
       const steps = node('ol','ai-steps');
-      for (const step of panel.agentSteps.slice(-6)) { const item = node('li',step.ok ? '' : 'ai-step-failed',`${step.ok ? '✓' : '✗'} ${step.text}`); if (step.code) item.title = step.code; steps.append(item); }
+      for (const step of panel.agentSteps.slice(-6)) { const item = renderIconStep(step); if (step.code) item.title = step.code; steps.append(item); }
       wait.append(steps);
     }
     log.append(wait);

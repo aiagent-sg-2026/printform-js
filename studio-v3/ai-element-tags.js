@@ -1,5 +1,6 @@
 import { BLOCKS, selectionField } from './model.js';
 import { tableDefinitions, tableOf } from './additional-tables.js';
+import { icon } from './icons.js';
 
 export const MAX_ELEMENT_TAGS = 8;
 export const MAX_ELEMENT_COMMENT = 500;
@@ -153,7 +154,7 @@ export class AIElementTags {
       const chip = node('section','ai-element-tag'); chip.dataset.aiTagId = id; if (invalid) chip.dataset.invalid = '';
       const row = node('div','ai-tag-row'), locate = node('button','ai-tag-locate',reference.caption);
       locate.type = 'button'; locate.dataset.aiTagAction = 'locate'; locate.title = `Highlight ${id}`; locate.setAttribute('aria-label',`Locate ${reference.caption} (${id})`);
-      const remove = node('button','ai-tag-remove','×'); remove.type = 'button'; remove.dataset.aiTagAction = 'remove'; remove.setAttribute('aria-label',`Remove reference ${id}`);
+      const remove = node('button','ai-tag-remove'); remove.innerHTML = icon('close'); remove.type = 'button'; remove.dataset.aiTagAction = 'remove'; remove.setAttribute('aria-label',`Remove reference ${id}`);
       row.append(locate,remove); chip.append(row,node('small','ai-tag-meta',`${id} · r${revision}`));
       const label = node('label','ai-tag-comment','Comment for this element'), input = node('textarea','');
       input.dataset.aiTagComment = id; input.maxLength = MAX_ELEMENT_COMMENT; input.rows = 1; input.value = comment; input.placeholder = 'e.g. Make this heading larger and blue'; input.setAttribute('aria-label',`Comment for ${id}`);

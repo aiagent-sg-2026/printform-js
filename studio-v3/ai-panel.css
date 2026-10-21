@@ -111,7 +111,9 @@ body.ai-open.preview-only .studio-grid { grid-template-columns:0 minmax(0,1fr) v
 .ai-change-card h3 { font-size:14px; margin:0 0 8px; }
 .ai-activity { margin:0 0 4px; padding:0; list-style:none; display:grid; gap:4px; font-size:14px; line-height:1.45; }
 .ai-activity li { padding-left:20px; position:relative; }
-.ai-activity li::before { content:"•"; position:absolute; left:2px; color:var(--muted); }
+.ai-activity li::before { content:""; position:absolute; left:2px; top:8px; width:5px; height:5px; border-radius:50%; background:var(--muted); }
+.ai-activity-icon { display:none; position:absolute; left:0; top:1px; color:var(--success); }
+.ai-steps li>svg,.ai-run-steps li>svg { vertical-align:middle; margin-right:6px; flex:none; }
 .ai-diff-json { margin:8px 0 0; padding:8px; max-height:220px; overflow:auto; font-size:12px; line-height:1.5; background:var(--bg,#f6f7f9); border:1px solid var(--line); border-radius:8px; white-space:pre-wrap; overflow-wrap:anywhere; }
 .ai-diff { width:100%; table-layout:fixed; border-collapse:collapse; font-size:13px; }
 .ai-diff th,.ai-diff td { padding:8px 4px; border-bottom:1px solid var(--line); text-align:left; overflow-wrap:anywhere; vertical-align:top; }
@@ -130,7 +132,8 @@ body.ai-open.preview-only .studio-grid { grid-template-columns:0 minmax(0,1fr) v
 .ai-card-icon { display:inline-flex; flex:none; vertical-align:middle; }
 .ai-card-tools { display:flex; flex-wrap:wrap; gap:6px; }
 .ai-card-tools button { min-height:44px; font-size:14px; padding:6px 8px; }
-.ai-change-applied:not(.ai-change-history) .ai-activity li::before { content:"✓"; color:var(--success); }
+.ai-change-applied:not(.ai-change-history) .ai-activity li::before { display:none; }
+.ai-change-applied:not(.ai-change-history) .ai-activity-icon { display:inline-flex; }
 .ai-change-applied .ai-change-details>summary { position:absolute; top:12px; right:12px; color:var(--ink); }
 .ai-change-card .ai-change-details>summary,.ai-change-card .ai-diff { font-size:14px; }
 .ai-retry { align-self:start; font-size:13px; }

@@ -1,6 +1,7 @@
 # Changelog
 All notable changes follow [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). Versions track the **pagination engine** (`dist/printform.js`); Studio v2, single-HTML protocol and Agent Contract version separately ([compatibility matrix](docs/COMPATIBILITY_MATRIX.zh-CN.md)). See [TASK.md](TASK.md) for engineering logs and verification; this file lists reader-facing changes.
 ## [Unreleased]
+- Batch 21 (2026-10-21): replace AI panel icon text with shared SVGs, clarify the line-spacing starter icon and More settings menu, and retain accessible failed-step text.
 ### Batch 19, 2026-10-21
 - Unify AI panel typography with 12/13/14/15/17px tokens; compact desktop scope and wrapping welcome pills while retaining 16px mobile inputs and 44px attach/send targets. Move the composer Demo boundary into settings, show only actual blocking reasons, and migrate sharing-menu viewport coverage.
 - Batch 18 (2026-10-21): simplify AI Assistant to four welcome starters and an anchored composer; move explicit per-run sharing controls to settings. Compact applied edits to Applied, Undo and one Details disclosure containing activity, retained steps and raw changes; retain manual approval gates and accessible status announcements. Request short replies in the person's language.
@@ -294,7 +295,6 @@ batch history controls, session/settings/trace surfaces and a resizable rail.
   bundle syntax and Windows Chromium 60/60 passed. Full application suites were not rerun
   for this documentation amendment; no new full browser/print/HA/network-audit result is claimed.
 - No source, runtime-loaded Agent prompt, behavior, version, supported-platform promise or release change.
-
 ## Historical releases
 
 - [1.0.0 — 2026-07-31](docs/CHANGELOG_1_0_0.md): complete original release notes.

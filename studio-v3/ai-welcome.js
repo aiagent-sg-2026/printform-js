@@ -2,7 +2,7 @@ import { icon } from './icons.js';
 // Starting actions shown in the empty conversation: each fills the message box, nothing is sent.
 export const STARTERS = [
   ['form','Organize form','Organize this form into a clear reading order. Keep existing data bindings and make section headings easy to scan.'],
-  ['type','Improve spacing','Improve the typography and spacing of this form so it is easy to read when printed. Keep existing content and data bindings.'],
+  ['spacing','Improve spacing','Improve the typography and spacing of this form so it is easy to read when printed. Keep existing content and data bindings.'],
   ['plus','Add notes area','Add a clearly labelled static notes area at the end of this form without changing existing data bindings.'],
   ['eye','Review layout','What would improve the readability and print layout of this form? Explain your recommendations without changing anything.']
 ];

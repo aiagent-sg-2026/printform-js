@@ -1,9 +1,9 @@
 import { SOURCE_ERROR_CONTRACTS } from './source-workspace-errors.js';
 import { publicBlockedReason } from './agent-blocked.js';
 export const AI_MESSAGES = {
-  OBSERVATION_DISCLOSURE_REQUIRED:'Turn on sharing in ⋯ settings for a new run. Text sharing is optional; numeric layout checks remain available. Nothing changed.',
-  OBSERVATION_PIXELS_REQUIRED:'Turn on sharing in ⋯ settings for a new run, including text and fictional page-pixel consent. Nothing changed.',
-  OBSERVATION_AUTHORIZATION_STALE:'Sharing authorization expired or the form changed. Turn on sharing in ⋯ settings for a new run. Nothing changed.',
+  OBSERVATION_DISCLOSURE_REQUIRED:'Turn on sharing in the More settings menu for a new run. Text sharing is optional; numeric layout checks remain available. Nothing changed.',
+  OBSERVATION_PIXELS_REQUIRED:'Turn on sharing in the More settings menu for a new run, including text and fictional page-pixel consent. Nothing changed.',
+  OBSERVATION_AUTHORIZATION_STALE:'Sharing authorization expired or the form changed. Turn on sharing in the More settings menu for a new run. Nothing changed.',
   AGENT_RELEASE_MISMATCH:'The assistant and product resources belong to different versions. Reload Studio before retrying. Nothing changed.',
   AGENT_KNOWLEDGE_UNAVAILABLE:'This version’s assistant resources are unavailable. Retry when online or reload a complete offline installation. Nothing changed.',
   DEMO_IMAGE_CAPABILITY_UNVERIFIED:'Image support is not confirmed for this Demo model. Image analysis is unavailable. Use Check image support to try again, or choose Text & positions and reattach the PDF to send without images.',
