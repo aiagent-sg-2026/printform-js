@@ -1,5 +1,5 @@
 # Studio v3 framework-native Pi authoring
-
+**Pi-style prompts (2026-10-21).** Design begins with get_context; read_skill supplies operation details as needed and get_capabilities lists release limits. Expanded character counts: design system prompt 1621 → 1569; form-authoring 15758 → 7929 (limit 8000), general-print-authoring 13576 → 6995 (7000), product-workflows 5938 → 3996 (4000). Skills retain operation/binding/scope/privacy facts, with one commit policy each; shared workflow paths are grouped without removing entries. Read-only/source prompts, host guards and Apply/Undo policy are unchanged. Direct harness smoke verified context-first answers and inspected drafts with unchanged live data; real-model replay, unit tests, builds and e2e remain manager-owned.
 The general-purpose form assistant keeps a bounded conversation and anchored composer.
 Send deliberately shares the described layout/binding metadata with the existing Demo gateway;
 it does not authorize preview-text or pixel disclosure. Those optional disclosures require

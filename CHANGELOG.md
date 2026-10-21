@@ -5,6 +5,8 @@ Version numbers below track the **pagination engine** (`dist/printform.js`).
 Studio v2, the single-HTML protocol, and the Agent Contract version separately — see the [compatibility matrix](docs/COMPATIBILITY_MATRIX.zh-CN.md).
 See [TASK.md](TASK.md) for the full engineering log, commit hashes, test counts and verification detail; this file only lists reader-facing changes.
 ## [Unreleased]
+### Batch 15, 2026-10-21
+- Slim design instructions to context-first discovery and compact operation/principle guides; group shared human workflow paths. Preserve scope, disclosure, financial bindings, exact final inspection and commit policy; add skill-size limits and a context-first answer regression.
 
 ### Batch 14, 2026-10-21
 - AI first: remove request-text intent/color classifiers and host answer replacement. Design/coding grants retain answer and proposal abilities; `finish_answer` is answered. Keep schema, scope, inspection, identity, Undo and the existing automatic/manual apply boundary.
@@ -19,13 +21,11 @@ See [TASK.md](TASK.md) for the full engineering log, commit hashes, test counts 
 ### Source artifact custody and broker ownership — 2026-10-19
 - Reject duplicate decoded JSON keys before native operation parsing while preserving numeric types and existing inspection/human-Apply gates.
 - Restrict expired-resource cleanup to the exact broker owner and recheck ownership before removal; do not delete another broker's crash leftovers.
-
 ### Optional pinned quality-inspection source — 2026-10-19
 - Map authorized ERPNext v15.0.0 Quality Inspection snapshots to existing InspectionReport, retaining native Data readings, exact Float overlays and raw live evidence without recalculating acceptance.
 
 ### Multipage long rows and fixed-module labels — 2026-10-19
 - Add an explicit-runtime digital probe for exact continuation text/order, repeated headers, PDF page geometry and independently decoded browser/PDF barcode pixels; oversized atomic content must block, not scale or disappear.
-
 ### Custom paper and PDF precedence investigation — 2026-10-19
 
 - Run12 three-engine digital scenarios and8 Chromium PDFs against the final built runtime with explicit Chromium sandbox and command-line verification; preserve asymmetric author insets, source tokens and custom orientation.

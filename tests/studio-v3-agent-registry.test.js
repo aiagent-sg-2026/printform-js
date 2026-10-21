@@ -18,6 +18,9 @@ const call=(name,args={})=>fauxAssistantMessage([fauxToolCall(name,args,{id:`c-$
 const json = result=>JSON.parse(result.content[0].text);
 const contextArgs={request:'Use navy',scope:{mode:'whole'},typography:[],conversation:[]};
 describe('feature-owned registry and knowledge',()=> {
+  it.each([['form-authoring',8000],['general-print-authoring',7000],['product-workflows',4000]])('keeps %s within its model-context budget', (id,limit)=> {
+    expect(readSkill(id).content.length).toBeLessThanOrEqual(limit);
+  });
   it('has closed transport contracts, real source/evaluation references and one canonical operation list',()=> {
     expect(validateRegistry()).toHaveLength(AGENT_TOOL_DEFINITIONS.length + OPERATION_CAPABILITIES.length);
     expect(OPERATION_CAPABILITIES.map(op=>op.name)).toEqual(AUTHORING_TYPES);

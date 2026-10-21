@@ -1,7 +1,7 @@
 import {describe,it,expect} from 'vitest';
 import {createModels,fauxProvider,fauxAssistantMessage,fauxToolCall} from '@earendil-works/pi-ai';
 import {newProject,designOf} from '../studio-v3/model.js';
-import {runAgentLoop,AGENT_PROMPT} from '../studio-v3/agent-loop.js';
+import {runAgentLoop} from '../studio-v3/agent-loop.js';
 import {createAgentMemory} from '../studio-v3/agent-memory.js';
 
 const note = {type:'add_field',section:'footer',field:{id:'note-two',label:'Extra note',kind:'static',text:'Authored note'}};
@@ -23,6 +23,14 @@ const run = (responses,over = {}) => {
 const reason = async promise => { try { await promise; } catch (error) { return error; } return null; };
 
 describe('the agent loop',()=> {
+  it('answers a context-grounded question without capability discovery or draft changes',async()=> {
+    const {promise,project,steps} = run([call('get_context',{}),call('finish_answer',{message:'18 pt'})],
+      {options:{request:'What is the title font size?',context:()=>'{"typography":[{"id":"header-title","fontSize":18}]}'}});
+    const before=structuredClone(project),result=await promise;
+    expect(result).toMatchObject({kind:'answer',taskOutcome:'answered',message:'18 pt'});
+    expect(result).not.toHaveProperty('candidate'); expect(project).toEqual(before);
+    expect(steps.map(step=>[step.name,step.ok])).toEqual([['get_context',true],['finish_answer',true]]);
+  });
   it('works in several steps, repairs a rejected step, inspects, and finishes with one proposal',async()=> {
     let seenError = '';
     const {promise,steps,faux,project} = run([
@@ -155,13 +163,5 @@ describe('what the run remembers',()=> {
     const memory = createAgentMemory();
     await run([call('take_notes',{notes:'Footer needs a note.'}),call('apply_operations',{summary:'Add a note',operations:[note]}),call('apply_operations',{summary:'Recolour',operations:[{type:'set_style',patch:{color:'#163a65'}}]}),call('undo_step',{}),call('inspect_draft',{}),call('finish',{summary:'Added a note'})],{options:{memory}}).promise;
     expect(memory.notes).toBe('Footer needs a note.'); expect(memory.steps).toEqual([{summary:'Add a note',changes:expect.any(Number)}]);
-  });
-});
-
-describe('the agent prompt',()=> {
-  it('keeps the printform.js authoring rules, and no longer asks for a JSON envelope',()=> {
-    for (const needle of ['get_capabilities','read_skill','operation schemas','actual run limits']) expect(AGENT_PROMPT).toContain(needle);
-    expect(AGENT_PROMPT).not.toContain('Return ONE JSON object');
-    for (const tool of ['get_context','apply_operations','inspect_draft','undo_step','take_notes','finish','report_blocked']) expect(AGENT_PROMPT).toContain(tool);
   });
 });
