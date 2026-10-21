@@ -4,6 +4,11 @@ Status: **2026-10-15 implementation authorized by the user**, following the earl
 
 Evidence tags: **[code]** the string or behavior was found in the source; **[shot]** seen only in the screenshot, not reproduced in a browser run.
 
+## Batch 20 unreachable suggestions cleanup (2026-10-21)
+- Removed the always-hidden suggestions module, layout/render calls and dedicated styles; no replacement suggestion bar is mounted. Welcome starters retain prompt-fill-only behavior and their existing busy-state guards.
+- Removed obsolete hidden-bar assertions while retaining welcome lifecycle, prompt focus/no-send, form isolation and composer scope/send/stop coverage. E2e specs remain manager-owned and unchanged.
+- Unverified: edit-only batch; unit tests, builds, browser behavior and screenshots require manager verification. No shell or git commands were run.
+
 ## Batch 19 type scale (owner 2026-10-21)
 - Supersedes earlier recipient-notice requirements: the composer reason is empty and hidden unless references are reading, image support is blocked, or source cleanup blocks Send. Send enablement is independent of visible notice text. Settings retains “Demo AI gateway · use fictional data only”; explicit per-run sharing and commit policy are unchanged.
 - Panel tokens: `--ai-fs-meta:12px`, `--ai-fs-small:13px`, `--ai-fs-body:14px`, `--ai-fs-title:15px`, `--ai-fs-heading:17px`. Body weight 400, controls 500, titles 600, line-height 1.4–1.5. Metadata and controls intentionally supersede the older blanket 14px minimum.

@@ -188,35 +188,18 @@ body.ai-open.preview-only .studio-grid { grid-template-columns:0 minmax(0,1fr) v
 .ai-composer-toolbar { display:flex; align-items:center; flex-wrap:nowrap; gap:6px; width:100%; }
 .ai-composer-toolbar #ai-scope { flex:0 1 auto; width:auto; min-width:0; max-width:60%; height:32px; min-height:32px; border:1px solid var(--line); border-radius:999px; background:var(--subtle); padding:4px 10px; font-size:var(--ai-fs-small); font-weight:500; }
 .ai-composer-toolbar .ai-send { margin-left:auto; }
-.ai-suggestions { flex:none; padding:4px 16px; font-size:14px; }
-.ai-suggestions[hidden] { display:none; }
-.ai-suggestions-heading { display:flex; align-items:center; justify-content:space-between; gap:8px; }
-.ai-suggestions h3 { display:flex; align-items:center; gap:6px; margin:0; font-size:14px; }
-.ai-suggestions-heading button { display:grid; place-items:center; min-width:44px; min-height:44px; background:transparent; border:0; }
-.ai-suggestion-chips { display:flex; flex-wrap:nowrap; gap:6px; overflow-x:auto; scroll-snap-type:x proximity; scrollbar-width:none; }
-.ai-suggestion-chips button { flex:none; display:flex; align-items:center; gap:6px; min-height:44px; padding:6px 10px; border-radius:999px; background:var(--surface); font-size:14px; text-align:left; white-space:nowrap; scroll-snap-align:start; }
-.ai-suggestion-chips svg { flex:none; color:var(--muted); }
-#ai-panel .ai-composer-toolbar :focus-visible,#ai-panel .ai-suggestions button:focus-visible { outline:2px solid var(--blue); outline-offset:2px; }
-.ai-suggestion-chips::-webkit-scrollbar { display:none; }
+#ai-panel .ai-composer-toolbar :focus-visible { outline:2px solid var(--blue); outline-offset:2px; }
 @media(min-width:901px) { body.ai-open .studio-grid,body.ai-open.hide-properties .studio-grid { --right-size:max(480px,var(--ai-width,390px)); } body.ai-open.preview-only .studio-grid { grid-template-columns:0 minmax(0,1fr) max(480px,var(--ai-width,390px)); } }
 .ai-change-card[data-ai-proposal] { display:flex; flex-direction:column; }
 .ai-change-card[data-ai-proposal]>.ai-actions { order:-1; margin:0 0 8px; }
 .ai-change-card[data-ai-proposal]>h3 { order:-2; }
-/* Short-window priority: keep the conversation and composer ahead of suggestions. */
+/* Short-window priority: keep the conversation and composer compact. */
 @media(max-height:700px) {
   .ai-heading { padding-block:4px; }
   #ai-panel [data-ai-scope] { padding-block:2px; }
-  .ai-suggestions { display:flex; align-items:center; gap:6px; padding-block:0; }
-  .ai-suggestions-heading { display:contents; }
-  .ai-suggestions-heading h3 { display:none; }
-  .ai-suggestions-heading button { order:2; flex:none; }
-  .ai-suggestion-chips { flex:1; min-width:0; }
   .ai-composer { padding-top:4px; padding-bottom:max(4px,env(safe-area-inset-bottom)); gap:2px; }
   #ai-prompt { max-height:64px; }
   #ai-panel [data-ai-status]:not(.sr-only) { line-height:20px; white-space:normal; }
-}
-@media(max-height:600px) {
-  .ai-suggestions { display:none; }
 }
 .ai-settings-body .ai-sharing>summary { min-height:44px; }
 #ai-panel p,#ai-panel label { font-size:var(--ai-fs-body); line-height:1.5; }
@@ -226,7 +209,7 @@ body.ai-open.preview-only .studio-grid { grid-template-columns:0 minmax(0,1fr) v
 #ai-panel .ai-welcome h3 { font-size:var(--ai-fs-heading); }
 #ai-panel .ai-beta,#ai-panel .ai-message-time,#ai-panel .ai-observation-receipt,#ai-panel .ai-tag-meta,#ai-panel .ai-reference-card small,#ai-panel .hint,#ai-panel [data-ai-send-reason],#ai-panel [data-ai-status] { font-size:var(--ai-fs-meta); font-weight:400; }
 #ai-panel .ai-message-text { font-size:var(--ai-fs-body); line-height:1.5; }
-#ai-panel .ai-message-label,#ai-panel .ai-change-card h3,#ai-panel .ai-activity,#ai-panel .ai-diff,#ai-panel .ai-steps,#ai-panel .ai-run-steps,#ai-panel .ai-tag-heading strong,#ai-panel .ai-suggestions h3 { font-size:var(--ai-fs-small); }
+#ai-panel .ai-message-label,#ai-panel .ai-change-card h3,#ai-panel .ai-activity,#ai-panel .ai-diff,#ai-panel .ai-steps,#ai-panel .ai-run-steps,#ai-panel .ai-tag-heading strong { font-size:var(--ai-fs-small); }
 #ai-panel .ai-diff-json { font-size:var(--ai-fs-meta); }
 #ai-panel .ai-history,#ai-panel [data-ai-scope],#ai-panel .ai-scope-help { font-size:var(--ai-fs-body); }
 #ai-panel .ai-reference-excerpt,#ai-panel .ai-settings-body pre { font-size:var(--ai-fs-small); }

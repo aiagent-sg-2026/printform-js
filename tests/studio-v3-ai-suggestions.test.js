@@ -11,9 +11,9 @@ describe('empty conversation starters',()=> {
     for (const button of panel.root.querySelectorAll('.ai-welcome [data-prompt]')) { expect(button.disabled).toBe(true); button.click(); } expect(prompt.value).toBe(before);
   });
   it('shows starters only before the first exchange and restores them after clearing',()=> {
-    const {panel}=setup(); expect(panel.node('.ai-welcome [data-prompt]')).not.toBeNull(); expect(panel.node('[data-ai-suggestions]').hidden).toBe(true);
-    panel.conversation.add('user','Adjust spacing'); panel.update(); expect(panel.node('.ai-welcome')).toBeNull(); expect(panel.node('[data-ai-suggestions]').hidden).toBe(true);
-    panel.conversation.messages=[]; panel.update(); expect(panel.node('.ai-welcome [data-prompt]')).not.toBeNull(); expect(panel.node('[data-ai-suggestions]').hidden).toBe(true);
+    const {panel}=setup(); expect(panel.node('.ai-welcome [data-prompt]')).not.toBeNull();
+    panel.conversation.add('user','Adjust spacing'); panel.update(); expect(panel.node('.ai-welcome')).toBeNull();
+    panel.conversation.messages=[]; panel.update(); expect(panel.node('.ai-welcome [data-prompt]')).not.toBeNull();
   });
   it('keeps attachment, derived scope, send and stop available in the composer toolbar',()=> {
     const {panel}=setup(),toolbar=panel.node('.ai-composer-toolbar');
