@@ -118,6 +118,8 @@ body.ai-open.preview-only .studio-grid { grid-template-columns:0 minmax(0,1fr) v
 .ai-diff { width:100%; table-layout:fixed; border-collapse:collapse; font-size:13px; }
 .ai-diff th,.ai-diff td { padding:8px 4px; border-bottom:1px solid var(--line); text-align:left; overflow-wrap:anywhere; vertical-align:top; }
 .ai-diff th:first-child { width:42%; }
+.ai-change-card .ai-change-details { border:0; }
+.ai-change-card .ai-change-details[open] { border-top:1px solid var(--line); }
 .ai-change-details>summary { display:flex; align-items:center; gap:8px; cursor:pointer; min-height:44px; padding:10px 0; font-size:14px; font-weight:400; line-height:1.5; color:var(--muted); list-style:none; }
 .ai-change-details>summary::-webkit-details-marker { display:none; }
 .ai-change-details>summary::before { content:''; width:6px; height:6px; border-right:1.5px solid currentColor; border-bottom:1.5px solid currentColor; transform:rotate(-45deg); flex:none; margin:0 3px; }
@@ -126,7 +128,7 @@ body.ai-open.preview-only .studio-grid { grid-template-columns:0 minmax(0,1fr) v
 #ai-panel .ai-card-state { margin-top:12px; color:var(--muted); }
 .ai-actions { display:flex; flex-wrap:wrap; gap:8px; margin-top:12px; }
 .ai-actions button,.ai-retry { min-height:44px; }
-.ai-change-applied { border-color:color-mix(in srgb,var(--success) 28%,var(--line)); background:color-mix(in srgb,var(--success) 7%,var(--surface)); }
+.ai-change-applied { padding-block:8px; border-color:color-mix(in srgb,var(--success) 28%,var(--line)); background:color-mix(in srgb,var(--success) 7%,var(--surface)); }
 .ai-card-header { display:flex; align-items:center; justify-content:space-between; gap:8px; padding-right:80px; min-height:44px; }
 .ai-card-header h3 { display:flex; align-items:center; gap:6px; color:var(--success); margin:0; }
 .ai-card-icon { display:inline-flex; flex:none; vertical-align:middle; }
@@ -134,7 +136,7 @@ body.ai-open.preview-only .studio-grid { grid-template-columns:0 minmax(0,1fr) v
 .ai-card-tools button { min-height:44px; font-size:14px; padding:6px 8px; }
 .ai-change-applied:not(.ai-change-history) .ai-activity li::before { display:none; }
 .ai-change-applied:not(.ai-change-history) .ai-activity-icon { display:inline-flex; }
-.ai-change-applied .ai-change-details>summary { position:absolute; top:12px; right:12px; color:var(--ink); }
+.ai-change-applied .ai-change-details>summary { position:absolute; top:8px; right:12px; color:var(--ink); }
 .ai-change-card .ai-change-details>summary,.ai-change-card .ai-diff { font-size:14px; }
 .ai-retry { align-self:start; font-size:13px; }
 .ai-reference-files { font-size:13px; border-bottom:1px solid var(--line); }

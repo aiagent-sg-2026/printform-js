@@ -29,6 +29,15 @@ for(const size of [{width:1440,height:900},{width:400,height:800}]) {
     const card=page.locator('.ai-change-card').last(),details=card.locator('details.ai-change-details'),undo=card.locator('[data-ai=undo]');
     await expect(card.getByRole('heading',{name:'Applied',exact:true})).toBeVisible({timeout:30000}); await expect(undo).toBeVisible(); await expect(page.locator('#revision')).toHaveText(/^r1\b/);
     await expect(details).not.toHaveAttribute('open',''); expect(await textLength(card)).toBeLessThanOrEqual(60); await expect(page.locator('[data-ai-suggestions]')).toBeHidden(); await expect(recipient).toBeHidden();
+    if(size.width===1440) {
+      expect(await card.evaluate(node=>node.getBoundingClientRect().height)).toBeLessThanOrEqual(64);
+      expect(await card.evaluate(node=>Array.from(node.querySelectorAll('*')).filter(element=>{
+        if(element.closest('details:not([open])') && element.tagName!=='DETAILS' && !element.closest('summary'))return false;
+        const style=getComputedStyle(element),rect=element.getBoundingClientRect(),border=['Top','Right','Bottom','Left'].some(side=>parseFloat(style[`border${side}Width`])>0 && !['none','hidden'].includes(style[`border${side}Style`]));
+        return rect.width>0 && rect.height>0 && style.visibility!=='hidden' && border && !element.innerText?.trim() && !element.querySelector('svg,img,input');
+      }).map(element=>element.className))).toEqual([]);
+      await expect(details).toHaveCSS('border-top-width','0px');
+    }
     await page.locator('.ai-conversation-scroll').focus(); let reachedUndo=false,reachedDetails=false;
     for(let i=0;i<12 && !reachedDetails;i++) { await page.keyboard.press('Tab'); reachedUndo ||= await undo.evaluate(node=>node===document.activeElement); reachedDetails=await details.locator('summary').evaluate(node=>node===document.activeElement); }
     expect(reachedUndo).toBe(true); expect(reachedDetails).toBe(true); await page.keyboard.press('Enter'); await expect(details).toHaveAttribute('open','');
