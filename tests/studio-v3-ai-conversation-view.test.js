@@ -84,16 +84,16 @@ describe('retained run steps',()=> {
     const bounded=Array.from({length:40},()=>({text:'x'.repeat(160),ok:true}));
     expect(cleanMessages([{role:'assistant',text:'Result',time:1,steps:bounded}])[0].steps).toEqual(bounded);
   });
-  it('renders a collapsed native disclosure between message text and its change card',()=> {
+  it('merges retained steps into the change card disclosure',()=> {
     const {panel}=setup();
     panel.conversation.add('user','Request');
     panel.conversation.add('assistant','Result','ready',{steps,diff:[{target:'style',property:'color',before:'#111111',after:'#222222'}]});
     panel.update();
-    const details=panel.node('.ai-assistant details.ai-run-steps');
-    expect(details.open).toBe(false); expect(details.querySelector('summary').textContent).toBe('Worked in 2 steps');
-    expect([...details.querySelectorAll('li')].map(n=>n.textContent)).toEqual(steps.map(s=>`${s.ok?'✓':'✗'} ${s.text}`));
-    expect(details.querySelectorAll('.ai-step-failed')).toHaveLength(1);
-    expect(details.previousElementSibling.className).toBe('ai-message-text'); expect(details.nextElementSibling.className).toContain('ai-change-card');
+    const details=panel.node('.ai-assistant details.ai-change-details'), retained=details.querySelector('.ai-run-steps');
+    expect(details.open).toBe(false); expect(panel.root.querySelectorAll('.ai-assistant details')).toHaveLength(1);
+    expect([...retained.querySelectorAll('li')].map(n=>n.textContent)).toEqual(steps.map(s=>`${s.ok?'✓':'✗'} ${s.text}`));
+    expect(retained.querySelectorAll('.ai-step-failed')).toHaveLength(1);
+    expect(details.closest('.ai-change-card')).not.toBeNull();
     expect(panel.node('.ai-user .ai-run-steps')).toBeNull();
   });
   it('uses the singular count and omits disclosures for empty or absent steps',()=> {

@@ -1,10 +1,9 @@
 # Changelog
-All notable changes to this project are documented in this file.
-The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
-Version numbers below track the **pagination engine** (`dist/printform.js`).
-Studio v2, the single-HTML protocol, and the Agent Contract version separately — see the [compatibility matrix](docs/COMPATIBILITY_MATRIX.zh-CN.md).
-See [TASK.md](TASK.md) for the full engineering log, commit hashes, test counts and verification detail; this file only lists reader-facing changes.
+All notable changes follow [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). Versions track the **pagination engine** (`dist/printform.js`); Studio v2, single-HTML protocol and Agent Contract version separately ([compatibility matrix](docs/COMPATIBILITY_MATRIX.zh-CN.md)). See [TASK.md](TASK.md) for engineering logs and verification; this file lists reader-facing changes.
 ## [Unreleased]
+### Batch 19, 2026-10-21
+- Unify AI panel typography with 12/13/14/15/17px tokens; compact desktop scope and wrapping welcome pills while retaining 16px mobile inputs and 44px attach/send targets. Move the composer Demo boundary into settings, show only actual blocking reasons, and migrate sharing-menu viewport coverage.
+- Batch 18 (2026-10-21): simplify AI Assistant to four welcome starters and an anchored composer; move explicit per-run sharing controls to settings. Compact applied edits to Applied, Undo and one Details disclosure containing activity, retained steps and raw changes; retain manual approval gates and accessible status announcements. Request short replies in the person's language.
 ### Batch 16, 2026-10-21
 - Keep completed AI tool steps in a collapsed per-message history across reloads, including failed steps, registered guide IDs and operation counts; exclude steps from model context. Align capability discovery copy with context-first guidance.
 - Batch 17 (2026-10-21): shared items-table styling adds independent header background/text colors on every printed page, available to AI and inspector with reset, Undo and save/reopen.

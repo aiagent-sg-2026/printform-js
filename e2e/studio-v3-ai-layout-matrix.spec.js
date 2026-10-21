@@ -41,7 +41,7 @@ for (const [width,height] of SIZES) {
     const sc0 = await box(page,'.ai-conversation-scroll');
     expect.soft(sc0.height,'empty: conversation height').toBeGreaterThanOrEqual(Math.min(200,panelH*.38));
     await expect(page.locator('.ai-welcome h3').first()).toBeInViewport({ratio:1});
-    for (const card of await page.locator('[data-ai-log] [data-prompt]').all()) expect.soft((await card.boundingBox()).height,'starter card height').toBeLessThanOrEqual(width < 500 ? 96 : 76);
+    for (const card of await page.locator('[data-ai-log] [data-prompt]').all()) { const bounds=await card.boundingBox();expect.soft(bounds.height,'starter pill height').toBeLessThanOrEqual(56);expect.soft(bounds.width,'starter pill stays inside panel').toBeLessThanOrEqual((await box(page,'[data-ai-log]')).width); }
     // Header: no hairline artifacts (thin full-width-ish bars) inside the header, one row for title and controls.
     const thin = await page.locator('.ai-heading').evaluate(h=>[...h.querySelectorAll('*')].filter(n=> { const r = n.getBoundingClientRect(),s = getComputedStyle(n); return r.width>30 && r.height>0 && r.height<=3 && (s.backgroundColor!=='rgba(0, 0, 0, 0)' || parseFloat(s.borderTopWidth)>0 || parseFloat(s.borderBottomWidth)>0) && !n.closest('button,summary,[role=progressbar]'); }).map(n=>n.className||n.tagName));
     expect.soft(thin,'hairline artifacts in header').toEqual([]);
@@ -52,27 +52,26 @@ for (const [width,height] of SIZES) {
       let off = 0; for (let i=0;i<png.data.length;i+=4) if (Math.abs(png.data[i]-base[0])+Math.abs(png.data[i+1]-base[1])+Math.abs(png.data[i+2]-base[2])>12) off++;
       expect.soft(off,`stray pixels in the top strip of ${selector}`).toBe(0);
     }
-    // Composer: the scope pill never takes most of the row; the hint shows when the composer is wide enough.
+    // Composer: the scope pill never takes most of the row.
     const comp = await box(page,'.ai-composer'), pill = await box(page,'#ai-scope');
     expect.soft(pill.width,'scope pill width').toBeLessThanOrEqual(comp.width*.62);
-    if (comp.width>=440) await expect(page.locator('.ai-composer')).toContainText('Shift + Enter');
     // One exchange: the newest card is readable, its heading and buttons are not clipped.
     await send(page,'Make the invoice title larger and blue, and improve spacing for the header and table.');
     const card = page.locator('.ai-change-card').first();
-    await expect(card).toContainText('Applied to draft',{timeout:30000});
+    await expect(card.getByRole('heading')).toHaveText('Applied',{timeout:30000});
     const sc = await box(page,'.ai-conversation-scroll');
     expect.soft(sc.height,'conversation height after one exchange').toBeGreaterThanOrEqual(Math.min(200,panelH*.38));
-    const head = await card.getByRole('heading',{name:/Applied to draft/}).boundingBox(), undo = await card.locator('[data-ai=undo]').boundingBox();
+    const head = await card.getByRole('heading',{name:'Applied',exact:true}).boundingBox(), undo = await card.locator('[data-ai=undo]').boundingBox();
     for (const [what,b] of [['card heading',head],['Undo button',undo]]) { expect.soft(b,what).not.toBeNull(); expect.soft(b.y,what+' top inside the conversation').toBeGreaterThanOrEqual(sc.y-1); expect.soft(b.y+b.height,what+' bottom inside the conversation').toBeLessThanOrEqual(sc.y+sc.height+1); }
     // A needs-approval card: Apply/Preview/Discard row is reachable and the card heading is visible.
     await send(page,'Set the top page margin to 12 px.');
     await expect(page.locator('[data-ai-proposal]')).toBeVisible({timeout:30000});
     const sc2 = await box(page,'.ai-conversation-scroll'), prop = page.locator('[data-ai-proposal]');
-    const ph = await prop.getByRole('heading',{name:/Suggested changes/}).boundingBox(), pd = await prop.locator('[data-ai=discard]').boundingBox();
+    const ph = await prop.getByRole('heading',{name:'Needs your approval',exact:true}).boundingBox(), pd = await prop.locator('[data-ai=discard]').boundingBox();
     for (const [what,b] of [['proposal heading',ph],['Discard button',pd]]) { expect.soft(b,what).not.toBeNull(); expect.soft(b.y,what+' top inside the conversation').toBeGreaterThanOrEqual(sc2.y-1); expect.soft(b.y+b.height,what+' bottom inside the conversation').toBeLessThanOrEqual(sc2.y+sc2.height+1); }
-    // Composer and the privacy notice stay on screen.
+    // Composer stays on screen without an unblocked recipient notice.
     const sendBtn = await box(page,'[data-ai-send]'); expect.soft(sendBtn.y+sendBtn.height).toBeLessThanOrEqual(height+1);
-    await expect(page.locator('[data-ai-send-reason]')).toBeInViewport({ratio:.9});
+    await expect(page.locator('[data-ai-send-reason]')).toBeHidden();
     await context.close();
   });
 }

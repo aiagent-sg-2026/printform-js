@@ -9,12 +9,17 @@ for(const viewport of [{width:400,height:800},{width:320,height:568}]){
  test(`${viewport.width}×${viewport.height}: changing a sharing permission keeps the next permission reachable`,async({page},info)=>{
   await page.setViewportSize(viewport);
   const inference=[];page.on('request',request=>{if(request.url().endsWith('/demo/v1/responses'))inference.push(request.url());});
+  await page.locator('.ai-settings>summary').click();
   await page.locator('.ai-sharing>summary').click();
-  await page.locator('.ai-conversation-scroll').evaluate(node=>node.scrollTop=node.scrollHeight);
+  const menu=page.locator('.ai-settings-body');await menu.evaluate(node=>node.scrollTop=node.scrollHeight);
   const text=page.locator('#ai-observation-text'),pixels=page.locator('#ai-observation-pixels');
-  await expect(pixels).toBeInViewport({ratio:1});
+  await text.scrollIntoViewIfNeeded();await expect(pixels).toBeInViewport({ratio:1});
   await text.check();await expect(text).toBeChecked();
   await expect(pixels).toBeInViewport({ratio:1});
+  await expect(page.locator('.ai-settings')).toHaveAttribute('open','');
+  const bounds=await menu.evaluate(node=>{const r=node.getBoundingClientRect();return {top:r.top,bottom:r.bottom,left:r.left,right:r.right,overflow:getComputedStyle(node).overflowY};});
+  expect(bounds.top).toBeGreaterThanOrEqual(0);expect(bounds.bottom).toBeLessThanOrEqual(viewport.height);expect(bounds.left).toBeGreaterThanOrEqual(0);expect(bounds.right).toBeLessThanOrEqual(viewport.width);expect(bounds.overflow).toBe('auto');
+  const next=await pixels.boundingBox();expect(next.y).toBeGreaterThanOrEqual(bounds.top);expect(next.y+next.height).toBeLessThanOrEqual(bounds.bottom);
   await pixels.check();await expect(pixels).toBeChecked();
   await expect(page.locator('#ai-prompt')).toBeInViewport({ratio:1});
   expect(inference).toEqual([]);

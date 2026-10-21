@@ -1,4 +1,4 @@
-import {describe,expect,it,vi} from 'vitest';
+import {describe,expect,it} from 'vitest';
 import {renderChangeCard} from '../studio-v3/ai-change-card.js';
 
 const bus = {};
@@ -7,22 +7,14 @@ const message = (patch={}) => ({id:'card-1',status:'applied',appliedRevision:12,
 const panel = (patch={}) => ({getBus:()=>bus,canUndo:()=>true,applying:false,...patch});
 
 describe('applied change card',()=> {
-  it('uses the committed revision and raw change count rather than grouped activity count',()=> {
-    const card=renderChangeCard(panel(),message());
-    expect(card.querySelector('h3').textContent).toContain('Revision 12');
-    expect(card.querySelectorAll('.ai-activity li')).toHaveLength(1);
-    expect(card.querySelector('.ai-card-footer').textContent).toContain('2 changes applied');
-    expect(card.querySelector('time').dateTime).toBe(new Date(message().at).toISOString());
-    expect(renderChangeCard(panel(),message({at:undefined})).querySelector('time')).toBeNull();
-  });
-  it('toggles the linked disclosure both ways and synchronizes native disclosure changes',()=> {
-    const card=renderChangeCard(panel(),message()),details=card.querySelector('details'),view=card.querySelector('[aria-controls]');
-    details.scrollIntoView=vi.fn();
-    expect(view.getAttribute('aria-controls')).toBe(details.id); expect(details.open).toBe(false); expect(view.getAttribute('aria-expanded')).toBe('false');
-    view.click(); expect(details.open).toBe(true); expect(view.getAttribute('aria-expanded')).toBe('true'); expect(details.scrollIntoView).toHaveBeenCalledWith({block:'nearest'});
+  it('keeps revision on Undo and groups activity, steps and raw changes in one native disclosure',()=> {
+    const steps=[{text:'Adjusted table columns',ok:true},{text:'Checked print layout',ok:true}], card=renderChangeCard(panel(),message({steps})), details=card.querySelector('details.ai-change-details'), undo=card.querySelector('[data-ai=undo]');
+    expect(undo.title).toBe('Undo Revision 12'); expect(undo.getAttribute('aria-description')).toBe('Undo Revision 12');
+    expect(details.open).toBe(false); expect(card.querySelectorAll('details')).toHaveLength(1);
+    expect(details.querySelectorAll('.ai-activity li')).toHaveLength(1);
+    expect([...details.querySelectorAll('.ai-run-steps li')].map(item=>item.textContent)).toEqual(steps.map(step=>`✓ ${step.text}`));
     expect(details.querySelector('.ai-diff-json').textContent).toBe(JSON.stringify(diff,null,2));
-    view.click(); expect(details.open).toBe(false); expect(view.getAttribute('aria-expanded')).toBe('false');
-    details.open=true; details.dispatchEvent(new Event('toggle')); expect(view.getAttribute('aria-expanded')).toBe('true');
+    expect(card.querySelector('.ai-card-footer')).toBeNull(); expect(card.querySelector('.ai-card-state')).toBeNull();
   });
   it('retains undo routing and disables it during an apply, but omits it from history',()=> {
     const card=renderChangeCard(panel({applying:true}),message()),undo=card.querySelector('[data-ai=undo]');

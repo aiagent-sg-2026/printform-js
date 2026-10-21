@@ -82,7 +82,7 @@ describe('the panel applies ordinary layout edits by itself',()=> {
     const card=panel.conversation.messages.find(m=>m.diff);
     expect(counter.count).toBe(1); expect(card.status).toBe('applied'); expect(panel.proposal).toBeNull(); expect(panel.getBus().revision).toBe(1);
     expect(panel.node('[data-ai=apply]')).toBeNull(); expect(panel.canUndo(card)).toBe(true);
-    expect(panel.node('[data-ai=undo]')).not.toBeNull(); expect(panel.node('[data-ai-log]').textContent).toContain('Applied to the form');
+    expect(panel.node('[data-ai=undo]')).not.toBeNull();
   });
   it('shows plain activity lines first and keeps the raw diff and JSON inside collapsed Details',async()=> {
     const {panel}=setup({reply:AUTO_REPLY,commit:commitInto({count:0})}); await panel.send();

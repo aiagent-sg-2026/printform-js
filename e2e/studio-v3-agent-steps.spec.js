@@ -49,13 +49,13 @@ test('works in steps: a visible timeline, one reviewable proposal, then Apply an
   await page.screenshot({path:info.outputPath('agent-steps-running.png')});
   await page.waitForFunction(()=>window.__release); await page.evaluate(()=>window.__release());
   await expect(page.locator('[data-ai-proposal]')).toBeVisible(); await expect(page.locator('[data-ai-status]')).toContainText('4 steps');
-  const completed=page.locator('.ai-assistant .ai-run-steps');
-  await expect(completed.locator('summary')).toHaveText('Worked in 4 steps'); await expect(completed).not.toHaveAttribute('open');
-  await completed.locator('summary').click(); await expect(completed.locator('li').filter({hasText:'Checked the print preview'})).toBeVisible();
+  const completed=page.locator('.ai-assistant .ai-change-details');
+  await expect(completed).not.toHaveAttribute('open','');
+  await completed.locator('summary').click(); await expect(completed.locator('.ai-run-steps li')).toHaveCount(4); await expect(completed.locator('.ai-run-steps li').filter({hasText:'Checked the print preview'})).toBeVisible();
   await expect(page.locator('#revision')).toHaveText('r0');
   await expect(page.locator('[data-ai=apply]')).toBeEnabled(); await page.locator('[data-ai=apply]').click();
   await expect(page.locator('#revision')).toContainText('r1');
-  await expect(page.locator('[data-ai-log]')).toContainText('Applied to the form');
+  await expect(page.locator('.ai-change-card').getByRole('heading',{name:'Applied',exact:true})).toBeVisible();
   await page.locator('[data-ai=undo]').click(); await expect(page.locator('#revision')).toContainText('r2'); await expect(page.locator('[data-ai=undo]')).toHaveCount(0); // undo is a revision of its own
   const sent = await wire(page);
   expect(sent.every(body=>body.store === undefined && body.previous_response_id === undefined)).toBe(true);
@@ -72,16 +72,16 @@ test.describe('work-in-steps update recovery',()=> {
       await page.waitForFunction(()=>Boolean(navigator.serviceWorker?.controller));
       await page.locator('[data-ai-toggle]').click(); await send(page);
       await expect(page.locator('[data-ai-proposal]')).toBeVisible();
-      const completed=page.locator('.ai-assistant .ai-run-steps');
-      await expect(completed.locator('summary')).toHaveText('Worked in 4 steps'); await expect(completed).not.toHaveAttribute('open');
+      const completed=page.locator('.ai-assistant .ai-change-details');
+      await expect(completed).not.toHaveAttribute('open',''); await expect(completed.locator('.ai-run-steps li')).toHaveCount(4);
       // Conversation recovery is opt-in through Keep on update, not an ordinary reload.
       server.publish(); await page.locator('#update-button').click(); await expect(page.locator('#update-dialog')).toBeVisible({timeout:30000});
       await page.locator('[data-update-choice=keep]').click();
       await expect(page.locator('#app-version')).toContainText(NEXT.slice(0,12)); await ready(page);
-      const restored=page.locator('.ai-assistant .ai-run-steps');
-      await expect(restored.locator('summary')).toHaveText('Worked in 4 steps'); await expect(restored).not.toHaveAttribute('open');
-      await restored.locator('summary').click(); await expect(restored.locator('li')).toHaveCount(4);
-      await expect(restored.locator('li').filter({hasText:'Checked the print preview'})).toBeVisible();
+      const restored=page.locator('.ai-assistant .ai-change-details');
+      await expect(restored).not.toHaveAttribute('open','');
+      await restored.locator('summary').click(); await expect(restored.locator('.ai-run-steps li')).toHaveCount(4);
+      await expect(restored.locator('.ai-run-steps li').filter({hasText:'Checked the print preview'})).toBeVisible();
     } finally { await server.close(); }
   });
 });

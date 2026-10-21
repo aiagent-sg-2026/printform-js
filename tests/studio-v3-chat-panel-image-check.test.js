@@ -20,7 +20,7 @@ describe('attaching an image',()=> {
     await attach(panel,[image]);
     expect(discover).toHaveBeenCalledTimes(1);
     expect(panel.referenceFiles.capability.textContent).toContain('Images available'); expect(panel.node('[data-ai-send]').disabled).toBe(false);
-    expect(panel.node('[data-ai-send-reason]').dataset.kind).toBe('notice');
+    expect(panel.node('[data-ai-send-reason]').hidden).toBe(true);
   });
 
   it('keeps Send off and says why when the gateway does not report image support, with the retry button in reach',async()=> {

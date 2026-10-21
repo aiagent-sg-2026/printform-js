@@ -251,7 +251,7 @@ describe('v3 text requests use the Responses endpoint',()=> {
     expect(body.model).toBe('demo-auto');expect(body.stream).toBe(true);
     expect(body.input.map(item=>item.role)).toEqual(['system','user']);
     expect(body.input[1].content).toEqual([{type:'input_text',text:'current layout'}]);
-    expect(JSON.stringify(body)).not.toMatch(/tools|tool_choice|messages|dmo_/);
+    expect(Object.keys(body).sort()).toEqual(['input','model','stream']);expect(JSON.stringify(body)).not.toMatch(/dmo_/);
     expect(calls.some(c=>c.url.includes('chat/completions'))).toBe(false);
     expect(result).toEqual({text:'{"kind":"answer","message":"hi"}',usage:{prompt_tokens:3,completion_tokens:4,total_tokens:7}});
   });

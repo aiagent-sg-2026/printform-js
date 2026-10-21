@@ -97,7 +97,7 @@ export async function runRedesignLifecycle({page,context},info,fixtures) {
   for (const prompt of ['Redesign this invoice freely. Rebuild its structure, layout and typography, not just its colors.','Redesign it again with a different structure and typography.'].slice(0,redesigns.length)) {
     await page.locator('#ai-prompt').fill(prompt); await page.locator('[data-ai-send]').click();
     const revision=evidence.rounds.length+1,options={timeout:livePlan ? 150000 : 45000};
-    await expect(page.locator('[data-ai-proposal]').or(page.getByRole('heading',{name:`Applied to draft · Revision ${revision}`,exact:true}))).toBeVisible(options);
+    await expect(page.locator('[data-ai-proposal]').or(page.locator(`.ai-change-card:has([data-ai=undo][title="Undo Revision ${revision}"])`))).toBeVisible(options);
     if (livePlan) {
       const operations=JSON.parse(modelReplies.at(-1)).operations || [];
       expect(operations.length).toBeLessThanOrEqual(24);

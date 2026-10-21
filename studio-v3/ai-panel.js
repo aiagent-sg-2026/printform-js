@@ -16,8 +16,6 @@ import { fillModels, showAlias } from './ai-model-select.js';
 import { AIObservationAuthorization } from './ai-observation-authorization.js';
 import { AISourceWorkspace } from './ai-source-workspace.js';
 import { COMMIT_POLICY_HELP } from './agent-commit-policy.js';
-// Shown under the message box whenever Send works; it is the recipient notice Send accepts.
-const RECIPIENT_NOTICE = 'Sent to the Demo gateway · use fictional data only';
 
 export class AIPanel {
   constructor({bus,selection=()=> 'items',facts=()=>[],elementTags,guard,preview,capturePixels,restore,commit,undo,sync,transport=createDemoTransport()}) {
@@ -54,7 +52,7 @@ export class AIPanel {
   }
   node(selector) { return this.root.querySelector(selector); }
   // Progress ticks twice a second; they stay silent for screen readers, phase changes are announced.
-  message(text,{progress = false} = {}) { const status = this.node('[data-ai-status]'); status.setAttribute('aria-live',progress ? 'off' : 'polite'); status.textContent = text; status.title = text; const wait = this.root.querySelector('.ai-pending-text'); if (wait) wait.textContent = text; }
+  message(text,{progress = false,redundant = false} = {}) { const status = this.node('[data-ai-status]'); status.classList.toggle('sr-only',redundant); status.setAttribute('aria-live',progress ? 'off' : 'polite'); status.textContent = text; status.title = text; const wait = this.root.querySelector('.ai-pending-text'); if (wait) wait.textContent = text; }
   error(error) { this.message(errorMessage(error)); }
   // Scope is derived, never chosen: referenced elements limit the edit, otherwise the whole form is editable.
   scope() { const ids = this.elementTags?.snapshot().map(r=>r.id) || []; return ids.length ? {mode:'selected',id:ids[0],ids} : {mode:'whole'}; }
@@ -185,7 +183,7 @@ export class AIPanel {
       if (card) Object.assign(card,{status:'applied',appliedBus:applied.bus,appliedRevision:applied.revision,appliedEpoch:proposal.epoch});
       // The references pointed at the revision just replaced; keeping them would block the next Send as outdated.
       if (applied.bus === this.getBus()) { this.elementTags?.consume(); this.showScopeHint(); }
-      this.message(applied.bus === this.getBus() ? 'Applied to the form. Undo restores the previous layout.' : 'Applied to the previous form. Current form unchanged.');
+      this.message(applied.bus === this.getBus() ? 'Applied to the form. Undo restores the previous layout.' : 'Applied to the previous form. Current form unchanged.',{redundant:true});
     } catch (error) {
       try { await this.restore(); canonical = true; this.error(error); }
       catch { this.message('Apply failed. The candidate remains unapplied; restore the form before printing.'); }
@@ -223,13 +221,12 @@ export class AIPanel {
     for (const node of this.root.querySelectorAll('[data-ai=close],[data-ai=clear]')) node.disabled = Boolean(this.applying);
     this.showSendReason(); renderConversation(this);
   }
-  // The line under the message box: who receives the request, or why Send is off when nothing else on screen says so
-  // (files still being read, image support not confirmed). The reason replaces the notice while it applies.
+  // Only blocking reasons belong below the composer; the recipient boundary lives in settings.
   showSendReason() {
     const files = this.referenceFiles, node = this.node('[data-ai-send-reason]');
     const source = this.sourceWorkspace;
     const reason = source?.closing || source?.cleanupFailed ? source.notice() : files?.reading ? 'Reading references… Send unlocks when they are ready.' : files?.imageBlocked() ? 'Send is off: image support is not confirmed for this model. Use Check image support, or remove the image.' : '';
-    node.textContent = reason || `${RECIPIENT_NOTICE}.`; node.dataset.kind = reason ? 'reason' : 'notice';
+    node.textContent = reason; node.dataset.kind = 'reason'; node.hidden = !reason;
     const consent = this.node('[data-ai-consent-state]');
     consent.textContent = `${this.observationAccess?.notice({compact:true}) || ''} ${source?.notice() || ''}`.trim();
   }

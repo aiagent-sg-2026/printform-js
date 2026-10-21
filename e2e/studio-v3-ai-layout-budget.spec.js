@@ -30,8 +30,8 @@ async function gateway(page) {
 const send = async(page,text)=> { await page.locator('#ai-prompt').fill(text); await page.locator('[data-ai-send]').click(); };
 const box = async(page,selector)=> { const b = await page.locator(selector).first().boundingBox(); expect(b,selector).not.toBeNull(); return b; };
 const BUDGETS = [
-  ['narrow 400x800',{width:400,height:800},{conversationMin:300,headerMax:104,suggestionsMax:112,sendReasonMax:56,scopeBarMax:44}],
-  ['wide 1440x900',{width:1440,height:900},{conversationMin:340,headerMax:104,suggestionsMax:112,sendReasonMax:56,scopeBarMax:44}]
+  ['narrow 400x800',{width:400,height:800},{conversationMin:300,headerMax:104,scopeBarMax:44}],
+  ['wide 1440x900',{width:1440,height:900},{conversationMin:340,headerMax:104,scopeBarMax:44}]
 ];
 for (const [name,size,budget] of BUDGETS) {
   test(`AI panel layout budget at ${name}`,async({page})=> {
@@ -41,21 +41,21 @@ for (const [name,size,budget] of BUDGETS) {
     await expect(page.locator('[data-ai-log]')).not.toContainText('Review any proposed changes before you apply them');
     await expect(page.locator('[data-ai-log]')).not.toContainText('Ask → Preview → Apply');
     await send(page,'Make the invoice title larger and blue, and improve spacing for the header and table.');
-    await expect(page.locator('.ai-change-card').first()).toContainText('Applied to draft',{timeout:30000});
+    await expect(page.locator('.ai-change-card').first().getByRole('heading')).toHaveText('Applied',{timeout:30000});
     const scroller = await box(page,'.ai-conversation-scroll'), card = await box(page,'.ai-change-card');
     expect(scroller.height,'conversation height').toBeGreaterThanOrEqual(budget.conversationMin);
     expect((await box(page,'.ai-heading')).height,'header height').toBeLessThanOrEqual(budget.headerMax);
-    expect((await box(page,'[data-ai-suggestions]')).height,'suggestions height').toBeLessThanOrEqual(budget.suggestionsMax);
-    expect((await box(page,'[data-ai-send-reason]')).height,'recipient notice height').toBeLessThanOrEqual(budget.sendReasonMax);
+    await expect(page.locator('[data-ai-suggestions]')).toBeHidden();
+    await expect(page.locator('[data-ai-send-reason]')).toBeHidden();
     const bar = await page.locator('[data-ai-scope]').first().boundingBox(); if (bar) expect(bar.height,'scope bar height').toBeLessThanOrEqual(budget.scopeBarMax);
     // The applied card is fully visible inside the conversation scroller, with its buttons.
     expect(card.y).toBeGreaterThanOrEqual(scroller.y - 1); expect(card.y + card.height).toBeLessThanOrEqual(scroller.y + scroller.height + 1);
     await expect(page.locator('.ai-change-card [data-ai=undo]')).toBeVisible();
-    await expect(page.locator('.ai-change-card')).toContainText('Revision 1');
+    await expect(page.locator('#revision')).toHaveText(/^r1\b/); await expect(page.locator('.ai-change-card [data-ai=undo]')).toHaveAttribute('title','Undo Revision 1');
     // One header row: title and the three controls share a row (their vertical centers are within 24px).
     const title = await box(page,'.ai-heading h2'), close = await box(page,'.ai-heading [data-ai=close]');
     expect(Math.abs((title.y + title.height/2) - (close.y + close.height/2)),'title and close share a row').toBeLessThanOrEqual(24);
-    // Privacy boundary stays visible.
-    await expect(page.locator('[data-ai-send-reason]')).toContainText('fictional data only');
+    // The recipient boundary remains available in settings, not below the composer.
+    await page.locator('.ai-settings>summary').click();await expect(page.locator('.ai-settings-body')).toContainText('Demo AI gateway · use fictional data only');
   });
 }

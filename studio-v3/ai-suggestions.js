@@ -19,6 +19,6 @@ export function updateSuggestions(panel) {
   const disabled=Boolean(panel.busy || panel.applying || panel.restoring || panel.referenceFiles?.reading);
   if (!panel.conversation.messages.length) state.chips.replaceChildren();
   else if (!state.chips.childElementCount) state.render();
-  state.section.hidden=!panel.conversation.messages.length || disabled;
+  state.section.hidden=true;
   state.refresh.disabled=disabled; for (const button of state.chips.querySelectorAll('[data-prompt]')) button.disabled=disabled;
 }

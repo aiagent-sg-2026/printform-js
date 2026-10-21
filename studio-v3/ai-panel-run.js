@@ -73,7 +73,7 @@ export async function sendPanelMessage() {
     const direct = result.kind === 'proposal' && result.inspection?.ready && !sourceBound && autoApplicable(result,{workspace});
     const auto = result.kind === 'proposal' && (direct || innerWidth > 900), next = direct ? 'Applying to the form…' : auto && result.inspection?.ready ? 'Review the paper preview, then Apply.' : 'Preview before Apply.';
     const details = `${alias} · ${result.kind === 'answer' ? '' : `r${revision} · ${result.mode === 'steps' ? `${result.turns} steps` : `${result.iterations} inspection round(s)`} · `}Tokens: ${result.usage?.total ?? 'unavailable'}`;
-    this.message(`${result.kind === 'answer' ? 'Answer ready; form unchanged.' : `${result.inspection?.ready ? 'Local checks passed.' : 'Local checks blocked.'} ${next}`} (${details})`);
+    this.message(`${result.kind === 'answer' ? 'Answer ready; form unchanged.' : `${result.inspection?.ready ? 'Local checks passed.' : 'Local checks blocked.'} ${next}`} (${details})`,{redundant:result.kind === 'answer' || Boolean(result.inspection?.ready)});
     if (auto) await this.preview(true,{keepOpen:direct}).catch(error=>this.error(error));
     // Apply runs after the run is finished (busy is cleared in finally) and only if the same checked proposal is still current.
     if (direct && this.checked && id === this.generation) applyNow = this.proposal;

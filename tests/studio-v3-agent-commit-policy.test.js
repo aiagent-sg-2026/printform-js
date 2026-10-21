@@ -8,7 +8,6 @@ import {authorizeSourceWorkspace} from '../studio-v3/source-workspace-run.js';
 import {newProject} from '../studio-v3/model.js';
 import {agentBody} from '../studio-v3/agent-wire.js';
 import {html,setup} from './support/chat-panel.js';
-import {renderWelcome} from '../studio-v3/ai-welcome.js';
 
 const args={request:'Make the title blue',scope:{mode:'whole'},typography:[],conversation:[]};
 describe('truthful host commit policy',()=> {
@@ -43,10 +42,10 @@ describe('truthful host commit policy',()=> {
       expect(COMMIT_POLICY_SHORT).toContain('source-workspace work always requires explicit Preview and Apply');
     } finally {await workspace.close();}
   });
-  it('shows the current approval boundary in the welcome and whole-form scope help',()=> {
+  it('shows the current approval boundary in settings and whole-form scope help',()=> {
     document.documentElement.innerHTML=html.replace(/<!doctype html>/i,'');document.body.inert=false;
     const {panel}=setup();
-    expect(renderWelcome().textContent).toContain(COMMIT_POLICY_HELP);
+    expect(panel.node('[data-ai-commit-help]').textContent).toContain(COMMIT_POLICY_HELP);
     expect(panel.node('.ai-scope-help').textContent).toContain(COMMIT_POLICY_HELP);
     expect(panel.root.textContent).not.toContain('only ordinary layout edits');
   });

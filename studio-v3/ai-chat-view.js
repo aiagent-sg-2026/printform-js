@@ -23,7 +23,9 @@ export function renderConversation(panel) {
   log.replaceChildren();
   updateSuggestions(panel);
   if (!panel.conversation.messages.length) {
-    log.append(renderWelcome());
+    const welcome = renderWelcome();
+    for (const button of welcome.querySelectorAll('[data-prompt]')) button.disabled = Boolean(panel.busy || panel.applying || panel.restoring || panel.referenceFiles?.reading);
+    log.append(welcome);
   }
   for (const message of panel.conversation.messages) {
     const article = node('article',`ai-message ai-${message.role}`); article.dataset.messageId = message.id;
@@ -36,7 +38,7 @@ export function renderConversation(panel) {
     const notice = taskOutcomeNotice(message.taskOutcome);
     if (notice) { const state = node('p','ai-card-state',notice); state.setAttribute('role','status'); article.append(state); }
     article.append(node('div','ai-message-text',message.text));
-    if (message.role === 'assistant' && message.steps?.length) {
+    if (message.role === 'assistant' && message.steps?.length && !message.diff) {
       const details = node('details','ai-run-steps'), count = message.steps.length, list = node('ol','');
       details.append(node('summary','',`Worked in ${count} ${count === 1 ? 'step' : 'steps'}`));
       for (const step of message.steps) list.append(node('li',step.ok ? '' : 'ai-step-failed',`${step.ok ? '✓' : '✗'} ${step.text}`));

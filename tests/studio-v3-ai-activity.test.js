@@ -44,11 +44,9 @@ describe('change card state and disclosure',()=> {
     for (const status of ['ready','expired']) expect(renderChangeCard(panel,{...message,status}).classList.contains('ai-change-applied')).toBe(false);
     for (const history of [{...message,id:'earlier'},{...message,appliedBus:{}}]) expect(renderChangeCard(panel,history).classList.contains('ai-change-history')).toBe(true);
   });
-  it('keeps technical evidence collapsed and lets View changes open and close it',()=> {
-    const card = renderChangeCard(panel,message), details = card.querySelector('details.ai-change-details'), view = card.querySelector('[aria-controls]');
+  it('keeps technical evidence in the single native disclosure',()=> {
+    const card = renderChangeCard(panel,message), details = card.querySelector('details.ai-change-details');
     expect(details.open).toBe(false); expect(details.querySelectorAll('tbody tr')).toHaveLength(1);
     expect(JSON.parse(details.querySelector('pre').textContent)).toEqual(message.diff);
-    view.click(); expect(details.open).toBe(true); expect(view.getAttribute('aria-expanded')).toBe('true');
-    view.click(); expect(details.open).toBe(false); expect(view.getAttribute('aria-expanded')).toBe('false');
   });
 });

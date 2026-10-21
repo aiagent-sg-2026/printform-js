@@ -26,7 +26,7 @@ async function attachImage(page) {
 
 test('an attached image has its support checked at once, and Send is ready when the gateway reports it',async({page})=> {
   await gateway(page,true); await attachImage(page);
-  await expect(page.locator('.ai-reference-files')).toContainText('Images available'); await expect(page.locator('[data-ai-send-reason]')).toHaveAttribute('data-kind','notice');
+  await expect(page.locator('.ai-reference-files')).toContainText('Images available'); await expect(page.locator('[data-ai-send-reason]')).toBeHidden();
   await page.locator('#ai-prompt').fill('Use navy accents.'); await expect(page.locator('[data-ai-send]')).toBeEnabled();
   expect(await page.evaluate(()=>window.__models)).toBe(1);
 });

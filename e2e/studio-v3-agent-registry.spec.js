@@ -31,7 +31,7 @@ test('discovers the shipped registry and guide, inspects, then automatically app
   const accent=()=>page.frameLocator('#preview-frame').locator('.v3-header').first().evaluate(node=>getComputedStyle(node).borderBottomColor),before=await accent();
   const heading=()=>page.frameLocator('#preview-frame').locator('[data-v3-id=header-title]').first(),originalHeading=await heading().textContent();
   await send(page);
-  await expect(page.locator('.ai-change-card')).toContainText('Applied to draft');await ready(page);await expect(page.locator('#revision')).toHaveText(/^r1\b/);expect(await accent()).toBe('rgb(22, 58, 101)');
+  await expect(page.locator('.ai-change-card').getByRole('heading',{name:'Applied',exact:true})).toBeVisible();await ready(page);await expect(page.locator('#revision')).toHaveText(/^r1\b/);expect(await accent()).toBe('rgb(22, 58, 101)');
   await expect(heading()).toHaveText('Tax Invoice');
   await page.locator('[data-ai=undo]').click();await ready(page);await expect(page.locator('#revision')).toHaveText(/^r2\b/);expect(await accent()).toBe(before);expect(errors).toEqual([]);
   await expect(heading()).toHaveText(originalHeading);

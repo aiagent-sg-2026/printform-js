@@ -54,21 +54,13 @@
     <aside id="ai-panel" aria-label="AI layout editor" hidden>
       <div data-ai-resize role="separator" tabindex="0" aria-label="Resize AI panel" aria-orientation="vertical" aria-valuemin="320" aria-valuemax="600" aria-valuenow="390"></div>
       <header class="ai-heading">
-        <div class="ai-header-copy"><h2><span data-icon="sparkles"></span>AI Assistant <span class="ai-beta">BETA</span></h2><div class="ai-header-secondary"><p class="ai-subtitle" title="Edit, generate and refine your form with AI">Edit, generate and refine your form with AI</p></div></div>
-        <div class="ai-header-actions"><button type="button" data-ai-history aria-label="Version history" aria-expanded="false" aria-controls="ai-history"><span data-icon="clock"></span><span class="ai-history-label">Version history</span></button><section id="ai-history" class="ai-history" tabindex="-1" aria-label="Version history" hidden></section><details class="ai-settings"><summary aria-label="AI settings"><span data-icon="more"></span></summary>
-          <div class="ai-settings-body"><strong>AI settings</strong><p>Demo gateway · text and image requests. <span data-ai-commit-help></span></p><p data-ai-origin></p>
+        <div class="ai-header-copy"><h2><span data-icon="sparkles"></span>AI Assistant <span class="ai-beta">BETA</span></h2></div>
+        <div class="ai-header-actions"><button type="button" data-ai-history aria-label="Version history" title="Version history" aria-expanded="false" aria-controls="ai-history"><span data-icon="clock"></span></button><section id="ai-history" class="ai-history" tabindex="-1" aria-label="Version history" hidden></section><details class="ai-settings"><summary aria-label="AI settings"><span data-icon="more"></span></summary>
+          <div class="ai-settings-body"><strong>AI settings</strong><p>Demo AI gateway · use fictional data only</p><p>Text and image requests. <span data-ai-commit-help></span></p><p data-ai-origin></p>
             <label>Selected model<select id="ai-model"><option value="demo-auto">demo-auto</option></select></label>
             <label class="ai-agent-toggle" title="The assistant drafts, checks the print preview and repairs over several steps. If the AI service does not allow it, one step is used."><input type="checkbox" id="ai-agent" checked> Work in steps (beta)</label>
             <button type="button" data-ai="models">Discover available models</button><button type="button" data-ai="clear">Clear conversation</button>
             <p>This tab keeps the last 12 messages. A follow-up sends at most the 6 most recent (3,000 characters). Tokens and sessions are never saved.</p>
-          </div>
-        </details><button data-ai="close" data-icon="close" aria-label="Close AI editor"></button></div>
-      </header>
-      <div class="ai-scope-hint" data-ai-scope><span class="ai-scope-icon" data-icon="form"></span><div><p class="ai-scope-help"></p></div></div>
-      <div class="ai-conversation-scroll" tabindex="0" aria-label="Conversation and shared context">
-      <div data-ai-log role="log" aria-label="AI conversation" aria-live="polite" aria-relevant="additions text"></div>
-      <div class="ai-context">
-        <div data-ai-element-tags aria-label="Referenced elements" hidden></div>
         <details class="ai-sharing"><summary><span class="ai-sharing-chevron" data-icon="next" aria-hidden="true"></span><span class="ai-sharing-label">Sharing permissions · fictional data only</span></summary>
         <div class="ai-observation-disclosure" role="group" aria-label="Observation sharing permissions">
         <p class="ai-demo-notice">Demo · fictional forms and references only</p>
@@ -77,11 +69,19 @@
         <label class="hint"><input type="checkbox" id="ai-observation-pixels"> I confirm this form is fictional and authorize page/crop pixels for this run via Demo Gateway and the selected model. Text authorization is also required; denied values and embedded images stay blocked. Real forms require separate approval.</label>
         </div>
         </details>
+          </div>
+        </details><button data-ai="close" data-icon="close" aria-label="Close AI editor"></button></div>
+      </header>
+      <div class="ai-scope-hint" data-ai-scope><span class="ai-scope-icon" data-icon="form"></span><div><p class="ai-scope-help"></p></div></div>
+      <div class="ai-conversation-scroll" tabindex="0" aria-label="Conversation and shared context">
+      <div data-ai-log role="log" aria-label="AI conversation" aria-live="polite" aria-relevant="additions text"></div>
+      <div class="ai-context">
+        <div data-ai-element-tags aria-label="Referenced elements" hidden></div>
       </div>
       </div>
       <form class="ai-composer">
-        <div class="ai-input"><label class="sr-only" for="ai-prompt">Message AI assistant</label><textarea id="ai-prompt" maxlength="4000" rows="1" placeholder="Describe what you want to change…"></textarea><div class="ai-composer-toolbar"><button type="button" class="ai-plus" data-ai="attach" data-icon="clip" aria-label="Attach reference" title="Attach reference (PDF, PNG or JPG)"></button><label class="sr-only" for="ai-scope">Edit:</label><select id="ai-scope"><option value="whole">Whole form</option><option value="selected" disabled>Selected elements</option></select><p class="ai-input-hint">Shift + Enter for new line</p><button class="primary ai-send" data-ai-send aria-describedby="ai-send-reason" data-icon="send" aria-label="Send message" title="Send (Enter)"></button><button type="button" class="ai-send" data-ai="cancel" data-icon="stop" aria-label="Stop request" title="Stop request" hidden></button></div></div>
-        <p class="ai-send-reason" id="ai-send-reason" data-ai-send-reason></p>
+        <div class="ai-input"><label class="sr-only" for="ai-prompt">Message AI assistant</label><textarea id="ai-prompt" maxlength="4000" rows="1" placeholder="Ask AI to change your form…"></textarea><div class="ai-composer-toolbar"><button type="button" class="ai-plus" data-ai="attach" data-icon="clip" aria-label="Attach reference" title="Attach reference (PDF, PNG or JPG)"></button><label class="sr-only" for="ai-scope">Edit:</label><select id="ai-scope"><option value="whole">Whole form</option><option value="selected" disabled>Selected elements</option></select><button class="primary ai-send" data-ai-send aria-describedby="ai-send-reason" data-icon="send" aria-label="Send message" title="Send (Enter)"></button><button type="button" class="ai-send" data-ai="cancel" data-icon="stop" aria-label="Stop request" title="Stop request" hidden></button></div></div>
+        <p class="ai-send-reason" id="ai-send-reason" data-ai-send-reason hidden></p>
         <p data-ai-status role="status" aria-live="polite"></p>
       </form>
     </aside>

@@ -33,7 +33,7 @@ test('grounded font Q&A and follow-up proposal form a real conversation with exp
   await page.locator('#ai-prompt').press('Enter');await expectApplied(page,1);
   expect(JSON.parse(userText(requests[1])).conversation).toHaveLength(2);expect(userText(requests[1])).toContain('What are the current font sizes?');await expect(page.locator('.ai-diff')).toContainText('#1763dc');await expect(page.locator('.ai-diff')).toContainText('#163a65');
   await ready(page);await page.screenshot({path:info.outputPath('chat-desktop-applied.png')});
-  await expect(log).toContainText('Applied to the form');await expect(page.locator('[data-ai=undo]')).toBeVisible();
+  await expect(page.locator('[data-ai=undo]')).toBeVisible();
   await page.locator('[data-ai=undo]').click();await ready(page);await expect(page.locator('#revision')).toHaveText(/^r2\b/);expect(await page.frameLocator('#preview-frame').locator('[data-v3-id=totals-total]').textContent()).toBe(original);
   expect(await page.frameLocator('#preview-frame').locator('.brand-mark').first().evaluate(n=>getComputedStyle(n).color)).toBe('rgb(23, 99, 220)');
 });

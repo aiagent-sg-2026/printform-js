@@ -4,6 +4,23 @@ Status: **2026-10-15 implementation authorized by the user**, following the earl
 
 Evidence tags: **[code]** the string or behavior was found in the source; **[shot]** seen only in the screenshot, not reproduced in a browser run.
 
+## Batch 19 type scale (owner 2026-10-21)
+- Supersedes earlier recipient-notice requirements: the composer reason is empty and hidden unless references are reading, image support is blocked, or source cleanup blocks Send. Send enablement is independent of visible notice text. Settings retains “Demo AI gateway · use fictional data only”; explicit per-run sharing and commit policy are unchanged.
+- Panel tokens: `--ai-fs-meta:12px`, `--ai-fs-small:13px`, `--ai-fs-body:14px`, `--ai-fs-title:15px`, `--ai-fs-heading:17px`. Body weight 400, controls 500, titles 600, line-height 1.4–1.5. Metadata and controls intentionally supersede the older blanket 14px minimum.
+- Scope is 13px/500, 32px tall with 4px 10px padding on desktop. At widths ≤900px or coarse pointers, scope and form inputs use 16px; scope stays 36px tall with 2px 8px padding. Attach/send are 36px on fine desktop and 44px on mobile/coarse pointers.
+- Welcome starters are auto-width wrapping pills with an 8px gap and a 17px heading; prompt-fill-only behavior remains unchanged. The composer stays anchored. Narrow settings use a viewport-bounded, internally scrolling surface. Sharing permissions and the removed subtitle remain absent from the main column.
+- Unit coverage retains blocking/readiness transitions and consent isolation. Browser coverage migrates the empty-state, layout matrix/budget, simple panel and image-check cases; sharing interaction now scrolls settings rather than the conversation and retains viewport/no-inference checks.
+- Unverified: edit-only batch; manager must run unit tests/builds/e2e and review 1440×900, 390×844, 360×640, 400×800 and 320×568 screenshots, coarse-pointer targets, themes, focus and screen-reader behavior. No shell or git was used.
+
+## Batch 18 simple and clean (owner/client 2026-10-21)
+- Supersedes the earlier header, sharing-placement, applied-card and suggestion presentation: icon-only Version history, no subtitle/policy paragraph/flow list/composer keyboard hint, and four welcome starters only. Starters still fill without sending; Enter and Shift+Enter behavior is unchanged.
+- Sharing permissions now live in the settings menu with the same unchecked, explicit per-run controls. Consent errors point to sharing in ⋯ settings; host policy denials cannot be bypassed by those controls. The recipient notice remains visible: “Demo AI · use fictional data only”.
+- Current applied cards show Applied, Undo and one native Details disclosure. Undo describes the committed numeric revision accessibly; the toolbar remains the visible revision source. Details groups plain activity, retained steps and raw table/JSON. Answers/errors without a card retain their own step disclosure; history states remain distinguishable.
+- Manual proposals say Needs your approval and retain Preview/Apply/Discard gates. Redundant completion statuses remain polite live announcements but are visually hidden; errors and blocking reasons stay visible.
+- Design and single-step prompts request at most two short sentences in the person's language, including finish summaries, without describing tools, drafts or inspection. This changes reply guidance, not grants, inspection requirements or commit policy.
+- Added Chromium scenarios for 1440×900 and 400×800: empty panel innerText ≤200 characters, collapsed applied card ≤60, Details activity/steps, visible recipient, unchecked settings permissions and keyboard access. Updated affected unit/e2e structure expectations without changing authority assertions.
+- Unverified: manager must run unit tests, builds and browser scenarios; no shell/git commands were run. The reported prior empty panel was approximately 430 visible characters; expected new visible copy is below 200, and the current collapsed applied card is approximately 20 characters. These are targets/estimates, not measured browser results. Theme contrast, clipping, single-scroll layout, 44px targets and screen-reader announcements need runtime review. Agent prompt release fingerprints may require the normal manager-owned release process; protected release files were not changed.
+
 ## Retained tool steps (2026-10-21, batch 16)
 - Completed answers, proposals and failed/blocked runs retain the last 40 plain step labels (160 characters each) on the assistant message before live progress is cleared. A native, initially collapsed "Worked in N steps" disclosure precedes the change card; success/failure symbols supplement color. Live progress still shows the latest six steps.
 - Successful `onStep` events add only a registered `skillId` or `operationCount`; labels never include raw tool arguments or form values. Operation counts intentionally supersede the earlier UX-01 wording restriction. Inspection result labels retain their existing plain status.
@@ -164,3 +181,11 @@ Priority: **P1** the user cannot tell what is happening; **P2** layout and scrol
 
 - Reference-consumption tests await the automatic label Apply performed by Send instead of applying the consumed proposal again. They assert exactly one commit, applied status on success, unchanged revision on failure, and the original reference-clearing/preservation outcomes.
 - The bundled form-authoring skill exceeded the 16000-character bound because the short commit policy is repeated in it; the short policy text was shortened. The bound is unchanged.
+
+## Batch 18 simple and clean gate repair (owner/client 2026-10-21)
+
+- Shorten the welcome chip from Improve readability to Improve spacing without changing its prompt or fill-only behavior. From the manager's measured 202 characters, this removes four characters: expected 198 at both tested viewport sizes.
+- Check approval guidance in settings and whole-form scope help, not the removed welcome paragraph. Remove obsolete applied-status wording pins while retaining commit count, revision, Undo and restoration assertions.
+- Assert the exact Responses envelope keys instead of banning the word tools inside system instructions; retain the credential-leak assertion and endpoint, role, payload and usage checks.
+- Open settings before exercising sharing controls in narrow-screen interaction coverage; retain viewport, consent and no-inference checks.
+- Unverified: manager must rerun unit, browser and layout gates. Release-review stale dispositions remain blocked: their files are outside this repair's permitted edit scope; no hashes or review checks were bypassed.
