@@ -1,5 +1,6 @@
 import {test,expect} from './studio-v3-test.js';
 import fs from 'node:fs/promises';
+import {openSharing,closeSettings} from './ai-sharing.js';
 
 for (const viewport of [{width:1280,height:720},{width:1024,height:768},{width:390,height:844},{width:320,height:568}]) {
   test(`observation permissions and referenced elements remain usable at ${viewport.width}x${viewport.height}`,async({page},info)=> {
@@ -11,15 +12,27 @@ for (const viewport of [{width:1280,height:720},{width:1024,height:768},{width:3
     await page.locator('.paper-toolbar [data-ai-add]').click();
     await page.setViewportSize(viewport);
     const tags=page.locator('[data-ai-element-tags]'),permissions=page.locator('.ai-observation-disclosure'),scroll=page.locator('.ai-conversation-scroll');
-    await expect(tags).toBeVisible();await page.locator('.ai-sharing>summary').click();await expect(permissions).toBeVisible();
+    await expect(tags).toBeVisible();await openSharing(page);await expect(permissions).toBeVisible();
     await expect(page.locator('#ai-scope')).toHaveValue('selected');
     await expect(page.locator('#ai-observation-text')).not.toBeChecked();
     await expect(page.locator('#ai-observation-pixels')).not.toBeChecked();
+    const menu=page.locator('.ai-settings-body');
+    const menuBounds=await menu.evaluate(node=>{const r=node.getBoundingClientRect();return {top:r.top,bottom:r.bottom,left:r.left,right:r.right,overflow:getComputedStyle(node).overflowY};});
+    expect(menuBounds.top).toBeGreaterThanOrEqual(0);expect(menuBounds.bottom).toBeLessThanOrEqual(viewport.height);
+    expect(menuBounds.left).toBeGreaterThanOrEqual(0);expect(menuBounds.right).toBeLessThanOrEqual(viewport.width);expect(menuBounds.overflow).toBe('auto');
+    expect(await permissions.evaluate(node=>node.getBoundingClientRect().height)).toBeGreaterThanOrEqual(48);
+    for(const selector of ['#ai-observation-text','#ai-observation-pixels']) {
+      const permission=page.locator(selector);await permission.scrollIntoViewIfNeeded();await expect(permission).toBeInViewport({ratio:1});
+      const bounds=await permission.boundingBox();expect(bounds.y).toBeGreaterThanOrEqual(menuBounds.top);expect(bounds.y+bounds.height).toBeLessThanOrEqual(menuBounds.bottom);
+      await permission.check();await expect(permission).toBeChecked();
+    }
+    await closeSettings(page);
+    await expect(page.locator('#ai-observation-text')).toBeChecked();await expect(page.locator('#ai-observation-pixels')).toBeChecked();
     const measure=()=>page.evaluate(()=>Object.fromEntries(['#ai-panel','.ai-heading','[data-ai-log]','.ai-composer','.ai-observation-disclosure','[data-ai-element-tags]','.ai-input','[data-ai-send-reason]'].map(selector=>{
       const node=document.querySelector(selector),r=node.getBoundingClientRect();return [selector,{x:r.x,y:r.y,width:r.width,height:r.height,clientHeight:node.clientHeight,scrollHeight:node.scrollHeight,scrollTop:node.scrollTop}];
     })));
     const before=await measure();expect(before['[data-ai-element-tags]'].height).toBeGreaterThanOrEqual(24);
-    expect(before['.ai-observation-disclosure'].height).toBeGreaterThanOrEqual(48);
+    await expect(page.locator('#ai-prompt')).toBeInViewport({ratio:1});
     const frames=[];
     for(const fraction of [0,.5,1]) {
       await scroll.evaluate((node,fraction)=>node.scrollTop=(node.scrollHeight-node.clientHeight)*fraction,fraction);
@@ -27,9 +40,10 @@ for (const viewport of [{width:1280,height:720},{width:1024,height:768},{width:3
       await expect(page.locator('#ai-prompt')).toBeInViewport({ratio:1});await expect(page.locator('[data-ai-send]')).toBeInViewport({ratio:1});
       await expect(page.locator('[data-ai=close]')).toBeInViewport({ratio:1});
     }
-    await page.locator('#ai-observation-text').check();await page.locator('#ai-observation-pixels').check();
+    await openSharing(page);
     await expect(page.locator('#ai-observation-text')).toBeChecked();await expect(page.locator('#ai-observation-pixels')).toBeChecked();
     await page.locator('#ai-observation-pixels').uncheck();await page.locator('#ai-observation-text').uncheck();
+    await closeSettings(page);
     const comment=page.locator('[data-ai-tag-comment]').first();await comment.fill('Use a readable heading.');await expect(comment).toBeFocused();
     await page.locator('#ai-prompt').fill('Keep the selected typography readable.');
     await expect(page.locator('#ai-prompt')).toBeFocused();await expect(page.locator('[data-ai-send]')).toBeInViewport({ratio:1});

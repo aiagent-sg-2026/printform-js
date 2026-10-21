@@ -1,6 +1,7 @@
 import {test,expect} from './studio-v3-test.js';
 import {createHash} from 'node:crypto';
 import {comparisonFixture,COMPARISON_DEFECTS,observeComparisonDom,checkComparison,FICTIONAL_RUBRIC} from '../tests/support/observation-comparison.js';
+import {openSharing,closeSettings} from './ai-sharing.js';
 test.use({workInSteps:true});
 const ready=page=>expect(page.locator('[data-action=export]')).toBeEnabled({timeout:30000});
 const expected={'missing-section':'MISSING_SECTION','wrong-text':'TEXT_MISMATCH',width:'WIDTH',alignment:'ALIGNMENT',pagination:'PAGINATION'};
@@ -36,8 +37,9 @@ test('OBS-05 frozen fictional rubric detects native defects; actual completion c
     await ready(page);
     if(index===0){await page.locator('[data-mode=validate]').click();await page.getByRole('button',{name:'Run all synthetic samples',exact:true}).click();await ready(page);}
     if(!await page.locator('#ai-prompt').isVisible())await page.locator('[data-ai-toggle]').click();
-    if(!await page.locator('.ai-sharing').evaluate(node=>node.open))await page.locator('.ai-sharing>summary').click();
+    await openSharing(page);
     await page.locator('#ai-observation-text').check();await page.locator('#ai-observation-pixels').check();
+    await closeSettings(page);await expect(page.locator('#ai-observation-text')).toBeChecked();await expect(page.locator('#ai-observation-pixels')).toBeChecked();
     await page.locator('#ai-prompt').fill('Compare this fictional static form using the current observation.');await page.locator('[data-ai-send]').click();
     await expect.poll(()=>page.evaluate(()=>window.__comparisonWire.length),{timeout:60000}).toBe((index+1)*5);
     const card=page.locator('.ai-message').filter({hasText:'Fictional comparison complete.'}).last();await expect(card).toBeVisible({timeout:60000});

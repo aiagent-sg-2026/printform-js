@@ -1,5 +1,6 @@
 import {test,expect} from './studio-v3-test.js';
 import {syntheticPdf} from './fixtures/reference-documents.js';
+import {openSharing,closeSettings} from './ai-sharing.js';
 const ready=page=>expect(page.locator('[data-action=export]')).toBeEnabled({timeout:30000});
 test.beforeEach(async({page})=>{
  await page.route('https://gpt.yapweijun1996.com/demo/**',route=>route.abort());
@@ -9,8 +10,7 @@ for(const viewport of [{width:400,height:800},{width:320,height:568}]){
  test(`${viewport.width}×${viewport.height}: changing a sharing permission keeps the next permission reachable`,async({page},info)=>{
   await page.setViewportSize(viewport);
   const inference=[];page.on('request',request=>{if(request.url().endsWith('/demo/v1/responses'))inference.push(request.url());});
-  await page.locator('.ai-settings>summary').click();
-  await page.locator('.ai-sharing>summary').click();
+  await openSharing(page);
   const menu=page.locator('.ai-settings-body');await menu.evaluate(node=>node.scrollTop=node.scrollHeight);
   const text=page.locator('#ai-observation-text'),pixels=page.locator('#ai-observation-pixels');
   await text.scrollIntoViewIfNeeded();await expect(pixels).toBeInViewport({ratio:1});
@@ -24,6 +24,8 @@ for(const viewport of [{width:400,height:800},{width:320,height:568}]){
   await expect(page.locator('#ai-prompt')).toBeInViewport({ratio:1});
   expect(inference).toEqual([]);
   await page.screenshot({path:info.outputPath('sharing-controls-retain-position.png')});
+  await closeSettings(page);await expect(text).toBeChecked();await expect(pixels).toBeChecked();
+  await expect(page.locator('#ai-prompt')).toBeInViewport({ratio:1});
  });
 }
 test('dropping a second PDF on existing references decodes it locally and preserves the first attachment',async({page},info)=>{

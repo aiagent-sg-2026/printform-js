@@ -1,4 +1,5 @@
 import { test, expect } from './studio-v3-test.js';
+import {openSharing,closeSharing,closeSettings} from './ai-sharing.js';
 const ready = page => expect(page.locator('[data-action=export]')).toBeEnabled({timeout:30000});
 async function open(page,size) {
   await page.setViewportSize(size);await page.goto('/studio-v3/');await ready(page);
@@ -35,12 +36,14 @@ test('the single attachment action is keyboard-operable and opens the native mul
 });
 test('sharing remains explicit and unchecked after expanding and closing its disclosure',async({page})=> {
   await open(page,{width:390,height:844});
-  await page.locator('.ai-settings>summary').click();
-  await page.locator('.ai-sharing>summary').click();
+  await openSharing(page);await openSharing(page);
   for(const selector of ['#ai-observation-text','#ai-observation-pixels']) {
     await expect(page.locator(selector)).toBeVisible();await expect(page.locator(selector)).not.toBeChecked();
   }
-  await page.locator('.ai-sharing>summary').click();
+  await closeSharing(page);
+  await expect(page.locator('#ai-observation-text')).not.toBeChecked();await expect(page.locator('#ai-observation-pixels')).not.toBeChecked();
+  await openSharing(page);await closeSettings(page);await closeSettings(page);
+  await expect(page.locator('#ai-prompt')).toBeInViewport({ratio:1});
   await expect(page.locator('#ai-observation-text')).not.toBeChecked();await expect(page.locator('#ai-observation-pixels')).not.toBeChecked();
 });
 test('Escape closes settings first and returns focus before closing the phone panel',async({page})=> {

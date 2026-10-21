@@ -1,6 +1,7 @@
 import {test,expect} from './studio-v3-test.js';
 import {createHash} from 'node:crypto';
 import {staticProject} from '../tests/support/static-observation-fixture.js';
+import {openSharing,closeSettings} from './ai-sharing.js';
 test.use({workInSteps:true});
 const ready=page=>expect(page.locator('[data-action=export]')).toBeEnabled({timeout:30000});
 const steps=[
@@ -49,11 +50,12 @@ test('Validate/AI panel captures fictional page and crop, denies missing/stale c
   await page.getByRole('button',{name:'Run all synthetic samples',exact:true}).click();await ready(page);
   await page.locator('[data-ai-toggle]').click();const text=page.locator('#ai-observation-text'),pixels=page.locator('#ai-observation-pixels');
   await expect(text).not.toBeChecked();await expect(pixels).not.toBeChecked();
+  await openSharing(page);await expect(text).toBeVisible();await expect(pixels).toBeVisible();await closeSettings(page);
   await send(page,'Inspect the fictional page.');await answer(page,'Default pixel consent denied.');
   let wire=await page.evaluate(()=>window.__pixelWire);expect(output(wire[2],'call_2').output).toContain('OBSERVATION_PIXELS_REQUIRED');
   expect(wire.slice(0,3).some(body=>JSON.stringify(body).includes('data:image/png;base64,'))).toBe(false);
-  await page.locator('.ai-sharing>summary').click();
-  await text.check();await pixels.check();await send(page,'Inspect the fictional page and crop.');await answer(page,'Page and crop received.');
+  await openSharing(page);await text.check();await pixels.check();await closeSettings(page);
+  await expect(text).toBeChecked();await expect(pixels).toBeChecked();await send(page,'Inspect the fictional page and crop.');await answer(page,'Page and crop received.');
   wire=await page.evaluate(()=>window.__pixelWire);const full=visual(wire[5],'call_5'),crop=visual(wire[7],'call_7');
   expect(crop.observed.sourceObservationId).toBe(full.observed.observation.id);
   expect(crop.observed.observation.candidateDigest).toBe(full.observed.observation.candidateDigest);
@@ -72,8 +74,10 @@ test('Validate/AI panel captures fictional page and crop, denies missing/stale c
   await send(page,'Inspect again without renewed consent.');await answer(page,'Single-use pixel consent denied.');
   wire=await page.evaluate(()=>window.__pixelWire);expect(output(wire[11],'call_11').output).toContain('OBSERVATION_PIXELS_REQUIRED');
   expect(wire.slice(9,12).some(body=>JSON.stringify(body).includes('data:image/png;base64,'))).toBe(false);
-  await text.check();await pixels.check();await page.locator('#document-name').fill('Changed fictional document');await page.locator('#document-name').press('Tab');await ready(page);
-  await expect(pixels).not.toBeChecked();await text.check();await pixels.check();await send(page,'Recover a fresh fictional crop.');await answer(page,'Fresh receipt recovered.');
+  await openSharing(page);await text.check();await pixels.check();await closeSettings(page);
+  await expect(text).toBeChecked();await expect(pixels).toBeChecked();await page.locator('#document-name').fill('Changed fictional document');await page.locator('#document-name').press('Tab');await ready(page);
+  await openSharing(page);await expect(pixels).not.toBeChecked();await text.check();await pixels.check();await closeSettings(page);
+  await expect(text).toBeChecked();await expect(pixels).toBeChecked();await send(page,'Recover a fresh fictional crop.');await answer(page,'Fresh receipt recovered.');
   wire=await page.evaluate(()=>window.__pixelWire);expect(output(wire[14],'call_14').output).toContain('OBSERVATION_PIXELS_BOUNDS');
   const recovered=visual(wire[16],'call_16');expect(recovered.observed.observation.runId).not.toBe(full.observed.observation.runId);expect(recovered.observed.observation.baseRevision).toBe(1);
   expect(errors).toEqual([]);await expect(page.locator('#revision')).toHaveText('r1 · unsaved template');

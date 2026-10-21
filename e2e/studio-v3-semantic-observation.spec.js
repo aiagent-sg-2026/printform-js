@@ -1,6 +1,7 @@
 import {test,expect} from './studio-v3-test.js';
 import fs from 'node:fs/promises';
 import {newProject} from '../studio-v3/model.js';
+import {openSharing,closeSettings} from './ai-sharing.js';
 test.use({workInSteps:true});
 const ready = page=>expect(page.locator('[data-action=export]')).toBeEnabled({timeout:30000});
 const steps = [
@@ -42,11 +43,12 @@ test('Validate and real AI wire enforce explicit, single-run text authorization 
   await validate.click(); await expect(validate).toBeVisible({timeout:120000}); await ready(page);
   await page.locator('[data-ai-toggle]').click();
   const consent=page.locator('#ai-observation-text'); await expect(consent).not.toBeChecked();
+  await openSharing(page);await expect(consent).toBeVisible();await expect(consent).not.toBeChecked();await closeSettings(page);
   await send(page,'Describe the form context.'); await answer(page,'Default text disclosure rejected.');
   let wire=await page.evaluate(()=>window.__semanticWire);
   expect(output(wire[1],'call_1').output).toContain('OBSERVATION_DISCLOSURE_REQUIRED');
   expect(JSON.stringify(wire)).not.toMatch(/AUTHORIZED_BROWSER_LABEL|AUTHORIZED_BROWSER_STATIC|UNKNOWN_BROWSER_VALUE|SENSITIVE_BROWSER_SECRET|PIXEL_BROWSER_CANARY/);
-  await page.locator('.ai-sharing>summary').click();await consent.check();
+  await openSharing(page);await consent.check();await closeSettings(page);await expect(consent).toBeChecked();
   await send(page,'Describe the authorized context.'); await answer(page,'Authorized semantic context observed.');
   wire=await page.evaluate(()=>window.__semanticWire);
   const observed=JSON.parse(output(wire[4],'call_4').output);
@@ -62,7 +64,8 @@ test('Validate and real AI wire enforce explicit, single-run text authorization 
   await fs.writeFile(replayEvidence,JSON.stringify({browser:testInfo.project.name,version:browser.version(),wire}));
   await testInfo.attach('semantic-history-replay',{path:replayEvidence,contentType:'application/json'});
   expect(JSON.stringify(wire.slice(5,8))).not.toMatch(/AUTHORIZED_BROWSER_LABEL|AUTHORIZED_BROWSER_STATIC/);
-  await consent.check(); await send(page,'Describe the freshly authorized context.'); await answer(page,'Fresh authorization recovered.');
+  await openSharing(page);await consent.check();await closeSettings(page);await expect(consent).toBeChecked();
+  await send(page,'Describe the freshly authorized context.'); await answer(page,'Fresh authorization recovered.');
   wire=await page.evaluate(()=>window.__semanticWire); const fresh=JSON.parse(output(wire[9],'call_9').output);
   expect(fresh.observation.runId).not.toBe(observed.observation.runId); expect(fresh.observation.id).not.toBe(observed.observation.id);
   expect(fresh.observation.candidateDigest).toBe(observed.observation.candidateDigest);

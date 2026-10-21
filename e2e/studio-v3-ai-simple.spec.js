@@ -1,4 +1,5 @@
 import {test,expect} from './studio-v3-test.js';
+import {openSharing,closeSettings} from './ai-sharing.js';
 test.use({workInSteps:true});
 async function gateway(page) {
   await page.addInitScript(()=> {
@@ -21,9 +22,9 @@ for(const size of [{width:1440,height:900},{width:400,height:800}]) {
     await page.setViewportSize(size); await gateway(page); await page.goto('/studio-v3/'); await expect(page.locator('[data-action=export]')).toBeEnabled({timeout:30000}); await page.locator('[data-ai-toggle]').click();
     await expect(page.locator('.ai-welcome')).toBeVisible(); expect(await textLength(page.locator('#ai-panel'))).toBeLessThanOrEqual(200);
     const recipient=page.locator('[data-ai-send-reason]'); await expect(recipient).toBeHidden();
-    await page.locator('.ai-settings>summary').click();await expect(page.locator('.ai-settings-body')).toContainText('Demo AI gateway · use fictional data only');await page.locator('.ai-sharing>summary').click();
+    await openSharing(page);await expect(page.locator('.ai-settings-body')).toContainText('Demo AI gateway · use fictional data only');
     for(const id of ['#ai-observation-text','#ai-observation-pixels']) { await expect(page.locator(id)).toBeVisible(); await expect(page.locator(id)).not.toBeChecked(); }
-    await page.locator('.ai-settings>summary').click();
+    await closeSettings(page);
     await page.locator('#ai-prompt').fill('Make the title larger and blue.'); await page.locator('[data-ai-send]').click();
     const card=page.locator('.ai-change-card').last(),details=card.locator('details.ai-change-details'),undo=card.locator('[data-ai=undo]');
     await expect(card.getByRole('heading',{name:'Applied',exact:true})).toBeVisible({timeout:30000}); await expect(undo).toBeVisible(); await expect(page.locator('#revision')).toHaveText(/^r1\b/);

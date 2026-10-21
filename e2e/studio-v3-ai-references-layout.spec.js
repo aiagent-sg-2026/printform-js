@@ -1,5 +1,6 @@
 import { test, expect } from './studio-v3-test.js';
 import { syntheticPdf, syntheticPng } from './fixtures/reference-documents.js';
+import {openSharing,closeSettings} from './ai-sharing.js';
 const ready = page => expect(page.locator('[data-action=export]')).toBeEnabled({timeout:30000});
 async function attach(page,file) {
   await page.getByLabel('Add reference PDF or image',{exact:true}).setInputFiles(file);
@@ -41,9 +42,9 @@ for(const size of [{width:1440,height:900},{width:1024,height:768},{width:390,he
     const panel=await page.locator('#ai-panel').boundingBox(),scroll=await page.locator('.ai-conversation-scroll').boundingBox();
     expect(scroll.height).toBeGreaterThanOrEqual(panel.height*.5);
     await page.locator('.ai-conversation-scroll').evaluate(n=>n.scrollTop=n.scrollHeight);
-    await page.locator('.ai-settings>summary').click(); await page.locator('.ai-sharing>summary').click();
+    await openSharing(page);
     await page.locator('#ai-observation-pixels').scrollIntoViewIfNeeded(); await expect(page.locator('#ai-observation-pixels')).toBeInViewport({ratio:1});
-    await page.locator('.ai-settings>summary').click();
+    await closeSettings(page);
     await expect(page.locator('#ai-prompt')).toBeInViewport({ratio:1});await expect(page.locator('[data-ai-send]')).toBeInViewport({ratio:1});
     expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
   });
