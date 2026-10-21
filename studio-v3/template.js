@@ -69,6 +69,8 @@ export function documentTheme(d) {
   const color = d.color, font = d.font, padding = d.padding;
   const page = pageSettings(d), physical = pageDimensions(d), size = contentDimensions(d), m = page.margins, mm = paperMillimeters(page);
   const grid = Object.entries(d.blocks).filter(([,b])=>b.layout).map(([id,b])=>`#pf-mount .v3-${{header:'header',customer:'customer',totals:'totals',footer:'notes'}[id]} ${id === 'header' ? '.company-fields' : id === 'totals' ? '.summary' : ''} {display:grid;grid-template-columns:repeat(${b.layout.columns || 1},minmax(0,1fr));gap:${b.layout.gap ?? 12}px;}`).join('\n');
+  // Pixel pages are rounded (A4 297 mm = 1122.52 px -> 1123 px); in print the wrapper takes the exact sheet size
+  // so the sub-pixel excess is clipped instead of pushing the page footer onto an extra sheet.
   return `${setPrintTypographyBase(PRINT_TYPOGRAPHY_CSS, font)}
 * { box-sizing:border-box; } body { margin:0; background:#e5eaf1; }
 #pf-mount { color:#1c2638; font-family:Arial,'Hiragino Sans GB','PingFang SC','Microsoft YaHei',sans-serif; line-height:1.4; }
@@ -120,5 +122,6 @@ ${size.width < 400 ? `
 #pf-mount .v3-page-number {margin:0 8px;padding:6px 0;}
 ` : ''}
 @page { size:${mm.width}mm ${mm.height}mm; margin:0; }
-@media print { body { background:white; } #pf-mount .printform_page, #pf-mount .physical_page_wrapper {margin:0;box-shadow:none;} }`;
+@media print { body { background:white; } #pf-mount .printform_page, #pf-mount .physical_page_wrapper {margin:0;box-shadow:none;}
+#pf-mount .physical_page_wrapper {width:${mm.width}mm!important;height:${mm.height}mm;overflow:hidden;break-inside:avoid;} }`;
 }

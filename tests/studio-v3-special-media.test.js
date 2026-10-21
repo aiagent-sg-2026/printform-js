@@ -109,4 +109,13 @@ describe('general Studio finite paper and user-supplied capability profiles',()=
     expect(quality.errors.some(error=>error.code === 'INVALID_DESIGN' && error.message.includes('20–1000'))).toBe(true);
     expect(quality.physical.physicalBlocked).toBe(true);
   });
+  it('sizes each printed sheet wrapper to the exact paper millimetres so rounded pixel pages never spill',()=> {
+    const project = newProject(), design = designOf(project);
+    expect(resolvePaperDimensions({paperSize:'A4',orientation:'portrait',dpi:96}).height).toBe(1123);
+    const portrait = compileProject(project,design).themeCss;
+    expect(portrait).toContain('@page { size:210mm 297mm; margin:0; }');
+    expect(portrait).toMatch(/@media print[^@]*\.physical_page_wrapper \{width:210mm!important;height:297mm;overflow:hidden;break-inside:avoid;\}/);
+    design.page = {...design.page,orientation:'landscape'};
+    expect(compileProject(project,design).themeCss).toContain('.physical_page_wrapper {width:297mm!important;height:210mm;overflow:hidden;');
+  });
 });
