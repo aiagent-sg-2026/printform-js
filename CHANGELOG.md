@@ -5,9 +5,9 @@ Version numbers below track the **pagination engine** (`dist/printform.js`).
 Studio v2, the single-HTML protocol, and the Agent Contract version separately — see the [compatibility matrix](docs/COMPATIBILITY_MATRIX.zh-CN.md).
 See [TASK.md](TASK.md) for the full engineering log, commit hashes, test counts and verification detail; this file only lists reader-facing changes.
 ## [Unreleased]
+- Batch 17 (2026-10-21): shared items-table styling adds independent header background/text colors on every printed page, available to AI and inspector with reset, Undo and save/reopen.
 ### Batch 15, 2026-10-21
 - Slim design instructions to context-first discovery and compact operation/principle guides; group shared human workflow paths. Preserve scope, disclosure, financial bindings, exact final inspection and commit policy; add skill-size limits and a context-first answer regression.
-
 ### Batch 14, 2026-10-21
 - AI first: remove request-text intent/color classifiers and host answer replacement. Design/coding grants retain answer and proposal abilities; `finish_answer` is answered. Keep schema, scope, inspection, identity, Undo and the existing automatic/manual apply boundary.
 ### Batch 13, 2026-10-20

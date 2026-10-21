@@ -90,7 +90,7 @@ export const OPERATION_CONTRACTS = Object.freeze({
   set_element_style:{examples:[{operation:{type:'set_element_style',target:'header-title',patch:{bold:true}}},{operation:{type:'set_element_style',target:'page-number',patch:{fontSize:9,bold:false}}}],
     invalid:[{operation:{type:'set_element_style',target:'header-title',patch:{fontSize:2}},error:ARGS},{operation:{type:'set_element_style',target:'page-number',patch:{}},error:'NO_CHANGES'}]},
   set_style:{examples:[{operation:navy}],invalid:[{operation:{type:'set_style',patch:{fontSize:12}},error:ARGS}]},
-  set_table_style:{examples:[{operation:{type:'set_table_style',target:'items',patch:{rowBackground:'#f5f7fa'}}}],invalid:[{operation:{type:'set_table_style',target:'items',patch:{rowBackground:'blue'}},error:ARGS}]},
+  set_table_style:{examples:[{operation:{type:'set_table_style',target:'items',patch:{rowBackground:'#f5f7fa'}}},{operation:{type:'set_table_style',target:'items',patch:{headerBackground:'#dbeafe',headerColor:'#1e293b'}}}],invalid:[{operation:{type:'set_table_style',target:'items',patch:{rowBackground:'blue'}},error:ARGS},{operation:{type:'set_table_style',target:'items',patch:{headerBackground:'lightblue'}},error:ARGS}]},
   set_field:{contractVersion:'1.1.0',examples:[{operation:{type:'set_field',target:'footer-notes',patch:{label:'Terms'}}},
     {operation:codeField,fixture:'general-print'},
     {operation:{type:'set_field',target:'table-work-operation',patch:{label:'Supplied operation',width:55}},fixture:'general-print'}],invalid:[

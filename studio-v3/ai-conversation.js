@@ -28,7 +28,7 @@ function validBarcodeDiff(value) {
 }
 function validAuthoringDiff(d) {
   if (['page.customSizeMm','page.printerProfile'].includes(d.property)) return d.target === 'document' && [d.before,d.after].every(value=>validPageDiff(d.property,value));
-  if (d.property === 'tableStyle.rowBackground') return d.target === 'items' && [d.before,d.after].every(v=>v === '(unset)' || isHexColor(v));
+  if (['tableStyle.rowBackground','tableStyle.headerBackground','tableStyle.headerColor'].includes(d.property)) return d.target === 'items' && [d.before,d.after].every(v=>v === '(unset)' || isHexColor(v));
   const target = typeof d.target === 'string' && d.target.length <= 80 && /^(document|page-number|header-logo|header-title|(?:label-)?(?:header|customer|items|totals|footer)(?:-[a-z0-9-]{1,60})?|(?:label-)?table-[a-z0-9-]{1,68})$/.test(d.target);
   if (d.property === 'barcode') return target && !d.target.startsWith('label-') && !['document','page-number','header-logo','header-title','header','customer','items','totals','footer'].includes(d.target) && [d.before,d.after].every(validBarcodeDiff);
   const scalar = v=>v === null || typeof v === 'boolean' || (typeof v === 'string' && v.length <= 10000) || (typeof v === 'number' && Number.isFinite(v) && Math.abs(v) <= 1000000);
