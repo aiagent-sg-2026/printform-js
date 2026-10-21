@@ -4,14 +4,29 @@
     {
       "name": "printform-js",
       "runtimeExecutable": "node",
-      "runtimeArgs": ["scripts/serve-site.mjs", "."],
+      "runtimeArgs": [
+        "scripts/serve-site.mjs",
+        "."
+      ],
       "port": 4174
     },
     {
       "name": "studio-v2",
       "runtimeExecutable": "node",
-      "runtimeArgs": ["scripts/serve-site.mjs", "studio-v2"],
+      "runtimeArgs": [
+        "scripts/serve-site.mjs",
+        "studio-v2"
+      ],
       "port": 4175
+    },
+    {
+      "name": "site-dist",
+      "runtimeExecutable": "node",
+      "runtimeArgs": [
+        "scripts/serve-site.mjs",
+        "site-dist"
+      ],
+      "port": 4178
     }
   ]
 }
