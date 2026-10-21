@@ -93,9 +93,10 @@ export function formDesign(project, selected, form, kind) {
   const text = name => String(values.get(name) || '');
   const checked = name => values.has(name);
   const tableStyle = () => {
-    if (!values.has('rowBackground')) return;
-    const color = text('rowBackground').trim();
-    d = tableStyleChange(d,'items',{rowBackground:color || null}).design;
+    for (const key of ['rowBackground','headerBackground','headerColor']) if (values.has(key)) {
+      const color = text(key).trim();
+      d = tableStyleChange(d,'items',{[key]:color || null}).design;
+    }
   };
   const selection = selectionField(d,selected);
   const fieldStyle = prefix => {

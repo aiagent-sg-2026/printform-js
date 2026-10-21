@@ -8,6 +8,8 @@ import {cleanMessages} from '../studio-v3/ai-conversation.js';
 import {rightView} from '../studio-v3/workspace-views.js';
 import {runLayoutHarness} from '../studio-v3/ai-harness.js';
 import {tableBodyCss} from '../studio-v3/table-style.js';
+import {tableStyleChange,validateTableStyle} from '../studio-v3/table-style.js';
+import {activityLines} from '../studio-v3/ai-activity.js';
 const request='row data table bg style use yellow';
 const operation={type:'set_table_style',target:'items',patch:{rowBackground:'#ffff00'}};
 const proposal=(operations=[operation])=>JSON.stringify({kind:'proposal',summary:'Yellow data row background',operations});
@@ -70,8 +72,8 @@ describe('closed table body background',()=>{
   it('exposes the current fill and table-only operation without leaking source values',()=>{
     const project=parseChatReply(proposal(),newProject()).candidate;
     const wire=JSON.parse(chatRequest(project,{request,scope:{mode:'selected',id:'items'},typography:[],conversation:[]}));
-    expect(wire.layout.table).toEqual({target:'items',rowBackground:'#ffff00'});
-    expect(wire.scopeAuthoringTargets[0]).toMatchObject({styleOperation:'set_table_style',allowedStylePatchKeys:['rowBackground']});
+    expect(wire.layout.table).toEqual({target:'items',rowBackground:'#ffff00',headerBackground:null,headerColor:null});
+    expect(wire.scopeAuthoringTargets[0].allowedStylePatchKeys).toEqual(['rowBackground','headerBackground','headerColor']);
     expect(JSON.stringify(wire)).not.toContain('ACME');
   });
   it('does not interpret request colors or reject a schema-valid accent proposal',async()=>{
@@ -89,5 +91,42 @@ describe('closed table body background',()=>{
       const updated=compileProject(project,edited);control.value='';expect(formDesign(updated,selected,form,kind).tableStyle).toBeUndefined();
       control.value='red;display:none';expect(()=>designOperations(project,formDesign(project,selected,form,kind))).toThrow('hex');
     }
+  });
+  it('applies independent header colors in items scope, restores inert history and clears without changing body rows',()=>{
+    const project=newProject(),patch={headerBackground:'#dbeafe',headerColor:'#1e293b'};
+    const result=parseChatReply(proposal([{...operation,patch}]),project,{scope:{mode:'selected',id:'items'}});
+    expect(result.design.tableStyle).toEqual(patch);
+    expect(result.diff).toEqual(Object.entries(patch).map(([key,after])=>({target:'items',property:`tableStyle.${key}`,before:'(unset)',after})));
+    expect(activityLines(result.diff)).toEqual(['Updated table header color','Updated table header text color']);
+    expect(cleanMessages([{role:'assistant',text:'Header colors',time:1,diff:result.diff}])[0].diff).toEqual(result.diff);
+    const css=tableBodyCss(result.design);expect(css).toContain('th {background:#dbeafe;print-color-adjust:exact;-webkit-print-color-adjust:exact;}');
+    expect(css).toContain('th .label {color:#1e293b;}');expect(css).not.toContain(' td');
+    const partial=tableStyleChange(result.design,'items',{headerBackground:null});
+    expect(partial.design.tableStyle).toEqual({headerColor:'#1e293b'});expect(tableBodyCss(partial.design)).not.toContain('background:');
+    const reset=tableStyleChange(partial.design,'items',{headerColor:null});
+    expect(reset.design.tableStyle).toBeUndefined();expect(tableBodyCss(reset.design)).toBe('');
+    expect(reset.changes).toEqual([{target:'items',property:'tableStyle.headerColor',before:'#1e293b',after:undefined}]);
+  });
+  it.each(['headerBackground','headerColor'])('rejects unsafe %s at proposal, design and restored-history boundaries',key=>{
+    for(const value of ['lightblue','#abc','url(x)',false,23,{},[]]){
+      expect(()=>parseChatReply(proposal([{...operation,patch:{[key]:value}}]),newProject())).toThrow('UNSAFE_PROPOSAL');
+      expect(()=>validateTableStyle({[key]:value})).toThrow('hex');
+      expect(()=>cleanMessages([{role:'assistant',text:'Header',time:1,diff:[{target:'items',property:`tableStyle.${key}`,before:'(unset)',after:value}]}])).toThrow('INVALID_CHAT_RECOVERY');
+    }
+  });
+  it('colors separate header tables and clones without changing body cells',()=>{
+    const project=newProject(),result=parseChatReply(proposal([{...operation,patch:{headerBackground:'#dbeafe',headerColor:'#1e293b'}}]),project);
+    document.head.innerHTML=`<style>${project.themeCss}</style>`;document.body.innerHTML=`<div id="pf-mount">${result.candidate.templateHtml}</div>`;
+    const bodyColors=()=>[...document.querySelectorAll('td')].map(node=>getComputedStyle(node).backgroundColor),before=bodyColors();
+    document.head.innerHTML=`<style>${result.candidate.themeCss}</style>`;
+    const header=document.querySelector('[data-v3-id="items-header"]');header.after(header.cloneNode(true));
+    for(const cell of document.querySelectorAll('th')){expect(getComputedStyle(cell).backgroundColor).toBe('rgb(219, 234, 254)');expect(getComputedStyle(cell).color).toBe('rgb(30, 41, 59)');}
+    for(const label of document.querySelectorAll('th .label'))expect(getComputedStyle(label).color).toBe('rgb(30, 41, 59)');
+    expect(bodyColors()).toEqual(before);document.head.innerHTML='';document.body.innerHTML='';
+  });
+  it.each(['headerBackground','headerColor'])('applies a header-only inspector form and independently resets %s',key=>{
+    const project=newProject(),form=document.createElement('form');form.innerHTML=`<input name="${key}" value="#dbeafe">`;
+    const design=formDesign(project,'items',form,'block');expect(design.tableStyle).toEqual({[key]:'#dbeafe'});
+    form.elements[key].value='';expect(formDesign(compileProject(project,design),'items',form,'block').tableStyle).toBeUndefined();
   });
 });

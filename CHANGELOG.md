@@ -7,6 +7,7 @@ See [TASK.md](TASK.md) for the full engineering log, commit hashes, test counts 
 ## [Unreleased]
 ### Batch 16, 2026-10-21
 - Keep completed AI tool steps in a collapsed per-message history across reloads, including failed steps, registered guide IDs and operation counts; exclude steps from model context. Align capability discovery copy with context-first guidance.
+- Batch 17 (2026-10-21): shared items-table styling adds independent header background/text colors on every printed page, available to AI and inspector with reset, Undo and save/reopen.
 ### Batch 15, 2026-10-21
 - Slim design instructions to context-first discovery and compact operation/principle guides; group shared human workflow paths. Preserve scope, disclosure, financial bindings, exact final inspection and commit policy; add skill-size limits and a context-first answer regression.
 ### Batch 14, 2026-10-21

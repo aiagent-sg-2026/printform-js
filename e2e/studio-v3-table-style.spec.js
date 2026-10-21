@@ -94,3 +94,30 @@ test('comments-only table requests share comments with the model and apply its i
  await expectYellow(paper(page).locator('.prowitem_processed td'));
  await ready(page);await expect(page.locator('#revision')).toHaveText('r1 · unsaved template');await expectYellow(paper(page).locator('.prowitem_processed td'));
 });
+test('header colors auto-apply on every page, undo, persist and support inspector set/reset',async({page},info)=>{
+  const headers=()=>paper(page).locator('.v3-grid[data-v3-id="items-header"] th');
+  const colors=locator=>locator.evaluateAll(nodes=>nodes.map(node=>({background:getComputedStyle(node).backgroundColor,color:getComputedStyle(node).color})));
+  const original=await colors(headers()),body=await colors(paper(page).locator('.prowitem_processed td'));
+  expect(await paper(page).locator('.printform_page').count()).toBeGreaterThan(1);expect(original.length).toBeGreaterThan(0);
+  const check=async()=>{
+    const pages=await paper(page).locator('.printform_page').all();
+    for(const sheet of pages){
+      const cells=await sheet.locator('.v3-grid[data-v3-id="items-header"] th').all();expect(cells.length).toBeGreaterThan(0);
+      for(const cell of cells){await expect(cell).toHaveCSS('background-color','rgb(219, 234, 254)');await expect(cell).toHaveCSS('color','rgb(30, 41, 59)');}
+    }
+    expect(await colors(paper(page).locator('.prowitem_processed td'))).toEqual(body);
+  };
+  await mock(page,[{kind:'proposal',summary:'Light header with dark text',operations:[{type:'set_table_style',target:'items',patch:{headerBackground:'#dbeafe',headerColor:'#1e293b'}}]}]);
+  await page.locator('[data-ai-toggle]').click();await limitToWholeForm(page);
+  await page.locator('#ai-prompt').fill('Give the items table header a light blue background and dark text.');await page.locator('[data-ai-send]').click();
+  await expectApplied(page,1);await ready(page);await check();
+  const authored=await save(page,info,'header-colors.printform.json');
+  await page.locator('[data-ai=undo]').click();await ready(page);expect(await colors(headers())).toEqual(original);
+  const chooser=page.waitForEvent('filechooser');await page.locator('[data-action=open]').click();await(await chooser).setFiles(authored.path);await ready(page);await check();
+  await page.locator('[data-ai=close]').click();await page.locator('#left-panel [data-select=items]').click();
+  const background=page.getByLabel('Table header background',{exact:true}),text=page.getByLabel('Table header text',{exact:true});
+  await expect(background).toHaveValue('#dbeafe');await expect(text).toHaveValue('#1e293b');
+  await background.fill('');await text.fill('');await page.getByRole('button',{name:'Apply section',exact:true}).click();await ready(page);
+  expect(await colors(headers())).toEqual(original);
+  await background.fill('#dbeafe');await text.fill('#1e293b');await page.getByRole('button',{name:'Apply section',exact:true}).click();await ready(page);await check();
+});

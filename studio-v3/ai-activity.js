@@ -25,6 +25,8 @@ export function describeChange({target,property,after}) {
   if (target === 'document') return property === 'sectionOrder' ? 'Reordered sections' : 'Updated the document';
   if (ELEMENT_NAMES[target]) return `Updated ${ELEMENT_NAMES[target]} ${ASPECTS[property] || 'settings'}`;
   if (target === 'items' && property === 'rowBackground') return 'Updated table row color';
+  if (target === 'items' && ['headerBackground','tableStyle.headerBackground'].includes(property)) return 'Updated table header color';
+  if (target === 'items' && ['headerColor','tableStyle.headerColor'].includes(property)) return 'Updated table header text color';
   if (property === 'width') return /^items-/.test(target) ? 'Changed column widths' : 'Resized an element';
   if (property === 'layout') return `Adjusted ${SECTION_NAMES[target] || 'section'} spacing`;
   if (property === 'labelStyle' || (label && property === 'valueStyle')) return blockOf(name) === 'items' ? `Updated table header ${aspect(property,after)}` : `Updated label ${aspect(property,after)}`;

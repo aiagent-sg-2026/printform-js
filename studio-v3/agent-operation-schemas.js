@@ -28,7 +28,7 @@ const printerProfile = Type.Union([Type.Null(),object({
 export const OPERATION_SCHEMAS = Object.freeze({
   set_element_style:operation('set_element_style',{target:choice(['header-title','page-number']),patch:typography}),
   set_style:operation('set_style',{patch:GLOBAL_STYLE_SCHEMA}),
-  set_table_style:operation('set_table_style',{target:Type.Literal('items'),patch:object({rowBackground:Type.Optional(Type.Union([color,Type.Null()]))})}),
+  set_table_style:operation('set_table_style',{target:Type.Literal('items'),patch:object(optional(Object.fromEntries(['rowBackground','headerBackground','headerColor'].map(key=>[key,Type.Union([color,Type.Null()])]))))}),
   set_field:operation('set_field',{target:id,patch:object(optional(fieldProperties))}),
   add_field:operation('add_field',{section,field:object({id:Type.String({pattern:'^[a-z0-9-]{1,60}$'}),...optional(fieldProperties)})}),
   remove_field:operation('remove_field',{target:id}),
