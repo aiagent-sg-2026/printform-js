@@ -40,11 +40,9 @@ const send = async(page,text = 'Use navy accents #163a65.')=> { await page.locat
 const wire = page=>page.evaluate(()=>window.__wire);
 
 test('works in steps: a visible timeline, one reviewable proposal, then Apply and Undo',async({page},info)=> {
-  const server=await upgradeServer();
-  try {
   const errors=[]; page.on('pageerror',error=>errors.push(error.message));
   page.on('console',message=> { if (message.type() === 'error') errors.push(message.text()); });
-  await page.addInitScript(()=>{ window.__hold = true; }); await gateway(page); await open(page,server.url); await send(page);
+  await page.addInitScript(()=>{ window.__hold = true; }); await gateway(page); await open(page); await send(page);
   const steps = page.locator('[data-ai-log] .ai-steps li');
   await expect(steps.first()).toContainText('Looked at the form'); await expect(steps).toHaveCount(2);
   await expect(page.locator('[data-ai=cancel]')).toBeVisible(); await expect(page.locator('#revision')).toHaveText('r0');
@@ -63,16 +61,29 @@ test('works in steps: a visible timeline, one reviewable proposal, then Apply an
   expect(sent.every(body=>body.store === undefined && body.previous_response_id === undefined)).toBe(true);
   expect(sent[1].input.map(item=>item.type || item.role)).toEqual(['system','user','reasoning','function_call','function_call_output']);
   expect(errors).toEqual([]);
-  // Conversation recovery is opt-in through Keep on update, not an ordinary reload.
-  await page.waitForFunction(()=>Boolean(navigator.serviceWorker?.controller));
-  server.publish(); await page.locator('#update-button').click(); await expect(page.locator('#update-dialog')).toBeVisible({timeout:30000});
-  await page.locator('[data-update-choice=keep]').click();
-  await expect(page.locator('#app-version')).toContainText(NEXT.slice(0,12)); await ready(page);
-  const restored=page.locator('.ai-assistant .ai-run-steps');
-  await expect(restored.locator('summary')).toHaveText('Worked in 4 steps'); await expect(restored).not.toHaveAttribute('open');
-  await restored.locator('summary').click(); await expect(restored.locator('li')).toHaveCount(4);
-  await expect(restored.locator('li').filter({hasText:'Checked the print preview'})).toBeVisible();
-  } finally { await server.close(); }
+});
+
+test.describe('work-in-steps update recovery',()=> {
+  test.use({blockServiceWorkers:false});
+  test('Keep on update restores the completed four-step timeline collapsed',async({page})=> {
+    const server=await upgradeServer();
+    try {
+      await gateway(page); await page.goto(server.url); await ready(page);
+      await page.waitForFunction(()=>Boolean(navigator.serviceWorker?.controller));
+      await page.locator('[data-ai-toggle]').click(); await send(page);
+      await expect(page.locator('[data-ai-proposal]')).toBeVisible();
+      const completed=page.locator('.ai-assistant .ai-run-steps');
+      await expect(completed.locator('summary')).toHaveText('Worked in 4 steps'); await expect(completed).not.toHaveAttribute('open');
+      // Conversation recovery is opt-in through Keep on update, not an ordinary reload.
+      server.publish(); await page.locator('#update-button').click(); await expect(page.locator('#update-dialog')).toBeVisible({timeout:30000});
+      await page.locator('[data-update-choice=keep]').click();
+      await expect(page.locator('#app-version')).toContainText(NEXT.slice(0,12)); await ready(page);
+      const restored=page.locator('.ai-assistant .ai-run-steps');
+      await expect(restored.locator('summary')).toHaveText('Worked in 4 steps'); await expect(restored).not.toHaveAttribute('open');
+      await restored.locator('summary').click(); await expect(restored.locator('li')).toHaveCount(4);
+      await expect(restored.locator('li').filter({hasText:'Checked the print preview'})).toBeVisible();
+    } finally { await server.close(); }
+  });
 });
 
 test('falls back to one step when the gateway does not allow tools, and does not ask again',async({page})=> {
