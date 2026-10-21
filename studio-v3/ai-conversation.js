@@ -43,6 +43,10 @@ export function cleanMessages(messages) {
       if (!Number.isSafeInteger(message.at) || message.at < 0 || message.at > 8640000000000000) throw fail('INVALID_CHAT_RECOVERY');
       cleaned.at = message.at;
     }
+    if (message.steps !== undefined) {
+      if (message.role !== 'assistant' || !Array.isArray(message.steps) || message.steps.length > 40 || Array.from(message.steps).some(step=>!step || typeof step.text !== 'string' || step.text.length > 160 || typeof step.ok !== 'boolean')) throw fail('INVALID_CHAT_RECOVERY');
+      cleaned.steps = message.steps.map(({text,ok})=>({text,ok}));
+    }
     if (message.observationProtected === true) cleaned.observationProtected = true;
     if (message.taskOutcome !== undefined) {
       if (message.role !== 'assistant' || !TASK_OUTCOMES.includes(message.taskOutcome)) throw fail('INVALID_CHAT_RECOVERY');
@@ -80,7 +84,7 @@ export class Conversation {
     let remaining = 3000;
     return recent.reverse().map(m=> { const content = m.text.slice(0,Math.min(800,remaining)); remaining -= content.length; return {role:m.role,content}; }).filter(m=>m.content).reverse();
   }
-  snapshot() { return this.messages.map(({role,text,time,at,status,diff,documentKey,observationProtected,observation,taskOutcome})=>({role,text,time,...(at !== undefined ? {at} : {}),status,documentKey,...(taskOutcome ? {taskOutcome} : {}),...(observationProtected ? {observationProtected:true} : {}),...(observation ? {observation:receiptIdentity(observation)} : {}),...(diff ? {diff} : {})})); }
+  snapshot() { return this.messages.map(({role,text,time,at,status,diff,documentKey,observationProtected,observation,taskOutcome,steps})=>({role,text,time,...(at !== undefined ? {at} : {}),status,documentKey,...(taskOutcome ? {taskOutcome} : {}),...(observationProtected ? {observationProtected:true} : {}),...(observation ? {observation:receiptIdentity(observation)} : {}),...(diff ? {diff} : {}),...(steps ? {steps:steps.map(({text,ok})=>({text,ok}))} : {})})); }
   restore(messages,documentKey) { this.messages = cleanMessages(messages); }
   expire() { for (const m of this.messages) if (m.diff && m.status === 'ready') m.status = 'expired'; }
 }

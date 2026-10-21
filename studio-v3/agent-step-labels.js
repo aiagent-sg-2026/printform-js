@@ -3,8 +3,9 @@ const LABELS = {get_capabilities:'Checked what the assistant can do',read_skill:
 // Tool results report technical words ("ready", "saved"); the line shows plain ones. Unknown details pass through.
 const DETAILS = {ready:'looks good',saved:'done'};
 // One line of the run's timeline. A rejected step is shown as such; its code stays in the tooltip, not the line.
-export function stepLabel({name,ok,detail}) {
+export function stepLabel({name,ok,detail,skillId,operationCount}) {
   if (name === 'finish_answer') return ok ? 'Answered without a proposal' : 'Answer rejected, trying again';
-  const label = LABELS[name] || 'Worked on the form';
+  const label = name === 'read_skill' && typeof skillId === 'string' && /^[a-z0-9-]{1,80}$/.test(skillId) ? `Read the ${skillId} guide` : LABELS[name] || 'Worked on the form';
+  if (ok && name === 'apply_operations' && Number.isSafeInteger(operationCount) && operationCount >= 0) return `${label} · ${operationCount} operation${operationCount === 1 ? '' : 's'}`;
   return ok ? `${label}${detail ? ` · ${DETAILS[detail] || detail}` : ''}` : `${label} · did not work, the assistant is trying another way`;
 }

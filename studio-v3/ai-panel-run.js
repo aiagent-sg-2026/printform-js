@@ -8,6 +8,7 @@ import { DEMO_CONFIG } from './ai-gateway-config.js';
 import { newIntentKey } from './intent-ledger.js';
 import { autoApplicable } from './ai-auto-apply-policy.js';
 
+const runSteps = panel=>panel.agentSteps?.length ? {steps:panel.agentSteps.slice(-40).map(({text,ok})=>({text:text.slice(0,160),ok:Boolean(ok)}))} : {};
 // Same conversation/proposal lifecycle; extraction keeps AIPanel below300 lines.
 export async function sendPanelMessage() {
   if (this.busy || this.applying || this.restoring || this.sourceWorkspace?.closing || this.sourceWorkspace?.cleanupFailed) return;
@@ -65,7 +66,7 @@ export async function sendPanelMessage() {
     if (id !== this.generation) return;
     assertContext();
     if (result.kind === 'answer' && this.viewing) { await this.restoreUnapplied(); if (id !== this.generation) return; assertContext(); }
-    const card = this.conversation.add('assistant',result.kind === 'answer' ? result.message : result.summary,result.kind === 'answer' ? 'answer' : 'ready',{documentKey:this.documentKey(),...(result.taskOutcome ? {taskOutcome:result.taskOutcome} : {}),observationProtected:observationAuthorization.text || observationAuthorization.values,...(result.kind === 'answer' && result.observation ? {observation:result.observation} : {}),...(result.diff ? {diff:result.diff} : {})});
+    const card = this.conversation.add('assistant',result.kind === 'answer' ? result.message : result.summary,result.kind === 'answer' ? 'answer' : 'ready',{...runSteps(this),documentKey:this.documentKey(),...(result.taskOutcome ? {taskOutcome:result.taskOutcome} : {}),observationProtected:observationAuthorization.text || observationAuthorization.values,...(result.kind === 'answer' && result.observation ? {observation:result.observation} : {}),...(result.diff ? {diff:result.diff} : {})});
     if (result.kind === 'proposal') this.proposal = {...result,bus,revision,baseDesign,epoch,selection,scope,cardId:card.id,intentKey:newIntentKey(),sourceBound};
     if (result.kind === 'answer' && this.viewing) return;
     // Layout/static-content edits (see ai-auto-apply-policy.js) are previewed at any width and applied once the checks pass.
@@ -77,7 +78,7 @@ export async function sendPanelMessage() {
     // Apply runs after the run is finished (busy is cleared in finally) and only if the same checked proposal is still current.
     if (direct && this.checked && id === this.generation) applyNow = this.proposal;
   } catch (error) {
-    if (id === this.generation) { const message = errorMessage(this.timedOut === id ? fail(this.timeoutCode) : error); this.conversation.add('assistant',message,error.name === 'AbortError' && this.timedOut !== id ? 'cancelled' : 'error',{request:payload.request,documentKey:this.documentKey()}); this.message(''); }
+    if (id === this.generation) { const message = errorMessage(this.timedOut === id ? fail(this.timeoutCode) : error); this.conversation.add('assistant',message,error.name === 'AbortError' && this.timedOut !== id ? 'cancelled' : 'error',{...runSteps(this),request:payload.request,documentKey:this.documentKey()}); this.message(''); }
     if (id === this.generation && inspected && this.viewing && !this.proposal) await this.restoreUnapplied();
   } finally {
     await this.sourceWorkspace?.release(workspace);

@@ -9,6 +9,7 @@ import { isSourceAuthorization } from './source-workspace-run.js';
 import { createObservationRecords, DIAGNOSTIC_POLICY } from './observation-records.js';
 import { observationDisclosure, pixelDisclosure, canonicalObservation, assertObservationAuthorization } from './observation-policy.js';
 import { createPixelEvidence } from './observation-pixels.js';
+import { AGENT_SKILLS } from './agent-knowledge.js';
 export { AGENT_TOOL_NAMES } from './agent-registry.js';
 
 // Registry metadata owns the model-visible contract; TOOL_HANDLERS own runtime effects and validation.
@@ -69,7 +70,8 @@ export function createAgentTools({draft,context,inspect,signal,outcome,limits,id
           const result = await handlers[name](args || {},run);
           assertCurrent(); signal.throwIfAborted();
           const taskOutcome = result.details?.taskOutcome;
-          run.failure = ''; run.repeats = 0; onStep({name,ok:true,detail:result.details?.detail,...(taskOutcome ? {taskOutcome} : {})}); return result;
+          const stepDetail = name === 'read_skill' && AGENT_SKILLS.some(skill=>skill.id === args?.id) ? {skillId:args.id} : name === 'apply_operations' && Array.isArray(args?.operations) ? {operationCount:args.operations.length} : {};
+          run.failure = ''; run.repeats = 0; onStep({name,ok:true,detail:result.details?.detail,...stepDetail,...(taskOutcome ? {taskOutcome} : {})}); return result;
         } catch (error) { return rejected(name,args,error); }
       }
     };

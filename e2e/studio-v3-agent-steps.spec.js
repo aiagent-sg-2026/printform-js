@@ -1,5 +1,6 @@
 import { test, expect } from './studio-v3-test.js';
 import { syntheticPng } from './fixtures/reference-documents.js';
+import {upgradeServer,NEXT} from './studio-v3-upgrade-server.js';
 // The Demo gateway is replaced inside the page by a fetch that answers with tool-call turns (server-sent events), so
 // the browser's own stream, timers and print preview are exercised. Nothing leaves the machine; the data is fictional.
 
@@ -34,20 +35,25 @@ async function gateway(page,mode = 'run') {
     };
   },{mode,single:JSON.stringify({summary:'Page margins',operations:[{type:'set_page',patch:{margins:{top:12}}}]})});
 }
-async function open(page) { await page.goto('/studio-v3/'); await ready(page); await page.locator('[data-ai-toggle]').click(); }
+async function open(page,url='/studio-v3/') { await page.goto(url); await ready(page); await page.locator('[data-ai-toggle]').click(); }
 const send = async(page,text = 'Use navy accents #163a65.')=> { await page.locator('#ai-prompt').fill(text); await page.locator('[data-ai-send]').click(); };
 const wire = page=>page.evaluate(()=>window.__wire);
 
 test('works in steps: a visible timeline, one reviewable proposal, then Apply and Undo',async({page},info)=> {
+  const server=await upgradeServer();
+  try {
   const errors=[]; page.on('pageerror',error=>errors.push(error.message));
   page.on('console',message=> { if (message.type() === 'error') errors.push(message.text()); });
-  await page.addInitScript(()=>{ window.__hold = true; }); await gateway(page); await open(page); await send(page);
+  await page.addInitScript(()=>{ window.__hold = true; }); await gateway(page); await open(page,server.url); await send(page);
   const steps = page.locator('[data-ai-log] .ai-steps li');
-  await expect(steps.first()).toContainText('Looked at the form'); await expect(steps.nth(1)).toContainText('Made changes · 1 change');
+  await expect(steps.first()).toContainText('Looked at the form'); await expect(steps).toHaveCount(2);
   await expect(page.locator('[data-ai=cancel]')).toBeVisible(); await expect(page.locator('#revision')).toHaveText('r0');
   await page.screenshot({path:info.outputPath('agent-steps-running.png')});
   await page.waitForFunction(()=>window.__release); await page.evaluate(()=>window.__release());
   await expect(page.locator('[data-ai-proposal]')).toBeVisible(); await expect(page.locator('[data-ai-status]')).toContainText('4 steps');
+  const completed=page.locator('.ai-assistant .ai-run-steps');
+  await expect(completed.locator('summary')).toHaveText('Worked in 4 steps'); await expect(completed).not.toHaveAttribute('open');
+  await completed.locator('summary').click(); await expect(completed.locator('li').filter({hasText:'Checked the print preview'})).toBeVisible();
   await expect(page.locator('#revision')).toHaveText('r0');
   await expect(page.locator('[data-ai=apply]')).toBeEnabled(); await page.locator('[data-ai=apply]').click();
   await expect(page.locator('#revision')).toContainText('r1');
@@ -57,6 +63,16 @@ test('works in steps: a visible timeline, one reviewable proposal, then Apply an
   expect(sent.every(body=>body.store === undefined && body.previous_response_id === undefined)).toBe(true);
   expect(sent[1].input.map(item=>item.type || item.role)).toEqual(['system','user','reasoning','function_call','function_call_output']);
   expect(errors).toEqual([]);
+  // Conversation recovery is opt-in through Keep on update, not an ordinary reload.
+  await page.waitForFunction(()=>Boolean(navigator.serviceWorker?.controller));
+  server.publish(); await page.locator('#update-button').click(); await expect(page.locator('#update-dialog')).toBeVisible({timeout:30000});
+  await page.locator('[data-update-choice=keep]').click();
+  await expect(page.locator('#app-version')).toContainText(NEXT.slice(0,12)); await ready(page);
+  const restored=page.locator('.ai-assistant .ai-run-steps');
+  await expect(restored.locator('summary')).toHaveText('Worked in 4 steps'); await expect(restored).not.toHaveAttribute('open');
+  await restored.locator('summary').click(); await expect(restored.locator('li')).toHaveCount(4);
+  await expect(restored.locator('li').filter({hasText:'Checked the print preview'})).toBeVisible();
+  } finally { await server.close(); }
 });
 
 test('falls back to one step when the gateway does not allow tools, and does not ask again',async({page})=> {

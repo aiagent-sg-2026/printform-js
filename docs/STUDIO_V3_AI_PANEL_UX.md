@@ -4,6 +4,12 @@ Status: **2026-10-15 implementation authorized by the user**, following the earl
 
 Evidence tags: **[code]** the string or behavior was found in the source; **[shot]** seen only in the screenshot, not reproduced in a browser run.
 
+## Retained tool steps (2026-10-21, batch 16)
+- Completed answers, proposals and failed/blocked runs retain the last 40 plain step labels (160 characters each) on the assistant message before live progress is cleared. A native, initially collapsed "Worked in N steps" disclosure precedes the change card; success/failure symbols supplement color. Live progress still shows the latest six steps.
+- Successful `onStep` events add only a registered `skillId` or `operationCount`; labels never include raw tool arguments or form values. Operation counts intentionally supersede the earlier UX-01 wording restriction. Inspection result labels retain their existing plain status.
+- Recovery rejects malformed or user-owned steps with `INVALID_CHAT_RECOVERY`; snapshots preserve steps, but model conversation context remains role/content only. Preview, Apply, Undo, scope and sharing authority are unchanged.
+- Unit and scripted-gateway e2e coverage includes retained history, collapsed rendering, failed steps, validation, safe details and reload. Unverified: test/build execution, release-review hashes, narrow/wide rendering, themes and keyboard/screen-reader behavior; this batch is edit-only.
+
 ## Batch 13h, 2026-10-21
 - Replace the open `give … a/an` lookahead with zero to three alphabetic modifier words followed by a closed formatting-attribute whitelist. Preserve the definite-object, `me/us`, question-mark, `or`, blocked-noun and response-target guards.
 - Grammar and host-grant cases cover letter grades, readability scores and quick checks as read-only, while retaining the five requested formatting commands as drafting/design requests.

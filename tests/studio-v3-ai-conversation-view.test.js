@@ -57,3 +57,49 @@ describe('read-only version history',()=> {
     expect(panel.node('#ai-history').hidden).toBe(true); expect(panel.open).toBe(true); expect(document.activeElement).toBe(button);
   });
 });
+describe('retained run steps',()=> {
+  const steps=[{text:'Read the form-authoring guide',ok:true},{text:'Could not change the selected field',ok:false}];
+  it('retains only bounded plain steps when stopping and clears them before the next run',()=> {
+    const {panel}=setup(); panel.pendingMessage='Request';
+    panel.agentSteps=Array.from({length:45},(_,i)=>({text:`${i}:`+'x'.repeat(180),ok:i%2===0,code:'INTERNAL_CODE'}));
+    const expected=panel.agentSteps.slice(-40).map(({text,ok})=>({text:text.slice(0,160),ok}));
+    panel.cancel(); expect(panel.conversation.messages.at(-1).steps).toEqual(expected); expect(panel.agentSteps).toEqual([]);
+    expect(panel.conversation.snapshot().at(-1).steps).toEqual(expected);
+    panel.pendingMessage='Next request'; panel.cancel(); expect(panel.conversation.messages.at(-1)).not.toHaveProperty('steps');
+  });
+  it('round trips assistant steps while excluding them from model context',()=> {
+    const conversation=new Conversation(); conversation.add('assistant','Result','answer',{documentKey:'v3-demo',steps});
+    const saved=conversation.snapshot(); AIPanel.validateSnapshot({prompt:'',open:false,messages:saved});
+    const restored=new Conversation(); restored.restore(saved);
+    expect(restored.messages[0].steps).toEqual(steps); expect(restored.context('v3-demo')).toEqual([{role:'assistant',content:'Result'}]);
+    saved[0].steps[0].text='Changed snapshot'; expect(conversation.messages[0].steps).toEqual(steps);
+  });
+  it.each([null,{},'steps',[null],[{text:'x',ok:1}],[{text:3,ok:true}],[{text:'x'.repeat(161),ok:true}],Array.from({length:41},()=>({text:'x',ok:true}))])('rejects malformed steps %j',value=> {
+    const messages=[{role:'assistant',text:'Result',time:1,steps:value}];
+    expect(()=>cleanMessages(messages)).toThrow('INVALID_CHAT_RECOVERY');
+    expect(()=>AIPanel.validateSnapshot({prompt:'',open:false,messages})).toThrow('INVALID_CHAT_RECOVERY');
+  });
+  it('rejects user steps, including an empty array, and accepts the exact assistant bounds',()=> {
+    for(const value of [[],steps]) expect(()=>cleanMessages([{role:'user',text:'Request',time:1,steps:value}])).toThrow('INVALID_CHAT_RECOVERY');
+    const bounded=Array.from({length:40},()=>({text:'x'.repeat(160),ok:true}));
+    expect(cleanMessages([{role:'assistant',text:'Result',time:1,steps:bounded}])[0].steps).toEqual(bounded);
+  });
+  it('renders a collapsed native disclosure between message text and its change card',()=> {
+    const {panel}=setup();
+    panel.conversation.add('user','Request');
+    panel.conversation.add('assistant','Result','ready',{steps,diff:[{target:'style',property:'color',before:'#111111',after:'#222222'}]});
+    panel.update();
+    const details=panel.node('.ai-assistant details.ai-run-steps');
+    expect(details.open).toBe(false); expect(details.querySelector('summary').textContent).toBe('Worked in 2 steps');
+    expect([...details.querySelectorAll('li')].map(n=>n.textContent)).toEqual(steps.map(s=>`${s.ok?'✓':'✗'} ${s.text}`));
+    expect(details.querySelectorAll('.ai-step-failed')).toHaveLength(1);
+    expect(details.previousElementSibling.className).toBe('ai-message-text'); expect(details.nextElementSibling.className).toContain('ai-change-card');
+    expect(panel.node('.ai-user .ai-run-steps')).toBeNull();
+  });
+  it('uses the singular count and omits disclosures for empty or absent steps',()=> {
+    const {panel}=setup();
+    panel.conversation.add('assistant','One','answer',{steps:steps.slice(0,1)});
+    panel.conversation.add('assistant','Empty','answer',{steps:[]}); panel.conversation.add('assistant','Single-step answer'); panel.update();
+    expect(panel.root.querySelectorAll('.ai-run-steps')).toHaveLength(1); expect(panel.node('.ai-run-steps summary').textContent).toBe('Worked in 1 step');
+  });
+});

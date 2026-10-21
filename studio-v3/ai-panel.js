@@ -108,8 +108,8 @@ export class AIPanel {
     ++this.generation; this.controller?.abort(); this.transport.clear(); this.controller = null;
     clearTimeout(this.timer); this.busy = false;
     const logged = Boolean(this.pendingMessage);
-    if (logged) { this.conversation.add('assistant',message,'cancelled',{request:this.pendingMessage,documentKey:this.documentKey()}); this.pendingMessage = null; }
-    this.message(logged ? '' : message); this.update();
+    if (logged) { this.conversation.add('assistant',message,'cancelled',{request:this.pendingMessage,documentKey:this.documentKey(),...(this.agentSteps.length ? {steps:this.agentSteps.slice(-40).map(({text,ok})=>({text:text.slice(0,160),ok:Boolean(ok)}))} : {})}); this.pendingMessage = null; }
+    this.agentSteps = []; this.message(logged ? '' : message); this.update();
   }
   async stop() {
     const viewing = this.viewing; this.cancel(); const restored = viewing ? this.restoreUnapplied() : undefined; await Promise.all([this.sourceWorkspace?.cancelActive(),restored]);

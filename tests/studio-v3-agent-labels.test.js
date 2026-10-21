@@ -4,14 +4,12 @@ import {agentEnabled,setAgentEnabled,AGENT_KEY} from '../studio-v3/agent-prefere
 
 afterEach(()=> localStorage.clear());
 describe('step labels',()=> {
-  it('say what a step did, with its detail',()=> {
-    expect(stepLabel({name:'get_context',ok:true})).toBe('Looked at the form');
-    expect(stepLabel({name:'apply_operations',ok:true,detail:'4 changes'})).toBe('Made changes · 4 changes');
-    expect(stepLabel({name:'inspect_draft',ok:true,detail:'ready'})).toBe('Checked the print preview · looks good');
-  });
-  it('use no internal words in any step line',()=> {
-    const names = ['get_capabilities','read_skill','get_context','apply_operations','inspect_draft','take_notes','finish','report_blocked','undo_step','import_artifact','something_new'];
-    for (const name of names) for (const ok of [true,false]) expect(stepLabel({name,ok})).not.toMatch(/draft|note|operation|handed/i);
+  it('shows only the supplied safe guide identifier and operation count',()=> {
+    expect(stepLabel({name:'read_skill',ok:true,skillId:'form-authoring'})).toBe('Read the form-authoring guide');
+    expect(stepLabel({name:'apply_operations',ok:true,operationCount:1})).toBe('Made changes · 1 operation');
+    expect(stepLabel({name:'apply_operations',ok:true,operationCount:3})).toBe('Made changes · 3 operations');
+    expect(stepLabel({name:'read_skill',ok:true,skillId:'<private value>'})).not.toContain('private');
+    for(const operationCount of [-1,1.5,'2',NaN]) expect(stepLabel({name:'apply_operations',ok:true,operationCount})).not.toContain(String(operationCount));
   });
   it('show a rejected step as rejected, without its internal code',()=> {
     const text = stepLabel({name:'apply_operations',ok:false,code:'UNSAFE_PROPOSAL'});

@@ -16,6 +16,8 @@ describe('the panel working in steps',()=> {
     expect(gateway.agentCalls()).toBe(4); expect(gateway.singleCalls()).toBe(0); expect(stepped).toHaveBeenCalledTimes(4);
     expect(panel.proposal).not.toBeNull(); expect(lastCard(panel).status).toBe('ready'); expect(lastCard(panel).diff.length).toBeGreaterThan(0);
     expect(panel.getBus().revision).toBe(0);
+    expect(lastCard(panel).steps).toHaveLength(4); expect(lastCard(panel).steps.every(step=>step.ok)).toBe(true);
+    expect(lastCard(panel).steps.some(step=>step.text.includes('1 operation'))).toBe(true); expect(panel.agentSteps).toEqual([]);
     expect(panel.proposal.alias).toBe('demo-fast');
     expect(panel.node('[data-ai-status]').textContent).toContain('4 steps'); expect(panel.node('[data-ai-status]').textContent).toContain('Local checks passed');
   });
@@ -24,6 +26,7 @@ describe('the panel working in steps',()=> {
     const gateway = scriptedGateway({agent:[json({error:{code:'DEMO_AGENT_TOOLS_DISABLED',message:'agent tools are disabled'}},400)],single:[plain(NAVY),plain(NAVY)]}), {panel} = setup({transport:gateway.transport});
     await panel.send();
     expect(panel.proposal).not.toBeNull(); expect(panel.agentUnavailable).toBe(true); expect(gateway.agentCalls()).toBe(1); expect(gateway.singleCalls()).toBe(1);
+    expect(lastCard(panel)).not.toHaveProperty('steps'); expect(panel.node('.ai-run-steps')).toBeNull();
     ask(panel,'Use navy accents.'); await panel.send();
     expect(gateway.agentCalls()).toBe(1); expect(gateway.singleCalls()).toBe(2);
   });
@@ -38,6 +41,7 @@ describe('the panel working in steps',()=> {
     const gateway = scriptedGateway({agent:[turn([reasoning(1),fn(1,'get_context',{})]),turn([message('All done.')])],single:[plain(NAVY)]}), {panel} = setup({transport:gateway.transport});
     await panel.send();
     expect(panel.proposal).toBeNull(); expect(lastCard(panel).status).toBe('error'); expect(gateway.singleCalls()).toBe(0);
+    expect(lastCard(panel).steps).toEqual([{text:'Looked at the form',ok:true}]); expect(panel.agentSteps).toEqual([]);
   });
 
   it('restores committed paper when the provider fails after inspecting a private draft',async()=> {
@@ -64,6 +68,7 @@ describe('the panel working in steps',()=> {
     const gateway = scriptedGateway({agent:[turn([reasoning(1),fn(1,'get_context',{})]),turn([reasoning(2),fn(2,'finish_answer',{message:'Select the field, then choose an available binding.'})])]}), {panel} = setup({transport:gateway.transport});
     ask(panel,'How should I bind an attendance field?'); await panel.send();
     expect(lastCard(panel).status).toBe('answer'); expect(panel.proposal).toBeNull(); expect(panel.getBus().revision).toBe(0);
+    expect(lastCard(panel).steps).toHaveLength(2); expect(panel.agentSteps).toEqual([]);
     for (const body of gateway.bodies.filter(body=>body.tools)) {
       expect(body.tools.map(tool=>tool.name)).toEqual(expect.arrayContaining(['finish_answer','apply_operations','finish']));
     }
@@ -125,6 +130,7 @@ describe('the panel working in steps',()=> {
     expect(panel.node('[data-ai-status]').textContent).toMatch(/12 tokens/); // 10 in + 2 out of the finished turn
     panel.node('[data-ai=cancel]').click(); await sending;
     expect(panel.node('[data-ai-log] .ai-steps')).toBeNull();
+    expect(lastCard(panel).steps).toEqual([{text:'Looked at the form',ok:true}]);
   });
 
   it('can be stopped, and then has no proposal',async()=> {
@@ -142,5 +148,17 @@ describe('the panel working in steps',()=> {
     await ctl.panel.send();
     expect(ctl.panel.proposal).toBeNull(); expect(lastCard(ctl.panel).status).toBe('cancelled');
     expect(gateway.agentCalls()).toBe(2);
+  });
+  it('captures registered skill identity and failed tool steps without retaining raw arguments',async()=> {
+    const gateway=scriptedGateway({agent:[
+      turn([reasoning(1),fn(1,'read_skill',{id:'form-authoring'})]),
+      turn([reasoning(2),fn(2,'read_skill',{id:'PRIVATE-UNKNOWN-GUIDE'})]),
+      turn([reasoning(3),fn(3,'report_blocked',{reason:'Cannot complete this request.'})])
+    ]}), {panel}=setup({transport:gateway.transport});
+    await panel.send();
+    const steps=lastCard(panel).steps;
+    expect(steps[0]).toEqual({text:'Read the form-authoring guide',ok:true}); expect(steps[1].ok).toBe(false);
+    expect(JSON.stringify(steps)).not.toContain('PRIVATE-UNKNOWN-GUIDE'); expect(panel.agentSteps).toEqual([]);
+    expect(lastCard(panel).status).toBe('error'); expect(steps).toHaveLength(3); expect(steps[2].ok).toBe(true); expect(panel.proposal).toBeNull();
   });
 });

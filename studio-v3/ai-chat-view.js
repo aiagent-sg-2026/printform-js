@@ -36,6 +36,12 @@ export function renderConversation(panel) {
     const notice = taskOutcomeNotice(message.taskOutcome);
     if (notice) { const state = node('p','ai-card-state',notice); state.setAttribute('role','status'); article.append(state); }
     article.append(node('div','ai-message-text',message.text));
+    if (message.role === 'assistant' && message.steps?.length) {
+      const details = node('details','ai-run-steps'), count = message.steps.length, list = node('ol','');
+      details.append(node('summary','',`Worked in ${count} ${count === 1 ? 'step' : 'steps'}`));
+      for (const step of message.steps) list.append(node('li',step.ok ? '' : 'ai-step-failed',`${step.ok ? '✓' : '✗'} ${step.text}`));
+      details.append(list); article.append(details);
+    }
     if (message.observation) {
       const citation = node('div','ai-observation-receipt',`Observation receipt: ${message.observation.id}`);
       citation.setAttribute('aria-label','Answer observation receipt'); article.append(citation);
