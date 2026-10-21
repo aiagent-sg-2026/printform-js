@@ -8,16 +8,18 @@ const ready = page=>expect(page.locator('[data-action=export]')).toBeEnabled({ti
 const version = (page,value)=>expect(page.locator('#app-version')).toHaveText(`v3 · ${value.slice(0,12)}`);
 async function controlled(page) { await page.waitForFunction(()=>Boolean(navigator.serviceWorker?.controller)); }
 async function open(page,url) { await keepStructureOpen(page); await page.goto(url); await ready(page); await controlled(page); }
+async function showUpdate(page) { if (page.viewportSize().width<=680 && !await page.locator('#mobile-actions').isVisible()) await page.locator('#mobile-more').click(); }
+async function clickUpdate(page) { await showUpdate(page); await page.locator('#update-button').click(); }
 async function offer(page) {
   const button = page.locator('#update-button'), dialog = page.locator('#update-dialog');
   // The browser may already have noticed the build (the approval dialog then opens by itself and the button is
   // disabled); otherwise a check asks it to look. These tests hold unsaved work, so the dialog always appears.
-  if (!await dialog.isVisible() && await button.isEnabled() && !(await button.textContent()).startsWith('Update to')) await button.click();
+  if (!await dialog.isVisible() && await button.isEnabled() && !(await button.textContent()).startsWith('Update to')) await clickUpdate(page);
   await expect(dialog).toBeVisible({timeout:30000}); await page.locator('[data-update-choice=stay]').click();
   await expect(button).toHaveText(`Update to ${NEXT.slice(0,12)}`,{timeout:30000});
   await expect(button).toBeEnabled();
 }
-async function choose(page,value) { await page.locator('#update-button').click(); await expect(page.locator('#update-dialog')).toBeVisible(); await page.locator(`[data-update-choice=${value}]`).click(); }
+async function choose(page,value) { await clickUpdate(page); await expect(page.locator('#update-dialog')).toBeVisible(); await page.locator(`[data-update-choice=${value}]`).click(); }
 
 for (const [name,width,height] of [['desktop',1440,900],['tablet',768,1024],['mobile',390,844]]) {
   test(`two real builds: ${name} protects work offline, keeps drafts/history/data/zoom on update and updates a tab without unsaved work by itself`,async({page,context},info)=> {
@@ -39,8 +41,8 @@ for (const [name,width,height] of [['desktop',1440,900],['tablet',768,1024],['mo
       const revision = await page.locator('#revision').textContent();
       server.publish(); await offer(page); await version(page,OLD);
       await choose(page,'stay'); await expect(page.getByLabel('Label',{exact:true})).toHaveValue('Synthetic unapplied heading');
-      await page.locator('#update-button').click(); await page.keyboard.press('Escape'); await version(page,OLD);
-      await page.locator('#update-button').click(); await context.setOffline(true);
+      await clickUpdate(page); await page.keyboard.press('Escape'); await version(page,OLD);
+      await clickUpdate(page); await context.setOffline(true);
       await page.locator('[data-update-choice=keep]').click(); await ready(page); await version(page,OLD);
       await expect(page.locator('#update-status')).toContainText('Reconnect');
       await expect(page.getByLabel('Label',{exact:true})).toHaveValue('Synthetic unapplied heading');
@@ -93,7 +95,7 @@ test('mobile viewport stays accessible: scale one, 16px inputs, keyboard update 
     const inputs=await page.locator('input,select,textarea').evaluateAll(nodes=>nodes.filter(n=>n.getClientRects().length && !['checkbox','color'].includes(n.type)).map(n=>parseFloat(getComputedStyle(n).fontSize)));
     expect(inputs.every(size=>size>=16)).toBe(true); expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
     await page.locator('[data-ai=close]').click(); server.publish(); await offer(page);
-    await page.locator('#update-button').focus(); await page.keyboard.press('Enter'); await expect(page.locator('[data-update-choice=stay]')).toBeFocused();
+    await showUpdate(page); await page.locator('#update-button').focus(); await page.keyboard.press('Enter'); await expect(page.locator('[data-update-choice=stay]')).toBeFocused();
     await page.keyboard.press('Escape'); await expect(page.locator('#update-button')).toBeFocused();
     await page.screenshot({path:info.outputPath('mobile-accessible-update.png')});
   } finally { await server.close(); }

@@ -52,6 +52,14 @@ Data and Validate always show their left panel, which holds the sample and datas
 The current-page indicator follows navigation and scrolling. The UI uses English; user data
 supports bilingual text and the existing five print locales.
 
+### Mobile paper-first shell (Batch 25)
+- At up to 680px, the header keeps Undo, Redo and Print beside a More actions disclosure. More contains the original New/Open/Save/export/share controls, Preview, update/recovery controls, source label, version and Studio v2 link; IDs and handlers are not cloned.
+- The workspace is one row with a 16px template input, mode icons and a compact pending-edits badge. AI editor becomes a 56px floating button, hidden while the panel is open. Preview lives in More to avoid crowding this row.
+- The paper toolbar stays one row and scrolls internally on narrow screens; zoom uses the select instead of separate increment buttons. Page thumbnails start collapsed on mobile and their choice lasts only for the current tab session. Desktop controls return to their original locations when the viewport widens.
+- Footer shows only the ellipsized live status. Mobile rules are isolated in `mobile.css`, included in immutable release assets and service-worker hashing.
+- Unverified: edit-only batch; manager must run unit/build/browser checks, inspect 390x844, 360x640 and 1440x900 screenshots, iOS safe areas, larger text, keyboard and update/recovery flows. The 60% paper target is an acceptance assertion, not a measured result.
+- Safe-area decision: preserve the full top/bottom insets rather than clip controls under a notch or home indicator. Header is 44px plus the top inset; footer is 20px plus the bottom inset. The 52px/32px height caps apply to zero-inset browser acceptance viewports; devices with larger insets cannot satisfy those literal caps together with 44px touch targets.
+
 ## AI layout editor
 
 The browser sidepanel uses the pinned upstream `AgentHarness` and

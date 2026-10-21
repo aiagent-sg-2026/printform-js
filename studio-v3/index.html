@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
   <meta name="description" content="Design, bind and validate print forms in your browser with real A4 pagination.">
   <meta name="printform-source-revision" content="__PRINTFORM_V3_REVISION__">
   <meta name="printform-assets" content="__PRINTFORM_V3_ASSETS__">
@@ -14,6 +14,7 @@
   <link rel="stylesheet" href="styles.css">
   <link rel="stylesheet" href="ai-panel.css">
   <link rel="stylesheet" href="update.css">
+  <link rel="stylesheet" href="mobile.css">
   <script type="module" src="app.js"></script>
 </head>
 <body inert aria-busy="true">
@@ -27,9 +28,11 @@
       <button data-action="save" data-icon="save" title="Portable editable form: retains active data, original local source file, filename and mappings">Save with source</button>
       <button data-action="print" data-icon="print" disabled>Print</button>
       <button data-action="export" data-icon="download" title="Standalone HTML: retains active data and the complete original local import source" disabled>HTML with source</button>
-      <button data-action="share" data-icon="download" title="Choose a separate copy without the original local import receipt">Share copy…</button>
+      <button data-action="share" data-icon="share" title="Choose a separate copy without the original local import receipt">Share copy…</button>
+      <button id="mobile-more" data-icon="more" aria-label="More actions" aria-haspopup="dialog" aria-expanded="false" aria-controls="mobile-actions">More</button>
     </div>
   </header>
+  <section id="mobile-actions" role="dialog" aria-label="More actions" hidden><div data-mobile-primary></div><hr><div data-mobile-footer></div></section>
   <nav class="workspace-bar" aria-label="Workspace">
     <div class="document-title"><input id="document-name" aria-label="Template name" maxlength="100"><span id="revision"></span></div>
     <button id="draft-state" data-action="review-drafts">No unapplied edits</button>

@@ -1,6 +1,6 @@
 # Studio v3 version updates and mobile view
 
-The current app build is shown in the status bar on desktop and mobile as
+The current app build is shown in the desktop status bar and mobile More actions as
 `v3 · <12-character source SHA>`. The full SHA is the label's title and the
 `printform-source-revision` metadata. It describes the loaded page, rather than
 the service worker that may have been activated by another tab.

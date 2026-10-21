@@ -25,6 +25,7 @@ import { syncPageControls, navigatePages } from './page-navigation.js';
 import { createValidateAll } from './validate-all.js';
 import { scenarioCandidate } from './scenario-matrix.js';
 import { paperMillimeters } from './paper-settings.js';
+import { setupMobileShell } from './mobile-shell.js';
 const $ = selector => document.querySelector(selector); setupDemoTemplatePicker();
 const state = {mode:'design',selected:'items',tab:'properties',sample:'erp',report:null,matrix:{},dirty:false,dataDraft:null,running:false,runId:0,collapsed:{},search:'',jsonError:'',fileReads:0};
 let bus, displayed, zoom = 1, pageIndex = 0, editQueue = Promise.resolve();
@@ -59,7 +60,8 @@ const paper = new PaperPreview($('#preview-frame'), (report,view) => {
     paper.thumbnails($('#thumbnails'),view.pages,view.styles,goPage);
     goPage(Math.min(pageIndex,view.pages.length-1), false); paper.send('select',{id:state.selected});
   } else $('#thumbnails').replaceChildren();
-  $('#page-count').textContent = report.status === 'ready' ? `Page ${pageIndex+1} / ${report.metrics.logicalPages}` : 'Render blocked';
+  $('#page-count').innerHTML = report.status === 'ready' ? `<span class="page-word">Page </span>${pageIndex+1} / ${report.metrics.logicalPages}` : 'Render blocked';
+  $('#page-count').setAttribute('aria-label',report.status === 'ready' ? `Page ${pageIndex+1} of ${report.metrics.logicalPages}` : 'Render blocked');
   syncControls();
   if (state.mode === 'validate') renderPanels();
   else updateQuality();
@@ -282,5 +284,6 @@ document.addEventListener('keydown', e => {
 await database.init();
 const initial = database.starting(newProject()); install(initial.project,initial.reference,'builtin-demo');
 await updateWork.restore(); setupUpdates(updateWork);
+setupMobileShell();
 // Keep startup controls inactive until local dataset loading can no longer replace the document.
 document.body.inert = false; document.body.setAttribute('aria-busy','false');

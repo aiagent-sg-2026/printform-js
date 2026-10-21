@@ -1,0 +1,42 @@
+#mobile-more,#mobile-actions { display:none; }
+@media(max-width:680px) {
+  .app-header { height:calc(44px + env(safe-area-inset-top,0px)); padding:env(safe-area-inset-top,0px) max(8px,env(safe-area-inset-right)) 0 max(8px,env(safe-area-inset-left)); gap:4px; }
+  .app-header .brand { display:inline-flex; align-items:center; min-height:44px; font-size:18px; }
+  .header-actions { flex-wrap:nowrap; gap:2px; }
+  .header-actions button,#mobile-more { display:inline-flex; min-width:44px; width:44px; height:44px; min-height:44px; padding:10px; font-size:0; }
+  #mobile-actions { display:block; position:fixed; z-index:8; top:calc(52px + env(safe-area-inset-top,0px)); right:max(8px,env(safe-area-inset-right)); width:min(320px,calc(100vw - 16px)); max-height:calc(100dvh - 80px - env(safe-area-inset-bottom,0px)); overflow:auto; overscroll-behavior:contain; padding:8px; border:1px solid var(--line); border-radius:var(--radius); background:var(--surface); color:var(--ink); box-shadow:var(--shadow); }
+  #mobile-actions > div { display:flex; flex-direction:column; gap:4px; }
+  #mobile-actions button,#mobile-actions a { min-height:44px; width:100%; justify-content:flex-start; text-align:left; font-size:14px; padding:10px; }
+  #mobile-actions #app-version,#mobile-actions #data-source,#mobile-actions #update-status { margin:0; padding:4px 10px 4px 36px; color:var(--muted); font-size:13px; line-height:1.5; overflow-wrap:anywhere; }
+  #mobile-actions #data-source { max-width:none; white-space:normal; }
+  #mobile-actions a { padding-left:36px; color:var(--muted); font-size:13px; }
+  .workspace-bar { display:flex; flex-wrap:nowrap; height:52px; padding:4px 8px; gap:4px; }
+  .document-title { flex:1; width:auto; min-width:0; }
+  #document-name { width:100%; min-width:0; font-size:16px; height:44px; }
+  .workspace-tabs { flex:none; gap:0; }
+  .workspace-tabs button { min-width:44px; width:44px; height:44px; min-height:44px; padding:10px; }
+  #draft-state:not(.has-drafts) { display:none; }
+  #draft-state.has-drafts { flex:0 1 72px; min-width:44px; min-height:44px; max-width:72px; font-size:11px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; border-radius:var(--radius); }
+  .workspace-bar [data-ai-toggle] { display:flex; position:fixed; z-index:4; right:calc(16px + env(safe-area-inset-right,0px)); bottom:calc(48px + env(safe-area-inset-bottom,0px)); width:56px; height:56px; min-height:56px; padding:16px; border-radius:50%; background:var(--blue); color:white; border:0; font-size:0; box-shadow:var(--shadow); }
+  .workspace-bar [data-ai-toggle][aria-expanded=true] { display:none; }
+  .paper-toolbar { height:52px; min-width:0; flex-wrap:nowrap; padding:4px 8px; gap:4px; }
+  .paper-toolbar > * { flex:0 0 auto; min-width:0; max-width:100%; }
+  .paper-toolbar button { width:40px; min-width:40px; height:44px; min-height:44px; padding:8px; }
+  .paper-toolbar [data-layout=zoom-in],.paper-toolbar [data-layout=zoom-out] { display:none; }
+  .paper-toolbar label { gap:0; }
+  .paper-toolbar label select { font-size:16px; width:68px; height:44px; }
+  .paper-toolbar [data-ai-add] { display:none; }
+  .page-navigation { flex:0 0 140px; width:140px; min-width:0; gap:4px; margin-left:auto; }
+  .page-navigation [data-action=previous] { order:-1; }
+  #page-count { flex:0 0 52px; width:52px; min-width:0; max-width:52px; margin:0; text-align:center; font-variant-numeric:tabular-nums; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  #page-count:not([aria-label]) { font-size:0; }
+  #page-count:not([aria-label])::after { content:"…"; font-size:12px; }
+  #page-count .page-word { display:none; }
+  #paper-scroll { padding:8px; overscroll-behavior:contain; }
+  .status-bar { height:calc(20px + env(safe-area-inset-bottom,0px)); padding:0 max(10px,env(safe-area-inset-right)) env(safe-area-inset-bottom,0px) max(10px,env(safe-area-inset-left)); gap:0; }
+  .status-bar > :not(#status) { display:none; }
+  #status { font-size:12px; line-height:20px; }
+  input,select,textarea { font-size:16px; }
+  button,a { touch-action:manipulation; }
+}
+@media(max-width:680px) and (prefers-reduced-motion:reduce) { *,*::before,*::after { scroll-behavior:auto!important; transition:none!important; animation:none!important; } }

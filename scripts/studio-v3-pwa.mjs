@@ -7,7 +7,7 @@ export function finalizeStudioV3Pwa(output, revision = process.env.GITHUB_SHA ||
   if (!/^(?:[a-f0-9]{40}|local)$/.test(revision)) throw new Error('Invalid Studio v3 build revision.');
   const root = path.resolve(output,'studio-v3'), release = `releases/${revision}`;
   const target = path.resolve(root,release); fs.mkdirSync(target,{recursive:true});
-  const names = ['app.js','tokens.css','styles.css','ai-panel.css','update.css'];
+  const names = ['app.js','tokens.css','styles.css','ai-panel.css','update.css','mobile.css'];
   for (const name of names) fs.copyFileSync(path.resolve(root,name),path.resolve(target,name));
   const agent = path.resolve(root,'agent');
   if (!fs.existsSync(path.resolve(agent,'agent-manifest.json'))) throw new Error('Missing Studio v3 agent package.');
@@ -21,7 +21,7 @@ export function finalizeStudioV3Pwa(output, revision = process.env.GITHUB_SHA ||
   const html = fs.readFileSync(index,'utf8').replaceAll('__PRINTFORM_V3_REVISION__',revision)
     .replace('__PRINTFORM_V3_ASSETS__',`./${release}/`)
     .replace('../studio-v2/icon.svg','./icon.svg');
-  fs.writeFileSync(index,html.replace(/(href|src)="(app\.js|tokens\.css|styles\.css|ai-panel\.css|update\.css)"/g,`$1="${release}/$2"`));
+  fs.writeFileSync(index,html.replace(/(href|src)="(app\.js|tokens\.css|styles\.css|ai-panel\.css|update\.css|mobile\.css)"/g,`$1="${release}/$2"`));
   const files = ['index.html','manifest.webmanifest','icon.svg'];
   const walk = dir => {
     for (const entry of fs.readdirSync(dir,{withFileTypes:true}).sort((a,b)=>a.name.localeCompare(b.name))) {

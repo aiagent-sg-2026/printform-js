@@ -1,0 +1,21 @@
+import fs from 'node:fs';
+import {expect,it,vi} from 'vitest';
+import {setupMobileShell} from '../studio-v3/mobile-shell.js';
+it('preserves live action state across breakpoint moves and closes before delegated actions',()=> {
+  document.documentElement.innerHTML=fs.readFileSync('studio-v3/index.html','utf8').replace(/<!doctype html>/i,''); document.body.inert=false;
+  let change; const media={matches:true,addEventListener:(_name,listener)=> {change=listener;}};
+  vi.stubGlobal('matchMedia',()=>media); sessionStorage.clear();
+  const save=document.querySelector('[data-action=save]'), update=document.querySelector('#update-button'), more=document.querySelector('#mobile-more'), menu=document.querySelector('#mobile-actions');
+  const listeners=[],add=document.addEventListener.bind(document),listen=vi.spyOn(document,'addEventListener').mockImplementation((type,listener,options)=> {listeners.push([type,listener,options]);add(type,listener,options);});
+  let invoked=0,closedAtDispatch=false;
+  const dispatch=event=> { if (event.target.closest('[data-action=save]')) {invoked++;closedAtDispatch=menu.hidden;} };
+  document.addEventListener('click',dispatch);
+  setupMobileShell();
+  more.click(); save.click(); expect(invoked).toBe(1); expect(closedAtDispatch).toBe(true); expect(document.activeElement).toBe(more);
+  more.click(); document.dispatchEvent(new KeyboardEvent('keydown',{key:'Escape',bubbles:true})); expect(menu.hidden).toBe(true); expect(document.activeElement).toBe(more);
+  more.click(); document.querySelector('#document-name').click(); expect(menu.hidden).toBe(true);
+  update.disabled=false; update.textContent='Update to pending-build';
+  media.matches=false; change(); expect(document.querySelector('.status-bar #update-button')).toBe(update); expect(update.disabled).toBe(false); expect(update.textContent).toBe('Update to pending-build'); expect(document.querySelector('.header-actions [data-action=save]')).toBe(save);
+  media.matches=true; change(); more.click(); save.click(); expect(invoked).toBe(2); expect(document.querySelector('#mobile-actions #update-button')).toBe(update); expect(update.textContent).toBe('Update to pending-build');
+  for (const args of listeners) document.removeEventListener(...args); listen.mockRestore(); document.removeEventListener('click',dispatch); vi.unstubAllGlobals();
+});

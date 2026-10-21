@@ -139,7 +139,7 @@ it('build emits an isolated scope, immutable asset URLs and a complete content m
     fs.writeFileSync(path.join(temp,'studio-v3/sw.js'),fs.readFileSync('studio-v3/sw.js'));
     fs.copyFileSync('studio-v3/manifest.webmanifest',path.join(temp,'studio-v3/manifest.webmanifest'));
     fs.writeFileSync(path.join(temp,'studio-v2/icon.svg'),'<svg/>');
-    for(const name of ['app.js','tokens.css','styles.css','ai-panel.css','update.css'])fs.writeFileSync(path.join(temp,'studio-v3',name),name);
+    for(const name of ['app.js','tokens.css','styles.css','mobile.css','ai-panel.css','update.css'])fs.writeFileSync(path.join(temp,'studio-v3',name),name);
     for(const name of ['printform.js','printform-document.js'])fs.writeFileSync(path.join(temp,'dist',name),name);
     generateAgentPackage({output:temp,revision:'a'.repeat(40)});
     finalizeStudioV3Pwa(temp,'a'.repeat(40));

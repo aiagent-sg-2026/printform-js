@@ -9,7 +9,10 @@ export function navigatePages(root,pages,index,{zoom=1,scroll=true,ready=true}={
     const selected = Number(node.dataset.page) === current;
     node.classList.toggle('active',selected); node.setAttribute('aria-current',selected ? 'page' : 'false');
   });
-  if (pages.length) root.querySelector('#page-count').textContent = `Page ${current+1} / ${pages.length}`;
+  if (pages.length) {
+    const label = root.querySelector('#page-count');
+    label.innerHTML = `<span class="page-word">Page </span>${current+1} / ${pages.length}`; label.setAttribute('aria-label',`Page ${current+1} of ${pages.length}`);
+  }
   syncPageControls(root,current,pages.length,ready);
   return current;
 }

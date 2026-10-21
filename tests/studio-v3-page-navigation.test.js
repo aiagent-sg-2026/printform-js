@@ -11,10 +11,10 @@ describe('paper page navigation boundaries',()=>{
   it('clamps first and last pages while keeping counts, thumbnails and disabled states aligned',()=>{
     expect(navigatePages(document,pages,-1)).toBe(0);expect(button('previous').disabled).toBe(true);expect(button('next').disabled).toBe(false);
     expect(navigatePages(document,pages,1,{zoom:.5})).toBe(1);expect(button('previous').disabled).toBe(false);expect(button('next').disabled).toBe(false);
-    expect(document.querySelector('#paper-scroll').scrollTop).toBe(573.5);expect(document.querySelector('#page-count').textContent).toBe('Page 2 / 3');
+    expect(document.querySelector('#paper-scroll').scrollTop).toBe(573.5);expect(document.querySelector('#page-count').getAttribute('aria-label')).toBe('Page 2 of 3');
     expect(document.querySelector('[data-page="1"]').getAttribute('aria-current')).toBe('page');
     expect(navigatePages(document,pages,99)).toBe(2);expect(button('previous').disabled).toBe(false);expect(button('next').disabled).toBe(true);
-    expect(document.querySelector('#page-count').textContent).toBe('Page 3 / 3');
+    expect(document.querySelector('#page-count').getAttribute('aria-label')).toBe('Page 3 of 3');
   });
   it('handles a smaller replacement document and non-scrolling selection',()=>{
     navigatePages(document,pages,2);const top=document.querySelector('#paper-scroll').scrollTop;

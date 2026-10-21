@@ -5,6 +5,7 @@ const paths = {
   save:'M4 3h14l3 3v15H3V3z M7 3v6h10V3 M7 21v-8h10v8',
   open:'M3 7V4h6l3 3h9v13H3z M3 11h18',
   download:'M12 3v12 m-5-5 5 5 5-5 M4 16v5h16v-5',
+  share:'M12 16V3 m-5 5 5-5 5 5 M5 11H3v10h18V11h-2',
   print:'M6 8V3h12v5 M6 17H3V8h18v9h-3 M6 13h12v8H6z',
   design:'m4 16-1 5 5-1L21 7l-4-4z M14 6l4 4',
   data:'M20 6c0 5-16 5-16 0s16-5 16 0z M4 6v12c0 5 16 5 16 0V6 M4 12c0 5 16 5 16 0',

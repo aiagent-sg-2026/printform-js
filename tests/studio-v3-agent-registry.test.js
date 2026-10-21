@@ -102,7 +102,7 @@ describe('generated coherent release resources',()=> {
     try {
       for(const dir of ['studio-v3','studio-v2','dist'])fs.mkdirSync(path.join(temp,dir));
       for(const name of ['index.html','sw.js','manifest.webmanifest'])fs.copyFileSync(`studio-v3/${name}`,path.join(temp,'studio-v3',name));
-      for(const name of ['app.js','tokens.css','styles.css','ai-panel.css','update.css'])fs.writeFileSync(path.join(temp,'studio-v3',name),name);
+      for(const name of ['app.js','tokens.css','styles.css','mobile.css','ai-panel.css','update.css'])fs.writeFileSync(path.join(temp,'studio-v3',name),name);
       fs.writeFileSync(path.join(temp,'studio-v2/icon.svg'),'<svg/>');
       for(const name of ['printform.js','printform-document.js'])fs.writeFileSync(path.join(temp,'dist',name),name);
       expect(()=>finalizeStudioV3Pwa(temp,'a'.repeat(40))).toThrow('Missing');
