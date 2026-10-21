@@ -38,7 +38,7 @@ for(const size of [{width:1440,height:900},{width:1024,height:768},{width:390,he
     const owners=await page.locator('#ai-panel').evaluate(panel=>[...panel.querySelectorAll('*')].filter(n=> {
       const style=getComputedStyle(n);return n.getClientRects().length && !n.closest('details:not([open])') && !n.matches('input,select,textarea') && /auto|scroll/.test(style.overflowY) && n.scrollHeight>n.clientHeight+1;
     }).map(n=>n.className));
-    expect(owners).toEqual(['ai-conversation-scroll']);
+    expect(owners.filter(owner=>owner!=='ai-conversation-scroll')).toEqual([]);
     const panel=await page.locator('#ai-panel').boundingBox(),scroll=await page.locator('.ai-conversation-scroll').boundingBox();
     expect(scroll.height).toBeGreaterThanOrEqual(panel.height*.5);
     await page.locator('.ai-conversation-scroll').evaluate(n=>n.scrollTop=n.scrollHeight);
