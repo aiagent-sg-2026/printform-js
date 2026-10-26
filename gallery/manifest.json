@@ -683,5 +683,157 @@
     "thumb": "thumbs/pos-shift-closing.png",
     "width": 750,
     "height": 1050
+  },
+  {
+    "id": "retail-price-directory",
+    "title": {
+      "en": "Retail Price List",
+      "zh": "零售商品价目表"
+    },
+    "type": "Price List",
+    "paper": "LETTER",
+    "pages": 2,
+    "tags": [
+      "retail",
+      "pricing",
+      "catalog"
+    ],
+    "file": "designs/retail-price-directory.html",
+    "thumb": "thumbs/retail-price-directory.png",
+    "width": 750,
+    "height": 971
+  },
+  {
+    "id": "ecommerce-order-summary",
+    "title": {
+      "en": "E-Commerce Order Summary",
+      "zh": "电商订单明细"
+    },
+    "type": "Order Summary",
+    "paper": "A4",
+    "pages": 1,
+    "tags": [
+      "ecommerce",
+      "orders",
+      "checkout"
+    ],
+    "file": "designs/ecommerce-order-summary.html",
+    "thumb": "thumbs/ecommerce-order-summary.png",
+    "width": 750,
+    "height": 1050
+  },
+  {
+    "id": "parcel-shipping-waybill",
+    "title": {
+      "en": "Shipping Label and Waybill",
+      "zh": "快递面单与运单"
+    },
+    "type": "Waybill",
+    "paper": "A5",
+    "pages": 1,
+    "tags": [
+      "ecommerce",
+      "shipping",
+      "logistics"
+    ],
+    "file": "designs/parcel-shipping-waybill.html",
+    "thumb": "thumbs/parcel-shipping-waybill.png",
+    "width": 750,
+    "height": 600
+  },
+  {
+    "id": "prepaid-return-label",
+    "title": {
+      "en": "Return Shipping Label",
+      "zh": "退货寄件标签"
+    },
+    "type": "Return Label",
+    "paper": "A5",
+    "pages": 1,
+    "tags": [
+      "ecommerce",
+      "returns",
+      "shipping"
+    ],
+    "file": "designs/prepaid-return-label.html",
+    "thumb": "thumbs/prepaid-return-label.png",
+    "width": 750,
+    "height": 600
+  },
+  {
+    "id": "warehouse-order-pick-list",
+    "title": {
+      "en": "Order Pick List",
+      "zh": "订单拣货单"
+    },
+    "type": "Pick List",
+    "paper": "A4",
+    "pages": 1,
+    "tags": [
+      "ecommerce",
+      "picking",
+      "warehouse"
+    ],
+    "file": "designs/warehouse-order-pick-list.html",
+    "thumb": "thumbs/warehouse-order-pick-list.png",
+    "width": 750,
+    "height": 1050
+  },
+  {
+    "id": "marketplace-payout-settlement",
+    "title": {
+      "en": "Marketplace Settlement",
+      "zh": "电商平台结算单"
+    },
+    "type": "Settlement",
+    "paper": "LETTER",
+    "pages": 2,
+    "tags": [
+      "ecommerce",
+      "marketplace",
+      "settlement"
+    ],
+    "file": "designs/marketplace-payout-settlement.html",
+    "thumb": "thumbs/marketplace-payout-settlement.png",
+    "width": 750,
+    "height": 971
+  },
+  {
+    "id": "crm-customer-profile",
+    "title": {
+      "en": "Customer Profile Card",
+      "zh": "客户资料卡"
+    },
+    "type": "Customer Profile",
+    "paper": "A5",
+    "pages": 1,
+    "tags": [
+      "crm",
+      "customer",
+      "relationship"
+    ],
+    "file": "designs/crm-customer-profile.html",
+    "thumb": "thumbs/crm-customer-profile.png",
+    "width": 750,
+    "height": 600
+  },
+  {
+    "id": "crm-opportunity-sheet",
+    "title": {
+      "en": "Lead and Opportunity Sheet",
+      "zh": "销售线索与商机跟进表"
+    },
+    "type": "Opportunity",
+    "paper": "A4",
+    "pages": 1,
+    "tags": [
+      "crm",
+      "pipeline",
+      "follow-up"
+    ],
+    "file": "designs/crm-opportunity-sheet.html",
+    "thumb": "thumbs/crm-opportunity-sheet.png",
+    "width": 750,
+    "height": 1050
   }
 ]

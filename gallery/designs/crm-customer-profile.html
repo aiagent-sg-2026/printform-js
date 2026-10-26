@@ -1,0 +1,201 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Customer Profile Card</title>
+    <link rel="stylesheet" href="shared/page.css" />
+    <style>
+      body {
+        color: #263845;
+        font:
+          13px Arial,
+          "Helvetica Neue",
+          sans-serif;
+      }
+      .paper_width {
+        width: 750px;
+      }
+      .section-table,
+      .items-grid {
+        table-layout: fixed;
+      }
+      .section-table td {
+        box-sizing: border-box;
+        vertical-align: top;
+      }
+      .items-grid {
+        width: 100%;
+      }
+      .items-grid td {
+        font-size: 13px;
+        line-height: 17px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .head-cell {
+        background: #5d8aa8;
+        color: white;
+        font-weight: 700;
+      }
+      .item-cell {
+        border-bottom: 1px solid #d7e1e8;
+      }
+      .cell-content {
+        padding: 3px;
+      }
+      .identity {
+        padding: 8px;
+        background: #eaf1f5;
+        border-left: 5px solid #5d8aa8;
+        line-height: 18px;
+      }
+      .page-number {
+        padding: 4px;
+        text-align: center;
+      }
+      .footer {
+        padding: 5px;
+        border-top: 1px solid #5d8aa8;
+        line-height: 17px;
+      }
+    </style>
+  </head>
+  <body>
+    <div
+      class="paper_width printform"
+      data-papersize-width="750"
+      data-papersize-height="600"
+      data-repeat-header="y"
+      data-repeat-rowheader="y"
+      data-repeat-footer-pagenum="y"
+    >
+      <table cellpadding="0" cellspacing="0" border="0" class="paper_width section-table pheader">
+        <tr>
+          <td style="width: 15px"></td>
+          <td style="width: inherit"></td>
+          <td style="width: 15px"></td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>
+            <svg width="720" height="56" viewBox="0 0 720 56" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Customer record">
+              <rect width="720" height="56" fill="#5D8AA8" />
+              <circle cx="42" cy="28" r="18" fill="none" stroke="white" stroke-width="2" />
+              <circle cx="42" cy="22" r="6" fill="white" />
+              <path d="M29 42q13-17 26 0" fill="none" stroke="white" stroke-width="3" />
+              <text x="72" y="27" fill="white" font-family="Arial,sans-serif" font-size="19" font-weight="700">
+                CUSTOMER PROFILE · AC-009184
+              </text>
+              <text x="72" y="46" fill="#e8f3f8" font-family="Arial,sans-serif" font-size="13">
+                ACCOUNT STATUS · ACTIVE · REVIEW 15 DEC 2026
+              </text>
+            </svg>
+          </td>
+          <td></td>
+        </tr>
+      </table>
+      <table cellpadding="0" cellspacing="0" border="0" class="paper_width section-table pdocinfo">
+        <tr>
+          <td style="width: 15px"></td>
+          <td style="width: inherit"></td>
+          <td style="width: 15px"></td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>
+            <div class="identity">
+              <b>JUNIPER & CO. · RETAIL PARTNER</b><br />Contact: Taylor Example · taylor@example.invalid · +1 555 010 0188<br />Segment:
+              Growth · Owner: Rowan Sample · Preference: Email, weekdays
+            </div>
+          </td>
+          <td></td>
+        </tr>
+      </table>
+      <table cellpadding="0" cellspacing="0" border="0" class="paper_width section-table prowheader">
+        <tr>
+          <td style="width: 15px"></td>
+          <td style="width: inherit"></td>
+          <td style="width: 15px"></td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>
+            <table class="items-grid">
+              <tr>
+                <td style="width: 95px"></td>
+                <td style="width: 225px"></td>
+                <td style="width: 100px"></td>
+                <td style="width: 100px"></td>
+                <td style="width: 200px"></td>
+              </tr>
+              <tr>
+                <td class="head-cell">Date</td>
+                <td class="head-cell">Activity</td>
+                <td class="head-cell">Channel</td>
+                <td class="head-cell">Owner</td>
+                <td class="head-cell">Next Action</td>
+              </tr>
+            </table>
+          </td>
+          <td></td>
+        </tr>
+      </table>
+      <div id="rows"></div>
+      <table cellpadding="0" cellspacing="0" border="0" class="paper_width section-table pfooter">
+        <tr>
+          <td style="width: 15px"></td>
+          <td style="width: inherit"></td>
+          <td style="width: 15px"></td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>
+            <div class="footer">
+              Relationship note: Prefers consolidated seasonal updates; avoid Monday morning calls.<br />Next review: 15 Dec 2026 · Account
+              owner Rowan Sample
+            </div>
+          </td>
+          <td></td>
+        </tr>
+      </table>
+      <script>
+        const activities = [
+          ["10/24/26", "Autumn range review", "Call", "Rowan", "Send revised catalog"],
+          ["10/18/26", "Invoice settled", "Email", "Rowan", "Confirm next order"],
+          ["10/09/26", "Sample kit received", "Portal", "Casey", "Request feedback"],
+          ["09/28/26", "Store visit", "Visit", "Rowan", "Share display guide"],
+          ["09/15/26", "Quarterly check-in", "Call", "Rowan", "Review sell-through"],
+        ];
+        const widths = [95, 225, 100, 100, 200];
+        const target = document.getElementById("rows");
+        const widthRow = widths.map((width) => `<td style="width:${width}px"></td>`).join("");
+        for (let index = 0; index < activities.length; index += 1) {
+          const table = document.createElement("table");
+          table.cellPadding = "0";
+          table.cellSpacing = "0";
+          table.border = "0";
+          table.className = "paper_width section-table prowitem";
+          table.innerHTML = `<tr><td style="width:15px"></td><td style="width:inherit"></td><td style="width:15px"></td></tr><tr><td></td><td><table class="items-grid"><tr>${widthRow}</tr><tr>${activities[index].map((value) => `<td class="item-cell"><div class="cell-content">${value}</div></td>`).join("")}</tr></table></td><td></td></tr>`;
+          target.before(table);
+        }
+        target.remove();
+      </script>
+      <table cellpadding="0" cellspacing="0" border="0" class="paper_width section-table pfooter_pagenum">
+        <tr>
+          <td style="width: 15px"></td>
+          <td style="width: inherit"></td>
+          <td style="width: 15px"></td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>
+            <div class="page-number" data-page-number-container>Page <span data-page-number></span> of <span data-page-total></span></div>
+          </td>
+          <td></td>
+        </tr>
+      </table>
+    </div>
+    <script src="../../dist/printform.js"></script>
+  </body>
+</html>

@@ -1,0 +1,252 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Order Pick List</title>
+    <link rel="stylesheet" href="shared/page.css" />
+    <style>
+      body {
+        color: #26362a;
+        font:
+          13px Arial,
+          "Helvetica Neue",
+          sans-serif;
+      }
+      .paper_width {
+        width: 750px;
+      }
+      .section-table,
+      .items-grid {
+        table-layout: fixed;
+      }
+      .section-table td {
+        box-sizing: border-box;
+        vertical-align: top;
+      }
+      .items-grid {
+        width: 100%;
+      }
+      .items-grid td {
+        font-size: 13px;
+        line-height: 19px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .head-cell {
+        background: #6b8e6e;
+        color: white;
+        font-weight: 700;
+      }
+      .item-cell {
+        border-bottom: 1px solid #dce6dc;
+      }
+      .alternate {
+        background: #f2f7f2;
+      }
+      .cell-content {
+        padding: 4px;
+      }
+      .box {
+        padding: 8px;
+        border-left: 4px solid #6b8e6e;
+        background: #f3f7f2;
+        line-height: 19px;
+      }
+      .page-number {
+        padding: 6px;
+        text-align: center;
+      }
+      .footer {
+        padding: 8px;
+        border-top: 2px solid #6b8e6e;
+        line-height: 19px;
+      }
+      .check {
+        font-size: 18px;
+      }
+    </style>
+  </head>
+  <body>
+    <div
+      class="paper_width printform"
+      data-papersize-width="750"
+      data-papersize-height="1050"
+      data-repeat-header="y"
+      data-repeat-rowheader="y"
+      data-repeat-footer-pagenum="y"
+    >
+      <table cellpadding="0" cellspacing="0" border="0" class="paper_width section-table pheader">
+        <tr>
+          <td style="width: 15px"></td>
+          <td style="width: inherit"></td>
+          <td style="width: 15px"></td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>
+            <svg
+              width="720"
+              height="76"
+              viewBox="0 0 720 76"
+              xmlns="http://www.w3.org/2000/svg"
+              role="img"
+              aria-label="Eucalyptus Warehouse"
+            >
+              <rect width="720" height="76" fill="#6B8E6E" />
+              <path d="M20 20h36v36H20zM26 27h24v20H26zM32 33h12v8H32z" fill="none" stroke="white" stroke-width="2" />
+              <text x="72" y="35" fill="white" font-family="Arial,sans-serif" font-size="21" font-weight="700">
+                EUCALYPTUS WAREHOUSE · PICK WAVE 18
+              </text>
+              <text x="72" y="57" fill="#e9f2e8" font-family="Arial,sans-serif" font-size="13">PRIORITY · STANDARD · 26 OCT 2026</text>
+              <text x="690" y="48" fill="white" font-family="Arial,sans-serif" font-size="19" font-weight="700" text-anchor="end">
+                PICK LIST
+              </text>
+            </svg>
+          </td>
+          <td></td>
+        </tr>
+      </table>
+      <table cellpadding="0" cellspacing="0" border="0" class="paper_width section-table pdocinfo">
+        <tr>
+          <td style="width: 15px"></td>
+          <td style="width: inherit"></td>
+          <td style="width: 15px"></td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>
+            <table class="items-grid">
+              <tr>
+                <td style="width: 360px"></td>
+                <td style="width: 360px"></td>
+              </tr>
+              <tr>
+                <td>
+                  <div class="box"><b>WAREHOUSE</b> · North Bay DC · Zone C<br />Order range: SO-80401–SO-80417</div>
+                </td>
+                <td>
+                  <div class="box"><b>ASSIGNED PICKER</b> · Jamie Example<br />Route: C1 → C4 → D2 · Verify all short picks</div>
+                </td>
+              </tr>
+            </table>
+          </td>
+          <td></td>
+        </tr>
+      </table>
+      <table cellpadding="0" cellspacing="0" border="0" class="paper_width section-table prowheader">
+        <tr>
+          <td style="width: 15px"></td>
+          <td style="width: inherit"></td>
+          <td style="width: 15px"></td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>
+            <table class="items-grid">
+              <tr>
+                <td style="width: 70px"></td>
+                <td style="width: 90px"></td>
+                <td style="width: 190px"></td>
+                <td style="width: 120px"></td>
+                <td style="width: 80px"></td>
+                <td style="width: 80px"></td>
+                <td style="width: 90px"></td>
+              </tr>
+              <tr>
+                <td class="head-cell">Bin</td>
+                <td class="head-cell">SKU</td>
+                <td class="head-cell">Description</td>
+                <td class="head-cell">Variant</td>
+                <td class="head-cell" align="right">Required</td>
+                <td class="head-cell" align="right">Picked</td>
+                <td class="head-cell">Check</td>
+              </tr>
+            </table>
+          </td>
+          <td></td>
+        </tr>
+      </table>
+      <div id="rows"></div>
+      <table cellpadding="0" cellspacing="0" border="0" class="paper_width section-table pfooter">
+        <tr>
+          <td style="width: 15px"></td>
+          <td style="width: inherit"></td>
+          <td style="width: 15px"></td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>
+            <div class="footer" id="summary"></div>
+            <div class="footer">Completed at: __________ · Verified by: __________________ · Record every shortage before dispatch.</div>
+          </td>
+          <td></td>
+        </tr>
+      </table>
+      <script>
+        const products = [
+          "Canvas tote",
+          "Stoneware cup",
+          "Linen pouch",
+          "Desk journal",
+          "Steel bottle",
+          "Wool coaster",
+          "Glass jar",
+          "Bamboo pen",
+          "Cork mat",
+          "Paper bundle",
+          "Ceramic plate",
+          "Storage tin",
+          "Cotton towel",
+          "Desk tray",
+          "Pencil set",
+          "Tea canister",
+          "Gift wrap",
+        ];
+        const widths = [70, 90, 190, 120, 80, 80, 90];
+        const target = document.getElementById("rows");
+        const widthRow = widths.map((width) => `<td style="width:${width}px"></td>`).join("");
+        let shortage = 0;
+        for (let index = 0; index < products.length; index += 1) {
+          const required = (index % 4) + 1;
+          const picked = index === 7 ? required - 1 : required;
+          shortage += required - picked;
+          const cells = [
+            `C-${String(Math.floor(index / 5) + 1)}-${String(index + 1).padStart(2, "0")}`,
+            `EW-${index + 201}`,
+            products[index],
+            index % 2 ? "Natural / S" : "Blue / M",
+            required,
+            picked,
+            "□",
+          ];
+          const table = document.createElement("table");
+          table.cellPadding = "0";
+          table.cellSpacing = "0";
+          table.border = "0";
+          table.className = "paper_width section-table prowitem";
+          table.innerHTML = `<tr><td style="width:15px"></td><td style="width:inherit"></td><td style="width:15px"></td></tr><tr><td></td><td><table class="items-grid"><tr>${widthRow}</tr><tr>${cells.map((value, cell) => `<td class="item-cell${index % 2 ? " alternate" : ""}"${cell === 4 || cell === 5 ? ' align="right"' : ""}><div class="cell-content${cell === 6 ? " check" : ""}">${value}</div></td>`).join("")}</tr></table></td><td></td></tr>`;
+          target.before(table);
+        }
+        target.remove();
+        document.getElementById("summary").textContent =
+          `Shortages: ${shortage} unit · Pick completion: __________ · Supervisor verification required.`;
+      </script>
+      <table cellpadding="0" cellspacing="0" border="0" class="paper_width section-table pfooter_pagenum">
+        <tr>
+          <td style="width: 15px"></td>
+          <td style="width: inherit"></td>
+          <td style="width: 15px"></td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>
+            <div class="page-number" data-page-number-container>Page <span data-page-number></span> of <span data-page-total></span></div>
+          </td>
+          <td></td>
+        </tr>
+      </table>
+    </div>
+    <script src="../../dist/printform.js"></script>
+  </body>
+</html>

@@ -1,0 +1,242 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Lead and Opportunity Sheet</title>
+    <link rel="stylesheet" href="shared/page.css" />
+    <style>
+      body {
+        color: #3b2d32;
+        font:
+          13px Arial,
+          "Helvetica Neue",
+          sans-serif;
+      }
+      .paper_width {
+        width: 750px;
+      }
+      .section-table,
+      .items-grid {
+        table-layout: fixed;
+      }
+      .section-table td {
+        box-sizing: border-box;
+        vertical-align: top;
+      }
+      .items-grid {
+        width: 100%;
+      }
+      .items-grid td {
+        font-size: 13px;
+        line-height: 18px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .head-cell {
+        background: #ac7d88;
+        color: white;
+        font-weight: 700;
+      }
+      .item-cell {
+        border-bottom: 1px solid #e8dce0;
+      }
+      .alternate {
+        background: #fbf5f7;
+      }
+      .cell-content {
+        padding: 3px;
+      }
+      .box {
+        padding: 7px;
+        border: 1px solid #e2cfd5;
+        line-height: 18px;
+      }
+      .stage {
+        padding: 7px;
+        background: #f5e9ed;
+        color: #754b57;
+        font-weight: 700;
+        letter-spacing: 1px;
+        text-align: center;
+      }
+      .page-number {
+        padding: 6px;
+        text-align: center;
+      }
+      .footer {
+        padding: 8px;
+        border-top: 2px solid #ac7d88;
+        line-height: 19px;
+      }
+    </style>
+  </head>
+  <body>
+    <div
+      class="paper_width printform"
+      data-papersize-width="750"
+      data-papersize-height="1050"
+      data-repeat-header="y"
+      data-repeat-rowheader="y"
+      data-repeat-footer-pagenum="y"
+    >
+      <table cellpadding="0" cellspacing="0" border="0" class="paper_width section-table pheader">
+        <tr>
+          <td style="width: 15px"></td>
+          <td style="width: inherit"></td>
+          <td style="width: 15px"></td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>
+            <svg width="720" height="72" viewBox="0 0 720 72" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Juniper CRM">
+              <rect width="720" height="72" fill="#AC7D88" />
+              <path d="M25 18h32v36H25zM32 26h18M32 34h18M32 42h12" fill="none" stroke="white" stroke-width="2" />
+              <text x="72" y="33" fill="white" font-family="Arial,sans-serif" font-size="21" font-weight="700">
+                JUNIPER CRM · OPPORTUNITY OP-26084
+              </text>
+              <text x="72" y="55" fill="#fff0f2" font-family="Arial,sans-serif" font-size="13">
+                LEAD · NORTHWIND STUDIO · TARGET CLOSE 18 DEC 2026
+              </text>
+              <text x="690" y="46" fill="white" font-family="Arial,sans-serif" font-size="18" font-weight="700" text-anchor="end">
+                FOLLOW-UP
+              </text>
+            </svg>
+          </td>
+          <td></td>
+        </tr>
+      </table>
+      <table cellpadding="0" cellspacing="0" border="0" class="paper_width section-table pdocinfo">
+        <tr>
+          <td style="width: 15px"></td>
+          <td style="width: inherit"></td>
+          <td style="width: 15px"></td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>
+            <div class="stage">QUALIFY ━━━ DISCOVER ━━━ PROPOSE ━━━ NEGOTIATE ━━━ CLOSE</div>
+            <table class="items-grid">
+              <tr>
+                <td style="width: 240px"></td>
+                <td style="width: 240px"></td>
+                <td style="width: 240px"></td>
+              </tr>
+              <tr>
+                <td>
+                  <div class="box"><b>LEAD SOURCE</b><br />Referral · Juniper & Co.</div>
+                </td>
+                <td>
+                  <div class="box"><b>CONTACT & DEAL</b><br />Taylor Example · USD 48,500.00</div>
+                </td>
+                <td>
+                  <div class="box"><b>FORECAST</b><br />Probability 60% · 18 Dec 2026</div>
+                </td>
+              </tr>
+            </table>
+          </td>
+          <td></td>
+        </tr>
+      </table>
+      <table cellpadding="0" cellspacing="0" border="0" class="paper_width section-table prowheader">
+        <tr>
+          <td style="width: 15px"></td>
+          <td style="width: inherit"></td>
+          <td style="width: 15px"></td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>
+            <table class="items-grid">
+              <tr>
+                <td style="width: 80px"></td>
+                <td style="width: 145px"></td>
+                <td style="width: 100px"></td>
+                <td style="width: 100px"></td>
+                <td style="width: 135px"></td>
+                <td style="width: 80px"></td>
+                <td style="width: 80px"></td>
+              </tr>
+              <tr>
+                <td class="head-cell">Date</td>
+                <td class="head-cell">Interaction</td>
+                <td class="head-cell">Stakeholder</td>
+                <td class="head-cell">Outcome</td>
+                <td class="head-cell">Next Action</td>
+                <td class="head-cell">Owner</td>
+                <td class="head-cell">Due Date</td>
+              </tr>
+            </table>
+          </td>
+          <td></td>
+        </tr>
+      </table>
+      <div id="rows"></div>
+      <table cellpadding="0" cellspacing="0" border="0" class="paper_width section-table pfooter">
+        <tr>
+          <td style="width: 15px"></td>
+          <td style="width: inherit"></td>
+          <td style="width: 15px"></td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>
+            <div class="footer">
+              <b>Qualification:</b> Budget confirmed; rollout depends on two-site pilot approval.<br /><b>Risk:</b> December procurement
+              window. <b>Agreed next step:</b> Send pilot proposal by 06 Nov.
+            </div>
+          </td>
+          <td></td>
+        </tr>
+      </table>
+      <script>
+        const actions = [
+          ["10/26", "Discovery call", "Taylor", "Need mapped", "Share recap", "Rowan", "10/28"],
+          ["10/23", "Referral review", "Casey", "Warm lead", "Book discovery", "Rowan", "10/27"],
+          ["10/21", "Email intro", "Taylor", "Replied", "Send agenda", "Rowan", "10/26"],
+          ["10/19", "Needs review", "Taylor", "2-site pilot", "Draft scope", "Morgan", "10/30"],
+          ["10/16", "Stakeholder map", "Jamie", "Finance added", "Invite finance", "Rowan", "11/02"],
+          ["10/14", "Product demo", "Taylor", "Fit confirmed", "Share case study", "Morgan", "10/29"],
+          ["10/12", "Budget check", "Taylor", "USD 48.5k", "Confirm terms", "Rowan", "11/04"],
+          ["10/09", "Site visit", "Jamie", "Pilot feasible", "List requirements", "Morgan", "11/03"],
+          ["10/07", "Follow-up", "Taylor", "Docs requested", "Send overview", "Rowan", "10/28"],
+          ["10/05", "Intro call", "Taylor", "Timeline set", "Plan pilot", "Morgan", "11/06"],
+          ["10/02", "Referral received", "Casey", "Qualified", "Contact lead", "Rowan", "10/27"],
+          ["09/29", "Research", "—", "Strong fit", "Prepare notes", "Morgan", "10/01"],
+          ["09/26", "First email", "Taylor", "Connected", "Set meeting", "Rowan", "10/02"],
+          ["09/23", "Account scan", "—", "Growth fit", "Find sponsor", "Morgan", "09/29"],
+          ["09/20", "Event meeting", "Taylor", "Asked for info", "Send brief", "Rowan", "09/24"],
+          ["09/18", "Lead created", "—", "New inquiry", "Verify need", "Morgan", "09/22"],
+        ];
+        const widths = [80, 145, 100, 100, 135, 80, 80];
+        const target = document.getElementById("rows");
+        const widthRow = widths.map((width) => `<td style="width:${width}px"></td>`).join("");
+        for (let index = 0; index < actions.length; index += 1) {
+          const table = document.createElement("table");
+          table.cellPadding = "0";
+          table.cellSpacing = "0";
+          table.border = "0";
+          table.className = "paper_width section-table prowitem";
+          table.innerHTML = `<tr><td style="width:15px"></td><td style="width:inherit"></td><td style="width:15px"></td></tr><tr><td></td><td><table class="items-grid"><tr>${widthRow}</tr><tr>${actions[index].map((value) => `<td class="item-cell${index % 2 ? " alternate" : ""}"><div class="cell-content">${value}</div></td>`).join("")}</tr></table></td><td></td></tr>`;
+          target.before(table);
+        }
+        target.remove();
+      </script>
+      <table cellpadding="0" cellspacing="0" border="0" class="paper_width section-table pfooter_pagenum">
+        <tr>
+          <td style="width: 15px"></td>
+          <td style="width: inherit"></td>
+          <td style="width: 15px"></td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>
+            <div class="page-number" data-page-number-container>Page <span data-page-number></span> of <span data-page-total></span></div>
+          </td>
+          <td></td>
+        </tr>
+      </table>
+    </div>
+    <script src="../../dist/printform.js"></script>
+  </body>
+</html>

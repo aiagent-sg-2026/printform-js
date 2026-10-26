@@ -1,0 +1,236 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Return Shipping Label</title>
+    <link rel="stylesheet" href="shared/page.css" />
+    <style>
+      body {
+        color: #342d1c;
+        font:
+          13px Arial,
+          "Helvetica Neue",
+          sans-serif;
+      }
+      .paper_width {
+        width: 750px;
+      }
+      .section-table,
+      .items-grid {
+        table-layout: fixed;
+      }
+      .section-table td {
+        box-sizing: border-box;
+        vertical-align: top;
+      }
+      .items-grid {
+        width: 100%;
+      }
+      .items-grid td {
+        font-size: 13px;
+        line-height: 17px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .head-cell {
+        background: #996515;
+        color: white;
+        font-weight: 700;
+      }
+      .item-cell {
+        border-bottom: 1px solid #e5dcc8;
+      }
+      .cell-content {
+        padding: 3px 4px;
+      }
+      .box {
+        padding: 6px;
+        border: 1px solid #d8c493;
+        line-height: 17px;
+      }
+      .marker {
+        padding: 5px;
+        background: #f5e7bd;
+        color: #67440f;
+        font-size: 17px;
+        font-weight: 700;
+        text-align: center;
+      }
+      .page-number {
+        padding: 4px;
+        text-align: center;
+      }
+      .footer {
+        padding: 5px;
+        border-top: 1px dashed #996515;
+        line-height: 17px;
+      }
+    </style>
+  </head>
+  <body>
+    <div
+      class="paper_width printform"
+      data-papersize-width="750"
+      data-papersize-height="600"
+      data-repeat-header="y"
+      data-repeat-rowheader="y"
+      data-repeat-footer-pagenum="y"
+    >
+      <table cellpadding="0" cellspacing="0" border="0" class="paper_width section-table pheader">
+        <tr>
+          <td style="width: 15px"></td>
+          <td style="width: inherit"></td>
+          <td style="width: 15px"></td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>
+            <svg
+              width="720"
+              height="56"
+              viewBox="0 0 720 56"
+              xmlns="http://www.w3.org/2000/svg"
+              role="img"
+              aria-label="Return parcel label"
+            >
+              <rect width="720" height="56" fill="#996515" />
+              <path d="M18 16h28v25H18zM24 22h16M24 29h16M24 36h10" fill="none" stroke="white" stroke-width="2" />
+              <text x="60" y="27" fill="white" font-family="Arial,sans-serif" font-size="17" font-weight="700">
+                PREPAID RETURN · AUTHORIZATION RA-26184
+              </text>
+              <text x="60" y="46" fill="#fff2cf" font-family="Arial,sans-serif" font-size="13">EXPIRES 30 NOV 2026 · ORDER TM-804219</text>
+            </svg>
+          </td>
+          <td></td>
+        </tr>
+      </table>
+      <table cellpadding="0" cellspacing="0" border="0" class="paper_width section-table pdocinfo">
+        <tr>
+          <td style="width: 15px"></td>
+          <td style="width: inherit"></td>
+          <td style="width: 15px"></td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>
+            <div class="marker">RETURN TO · DOCK R-12 · PORTLAND OR</div>
+            <table class="items-grid">
+              <tr>
+                <td style="width: 360px"></td>
+                <td style="width: 360px"></td>
+              </tr>
+              <tr>
+                <td>
+                  <div class="box"><b>SENDER</b><br />Alex Example · 14 Sample Lane<br />Salem OR 97301 · Order TM-804219</div>
+                </td>
+                <td>
+                  <div class="box"><b>RETURNS CENTER</b><br />Tidepool Market Returns<br />900 Fictional Way · Portland OR 97205</div>
+                </td>
+              </tr>
+            </table>
+            <svg
+              width="720"
+              height="38"
+              viewBox="0 0 720 38"
+              xmlns="http://www.w3.org/2000/svg"
+              role="img"
+              aria-label="Return tracking barcode"
+            >
+              <rect width="720" height="38" fill="white" />
+              <path
+                d="M18 2v32m5-32v32m10-32v32m4-32v32m8-32v32m11-32v32m4-32v32m12-32v32m8-32v32m5-32v32m12-32v32m4-32v32m10-32v32m11-32v32m5-32v32m12-32v32m8-32v32m5-32v32m12-32v32m9-32v32m6-32v32m11-32v32m6-32v32m10-32v32m8-32v32m5-32v32m12-32v32m8-32v32m11-32v32m5-32v32m12-32v32m9-32v32m12-32v32m5-32v32m11-32v32m8-32v32m6-32v32m12-32v32m7-32v32m11-32v32m9-32v32m6-32v32m12-32v32m8-32v32m6-32v32m12-32v32m7-32v32m11-32v32m8-32v32"
+                stroke="#222"
+                stroke-width="3"
+              />
+            </svg>
+            <div class="marker">TRACKING · 9400 1200 8841</div>
+          </td>
+          <td></td>
+        </tr>
+      </table>
+      <table cellpadding="0" cellspacing="0" border="0" class="paper_width section-table prowheader">
+        <tr>
+          <td style="width: 15px"></td>
+          <td style="width: inherit"></td>
+          <td style="width: 15px"></td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>
+            <table class="items-grid">
+              <tr>
+                <td style="width: 250px"></td>
+                <td style="width: 140px"></td>
+                <td style="width: 80px"></td>
+                <td style="width: 250px"></td>
+              </tr>
+              <tr>
+                <td class="head-cell">Return Item</td>
+                <td class="head-cell">SKU</td>
+                <td class="head-cell" align="right">Quantity</td>
+                <td class="head-cell">Reason</td>
+              </tr>
+            </table>
+          </td>
+          <td></td>
+        </tr>
+      </table>
+      <div id="rows"></div>
+      <table cellpadding="0" cellspacing="0" border="0" class="paper_width section-table pfooter">
+        <tr>
+          <td style="width: 15px"></td>
+          <td style="width: inherit"></td>
+          <td style="width: 15px"></td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>
+            <div class="footer">
+              Attach label to parcel and drop at any Greyrock Parcel counter. Keep proof of handoff.<br />Order reference TM-804219 · No
+              postage payment required.
+            </div>
+          </td>
+          <td></td>
+        </tr>
+      </table>
+      <script>
+        const items = [
+          ["Ceramic pour-over", "TP-101", 1, "Changed mind"],
+          ["Canvas market bag", "TP-102", 1, "Wrong size"],
+          ["Desk journal", "TP-104", 2, "Duplicate"],
+          ["Stoneware cup", "TP-110", 1, "Damaged"],
+          ["Cork desk mat", "TP-112", 1, "Not needed"],
+        ];
+        const widths = [250, 140, 80, 250];
+        const target = document.getElementById("rows");
+        const widthRow = widths.map((width) => `<td style="width:${width}px"></td>`).join("");
+        for (let index = 0; index < items.length; index += 1) {
+          const table = document.createElement("table");
+          table.cellPadding = "0";
+          table.cellSpacing = "0";
+          table.border = "0";
+          table.className = "paper_width section-table prowitem";
+          table.innerHTML = `<tr><td style="width:15px"></td><td style="width:inherit"></td><td style="width:15px"></td></tr><tr><td></td><td><table class="items-grid"><tr>${widthRow}</tr><tr>${items[index].map((value, cell) => `<td class="item-cell"><div class="cell-content">${value}</div></td>`).join("")}</tr></table></td><td></td></tr>`;
+          target.before(table);
+        }
+        target.remove();
+      </script>
+      <table cellpadding="0" cellspacing="0" border="0" class="paper_width section-table pfooter_pagenum">
+        <tr>
+          <td style="width: 15px"></td>
+          <td style="width: inherit"></td>
+          <td style="width: 15px"></td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>
+            <div class="page-number" data-page-number-container>Page <span data-page-number></span> of <span data-page-total></span></div>
+          </td>
+          <td></td>
+        </tr>
+      </table>
+    </div>
+    <script src="../../dist/printform.js"></script>
+  </body>
+</html>

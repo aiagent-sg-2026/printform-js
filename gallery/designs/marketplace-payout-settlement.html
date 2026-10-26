@@ -1,0 +1,251 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Marketplace Settlement</title>
+    <link rel="stylesheet" href="shared/page.css" />
+    <style>
+      body {
+        color: #352c38;
+        font:
+          13px Arial,
+          "Helvetica Neue",
+          sans-serif;
+      }
+      .paper_width {
+        width: 750px;
+      }
+      .section-table,
+      .items-grid,
+      .totals {
+        table-layout: fixed;
+      }
+      .section-table td {
+        box-sizing: border-box;
+        vertical-align: top;
+      }
+      .items-grid {
+        width: 100%;
+      }
+      .items-grid td {
+        font-size: 13px;
+        line-height: 19px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .head-cell {
+        background: #9867a0;
+        color: white;
+        font-weight: 700;
+      }
+      .item-cell {
+        border-bottom: 1px solid #e3dce6;
+      }
+      .alternate {
+        background: #f7f3f8;
+      }
+      .cell-content {
+        padding: 3px;
+      }
+      .box {
+        padding: 7px;
+        border: 1px solid #dfd0e3;
+        line-height: 18px;
+      }
+      .totals {
+        width: 100%;
+      }
+      .totals td {
+        padding: 4px 8px;
+        font-size: 13px;
+      }
+      .grand td {
+        background: #9867a0;
+        color: white;
+        font-size: 16px;
+        font-weight: 700;
+      }
+      .page-number {
+        padding: 6px;
+        text-align: center;
+      }
+      .footer {
+        padding: 7px;
+        line-height: 18px;
+      }
+    </style>
+  </head>
+  <body>
+    <div
+      class="paper_width printform"
+      data-papersize-width="750"
+      data-papersize-height="971"
+      data-repeat-header="y"
+      data-repeat-rowheader="y"
+      data-repeat-footer-pagenum="y"
+    >
+      <table cellpadding="0" cellspacing="0" border="0" class="paper_width section-table pheader">
+        <tr>
+          <td style="width: 15px"></td>
+          <td style="width: inherit"></td>
+          <td style="width: 15px"></td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>
+            <svg
+              width="720"
+              height="72"
+              viewBox="0 0 720 72"
+              xmlns="http://www.w3.org/2000/svg"
+              role="img"
+              aria-label="Heather Marketplace"
+            >
+              <rect width="720" height="72" fill="#9867A0" />
+              <path d="M25 18h32v36H25zM32 26h18M32 34h18M32 42h12" fill="none" stroke="white" stroke-width="2" />
+              <text x="72" y="33" fill="white" font-family="Arial,sans-serif" font-size="21" font-weight="700">HEATHER MARKETPLACE</text>
+              <text x="72" y="55" fill="#f5eafa" font-family="Arial,sans-serif" font-size="13">
+                SELLER ACCOUNT HM-20814 · 01–15 OCT 2026
+              </text>
+              <text x="690" y="47" fill="white" font-family="Arial,sans-serif" font-size="19" font-weight="700" text-anchor="end">
+                PAYOUT
+              </text>
+            </svg>
+          </td>
+          <td></td>
+        </tr>
+      </table>
+      <table cellpadding="0" cellspacing="0" border="0" class="paper_width section-table pdocinfo">
+        <tr>
+          <td style="width: 15px"></td>
+          <td style="width: inherit"></td>
+          <td style="width: 15px"></td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>
+            <table class="items-grid">
+              <tr>
+                <td style="width: 360px"></td>
+                <td style="width: 360px"></td>
+              </tr>
+              <tr>
+                <td>
+                  <div class="box"><b>PAYOUT BATCH</b> · HP-261015-B<br />Currency USD · Transfer date 18 Oct 2026</div>
+                </td>
+                <td>
+                  <div class="box"><b>SELLER</b> · Heather Sample Goods<br />Bank transfer · Account ending 8042</div>
+                </td>
+              </tr>
+            </table>
+          </td>
+          <td></td>
+        </tr>
+      </table>
+      <table cellpadding="0" cellspacing="0" border="0" class="paper_width section-table prowheader">
+        <tr>
+          <td style="width: 15px"></td>
+          <td style="width: inherit"></td>
+          <td style="width: 15px"></td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>
+            <table class="items-grid">
+              <tr>
+                <td style="width: 95px"></td>
+                <td style="width: 105px"></td>
+                <td style="width: 90px"></td>
+                <td style="width: 105px"></td>
+                <td style="width: 110px"></td>
+                <td style="width: 90px"></td>
+                <td style="width: 125px"></td>
+              </tr>
+              <tr>
+                <td class="head-cell">Order Ref</td>
+                <td class="head-cell" align="right">Gross Sales</td>
+                <td class="head-cell" align="right">Refunds</td>
+                <td class="head-cell" align="right">Platform Fees</td>
+                <td class="head-cell" align="right">Shipping Adj.</td>
+                <td class="head-cell" align="right">Other Adj.</td>
+                <td class="head-cell" align="right">Net Payout</td>
+              </tr>
+            </table>
+          </td>
+          <td></td>
+        </tr>
+      </table>
+      <div id="rows"></div>
+      <table cellpadding="0" cellspacing="0" border="0" class="paper_width section-table pfooter">
+        <tr>
+          <td style="width: 15px"></td>
+          <td style="width: inherit"></td>
+          <td style="width: 15px"></td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>
+            <table class="totals">
+              <tr>
+                <td>Sales less refunds, fees, shipping adjustments and reserve</td>
+                <td id="net" align="right"></td>
+              </tr>
+              <tr class="grand">
+                <td>Deposited amount · after $125.00 reserve</td>
+                <td id="deposit" align="right"></td>
+              </tr>
+            </table>
+            <div class="footer">
+              Settlement reconciles completed orders, refunds, platform deductions and adjustments. Reserve is released next cycle.
+            </div>
+          </td>
+          <td></td>
+        </tr>
+      </table>
+      <script>
+        const options = { minimumFractionDigits: 2, maximumFractionDigits: 2 };
+        const money = (cents) => `${cents < 0 ? "−" : ""}$${(Math.abs(cents) / 100).toLocaleString("en-US", options)}`;
+        const widths = [95, 105, 90, 105, 110, 90, 125];
+        const target = document.getElementById("rows");
+        const widthRow = widths.map((width) => `<td style="width:${width}px"></td>`).join("");
+        let net = 0;
+        for (let index = 0; index < 24; index += 1) {
+          const gross = 14500 + index * 783;
+          const refund = index % 4 === 0 ? 1200 : 0;
+          const fee = Math.round(gross * 0.12);
+          const shipping = index % 3 === 0 ? -350 : 125;
+          const other = index === 5 ? -500 : 0;
+          const payout = gross - refund - fee + shipping + other;
+          net += payout;
+          const cells = [`HM-${80401 + index}`, money(gross), money(-refund), money(-fee), money(shipping), money(other), money(payout)];
+          const table = document.createElement("table");
+          table.cellPadding = "0";
+          table.cellSpacing = "0";
+          table.border = "0";
+          table.className = "paper_width section-table prowitem";
+          table.innerHTML = `<tr><td style="width:15px"></td><td style="width:inherit"></td><td style="width:15px"></td></tr><tr><td></td><td><table class="items-grid"><tr>${widthRow}</tr><tr>${cells.map((value, cell) => `<td class="item-cell${index % 2 ? " alternate" : ""}"${cell ? ' align="right"' : ""}><div class="cell-content">${value}</div></td>`).join("")}</tr></table></td><td></td></tr>`;
+          target.before(table);
+        }
+        target.remove();
+        document.getElementById("net").textContent = money(net);
+        document.getElementById("deposit").textContent = money(net - 12500);
+      </script>
+      <table cellpadding="0" cellspacing="0" border="0" class="paper_width section-table pfooter_pagenum">
+        <tr>
+          <td style="width: 15px"></td>
+          <td style="width: inherit"></td>
+          <td style="width: 15px"></td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>
+            <div class="page-number" data-page-number-container>Page <span data-page-number></span> of <span data-page-total></span></div>
+          </td>
+          <td></td>
+        </tr>
+      </table>
+    </div>
+    <script src="../../dist/printform.js"></script>
+  </body>
+</html>

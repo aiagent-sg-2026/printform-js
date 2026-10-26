@@ -17,7 +17,9 @@ export const translations = {
     typeTraceability: "Traceability", typeCashReceipt: "Cash Receipt",
     typePaymentVoucher: "Payment Voucher", typeOfficialReceipt: "Official Receipt",
     typeRefund: "Refund", typePOSReceipt: "POS Receipt", typeGiftReceipt: "Gift Receipt",
-    typeShiftClosing: "Shift Closing"
+    typeShiftClosing: "Shift Closing", typePriceList: "Price List", typeOrderSummary: "Order Summary",
+    typeWaybill: "Waybill", typeReturnLabel: "Return Label", typePickList: "Pick List",
+    typeSettlement: "Settlement", typeCustomerProfile: "Customer Profile", typeOpportunity: "Opportunity"
   },
   zh: {
     eyebrow: "打印文档设计库", heading: "为打印而设计的表单。",
@@ -37,7 +39,9 @@ export const translations = {
     typeTraceability: "可追溯性", typeCashReceipt: "现金收据",
     typePaymentVoucher: "付款凭单", typeOfficialReceipt: "正式收据",
     typeRefund: "退款", typePOSReceipt: "收银小票", typeGiftReceipt: "礼品收据",
-    typeShiftClosing: "交班结算"
+    typeShiftClosing: "交班结算", typePriceList: "价目表", typeOrderSummary: "订单明细",
+    typeWaybill: "运单", typeReturnLabel: "退货标签", typePickList: "拣货单",
+    typeSettlement: "结算单", typeCustomerProfile: "客户资料", typeOpportunity: "销售商机"
   }
 };
 

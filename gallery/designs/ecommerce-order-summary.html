@@ -1,0 +1,289 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>E-Commerce Order Summary</title>
+    <link rel="stylesheet" href="shared/page.css" />
+    <style>
+      body {
+        color: #173638;
+        font-family: Arial, "Helvetica Neue", sans-serif;
+        font-size: 13px;
+      }
+      .paper_width {
+        width: 750px;
+      }
+      .section-table,
+      .items-grid,
+      .totals {
+        table-layout: fixed;
+      }
+      .section-table td {
+        box-sizing: border-box;
+        vertical-align: top;
+      }
+      .items-grid {
+        width: 100%;
+      }
+      .items-grid td {
+        font-size: 13px;
+        line-height: 19px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .head-cell {
+        color: white;
+        background: #00a0a8;
+        font-weight: 700;
+      }
+      .item-cell {
+        border-bottom: 1px solid #d7e9e8;
+      }
+      .alternate {
+        background: #eff9f8;
+      }
+      .cell-content {
+        padding: 4px;
+      }
+      .card {
+        padding: 8px;
+        border: 1px solid #b8dddd;
+        line-height: 19px;
+      }
+      .label {
+        color: #00868d;
+        font-weight: 700;
+      }
+      .totals {
+        width: 100%;
+        background: #e9f7f6;
+      }
+      .totals td {
+        padding: 5px 8px;
+        font-size: 13px;
+      }
+      .grand td {
+        border-top: 2px solid #00a0a8;
+        color: #006e74;
+        font-size: 16px;
+        font-weight: 700;
+      }
+      .page-number {
+        padding: 6px;
+        text-align: center;
+      }
+      .footer {
+        padding: 8px;
+        line-height: 19px;
+      }
+    </style>
+  </head>
+  <body>
+    <div
+      class="paper_width printform"
+      data-papersize-width="750"
+      data-papersize-height="1050"
+      data-repeat-header="y"
+      data-repeat-rowheader="y"
+      data-repeat-footer-pagenum="y"
+    >
+      <table cellpadding="0" cellspacing="0" border="0" class="paper_width section-table pheader">
+        <tr>
+          <td style="width: 15px"></td>
+          <td style="width: inherit"></td>
+          <td style="width: 15px"></td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>
+            <svg width="720" height="84" viewBox="0 0 720 84" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Tidepool Market">
+              <rect width="720" height="84" fill="#00A0A8" />
+              <circle cx="45" cy="42" r="21" fill="none" stroke="white" stroke-width="3" />
+              <path d="M30 43q15-18 30 0t30 0" fill="none" stroke="white" stroke-width="3" />
+              <text x="95" y="38" fill="white" font-family="Arial,sans-serif" font-size="22" font-weight="700">TIDEPOOL MARKET</text>
+              <text x="95" y="62" fill="#dcffff" font-family="Arial,sans-serif" font-size="13">ORDER #TM-804219 · 26 OCT 2026</text>
+              <text x="690" y="52" fill="white" font-family="Arial,sans-serif" font-size="19" font-weight="700" text-anchor="end">ORDER SUMMARY</text>
+            </svg>
+          </td>
+          <td></td>
+        </tr>
+      </table>
+      <table cellpadding="0" cellspacing="0" border="0" class="paper_width section-table pdocinfo">
+        <tr>
+          <td style="width: 15px"></td>
+          <td style="width: inherit"></td>
+          <td style="width: 15px"></td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>
+            <table class="items-grid">
+              <tr>
+                <td style="width: 355px"></td>
+                <td style="width: 355px"></td>
+              </tr>
+              <tr>
+                <td>
+                  <div class="card">
+                    <span class="label">CUSTOMER & SHIPPING</span><br />Alex Example · 14 Sample Lane, Salem, OR<br />Delivery: Standard parcel · 29 Oct 2026
+                  </div>
+                </td>
+                <td>
+                  <div class="card">
+                    <span class="label">CHECKOUT STATUS</span><br />Payment: Visa ending 2048 · Paid<br />Storefront: Tidepool Market · Voucher: WAVE10
+                  </div>
+                </td>
+              </tr>
+            </table>
+          </td>
+          <td></td>
+        </tr>
+      </table>
+      <table cellpadding="0" cellspacing="0" border="0" class="paper_width section-table prowheader">
+        <tr>
+          <td style="width: 15px"></td>
+          <td style="width: inherit"></td>
+          <td style="width: 15px"></td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>
+            <table class="items-grid">
+              <tr>
+                <td style="width: 70px"></td>
+                <td style="width: 145px"></td>
+                <td style="width: 105px"></td>
+                <td style="width: 70px"></td>
+                <td style="width: 105px"></td>
+                <td style="width: 85px"></td>
+                <td style="width: 140px"></td>
+              </tr>
+              <tr>
+                <td class="head-cell">SKU</td>
+                <td class="head-cell">Product</td>
+                <td class="head-cell">Variant</td>
+                <td class="head-cell" align="right">Qty</td>
+                <td class="head-cell" align="right">Unit Price</td>
+                <td class="head-cell" align="right">Discount</td>
+                <td class="head-cell" align="right">Subtotal</td>
+              </tr>
+            </table>
+          </td>
+          <td></td>
+        </tr>
+      </table>
+      <div id="rows"></div>
+      <table cellpadding="0" cellspacing="0" border="0" class="paper_width section-table pfooter">
+        <tr>
+          <td style="width: 15px"></td>
+          <td style="width: inherit"></td>
+          <td style="width: 15px"></td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>
+            <table class="totals">
+              <tr>
+                <td>Items</td>
+                <td id="subtotal" align="right"></td>
+              </tr>
+              <tr>
+                <td>Voucher WAVE10</td>
+                <td id="discount" align="right"></td>
+              </tr>
+              <tr>
+                <td>Shipping</td>
+                <td id="shipping" align="right"></td>
+              </tr>
+              <tr>
+                <td>Tax (8%)</td>
+                <td id="tax" align="right"></td>
+              </tr>
+              <tr class="grand">
+                <td>Paid total</td>
+                <td id="total" align="right"></td>
+              </tr>
+            </table>
+            <div class="footer">Voucher savings, delivery charge and sales tax are included above. Paid in full by Visa ending 2048.</div>
+          </td>
+          <td></td>
+        </tr>
+      </table>
+      <script>
+        const products = [
+          "Linen travel pouch",
+          "Ceramic pour-over",
+          "Canvas market bag",
+          "Desk journal",
+          "Steel lunch tin",
+          "Cotton tea towel",
+          "Glass storage set",
+          "Wool coaster pack",
+          "Bamboo pen case",
+          "Stoneware cup",
+          "Recycled notebook",
+          "Cork desk mat",
+        ];
+        const widths = [70, 145, 105, 70, 105, 85, 140];
+        const options = { minimumFractionDigits: 2, maximumFractionDigits: 2 };
+        const fmt = (cents) => `$${(cents / 100).toLocaleString("en-US", options)}`;
+        const target = document.getElementById("rows");
+        const widthRow = widths.map((width) => `<td style="width:${width}px"></td>`).join("");
+        let sum = 0;
+        let savings = 0;
+        for (let index = 0; index < products.length; index += 1) {
+          const quantity = (index % 3) + 1;
+          const unit = 1399 + index * 125;
+          const discount = 100 * quantity;
+          const line = quantity * unit - discount;
+          sum += quantity * unit;
+          savings += discount;
+          const cells = [`TP-${index + 101}`, products[index], index % 2 ? "Sea / medium" : "Natural / one", quantity, fmt(unit), fmt(discount), fmt(line)];
+          const table = document.createElement("table");
+          table.cellPadding = "0";
+          table.cellSpacing = "0";
+          table.border = "0";
+          table.className = "paper_width section-table prowitem";
+          table.innerHTML = `<tr><td style="width:15px"></td><td style="width:inherit"></td><td style="width:15px"></td></tr><tr><td></td><td><table class="items-grid"><tr>${widthRow}</tr><tr>${cells.map((value, cell) => `<td class="item-cell${index % 2 ? " alternate" : ""}"${cell > 2 ? ' align="right"' : ""}><div class="cell-content">${value}</div></td>`).join("")}</tr></table></td><td></td></tr>`;
+          target.before(table);
+        }
+        target.remove();
+      </script>
+      <script>
+        const footerOptions = { minimumFractionDigits: 2, maximumFractionDigits: 2 };
+        const money = (cents) => `$${(cents / 100).toLocaleString("en-US", footerOptions)}`;
+        let subtotalCents = 0;
+        let discountCents = 0;
+        for (let index = 0; index < 12; index += 1) {
+          const quantity = (index % 3) + 1;
+          const unit = 1399 + index * 125;
+          subtotalCents += quantity * unit;
+          discountCents += 100 * quantity;
+        }
+        const shippingCents = 795;
+        const taxCents = Math.round((subtotalCents - discountCents) * 0.08);
+        document.getElementById("subtotal").textContent = money(subtotalCents);
+        document.getElementById("discount").textContent = `−${money(discountCents)}`;
+        document.getElementById("shipping").textContent = money(shippingCents);
+        document.getElementById("tax").textContent = money(taxCents);
+        document.getElementById("total").textContent = money(subtotalCents - discountCents + shippingCents + taxCents);
+      </script>
+      <table cellpadding="0" cellspacing="0" border="0" class="paper_width section-table pfooter_pagenum">
+        <tr>
+          <td style="width: 15px"></td>
+          <td style="width: inherit"></td>
+          <td style="width: 15px"></td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>
+            <div class="page-number" data-page-number-container>Page <span data-page-number></span> of <span data-page-total></span></div>
+          </td>
+          <td></td>
+        </tr>
+      </table>
+    </div>
+    <script src="../../dist/printform.js"></script>
+  </body>
+</html>

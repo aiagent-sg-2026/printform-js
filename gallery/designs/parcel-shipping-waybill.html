@@ -1,0 +1,238 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Shipping Label and Waybill</title>
+    <link rel="stylesheet" href="shared/page.css" />
+    <style>
+      body {
+        color: #302b23;
+        font:
+          13px Arial,
+          "Helvetica Neue",
+          sans-serif;
+      }
+      .paper_width {
+        width: 750px;
+      }
+      .section-table,
+      .items-grid {
+        table-layout: fixed;
+      }
+      .section-table td {
+        box-sizing: border-box;
+        vertical-align: top;
+      }
+      .items-grid {
+        width: 100%;
+      }
+      .items-grid td {
+        font-size: 13px;
+        line-height: 18px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .head-cell {
+        background: #8a7759;
+        color: white;
+        font-weight: 700;
+      }
+      .item-cell {
+        border-bottom: 1px solid #ded8ce;
+      }
+      .cell-content {
+        padding: 3px;
+      }
+      .panel {
+        padding: 6px;
+        border: 1px solid #c9c0b2;
+        line-height: 17px;
+      }
+      .route {
+        padding: 7px;
+        background: #8a7759;
+        color: white;
+        font-size: 20px;
+        font-weight: 700;
+        text-align: center;
+      }
+      .barcode {
+        width: 100%;
+        height: 42px;
+      }
+      .page-number {
+        padding: 4px;
+        text-align: center;
+      }
+      .footer {
+        padding: 5px;
+        border-top: 1px dashed #8a7759;
+        line-height: 17px;
+      }
+    </style>
+  </head>
+  <body>
+    <div
+      class="paper_width printform"
+      data-papersize-width="750"
+      data-papersize-height="600"
+      data-repeat-header="y"
+      data-repeat-rowheader="y"
+      data-repeat-footer-pagenum="y"
+    >
+      <table cellpadding="0" cellspacing="0" border="0" class="paper_width section-table pheader">
+        <tr>
+          <td style="width: 15px"></td>
+          <td style="width: inherit"></td>
+          <td style="width: 15px"></td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>
+            <svg width="720" height="58" viewBox="0 0 720 58" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Greyrock Parcel">
+              <rect width="720" height="58" fill="#8A7759" />
+              <path d="M18 14h31v30H18zM24 21h19M24 28h19M24 35h12" fill="none" stroke="white" stroke-width="2" />
+              <text x="62" y="27" fill="white" font-family="Arial,sans-serif" font-size="17" font-weight="700">
+                GREYROCK PARCEL · EXPRESS
+              </text>
+              <text x="62" y="46" fill="#f4ece0" font-family="Arial,sans-serif" font-size="13">
+                WAYBILL WB-804160 · TRACKING 9400 1200 8841
+              </text>
+              <text x="690" y="39" fill="white" font-family="Arial,sans-serif" font-size="24" font-weight="700" text-anchor="end">
+                SEA-04
+              </text>
+            </svg>
+          </td>
+          <td></td>
+        </tr>
+      </table>
+      <table cellpadding="0" cellspacing="0" border="0" class="paper_width section-table pdocinfo">
+        <tr>
+          <td style="width: 15px"></td>
+          <td style="width: inherit"></td>
+          <td style="width: 15px"></td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>
+            <table class="items-grid">
+              <tr>
+                <td style="width: 360px"></td>
+                <td style="width: 360px"></td>
+              </tr>
+              <tr>
+                <td>
+                  <div class="panel"><b>FROM · NORTHSTAR SAMPLE GOODS</b><br />14 Fictional Quay, Salem OR 97301</div>
+                </td>
+                <td>
+                  <div class="panel"><b>TO · MORGAN EXAMPLE</b><br />72 Imaginary Road, Seattle WA 98101</div>
+                </td>
+              </tr>
+            </table>
+            <div class="route">DESTINATION SEA-04 · SORT 7B</div>
+            <svg class="barcode" viewBox="0 0 720 42" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Tracking barcode">
+              <rect width="720" height="42" fill="white" />
+              <path
+                d="M20 3v34m5-34v34m9-34v34m4-34v34m11-34v34m8-34v34m3-34v34m12-34v34m10-34v34m5-34v34m12-34v34m4-34v34m8-34v34m10-34v34m3-34v34m12-34v34m7-34v34m5-34v34m12-34v34m6-34v34m9-34v34m4-34v34m13-34v34m6-34v34m10-34v34m8-34v34m4-34v34m11-34v34m8-34v34m11-34v34m4-34v34m12-34v34m7-34v34m12-34v34m5-34v34m11-34v34m8-34v34m6-34v34m12-34v34m5-34v34m11-34v34m8-34v34m6-34v34m11-34v34m8-34v34m6-34v34m13-34v34m6-34v34m11-34v34m8-34v34"
+                stroke="#222"
+                stroke-width="3"
+              />
+            </svg>
+          </td>
+          <td></td>
+        </tr>
+      </table>
+      <table cellpadding="0" cellspacing="0" border="0" class="paper_width section-table prowheader">
+        <tr>
+          <td style="width: 15px"></td>
+          <td style="width: inherit"></td>
+          <td style="width: 15px"></td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>
+            <table class="items-grid">
+              <tr>
+                <td style="width: 70px"></td>
+                <td style="width: 330px"></td>
+                <td style="width: 90px"></td>
+                <td style="width: 100px"></td>
+                <td style="width: 130px"></td>
+              </tr>
+              <tr>
+                <td class="head-cell">Parcel</td>
+                <td class="head-cell">Contents</td>
+                <td class="head-cell" align="right">Quantity</td>
+                <td class="head-cell" align="right">Weight kg</td>
+                <td class="head-cell">Handling</td>
+              </tr>
+            </table>
+          </td>
+          <td></td>
+        </tr>
+      </table>
+      <div id="rows"></div>
+      <table cellpadding="0" cellspacing="0" border="0" class="paper_width section-table pfooter">
+        <tr>
+          <td style="width: 15px"></td>
+          <td style="width: inherit"></td>
+          <td style="width: 15px"></td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>
+            <div class="footer" id="summary"></div>
+            <div class="footer">Deliver to reception. Keep upright; recipient signature requested.</div>
+          </td>
+          <td></td>
+        </tr>
+      </table>
+      <script>
+        const packages = [
+          ["Glass jars", 2, 1.2, "Fragile"],
+          ["Linen towels", 4, 2.1, "Dry"],
+          ["Ceramic cups", 2, 1.8, "Fragile"],
+          ["Paper goods", 3, 1.0, "Keep dry"],
+          ["Desk tray", 1, 0.9, "Standard"],
+        ];
+        const widths = [70, 330, 90, 100, 130];
+        const target = document.getElementById("rows");
+        const widthRow = widths.map((width) => `<td style="width:${width}px"></td>`).join("");
+        let weight = 0;
+        let quantity = 0;
+        for (let index = 0; index < packages.length; index += 1) {
+          const item = packages[index];
+          weight += item[2];
+          quantity += item[1];
+          const cells = [`P-${index + 1}`, item[0], item[1], item[2].toFixed(1), item[3]];
+          const table = document.createElement("table");
+          table.cellPadding = "0";
+          table.cellSpacing = "0";
+          table.border = "0";
+          table.className = "paper_width section-table prowitem";
+          table.innerHTML = `<tr><td style="width:15px"></td><td style="width:inherit"></td><td style="width:15px"></td></tr><tr><td></td><td><table class="items-grid"><tr>${widthRow}</tr><tr>${cells.map((value, cell) => `<td class="item-cell"${cell === 2 || cell === 3 ? ' align="right"' : ""}><div class="cell-content">${value}</div></td>`).join("")}</tr></table></td><td></td></tr>`;
+          target.before(table);
+        }
+        target.remove();
+        document.getElementById("summary").textContent =
+          `PARCELS: ${packages.length} · PIECES: ${quantity} · DECLARED WEIGHT: ${weight.toFixed(1)} kg · SERVICE: EXPRESS`;
+      </script>
+      <table cellpadding="0" cellspacing="0" border="0" class="paper_width section-table pfooter_pagenum">
+        <tr>
+          <td style="width: 15px"></td>
+          <td style="width: inherit"></td>
+          <td style="width: 15px"></td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>
+            <div class="page-number" data-page-number-container>Page <span data-page-number></span> of <span data-page-total></span></div>
+          </td>
+          <td></td>
+        </tr>
+      </table>
+    </div>
+    <script src="../../dist/printform.js"></script>
+  </body>
+</html>
