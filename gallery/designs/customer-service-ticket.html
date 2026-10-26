@@ -1,0 +1,208 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Service Ticket</title>
+    <link rel="stylesheet" href="shared/page.css" />
+    <style>
+      body {
+        color: #34464a;
+        font-family: Arial, "Helvetica Neue", sans-serif;
+      }
+      .paper_width {
+        width: 750px;
+      }
+      .section-table {
+        table-layout: fixed;
+      }
+      .section-table td {
+        box-sizing: border-box;
+        vertical-align: top;
+      }
+      .items-grid,
+      .info-grid {
+        width: 100%;
+        table-layout: fixed;
+      }
+      .info-grid td {
+        width: 50%;
+        padding: 4px;
+        font-size: 13px;
+        line-height: 18px;
+      }
+      .info-box {
+        padding: 8px;
+        border: 1px solid #b9c9c9;
+      }
+      .items-grid td {
+        font-size: 13px;
+        line-height: 18px;
+      }
+      .head-cell {
+        background: #55828b;
+        color: white;
+        font-weight: 700;
+      }
+      .item-cell {
+        border-bottom: 1px solid #dce4e4;
+      }
+      .alternate {
+        background: #f3f7f7;
+      }
+      .cell-content {
+        padding: 4px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .page-number {
+        padding: 7px;
+        text-align: center;
+      }
+    </style>
+  </head>
+  <body>
+    <div
+      class="paper_width printform"
+      data-papersize-width="750"
+      data-papersize-height="1050"
+      data-repeat-header="y"
+      data-repeat-rowheader="y"
+      data-repeat-footer-pagenum="y"
+    >
+      <table class="paper_width section-table pheader">
+        <tr>
+          <td style="width: 15px"></td>
+          <td style="width: inherit"></td>
+          <td style="width: 15px"></td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>
+            <svg width="720" height="96" viewBox="0 0 720 96" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Harbor Care">
+              <rect width="720" height="96" fill="#55828B" />
+              <circle cx="45" cy="48" r="23" fill="white" />
+              <path d="M45 34v28M31 48h28" stroke="#55828B" stroke-width="5" />
+              <text x="82" y="43" fill="white" font-family="Arial,sans-serif" font-size="23" font-weight="700">HARBOR CARE · ST-26084</text>
+              <text x="82" y="69" fill="white" font-family="Arial,sans-serif" font-size="17">
+                SERVICE TICKET · PRIORITY P2 · RESPONSE DUE 16:00
+              </text>
+            </svg>
+          </td>
+          <td></td>
+        </tr>
+      </table>
+      <table class="paper_width section-table pdocinfo">
+        <tr>
+          <td style="width: 15px"></td>
+          <td style="width: inherit"></td>
+          <td style="width: 15px"></td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>
+            <table class="info-grid">
+              <tr>
+                <td style="width: 50%"></td>
+                <td style="width: 50%"></td>
+              </tr>
+              <tr>
+                <td>
+                  <div class="info-box"><b>CUSTOMER</b><br />Harbor &amp; Pine Studio<br />Morgan Lee · 503-555-0142</div>
+                </td>
+                <td>
+                  <div class="info-box">
+                    <b>PRODUCT / TEAM</b><br />Northstar Sync Hub · Serial NSH-44021<br />Customer Care · Assigned: A. Chen
+                  </div>
+                </td>
+              </tr>
+            </table>
+            <div style="margin: 8px; padding: 8px; background: #eaf0f0; font-size: 13px">
+              ISSUE SUMMARY · Intermittent synchronization failure reported through the customer portal. Impact: two staff accounts.
+            </div>
+          </td>
+          <td></td>
+        </tr>
+      </table>
+      <table class="paper_width section-table prowheader">
+        <tr>
+          <td style="width: 15px"></td>
+          <td style="width: inherit"></td>
+          <td style="width: 15px"></td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>
+            <table class="items-grid">
+              <tr id="widths"></tr>
+              <tr id="headers"></tr>
+            </table>
+          </td>
+          <td></td>
+        </tr>
+      </table>
+      <div id="rows"></div>
+      <table class="paper_width section-table pfooter">
+        <tr>
+          <td style="width: 15px"></td>
+          <td style="width: inherit"></td>
+          <td style="width: 15px"></td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>
+            <div style="padding: 9px; border-top: 2px solid #55828b; font-size: 13px">
+              Resolution: Sync profile refreshed; customer confirmed service restored. Acknowledged by Morgan Lee · Closed 26 October 2026.
+            </div>
+          </td>
+          <td></td>
+        </tr>
+      </table>
+      <script>
+        const columns = ["Time", "Action", "Agent", "Status", "Duration", "Notes"];
+        const widths = [65, 150, 90, 85, 75, 255];
+        const align = ["left", "left", "left", "left", "right", "left"];
+        const rows = Array.from({ length: 14 }, (_, i) => [
+          "09:" + String(5 + i * 3).padStart(2, "0"),
+          ["Intake review", "Verify serial", "Reproduce fault", "Check logs", "Customer call", "Apply update", "Run validation"][i % 7],
+          ["A. Chen", "M. Patel", "R. Kim"][i % 3],
+          i === 13 ? "Resolved" : "Complete",
+          12 + (i % 6) + " min",
+          ["Queue reviewed", "Serial confirmed", "Issue reproduced", "Logs attached", "Customer updated", "Patch staged", "Test passed"][
+            i % 7
+          ],
+        ]);
+        const widthRow = widths.map((w) => `<td style="width:${w}px"></td>`).join("");
+        document.getElementById("widths").innerHTML = widthRow;
+        document.getElementById("headers").innerHTML = columns
+          .map((v, i) => `<td class="head-cell" align="${align[i]}"><div class="cell-content">${v}</div></td>`)
+          .join("");
+        rows.forEach((row, index) => {
+          const table = document.createElement("table");
+          table.cellPadding = "0";
+          table.cellSpacing = "0";
+          table.border = "0";
+          table.className = "paper_width section-table prowitem";
+          table.innerHTML = `<tr><td style="width:15px"></td><td style="width:inherit"></td><td style="width:15px"></td></tr><tr><td></td><td><table class="items-grid"><tr>${widthRow}</tr><tr>${row.map((v, i) => `<td class="item-cell${index % 2 ? " alternate" : ""}" align="${align[i]}"><div class="cell-content">${v}</div></td>`).join("")}</tr></table></td><td></td></tr>`;
+          document.getElementById("rows").before(table);
+        });
+        document.getElementById("rows").remove();
+      </script>
+      <table class="paper_width section-table pfooter_pagenum">
+        <tr>
+          <td style="width: 15px"></td>
+          <td style="width: inherit"></td>
+          <td style="width: 15px"></td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>
+            <div class="page-number" data-page-number-container>Page <span data-page-number></span> of <span data-page-total></span></div>
+          </td>
+          <td></td>
+        </tr>
+      </table>
+    </div>
+    <script src="../../dist/printform.js"></script>
+  </body>
+</html>

@@ -1,0 +1,207 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Employee Payslip</title>
+    <link rel="stylesheet" href="shared/page.css" />
+    <style>
+      body {
+        color: #393541;
+        font-family: Arial, "Helvetica Neue", sans-serif;
+      }
+      .paper_width {
+        width: 750px;
+      }
+      .section-table {
+        table-layout: fixed;
+      }
+      .section-table td {
+        box-sizing: border-box;
+        vertical-align: top;
+      }
+      .info-grid,
+      .items-grid {
+        width: 100%;
+        table-layout: fixed;
+      }
+      .info-grid td {
+        width: 50%;
+        padding: 4px;
+        font-size: 13px;
+        line-height: 18px;
+      }
+      .info-box {
+        padding: 7px;
+        border: 1px solid #d9d5e5;
+      }
+      .items-grid td {
+        font-size: 13px;
+        line-height: 18px;
+      }
+      .head-cell {
+        background: #887bae;
+        color: white;
+        font-weight: bold;
+      }
+      .item-cell {
+        border-bottom: 1px solid #e4e1eb;
+      }
+      .alternate {
+        background: #f7f6fa;
+      }
+      .cell-content {
+        padding: 4px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .page-number {
+        padding: 6px;
+        text-align: center;
+      }
+    </style>
+  </head>
+  <body>
+    <div
+      class="paper_width printform"
+      data-papersize-width="750"
+      data-papersize-height="600"
+      data-repeat-header="y"
+      data-repeat-rowheader="y"
+      data-repeat-footer-pagenum="y"
+    >
+      <table class="paper_width section-table pheader">
+        <tr>
+          <td style="width: 15px"></td>
+          <td style="width: inherit"></td>
+          <td style="width: 15px"></td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>
+            <svg width="720" height="78" viewBox="0 0 720 78" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Lavender Payroll">
+              <rect width="720" height="78" fill="#887BAE" />
+              <path d="M25 21h45v37H25zM35 31h25M35 41h25M35 51h16" fill="none" stroke="white" stroke-width="3" />
+              <text x="87" y="36" fill="white" font-family="Arial,sans-serif" font-size="21" font-weight="700">
+                LAVENDER PAYROLL · CONFIDENTIAL
+              </text>
+              <text x="87" y="61" fill="white" font-family="Arial,sans-serif" font-size="17">OCTOBER 2026 · PAYMENT DATE 30 OCT</text>
+            </svg>
+          </td>
+          <td></td>
+        </tr>
+      </table>
+      <table class="paper_width section-table pdocinfo">
+        <tr>
+          <td style="width: 15px"></td>
+          <td style="width: inherit"></td>
+          <td style="width: 15px"></td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>
+            <table class="info-grid">
+              <tr>
+                <td style="width: 50%"></td>
+                <td style="width: 50%"></td>
+              </tr>
+              <tr>
+                <td>
+                  <div class="info-box">EMPLOYEE · Riley Example · E-2048<br />Department: Product Operations</div>
+                </td>
+                <td>
+                  <div class="info-box">PAY PERIOD · October 2026<br />Account: •••• •••• 4821 · USD</div>
+                </td>
+              </tr>
+            </table>
+          </td>
+          <td></td>
+        </tr>
+      </table>
+      <table class="paper_width section-table prowheader">
+        <tr>
+          <td style="width: 15px"></td>
+          <td style="width: inherit"></td>
+          <td style="width: 15px"></td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>
+            <table class="items-grid">
+              <tr id="widths"></tr>
+              <tr id="headers"></tr>
+            </table>
+          </td>
+          <td></td>
+        </tr>
+      </table>
+      <div id="rows"></div>
+      <table class="paper_width section-table pfooter">
+        <tr>
+          <td style="width: 15px"></td>
+          <td style="width: inherit"></td>
+          <td style="width: 15px"></td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>
+            <div style="padding: 7px; border: 2px solid #887bae; font-size: 13px">
+              Gross <span id="gross"></span> · Deductions <span id="deductions"></span> · <b>NET PAY <span id="net"></span></b
+              ><br />Employer contributions (8%): <span id="employer"></span>
+            </div>
+          </td>
+          <td></td>
+        </tr>
+      </table>
+      <script>
+        const columns = ["Pay Component", "Basis", "Units", "Earnings", "Deductions"];
+        const widths = [180, 150, 90, 145, 155];
+        const align = ["left", "left", "right", "right", "right"];
+        const rows = [
+          ["Base salary", "Monthly", 1, 520000, 0],
+          ["Housing allowance", "Fixed", 1, 65000, 0],
+          ["Transit benefit", "Monthly", 1, 18000, 0],
+          ["Health premium", "Employee", 1, 0, 24500],
+          ["Income tax", "Withholding", 1, 0, 82000],
+        ];
+        const widthRow = widths.map((w) => `<td style="width:${w}px"></td>`).join("");
+        document.getElementById("widths").innerHTML = widthRow;
+        document.getElementById("headers").innerHTML = columns
+          .map((v, i) => `<td class="head-cell" align="${align[i]}"><div class="cell-content">${v}</div></td>`)
+          .join("");
+        const money = (n) => `$${(n / 100).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+        rows.forEach((row, index) => {
+          const table = document.createElement("table");
+          table.cellPadding = "0";
+          table.cellSpacing = "0";
+          table.border = "0";
+          table.className = "paper_width section-table prowitem";
+          table.innerHTML = `<tr><td style="width:15px"></td><td style="width:inherit"></td><td style="width:15px"></td></tr><tr><td></td><td><table class="items-grid"><tr>${widthRow}</tr><tr>${row.map((v, i) => `<td class="item-cell${index % 2 ? " alternate" : ""}" align="${align[i]}"><div class="cell-content">${i > 2 ? money(v) : v}</div></td>`).join("")}</tr></table></td><td></td></tr>`;
+          document.getElementById("rows").before(table);
+        });
+        document.getElementById("rows").remove();
+        const gross = rows.reduce((s, r) => s + r[3], 0),
+          deductions = rows.reduce((s, r) => s + r[4], 0);
+        document.getElementById("gross").textContent = money(gross);
+        document.getElementById("deductions").textContent = money(deductions);
+        document.getElementById("net").textContent = money(gross - deductions);
+        document.getElementById("employer").textContent = money(Math.round(gross * 0.08));
+      </script>
+      <table class="paper_width section-table pfooter_pagenum">
+        <tr>
+          <td style="width: 15px"></td>
+          <td style="width: inherit"></td>
+          <td style="width: 15px"></td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>
+            <div class="page-number" data-page-number-container>Page <span data-page-number></span> of <span data-page-total></span></div>
+          </td>
+          <td></td>
+        </tr>
+      </table>
+    </div>
+    <script src="../../dist/printform.js"></script>
+  </body>
+</html>

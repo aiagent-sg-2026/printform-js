@@ -1,0 +1,212 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Credit Note</title>
+    <link rel="stylesheet" href="shared/page.css" />
+    <style>
+      body {
+        color: #303c3b;
+        font-family: Arial, "Helvetica Neue", sans-serif;
+      }
+      .paper_width {
+        width: 750px;
+      }
+      .section-table {
+        table-layout: fixed;
+      }
+      .section-table td {
+        box-sizing: border-box;
+        vertical-align: top;
+      }
+      .info-grid,
+      .items-grid {
+        width: 100%;
+        table-layout: fixed;
+      }
+      .info-grid td {
+        width: 50%;
+        padding: 5px;
+        font-size: 13px;
+        line-height: 18px;
+      }
+      .info-box {
+        padding: 9px;
+        border: 1px solid #c9dedb;
+      }
+      .items-grid td {
+        font-size: 13px;
+        line-height: 18px;
+      }
+      .head-cell {
+        background: #4d908e;
+        color: white;
+        font-weight: bold;
+      }
+      .item-cell {
+        border-bottom: 1px solid #dce7e5;
+      }
+      .alternate {
+        background: #f2f8f7;
+      }
+      .cell-content {
+        padding: 4px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .page-number {
+        padding: 7px;
+        text-align: center;
+      }
+    </style>
+  </head>
+  <body>
+    <div
+      class="paper_width printform"
+      data-papersize-width="750"
+      data-papersize-height="1050"
+      data-repeat-header="y"
+      data-repeat-rowheader="y"
+      data-repeat-footer-pagenum="y"
+    >
+      <table class="paper_width section-table pheader">
+        <tr>
+          <td style="width: 15px"></td>
+          <td style="width: inherit"></td>
+          <td style="width: 15px"></td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>
+            <svg width="720" height="88" viewBox="0 0 720 88" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Example Finance">
+              <rect width="720" height="88" fill="#4D908E" />
+              <circle cx="45" cy="44" r="24" fill="none" stroke="white" stroke-width="3" />
+              <path d="m33 44 8 8 17-18" fill="none" stroke="white" stroke-width="4" />
+              <text x="84" y="39" fill="white" font-family="Arial,sans-serif" font-size="23" font-weight="700">
+                EXAMPLE FINANCE · CREDIT NOTE
+              </text>
+              <text x="84" y="65" fill="white" font-family="Arial,sans-serif" font-size="16">CN-26091 · ISSUED 26 OCTOBER 2026</text>
+            </svg>
+          </td>
+          <td></td>
+        </tr>
+      </table>
+      <table class="paper_width section-table pdocinfo">
+        <tr>
+          <td style="width: 15px"></td>
+          <td style="width: inherit"></td>
+          <td style="width: 15px"></td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>
+            <table class="info-grid">
+              <tr>
+                <td style="width: 50%"></td>
+                <td style="width: 50%"></td>
+              </tr>
+              <tr>
+                <td>
+                  <div class="info-box">CUSTOMER · Harbor &amp; Pine Studio<br />Account: C-10482 · Morgan Lee</div>
+                </td>
+                <td>
+                  <div class="info-box">
+                    LINKED INVOICE · INV-26-0418<br />Reason: returned goods adjustment<br />Adjustment date: 26 Oct 2026
+                  </div>
+                </td>
+              </tr>
+            </table>
+          </td>
+          <td></td>
+        </tr>
+      </table>
+      <table class="paper_width section-table prowheader">
+        <tr>
+          <td style="width: 15px"></td>
+          <td style="width: inherit"></td>
+          <td style="width: 15px"></td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>
+            <table class="items-grid">
+              <tr id="widths"></tr>
+              <tr id="headers"></tr>
+            </table>
+          </td>
+          <td></td>
+        </tr>
+      </table>
+      <div id="rows"></div>
+      <table class="paper_width section-table pfooter">
+        <tr>
+          <td style="width: 15px"></td>
+          <td style="width: inherit"></td>
+          <td style="width: 15px"></td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>
+            <div style="padding: 9px; border-top: 2px solid #4d908e; font-size: 13px">
+              Credit total: <b id="total"></b> · Tax impact: <span id="tax"></span><br />Apply against account balance or request a refund
+              through billing support.
+            </div>
+          </td>
+          <td></td>
+        </tr>
+      </table>
+      <script>
+        const columns = ["Item", "Description", "Credit Qty", "Unit Price", "Tax Adjustment", "Credit Amount"];
+        const widths = [65, 190, 90, 110, 120, 145];
+        const align = ["left", "left", "right", "right", "right", "right"];
+        const rows = Array.from({ length: 12 }, (_, i) => {
+          const unit = 12500 + i * 875,
+            qty = 1 + (i % 3),
+            tax = Math.round(unit * 0.08);
+          return [
+            `CR-${String(i + 1).padStart(2, "0")}`,
+            ["Returned component", "Service adjustment", "Price correction"][i % 3],
+            qty,
+            unit,
+            tax,
+            unit * qty + tax,
+          ];
+        });
+        const widthRow = widths.map((w) => `<td style="width:${w}px"></td>`).join("");
+        document.getElementById("widths").innerHTML = widthRow;
+        document.getElementById("headers").innerHTML = columns
+          .map((v, i) => `<td class="head-cell" align="${align[i]}"><div class="cell-content">${v}</div></td>`)
+          .join("");
+        const money = (n) => `$${(n / 100).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+        rows.forEach((row, index) => {
+          const table = document.createElement("table");
+          table.cellPadding = "0";
+          table.cellSpacing = "0";
+          table.border = "0";
+          table.className = "paper_width section-table prowitem";
+          table.innerHTML = `<tr><td style="width:15px"></td><td style="width:inherit"></td><td style="width:15px"></td></tr><tr><td></td><td><table class="items-grid"><tr>${widthRow}</tr><tr>${row.map((v, i) => `<td class="item-cell${index % 2 ? " alternate" : ""}" align="${align[i]}"><div class="cell-content">${i >= 3 ? money(v) : v}</div></td>`).join("")}</tr></table></td><td></td></tr>`;
+          document.getElementById("rows").before(table);
+        });
+        document.getElementById("rows").remove();
+        document.getElementById("total").textContent = money(rows.reduce((s, r) => s + r[5], 0));
+        document.getElementById("tax").textContent = money(rows.reduce((s, r) => s + r[4], 0));
+      </script>
+      <table class="paper_width section-table pfooter_pagenum">
+        <tr>
+          <td style="width: 15px"></td>
+          <td style="width: inherit"></td>
+          <td style="width: 15px"></td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>
+            <div class="page-number" data-page-number-container>Page <span data-page-number></span> of <span data-page-total></span></div>
+          </td>
+          <td></td>
+        </tr>
+      </table>
+    </div>
+    <script src="../../dist/printform.js"></script>
+  </body>
+</html>

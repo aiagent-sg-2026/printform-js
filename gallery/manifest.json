@@ -835,5 +835,157 @@
     "thumb": "thumbs/crm-opportunity-sheet.png",
     "width": 750,
     "height": 1050
+  },
+  {
+    "id": "customer-service-ticket",
+    "title": {
+      "en": "Service Ticket",
+      "zh": "客户服务工单"
+    },
+    "type": "Service Ticket",
+    "paper": "A4",
+    "pages": 1,
+    "tags": [
+      "crm",
+      "support",
+      "service"
+    ],
+    "file": "designs/customer-service-ticket.html",
+    "thumb": "thumbs/customer-service-ticket.png",
+    "width": 750,
+    "height": 1050
+  },
+  {
+    "id": "customer-open-item-statement",
+    "title": {
+      "en": "Customer Open-Item Statement",
+      "zh": "客户未结款项对账单"
+    },
+    "type": "Customer Statement",
+    "paper": "A4",
+    "pages": 2,
+    "tags": [
+      "crm",
+      "receivables",
+      "collections"
+    ],
+    "file": "designs/customer-open-item-statement.html",
+    "thumb": "thumbs/customer-open-item-statement.png",
+    "width": 750,
+    "height": 1050
+  },
+  {
+    "id": "loyalty-points-activity",
+    "title": {
+      "en": "Loyalty Points Statement",
+      "zh": "会员积分明细单"
+    },
+    "type": "Loyalty Statement",
+    "paper": "LETTER",
+    "pages": 2,
+    "tags": [
+      "crm",
+      "loyalty",
+      "membership"
+    ],
+    "file": "designs/loyalty-points-activity.html",
+    "thumb": "thumbs/loyalty-points-activity.png",
+    "width": 750,
+    "height": 971
+  },
+  {
+    "id": "crm-contact-directory",
+    "title": {
+      "en": "Business Contact List",
+      "zh": "业务联系人名录"
+    },
+    "type": "Contact List",
+    "paper": "LETTER",
+    "pages": 2,
+    "tags": [
+      "crm",
+      "contacts",
+      "directory"
+    ],
+    "file": "designs/crm-contact-directory.html",
+    "thumb": "thumbs/crm-contact-directory.png",
+    "width": 750,
+    "height": 971
+  },
+  {
+    "id": "employee-monthly-payslip",
+    "title": {
+      "en": "Employee Payslip",
+      "zh": "员工工资单"
+    },
+    "type": "Payslip",
+    "paper": "A5",
+    "pages": 1,
+    "tags": [
+      "hr",
+      "payroll",
+      "employee"
+    ],
+    "file": "designs/employee-monthly-payslip.html",
+    "thumb": "thumbs/employee-monthly-payslip.png",
+    "width": 750,
+    "height": 600
+  },
+  {
+    "id": "customer-credit-note",
+    "title": {
+      "en": "Credit Note",
+      "zh": "贷项通知单"
+    },
+    "type": "Credit Note",
+    "paper": "A4",
+    "pages": 1,
+    "tags": [
+      "finance",
+      "credit",
+      "adjustments"
+    ],
+    "file": "designs/customer-credit-note.html",
+    "thumb": "thumbs/customer-credit-note.png",
+    "width": 750,
+    "height": 1050
+  },
+  {
+    "id": "customer-debit-note",
+    "title": {
+      "en": "Debit Note",
+      "zh": "借项通知单"
+    },
+    "type": "Debit Note",
+    "paper": "A4",
+    "pages": 1,
+    "tags": [
+      "finance",
+      "debit",
+      "billing"
+    ],
+    "file": "designs/customer-debit-note.html",
+    "thumb": "thumbs/customer-debit-note.png",
+    "width": 750,
+    "height": 1050
+  },
+  {
+    "id": "bank-reconciliation-workpaper",
+    "title": {
+      "en": "Bank Reconciliation",
+      "zh": "银行存款余额调节表"
+    },
+    "type": "Reconciliation",
+    "paper": "A4",
+    "pages": 2,
+    "tags": [
+      "finance",
+      "banking",
+      "reconciliation"
+    ],
+    "file": "designs/bank-reconciliation-workpaper.html",
+    "thumb": "thumbs/bank-reconciliation-workpaper.png",
+    "width": 750,
+    "height": 1050
   }
 ]
