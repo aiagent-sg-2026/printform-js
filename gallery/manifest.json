@@ -1,0 +1,117 @@
+[
+  {
+    "id": "blue-sales-invoice",
+    "title": {
+      "en": "Northstar Sales Invoice",
+      "zh": "北辰销售发票"
+    },
+    "type": "Invoice",
+    "paper": "A4",
+    "pages": 1,
+    "tags": [
+      "sales",
+      "blue",
+      "modern"
+    ],
+    "file": "designs/blue-sales-invoice.html",
+    "thumb": "thumbs/blue-sales-invoice.png",
+    "width": 794,
+    "height": 1123
+  },
+  {
+    "id": "red-purchase-order",
+    "title": {
+      "en": "Redwood Purchase Order",
+      "zh": "红木采购订单"
+    },
+    "type": "Purchase Order",
+    "paper": "LETTER",
+    "pages": 2,
+    "tags": [
+      "purchase",
+      "red",
+      "supplier"
+    ],
+    "file": "designs/red-purchase-order.html",
+    "thumb": "thumbs/red-purchase-order.png",
+    "width": 816,
+    "height": 1056
+  },
+  {
+    "id": "delivery-note",
+    "title": {
+      "en": "Fieldway Delivery Note",
+      "zh": "田野配送单"
+    },
+    "type": "Delivery Note",
+    "paper": "A5",
+    "pages": 1,
+    "tags": [
+      "delivery",
+      "green",
+      "warehouse"
+    ],
+    "file": "designs/delivery-note.html",
+    "thumb": "thumbs/delivery-note.png",
+    "width": 559,
+    "height": 794
+  },
+  {
+    "id": "terms-quotation",
+    "title": {
+      "en": "Studio Quotation + Terms",
+      "zh": "工作室报价单与条款"
+    },
+    "type": "Quotation",
+    "paper": "A4",
+    "pages": 2,
+    "tags": [
+      "quotation",
+      "terms",
+      "blue"
+    ],
+    "file": "designs/terms-quotation.html",
+    "thumb": "thumbs/terms-quotation.png",
+    "width": 794,
+    "height": 1123
+  },
+  {
+    "id": "packing-list",
+    "title": {
+      "en": "Cedar Packing List",
+      "zh": "雪松装箱单"
+    },
+    "type": "Packing List",
+    "paper": "LETTER",
+    "pages": 1,
+    "tags": [
+      "packing",
+      "export",
+      "logistics"
+    ],
+    "file": "designs/packing-list.html",
+    "thumb": "thumbs/packing-list.png",
+    "width": 816,
+    "height": 1056
+  },
+  {
+    "id": "mono-credit-receipt",
+    "title": {
+      "en": "Mono Credit Receipt",
+      "zh": "黑白退款收据"
+    },
+    "type": "Credit Note",
+    "paper": "A5",
+    "pages": 1,
+    "tags": [
+      "receipt",
+      "credit",
+      "minimal",
+      "black"
+    ],
+    "file": "designs/mono-credit-receipt.html",
+    "thumb": "thumbs/mono-credit-receipt.png",
+    "width": 559,
+    "height": 794
+  }
+]

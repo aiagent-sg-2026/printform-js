@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <title>PrintForm Gallery</title>
+  <link rel="stylesheet" href="./gallery.css">
+  <script type="module" src="./js/main.js"></script>
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="../index.html" aria-label="PrintForm home">PrintForm <span>Gallery</span></a>
+    <div class="language" aria-label="Language">
+      <button type="button" data-language="en" aria-pressed="true">EN</button>
+      <button type="button" data-language="zh" aria-pressed="false">中文</button>
+    </div>
+  </header>
+  <main>
+    <section class="intro">
+      <p class="eyebrow" data-i18n="eyebrow">DOCUMENT DESIGN LIBRARY</p>
+      <h1 data-i18n="heading">Forms made for print.</h1>
+      <p data-i18n="subheading">Explore live, paginated business documents built with PrintForm.js.</p>
+    </section>
+    <section class="controls" aria-label="Gallery filters">
+      <label class="search"><span data-i18n="searchLabel">Search designs</span><input id="search" type="search" data-i18n-placeholder="searchPlaceholder" placeholder="Search by name or tag"></label>
+      <div class="filter-group"><span data-i18n="typeLabel">Document type</span><div id="type-filters" class="chips" role="group" aria-label="Document type"></div></div>
+      <div class="filter-group"><span data-i18n="paperLabel">Paper</span><div id="paper-filters" class="chips" role="group" aria-label="Paper size"></div></div>
+    </section>
+    <p id="result-count" class="result-count" aria-live="polite"></p>
+    <section id="gallery-grid" class="gallery-grid" aria-label="Print form designs"></section>
+    <p id="empty-state" class="empty-state" hidden data-i18n="empty">No designs match these filters.</p>
+  </main>
+  <dialog id="design-modal" aria-labelledby="modal-title">
+    <div class="modal-header"><div><h2 id="modal-title"></h2><p id="modal-meta"></p></div><button type="button" class="icon-button" data-close aria-label="Close viewer">×</button></div>
+    <div class="frame-wrap"><iframe title="Live print form preview"></iframe></div>
+    <footer class="modal-actions"><a class="button secondary" data-open target="_blank" rel="noopener"></a><a class="button primary" data-studio target="_blank" rel="noopener" hidden></a></footer>
+  </dialog>
+</body>
+</html>

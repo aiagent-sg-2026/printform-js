@@ -17,7 +17,7 @@ import { finalizeStudioV3Pwa } from './studio-v3-pwa.mjs';
 
 const root = process.cwd();
 const output = path.resolve(root, "site-dist");
-const allowedDirectories = ["dist", "docs", "img", "studio", "studio-v2", "studio-v3"];
+const allowedDirectories = ["dist", "docs", "gallery", "img", "studio", "studio-v2", "studio-v3"];
 const allowedRootFiles = ["index.html", "README.md", "README.zh-CN.md"];
 
 function copy(source, destination) {
