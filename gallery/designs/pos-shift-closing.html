@@ -1,0 +1,281 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Shift Closing Report</title>
+    <link rel="stylesheet" href="shared/page.css" />
+    <style>
+      body {
+        color: #29343b;
+        font-family: Arial, "Helvetica Neue", sans-serif;
+      }
+      .paper_width {
+        width: 750px;
+      }
+      .section-table {
+        table-layout: fixed;
+      }
+      .section-table td {
+        box-sizing: border-box;
+        vertical-align: top;
+      }
+      .info-grid,
+      .items-grid,
+      .totals-grid {
+        width: 100%;
+        table-layout: fixed;
+      }
+      .info-grid td {
+        width: 50%;
+        padding: 4px;
+        font-size: 13px;
+        line-height: 18px;
+      }
+      .info-box {
+        min-height: 50px;
+        padding: 8px;
+        border: 1px solid #d7e0e6;
+        background: #f5f8fa;
+      }
+      .info-label {
+        color: #536878;
+        font-weight: 700;
+      }
+      .dashboard {
+        display: table;
+        width: 100%;
+        margin: 8px 0;
+      }
+      .metric {
+        display: table-cell;
+        width: 33%;
+        padding: 8px;
+        background: #edf2f5;
+        border-right: 4px solid white;
+      }
+      .metric strong {
+        display: block;
+        font-size: 16px;
+      }
+      .items-grid td {
+        font-size: 13px;
+        line-height: 18px;
+      }
+      .head-cell {
+        background: #536878;
+        color: white;
+        font-weight: 700;
+      }
+      .item-cell {
+        border-bottom: 1px solid #dce4e9;
+      }
+      .alternate {
+        background: #f6f8fa;
+      }
+      .cell-content {
+        padding: 3px 4px;
+      }
+      .variance {
+        color: #8a4e27;
+        font-weight: 700;
+      }
+      .totals-grid td {
+        padding: 6px;
+        font-size: 14px;
+      }
+      .grand-total td {
+        border-top: 2px solid #536878;
+        font-size: 16px;
+        font-weight: 700;
+      }
+      .page-number {
+        padding: 6px;
+        font-size: 13px;
+        text-align: center;
+      }
+    </style>
+  </head>
+  <body>
+    <div
+      class="paper_width printform"
+      data-papersize-width="750"
+      data-papersize-height="1050"
+      data-repeat-header="y"
+      data-repeat-rowheader="y"
+      data-repeat-footer-pagenum="y"
+    >
+      <table class="paper_width section-table pheader" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td style="width: 15px"></td>
+          <td style="width: inherit"></td>
+          <td style="width: 15px"></td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>
+            <svg width="720" height="82" viewBox="0 0 720 82" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Steel register summary">
+              <rect width="720" height="82" fill="#536878" />
+              <path d="M25 19h44v44H25zM34 51l10-13 8 8 8-12" fill="none" stroke="white" stroke-width="3" />
+              <text x="84" y="37" fill="white" font-family="Arial,sans-serif" font-size="21" font-weight="700">HARBOR STREET RETAIL</text>
+              <text x="84" y="60" fill="#e8eef2" font-family="Arial,sans-serif" font-size="13">STORE 04 · REGISTER 02 · SHIFT 07:00–15:00</text>
+              <text x="690" y="50" fill="white" font-family="Arial,sans-serif" font-size="20" font-weight="700" text-anchor="end">SHIFT CLOSE</text>
+            </svg>
+          </td>
+          <td></td>
+        </tr>
+      </table>
+      <table class="paper_width section-table pdocinfo" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td style="width: 15px"></td>
+          <td style="width: inherit"></td>
+          <td style="width: 15px"></td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>
+            <table class="info-grid">
+              <tr>
+                <td style="width: 50%"></td>
+                <td style="width: 50%"></td>
+              </tr>
+              <tr>
+                <td>
+                  <div class="info-box">
+                    <div class="info-label">CASHIER / WINDOW</div>
+                    Jordan Example · Shift 07<br />October 26, 2026 · 07:00–15:00
+                  </div>
+                </td>
+                <td>
+                  <div class="info-box">
+                    <div class="info-label">CONTROL</div>
+                    Opening float: <span id="opening-float">$200.00</span><br />Supervisor: Casey Example
+                  </div>
+                </td>
+              </tr>
+            </table>
+            <div class="dashboard">
+              <div class="metric">Gross sales<strong id="gross">$0.00</strong></div>
+              <div class="metric">Refunds<strong id="refunds">$0.00</strong></div>
+              <div class="metric">Variance<strong id="variance">$0.00</strong></div>
+            </div>
+          </td>
+          <td></td>
+        </tr>
+      </table>
+      <table class="paper_width section-table prowheader" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td style="width: 15px"></td>
+          <td style="width: inherit"></td>
+          <td style="width: 15px"></td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>
+            <table class="items-grid">
+              <tr>
+                <td style="width: 105px"></td>
+                <td style="width: 82px"></td>
+                <td style="width: 90px"></td>
+                <td style="width: 85px"></td>
+                <td style="width: 95px"></td>
+                <td style="width: 95px"></td>
+                <td style="width: 90px"></td>
+              </tr>
+              <tr>
+                <td class="head-cell">Tender Type</td>
+                <td class="head-cell" align="right">Transactions</td>
+                <td class="head-cell" align="right">Sales</td>
+                <td class="head-cell" align="right">Refunds</td>
+                <td class="head-cell" align="right">Expected</td>
+                <td class="head-cell" align="right">Counted</td>
+                <td class="head-cell" align="right">Variance</td>
+              </tr>
+            </table>
+          </td>
+          <td></td>
+        </tr>
+      </table>
+      <div id="rows"></div>
+      <table class="paper_width section-table pfooter" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td style="width: 15px"></td>
+          <td style="width: inherit"></td>
+          <td style="width: 15px"></td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>
+            <table class="totals-grid">
+              <tr class="grand-total">
+                <td>Cash deposit</td>
+                <td id="deposit" align="right">$0.00</td>
+              </tr>
+            </table>
+            <div style="padding: 7px; font-size: 13px">
+              Cash movement: float <span id="movement-float">$200.00</span> + cash sales − cash refunds = counted cash. Variances above $5 require supervisor review.
+            </div>
+            <div style="padding: 8px 6px; font-size: 13px">Cashier handover: ____________________ &nbsp; Supervisor: ____________________</div>
+          </td>
+          <td></td>
+        </tr>
+      </table>
+      <script>
+        const formatMoney = (amount) => `${amount < 0 ? "−" : ""}$${Math.abs(amount).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+        const rows = [
+          ["Cash", 82, 1842, 42, 2000, 1998],
+          ["Visa", 64, 2910, 35, 2875, 2875],
+          ["Mastercard", 48, 2180, 20, 2160, 2160],
+          ["Debit", 31, 1240, 0, 1240, 1240],
+          ["Gift card", 12, 420, 0, 420, 420],
+          ["Mobile pay", 28, 1480, 15, 1465, 1465],
+          ["Store credit", 7, 210, 0, 210, 210],
+          ["Online pickup", 15, 875, 0, 875, 875],
+          ["Voucher", 5, 160, 0, 160, 160],
+          ["Loyalty", 11, 330, 0, 330, 330],
+          ["Partner card", 9, 520, 10, 510, 510],
+          ["Other", 3, 95, 0, 95, 95],
+        ];
+        const target = document.getElementById("rows");
+        let gross = 0;
+        let refunds = 0;
+        let varianceTotal = 0;
+        let cashCounted = 0;
+        rows.forEach(([type, transactions, sales, refund, expected, counted], index) => {
+          gross += sales;
+          refunds += refund;
+          varianceTotal += counted - expected;
+          if (type === "Cash") cashCounted = counted;
+          const variance = counted - expected;
+          const values = [type, transactions, formatMoney(sales), formatMoney(refund), formatMoney(expected), formatMoney(counted), formatMoney(variance)];
+          const table = document.createElement("table");
+          table.className = "paper_width section-table prowitem";
+          table.innerHTML = `<tr><td style="width:15px"></td><td style="width:inherit"></td><td style="width:15px"></td></tr><tr><td></td><td><table class="items-grid"><tr><td style="width:105px"></td><td style="width:82px"></td><td style="width:90px"></td><td style="width:85px"></td><td style="width:95px"></td><td style="width:95px"></td><td style="width:90px"></td></tr><tr>${values.map((value, cell) => `<td class="item-cell${index % 2 ? " alternate" : ""}${cell === 6 && variance !== 0 ? " variance" : ""}"${cell > 0 ? ' align="right"' : ""}><div class="cell-content">${value}</div></td>`).join("")}</tr></table></td><td></td></tr>`;
+          target.before(table);
+        });
+        target.remove();
+        document.getElementById("gross").textContent = formatMoney(gross);
+        document.getElementById("refunds").textContent = formatMoney(refunds);
+        document.getElementById("variance").textContent = formatMoney(varianceTotal);
+        document.getElementById("deposit").textContent = formatMoney(cashCounted);
+        document.getElementById("opening-float").textContent = formatMoney(200);
+        document.getElementById("movement-float").textContent = formatMoney(200);
+      </script>
+      <table class="paper_width section-table pfooter_pagenum" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td style="width: 15px"></td>
+          <td style="width: inherit"></td>
+          <td style="width: 15px"></td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>
+            <div class="page-number" data-page-number-container>Page <span data-page-number></span> of <span data-page-total></span></div>
+          </td>
+          <td></td>
+        </tr>
+      </table>
+    </div>
+    <script src="../../dist/printform.js"></script>
+  </body>
+</html>

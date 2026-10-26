@@ -531,5 +531,157 @@
     "thumb": "thumbs/warehouse-bin-labels.png",
     "width": 750,
     "height": 1050
+  },
+  {
+    "id": "batch-serial-traceability",
+    "title": {
+      "en": "Batch and Serial Register",
+      "zh": "批次与序列号登记表"
+    },
+    "type": "Traceability",
+    "paper": "A4",
+    "pages": 2,
+    "tags": [
+      "inventory",
+      "traceability",
+      "serials"
+    ],
+    "file": "designs/batch-serial-traceability.html",
+    "thumb": "thumbs/batch-serial-traceability.png",
+    "width": 750,
+    "height": 1050
+  },
+  {
+    "id": "cash-collection-receipt",
+    "title": {
+      "en": "Cash Receipt",
+      "zh": "现金收款单"
+    },
+    "type": "Cash Receipt",
+    "paper": "A5",
+    "pages": 1,
+    "tags": [
+      "receipts",
+      "cash",
+      "collections"
+    ],
+    "file": "designs/cash-collection-receipt.html",
+    "thumb": "thumbs/cash-collection-receipt.png",
+    "width": 750,
+    "height": 600
+  },
+  {
+    "id": "accounts-payment-voucher",
+    "title": {
+      "en": "Payment Voucher",
+      "zh": "付款凭单"
+    },
+    "type": "Payment Voucher",
+    "paper": "A4",
+    "pages": 1,
+    "tags": [
+      "receipts",
+      "payments",
+      "approval"
+    ],
+    "file": "designs/accounts-payment-voucher.html",
+    "thumb": "thumbs/accounts-payment-voucher.png",
+    "width": 750,
+    "height": 1050
+  },
+  {
+    "id": "official-payment-receipt",
+    "title": {
+      "en": "Official Receipt",
+      "zh": "正式收据"
+    },
+    "type": "Official Receipt",
+    "paper": "A5",
+    "pages": 1,
+    "tags": [
+      "receipts",
+      "customer-payment",
+      "accounting"
+    ],
+    "file": "designs/official-payment-receipt.html",
+    "thumb": "thumbs/official-payment-receipt.png",
+    "width": 750,
+    "height": 600
+  },
+  {
+    "id": "customer-refund-slip",
+    "title": {
+      "en": "Refund Slip",
+      "zh": "退款凭条"
+    },
+    "type": "Refund",
+    "paper": "A5",
+    "pages": 1,
+    "tags": [
+      "receipts",
+      "refunds",
+      "customer-service"
+    ],
+    "file": "designs/customer-refund-slip.html",
+    "thumb": "thumbs/customer-refund-slip.png",
+    "width": 750,
+    "height": 600
+  },
+  {
+    "id": "thermal-pos-receipt",
+    "title": {
+      "en": "POS Receipt",
+      "zh": "收银小票"
+    },
+    "type": "POS Receipt",
+    "paper": "A5",
+    "pages": 1,
+    "tags": [
+      "retail",
+      "pos",
+      "thermal"
+    ],
+    "file": "designs/thermal-pos-receipt.html",
+    "thumb": "thumbs/thermal-pos-receipt.png",
+    "width": 750,
+    "height": 600
+  },
+  {
+    "id": "retail-gift-receipt",
+    "title": {
+      "en": "Gift Receipt",
+      "zh": "礼品收据"
+    },
+    "type": "Gift Receipt",
+    "paper": "A5",
+    "pages": 1,
+    "tags": [
+      "retail",
+      "gifts",
+      "exchange"
+    ],
+    "file": "designs/retail-gift-receipt.html",
+    "thumb": "thumbs/retail-gift-receipt.png",
+    "width": 750,
+    "height": 600
+  },
+  {
+    "id": "pos-shift-closing",
+    "title": {
+      "en": "Shift Closing Report",
+      "zh": "收银交班结算表"
+    },
+    "type": "Shift Closing",
+    "paper": "A4",
+    "pages": 1,
+    "tags": [
+      "retail",
+      "cash-control",
+      "shift"
+    ],
+    "file": "designs/pos-shift-closing.html",
+    "thumb": "thumbs/pos-shift-closing.png",
+    "width": 750,
+    "height": 1050
   }
 ]

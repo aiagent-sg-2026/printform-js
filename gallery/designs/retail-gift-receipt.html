@@ -1,0 +1,227 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Gift Receipt</title>
+    <link rel="stylesheet" href="shared/page.css" />
+    <style>
+      body {
+        color: #3b3038;
+        font-family: Arial, "Helvetica Neue", sans-serif;
+      }
+      .paper_width {
+        width: 750px;
+      }
+      .section-table {
+        table-layout: fixed;
+      }
+      .section-table td {
+        box-sizing: border-box;
+        vertical-align: top;
+      }
+      .info-grid,
+      .items-grid,
+      .totals-grid {
+        width: 100%;
+        table-layout: fixed;
+      }
+      .info-grid td {
+        width: 50%;
+        padding: 2px;
+        font-size: 13px;
+        line-height: 16px;
+      }
+      .info-box {
+        padding: 4px;
+        background: #fbf5f8;
+      }
+      .info-label {
+        color: #be789a;
+        font-weight: 700;
+      }
+      .items-grid td {
+        font-size: 13px;
+        line-height: 16px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .head-cell {
+        background: #be789a;
+        color: white;
+        font-weight: 700;
+      }
+      .item-cell {
+        border-bottom: 1px solid #eadbe3;
+      }
+      .alternate {
+        background: #fcf8fa;
+      }
+      .cell-content {
+        padding: 3px 5px;
+      }
+      .policy {
+        margin-top: 8px;
+        padding: 8px;
+        border: 1px dashed #be789a;
+        font-size: 13px;
+        line-height: 18px;
+      }
+      .page-number {
+        padding: 6px;
+        font-size: 13px;
+        text-align: center;
+      }
+    </style>
+  </head>
+  <body>
+    <div
+      class="paper_width printform"
+      data-papersize-width="750"
+      data-papersize-height="600"
+      data-repeat-header="y"
+      data-repeat-rowheader="y"
+      data-repeat-footer-pagenum="y"
+    >
+      <table class="paper_width section-table pheader" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td style="width: 15px"></td>
+          <td style="width: inherit"></td>
+          <td style="width: 15px"></td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>
+            <svg width="720" height="76" viewBox="0 0 720 76" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Mauve gift receipt">
+              <rect width="720" height="76" fill="#BE789A" />
+              <path
+                d="M27 22h42v34H27zM48 22v34M27 34h42M48 22c-18 0-15-18-5-14 8 3 5 14 5 14zm0 0c18 0 15-18 5-14-8 3-5 14-5 14z"
+                fill="none"
+                stroke="white"
+                stroke-width="2"
+              />
+              <text x="84" y="36" fill="white" font-family="Arial,sans-serif" font-size="22" font-weight="700">PETAL &amp; THREAD</text>
+              <text x="84" y="59" fill="#fff0f6" font-family="Arial,sans-serif" font-size="13">A GIFT FOR YOU</text>
+              <text x="690" y="49" fill="white" font-family="Arial,sans-serif" font-size="22" font-weight="700" text-anchor="end">
+                GIFT RECEIPT
+              </text>
+            </svg>
+          </td>
+          <td></td>
+        </tr>
+      </table>
+      <table class="paper_width section-table pdocinfo" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td style="width: 15px"></td>
+          <td style="width: inherit"></td>
+          <td style="width: 15px"></td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>
+            <table class="info-grid">
+              <tr>
+                <td style="width: 50%"></td>
+                <td style="width: 50%"></td>
+              </tr>
+              <tr>
+                <td>
+                  <div class="info-box">
+                    <div class="info-label">STORE REFERENCE</div>
+                    Petal &amp; Thread · Gift GR-26072<br />Purchase date: October 25, 2026
+                  </div>
+                </td>
+                <td>
+                  <div class="info-box">
+                    <div class="info-label">EXCHANGE WINDOW</div>
+                    Exchange by November 24, 2026<br />Original store: Market Street
+                  </div>
+                </td>
+              </tr>
+            </table>
+          </td>
+          <td></td>
+        </tr>
+      </table>
+      <table class="paper_width section-table prowheader" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td style="width: 15px"></td>
+          <td style="width: inherit"></td>
+          <td style="width: 15px"></td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>
+            <table class="items-grid">
+              <tr>
+                <td style="width: 105px"></td>
+                <td style="width: inherit"></td>
+                <td style="width: 120px"></td>
+                <td style="width: 80px"></td>
+              </tr>
+              <tr>
+                <td class="head-cell">Item Code</td>
+                <td class="head-cell">Gift Item</td>
+                <td class="head-cell">Variant</td>
+                <td class="head-cell" align="right">Quantity</td>
+              </tr>
+            </table>
+          </td>
+          <td></td>
+        </tr>
+      </table>
+      <div id="rows"></div>
+      <table class="paper_width section-table pfooter" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td style="width: 15px"></td>
+          <td style="width: inherit"></td>
+          <td style="width: 15px"></td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>
+            <div class="policy">
+              <strong>EXCHANGE POLICY</strong><br />Items may be exchanged with this receipt and original tags within 30 days. Final-sale
+              items excluded. No prices or purchaser details are shown.
+            </div>
+            <div style="padding: 6px; text-align: center; font-family: monospace; font-size: 13px">|| |||| | ||| |||| | · GR-26072</div>
+          </td>
+          <td></td>
+        </tr>
+      </table>
+      <script>
+        const rows = [
+          ["PT-401", "Linen scarf", "Rose / One size", 1],
+          ["PT-418", "Ceramic vase", "Ivory / Small", 1],
+          ["PT-433", "Wool throw", "Sage / Twin", 1],
+          ["PT-445", "Tea set", "Blue / 2-piece", 1],
+          ["PT-452", "Candle pair", "Amber / Set", 1],
+        ];
+        const target = document.getElementById("rows");
+        rows.forEach((values, index) => {
+          const table = document.createElement("table");
+          table.className = "paper_width section-table prowitem";
+          table.innerHTML = `<tr><td style="width:15px"></td><td style="width:inherit"></td><td style="width:15px"></td></tr><tr><td></td><td><table class="items-grid"><tr><td style="width:105px"></td><td style="width:inherit"></td><td style="width:120px"></td><td style="width:80px"></td></tr><tr>${values.map((value) => `<td class="item-cell${index % 2 ? " alternate" : ""}"><div class="cell-content">${value}</div></td>`).join("")}</tr></table></td><td></td></tr>`;
+          target.before(table);
+        });
+        target.remove();
+      </script>
+      <table class="paper_width section-table pfooter_pagenum" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td style="width: 15px"></td>
+          <td style="width: inherit"></td>
+          <td style="width: 15px"></td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>
+            <div class="page-number" data-page-number-container>Page <span data-page-number></span> of <span data-page-total></span></div>
+          </td>
+          <td></td>
+        </tr>
+      </table>
+    </div>
+    <script src="../../dist/printform.js"></script>
+  </body>
+</html>

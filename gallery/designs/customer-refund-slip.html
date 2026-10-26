@@ -1,0 +1,242 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Refund Slip</title>
+    <link rel="stylesheet" href="shared/page.css" />
+    <style>
+      body {
+        color: #403136;
+        font-family: Arial, "Helvetica Neue", sans-serif;
+      }
+      .paper_width {
+        width: 750px;
+      }
+      .section-table {
+        table-layout: fixed;
+      }
+      .section-table td {
+        box-sizing: border-box;
+        vertical-align: top;
+      }
+      .info-grid,
+      .items-grid,
+      .totals-grid {
+        width: 100%;
+        table-layout: fixed;
+      }
+      .info-grid td {
+        width: 50%;
+        padding: 2px;
+        font-size: 13px;
+        line-height: 18px;
+      }
+      .info-box {
+        padding: 4px;
+        border: 1px solid #f0d7dc;
+      }
+      .info-label {
+        color: #cd6c7a;
+        font-weight: 700;
+      }
+      .items-grid td {
+        font-size: 13px;
+        line-height: 18px;
+      }
+      .head-cell {
+        background: #cd6c7a;
+        color: white;
+        font-weight: 700;
+      }
+      .item-cell {
+        border-bottom: 1px solid #efdde0;
+      }
+      .alternate {
+        background: #fff6f7;
+      }
+      .cell-content {
+        padding: 6px 4px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .refund-total {
+        margin: 8px 0;
+        padding: 8px 12px;
+        border: 2px solid #cd6c7a;
+        text-align: right;
+        font-size: 17px;
+        font-weight: 700;
+      }
+      .page-number {
+        padding: 6px;
+        font-size: 13px;
+        text-align: center;
+      }
+    </style>
+  </head>
+  <body>
+    <div
+      class="paper_width printform"
+      data-papersize-width="750"
+      data-papersize-height="600"
+      data-repeat-header="y"
+      data-repeat-rowheader="y"
+      data-repeat-footer-pagenum="y"
+    >
+      <table class="paper_width section-table pheader" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td style="width: 15px"></td>
+          <td style="width: inherit"></td>
+          <td style="width: 15px"></td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>
+            <svg
+              width="720"
+              height="56"
+              viewBox="0 0 720 70"
+              preserveAspectRatio="none"
+              xmlns="http://www.w3.org/2000/svg"
+              role="img"
+              aria-label="Refund ribbon"
+            >
+              <path d="M0 0h720v56H0z" fill="#CD6C7A" />
+              <path d="M0 56h38l-19 14zM720 56h-38l19 14z" fill="#a44f5d" />
+              <path d="M27 16h38v35H27zM36 25h20M36 34h20M36 43h14" fill="none" stroke="white" stroke-width="2" />
+              <text x="80" y="31" fill="white" font-family="Arial,sans-serif" font-size="21" font-weight="700">ROSEWOOD GOODS</text>
+              <text x="80" y="51" fill="#fff1f3" font-family="Arial,sans-serif" font-size="13">CUSTOMER RETURNS</text>
+              <text x="690" y="42" fill="white" font-family="Arial,sans-serif" font-size="22" font-weight="700" text-anchor="end">
+                REFUND SLIP
+              </text>
+            </svg>
+          </td>
+          <td></td>
+        </tr>
+      </table>
+      <table class="paper_width section-table pdocinfo" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td style="width: 15px"></td>
+          <td style="width: inherit"></td>
+          <td style="width: 15px"></td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>
+            <div style="padding: 5px 8px; background: #fff6f7; border: 1px dashed #cd6c7a; font-size: 13px">
+              Original payment: INV-26018 · Card ending 4412 · October 20, 2026
+            </div>
+            <table class="info-grid">
+              <tr>
+                <td style="width: 50%"></td>
+                <td style="width: 50%"></td>
+              </tr>
+              <tr>
+                <td>
+                  <div class="info-box">
+                    <div class="info-label">CUSTOMER</div>
+                    Taylor Example · Return R-091<br />Refund method: original card
+                  </div>
+                </td>
+                <td>
+                  <div class="info-box">
+                    <div class="info-label">PROCESSING</div>
+                    Processed October 26, 2026<br />Status: approved · Staff: Alex E.
+                  </div>
+                </td>
+              </tr>
+            </table>
+          </td>
+          <td></td>
+        </tr>
+      </table>
+      <table class="paper_width section-table prowheader" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td style="width: 15px"></td>
+          <td style="width: inherit"></td>
+          <td style="width: 15px"></td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>
+            <table class="items-grid">
+              <tr>
+                <td style="width: 115px"></td>
+                <td style="width: inherit"></td>
+                <td style="width: 75px"></td>
+                <td style="width: 105px"></td>
+                <td style="width: 115px"></td>
+              </tr>
+              <tr>
+                <td class="head-cell">Item</td>
+                <td class="head-cell">Reason</td>
+                <td class="head-cell" align="right">Quantity</td>
+                <td class="head-cell" align="right">Unit Refund</td>
+                <td class="head-cell" align="right">Refund Amount</td>
+              </tr>
+            </table>
+          </td>
+          <td></td>
+        </tr>
+      </table>
+      <div id="rows"></div>
+      <table class="paper_width section-table pfooter" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td style="width: 15px"></td>
+          <td style="width: inherit"></td>
+          <td style="width: 15px"></td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>
+            <div class="refund-total">Total refunded: <span id="total">$0.00</span></div>
+            <div style="padding: 4px 8px; font-size: 13px">
+              Expected settlement: 5–7 business days · Approved by Alex Example __________________
+            </div>
+          </td>
+          <td></td>
+        </tr>
+      </table>
+      <script>
+        const rows = [
+          ["Canvas tote", "Wrong size", 1, 18],
+          ["Desk tray", "Damaged edge", 1, 24],
+          ["Notebook set", "Duplicate", 2, 8.5],
+          ["Mug", "Color mismatch", 1, 12],
+          ["Lamp shade", "Not required", 1, 15],
+        ];
+        const target = document.getElementById("rows");
+        const formatMoney = (amount) => new Intl.NumberFormat("en-US", { style: "currency", currency: "USD" }).format(amount);
+        let total = 0;
+        rows.forEach(([item, reason, quantity, unit], index) => {
+          const amount = quantity * unit;
+          total += amount;
+          const values = [item, reason, quantity, formatMoney(unit), formatMoney(amount)];
+          const table = document.createElement("table");
+          table.className = "paper_width section-table prowitem";
+          table.innerHTML = `<tr><td style="width:15px"></td><td style="width:inherit"></td><td style="width:15px"></td></tr><tr><td></td><td><table class="items-grid"><tr><td style="width:115px"></td><td style="width:inherit"></td><td style="width:75px"></td><td style="width:105px"></td><td style="width:115px"></td></tr><tr>${values.map((value, cell) => `<td class="item-cell${index % 2 ? " alternate" : ""}"${cell > 1 ? ' align="right"' : ""}><div class="cell-content">${value}</div></td>`).join("")}</tr></table></td><td></td></tr>`;
+          target.before(table);
+        });
+        target.remove();
+        document.getElementById("total").textContent = formatMoney(total);
+      </script>
+      <table class="paper_width section-table pfooter_pagenum" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td style="width: 15px"></td>
+          <td style="width: inherit"></td>
+          <td style="width: 15px"></td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>
+            <div class="page-number" data-page-number-container>Page <span data-page-number></span> of <span data-page-total></span></div>
+          </td>
+          <td></td>
+        </tr>
+      </table>
+    </div>
+    <script src="../../dist/printform.js"></script>
+  </body>
+</html>

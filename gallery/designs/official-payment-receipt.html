@@ -1,0 +1,255 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Official Receipt</title>
+    <link rel="stylesheet" href="shared/page.css" />
+    <style>
+      body {
+        color: #332b36;
+        font-family: Arial, "Helvetica Neue", sans-serif;
+      }
+      .paper_width {
+        width: 750px;
+      }
+      .section-table {
+        table-layout: fixed;
+      }
+      .section-table td {
+        box-sizing: border-box;
+        vertical-align: top;
+      }
+      .info-grid,
+      .items-grid,
+      .totals-grid {
+        width: 100%;
+        table-layout: fixed;
+      }
+      .info-grid td {
+        width: 50%;
+        padding: 2px;
+        font-size: 13px;
+        line-height: 18px;
+      }
+      .info-box {
+        padding: 4px;
+        border: 1px solid #e2dce5;
+      }
+      .info-label {
+        color: #7e6688;
+        font-weight: 700;
+      }
+      .items-grid td {
+        font-size: 13px;
+        line-height: 18px;
+      }
+      .head-cell {
+        background: #7e6688;
+        color: white;
+        font-weight: 700;
+      }
+      .item-cell {
+        border-bottom: 1px solid #ded7e1;
+      }
+      .alternate {
+        background: #f8f5f9;
+      }
+      .cell-content {
+        padding: 6px 4px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .grand-total td {
+        border-top: 3px double #7e6688;
+        font-size: 16px;
+        font-weight: 700;
+      }
+      .seal {
+        display: inline-block;
+        margin: 8px 0;
+        padding: 12px 20px;
+        border: 3px double #7e6688;
+        border-radius: 50%;
+        color: #7e6688;
+        font-size: 13px;
+        font-weight: 700;
+      }
+      .page-number {
+        padding: 6px;
+        font-size: 13px;
+        text-align: center;
+      }
+    </style>
+  </head>
+  <body>
+    <div
+      class="paper_width printform"
+      data-papersize-width="750"
+      data-papersize-height="600"
+      data-repeat-header="y"
+      data-repeat-rowheader="y"
+      data-repeat-footer-pagenum="y"
+    >
+      <table class="paper_width section-table pheader" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td style="width: 15px"></td>
+          <td style="width: inherit"></td>
+          <td style="width: 15px"></td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>
+            <svg
+              width="720"
+              height="60"
+              viewBox="0 0 720 80"
+              preserveAspectRatio="none"
+              xmlns="http://www.w3.org/2000/svg"
+              role="img"
+              aria-label="Official receipt issuer"
+            >
+              <rect width="720" height="80" fill="#7E6688" />
+              <path d="M29 17h36v46H29zM37 27h20M37 37h20M37 47h14" fill="none" stroke="white" stroke-width="2" />
+              <text x="82" y="35" fill="white" font-family="Arial,sans-serif" font-size="20" font-weight="700">
+                RIVERBEND COMMUNITY SERVICES
+              </text>
+              <text x="82" y="58" fill="#f1eaf3" font-family="Arial,sans-serif" font-size="13">REGISTERED PAYMENT OFFICE</text>
+              <text x="690" y="48" fill="white" font-family="Arial,sans-serif" font-size="22" font-weight="700" text-anchor="end">
+                OFFICIAL RECEIPT
+              </text>
+            </svg>
+          </td>
+          <td></td>
+        </tr>
+      </table>
+      <table class="paper_width section-table pdocinfo" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td style="width: 15px"></td>
+          <td style="width: inherit"></td>
+          <td style="width: 15px"></td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>
+            <table class="info-grid">
+              <tr>
+                <td style="width: 50%"></td>
+                <td style="width: 50%"></td>
+              </tr>
+              <tr>
+                <td>
+                  <div class="info-box">
+                    <div class="info-label">PAYER</div>
+                    Harbor Lane Books · Account A-204<br />Receipt OR-26044
+                  </div>
+                </td>
+                <td>
+                  <div class="info-box">
+                    <div class="info-label">TRANSACTION</div>
+                    October 26, 2026 · Card payment<br />Authorization: CC-80917
+                  </div>
+                </td>
+              </tr>
+            </table>
+          </td>
+          <td></td>
+        </tr>
+      </table>
+      <table class="paper_width section-table prowheader" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td style="width: 15px"></td>
+          <td style="width: inherit"></td>
+          <td style="width: 15px"></td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>
+            <table class="items-grid">
+              <tr>
+                <td style="width: 105px"></td>
+                <td style="width: inherit"></td>
+                <td style="width: 115px"></td>
+                <td style="width: 120px"></td>
+                <td style="width: 105px"></td>
+              </tr>
+              <tr>
+                <td class="head-cell">Invoice Ref</td>
+                <td class="head-cell">Description</td>
+                <td class="head-cell" align="right">Original Amount</td>
+                <td class="head-cell" align="right">Payment Applied</td>
+                <td class="head-cell" align="right">Balance</td>
+              </tr>
+            </table>
+          </td>
+          <td></td>
+        </tr>
+      </table>
+      <div id="rows"></div>
+      <table class="paper_width section-table pfooter" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td style="width: 15px"></td>
+          <td style="width: inherit"></td>
+          <td style="width: 15px"></td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>
+            <table class="totals-grid">
+              <tr class="grand-total">
+                <td>Total received</td>
+                <td id="received" align="right">$0.00</td>
+                <td>Outstanding</td>
+                <td id="balance" align="right">$0.00</td>
+              </tr>
+            </table>
+            <div class="seal">PAID · RECEIVED</div>
+            <div style="float: right; padding: 14px; font-size: 13px">Authorized: Casey Example __________________</div>
+          </td>
+          <td></td>
+        </tr>
+      </table>
+      <script>
+        const rows = [
+          ["INV-550", "Equipment hire", 240, 180],
+          ["INV-552", "Service visit", 125, 125],
+          ["INV-559", "Supply order", 96, 60],
+          ["INV-561", "Delivery", 48, 48],
+          ["INV-566", "Workshop", 80, 50],
+        ];
+        const target = document.getElementById("rows");
+        const formatMoney = (amount) => new Intl.NumberFormat("en-US", { style: "currency", currency: "USD" }).format(amount);
+        let paid = 0;
+        let balance = 0;
+        rows.forEach(([reference, description, original, applied], index) => {
+          paid += applied;
+          balance += original - applied;
+          const values = [reference, description, formatMoney(original), formatMoney(applied), formatMoney(original - applied)];
+          const table = document.createElement("table");
+          table.className = "paper_width section-table prowitem";
+          table.innerHTML = `<tr><td style="width:15px"></td><td style="width:inherit"></td><td style="width:15px"></td></tr><tr><td></td><td><table class="items-grid"><tr><td style="width:105px"></td><td style="width:inherit"></td><td style="width:115px"></td><td style="width:120px"></td><td style="width:105px"></td></tr><tr>${values.map((value, cell) => `<td class="item-cell${index % 2 ? " alternate" : ""}"${cell > 1 ? ' align="right"' : ""}><div class="cell-content">${value}</div></td>`).join("")}</tr></table></td><td></td></tr>`;
+          target.before(table);
+        });
+        target.remove();
+        document.getElementById("received").textContent = formatMoney(paid);
+        document.getElementById("balance").textContent = formatMoney(balance);
+      </script>
+      <table class="paper_width section-table pfooter_pagenum" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td style="width: 15px"></td>
+          <td style="width: inherit"></td>
+          <td style="width: 15px"></td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>
+            <div class="page-number" data-page-number-container>Page <span data-page-number></span> of <span data-page-total></span></div>
+          </td>
+          <td></td>
+        </tr>
+      </table>
+    </div>
+    <script src="../../dist/printform.js"></script>
+  </body>
+</html>

@@ -1,0 +1,244 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Batch and Serial Register</title>
+    <link rel="stylesheet" href="shared/page.css" />
+    <style>
+      body {
+        color: #29263a;
+        font-family: Arial, "Helvetica Neue", sans-serif;
+      }
+      .paper_width {
+        width: 750px;
+      }
+      .section-table {
+        table-layout: fixed;
+      }
+      .section-table td {
+        box-sizing: border-box;
+        vertical-align: top;
+      }
+      .info-grid,
+      .items-grid,
+      .totals-grid {
+        width: 100%;
+        table-layout: fixed;
+      }
+      .info-grid td {
+        width: 50%;
+        padding: 4px;
+        font-size: 13px;
+        line-height: 18px;
+      }
+      .info-box {
+        padding: 8px;
+        border-left: 4px solid #7262a8;
+        background: #f4f2fa;
+      }
+      .info-label {
+        color: #7262a8;
+        font-weight: 700;
+      }
+      .items-grid td {
+        font-size: 13px;
+        line-height: 18px;
+      }
+      .head-cell {
+        background: #7262a8;
+        color: white;
+        font-weight: 700;
+      }
+      .item-cell {
+        border-bottom: 1px solid #dedbe8;
+      }
+      .alternate {
+        background: #f8f7fb;
+      }
+      .cell-content {
+        padding: 3px 4px;
+      }
+      .code {
+        font-family: monospace;
+      }
+      .expired {
+        color: #a33;
+        font-weight: 700;
+      }
+      .page-number {
+        padding: 6px;
+        font-size: 13px;
+        text-align: center;
+      }
+    </style>
+  </head>
+  <body>
+    <div
+      class="paper_width printform"
+      data-papersize-width="750"
+      data-papersize-height="1050"
+      data-repeat-header="y"
+      data-repeat-rowheader="y"
+      data-repeat-footer-pagenum="y"
+    >
+      <table class="paper_width section-table pheader" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td style="width: 15px"></td>
+          <td style="width: inherit"></td>
+          <td style="width: 15px"></td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>
+            <svg
+              width="720"
+              height="82"
+              viewBox="0 0 720 82"
+              xmlns="http://www.w3.org/2000/svg"
+              role="img"
+              aria-label="Periwinkle inventory register"
+            >
+              <rect width="720" height="82" fill="#7262A8" />
+              <path d="M24 21h40v40H24zM32 30h24M32 40h24M32 50h17" fill="none" stroke="white" stroke-width="3" />
+              <text x="80" y="36" fill="white" font-family="Arial,sans-serif" font-size="21" font-weight="700">ASTER WAREHOUSE</text>
+              <text x="80" y="60" fill="#eeeafa" font-family="Arial,sans-serif" font-size="13">
+                TRACEABILITY SCOPE · ACTIVE STOCK / SNAPSHOT 26 OCT 2026
+              </text>
+              <text x="690" y="49" fill="white" font-family="Arial,sans-serif" font-size="20" font-weight="700" text-anchor="end">
+                BATCH REGISTER
+              </text>
+            </svg>
+          </td>
+          <td></td>
+        </tr>
+      </table>
+      <table class="paper_width section-table pdocinfo" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td style="width: 15px"></td>
+          <td style="width: inherit"></td>
+          <td style="width: 15px"></td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>
+            <table class="info-grid">
+              <tr>
+                <td style="width: 50%"></td>
+                <td style="width: 50%"></td>
+              </tr>
+              <tr>
+                <td>
+                  <div class="info-box">
+                    <div class="info-label">PRODUCT FILTER</div>
+                    Catalog: all stocked SKUs<br />Condition: saleable and quarantined
+                  </div>
+                </td>
+                <td>
+                  <div class="info-box">
+                    <div class="info-label">WAREHOUSE</div>
+                    North Annex · Aisles A–D<br />Snapshot: October 26, 2026
+                  </div>
+                </td>
+              </tr>
+            </table>
+          </td>
+          <td></td>
+        </tr>
+      </table>
+      <table class="paper_width section-table prowheader" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td style="width: 15px"></td>
+          <td style="width: inherit"></td>
+          <td style="width: 15px"></td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>
+            <table class="items-grid">
+              <tr>
+                <td style="width: 75px"></td>
+                <td style="width: 105px"></td>
+                <td style="width: 105px"></td>
+                <td style="width: 90px"></td>
+                <td style="width: 90px"></td>
+                <td style="width: 80px"></td>
+                <td style="width: 80px"></td>
+              </tr>
+              <tr>
+                <td class="head-cell">SKU</td>
+                <td class="head-cell">Batch Number</td>
+                <td class="head-cell">Serial Number</td>
+                <td class="head-cell">Received Date</td>
+                <td class="head-cell">Expiry Date</td>
+                <td class="head-cell">Location</td>
+                <td class="head-cell">Status</td>
+              </tr>
+            </table>
+          </td>
+          <td></td>
+        </tr>
+      </table>
+      <div id="rows"></div>
+      <table class="paper_width section-table pfooter" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td style="width: 15px"></td>
+          <td style="width: inherit"></td>
+          <td style="width: 15px"></td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>
+            <table class="totals-grid">
+              <tr>
+                <td>Exceptions</td>
+                <td id="exceptions" align="right">0</td>
+              </tr>
+            </table>
+            <div style="padding: 8px; font-size: 13px; border-top: 1px solid #dedbe8">
+              Custody note: sealed transfers logged at every aisle handoff. Register reviewed by inventory control.
+            </div>
+          </td>
+          <td></td>
+        </tr>
+      </table>
+      <script>
+        const rows = Array.from({ length: 32 }, (_, i) => [
+          `SKU-${410 + i}`,
+          `BT-26-${String(80 + i).padStart(3, "0")}`,
+          `SN-${720140 + i}`,
+          `Oct ${String((i % 20) + 1).padStart(2, "0")}`,
+          `Dec ${String((i % 27) + 1).padStart(2, "0")}`,
+          `A-${(i % 4) + 1}-${String(i + 1).padStart(2, "0")}`,
+          i === 5 ? "Review" : "Clear",
+        ]);
+        const target = document.getElementById("rows");
+        let exceptions = 0;
+        rows.forEach((values, index) => {
+          if (values[6] !== "Clear") exceptions += 1;
+          const table = document.createElement("table");
+          table.className = "paper_width section-table prowitem";
+          table.innerHTML = `<tr><td style="width:15px"></td><td style="width:inherit"></td><td style="width:15px"></td></tr><tr><td></td><td><table class="items-grid"><tr><td style="width:75px"></td><td style="width:105px"></td><td style="width:105px"></td><td style="width:90px"></td><td style="width:90px"></td><td style="width:80px"></td><td style="width:80px"></td></tr><tr>${values.map((value, cell) => `<td class="item-cell${index % 2 ? " alternate" : ""}${cell < 3 ? " code" : ""}${cell === 6 && value !== "Clear" ? " expired" : ""}"${cell === 4 ? ' align="right"' : ""}><div class="cell-content">${value}</div></td>`).join("")}</tr></table></td><td></td></tr>`;
+          target.before(table);
+        });
+        target.remove();
+        document.getElementById("exceptions").textContent = exceptions;
+      </script>
+      <table class="paper_width section-table pfooter_pagenum" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td style="width: 15px"></td>
+          <td style="width: inherit"></td>
+          <td style="width: 15px"></td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>
+            <div class="page-number" data-page-number-container>Page <span data-page-number></span> of <span data-page-total></span></div>
+          </td>
+          <td></td>
+        </tr>
+      </table>
+    </div>
+    <script src="../../dist/printform.js"></script>
+  </body>
+</html>

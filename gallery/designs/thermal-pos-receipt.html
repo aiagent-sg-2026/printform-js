@@ -1,0 +1,256 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>POS Receipt</title>
+    <link rel="stylesheet" href="shared/page.css" />
+    <style>
+      body {
+        color: #293127;
+        font-family: Arial, "Helvetica Neue", sans-serif;
+      }
+      .paper_width {
+        width: 750px;
+      }
+      .section-table {
+        table-layout: fixed;
+      }
+      .section-table td {
+        box-sizing: border-box;
+        vertical-align: top;
+      }
+      .receipt {
+        width: 340px;
+        margin: 0 auto;
+        font-family: monospace;
+        font-size: 13px;
+      }
+      .receipt-title {
+        color: #687a61;
+        font-size: 19px;
+        font-weight: 700;
+        text-align: center;
+      }
+      .info-grid,
+      .items-grid,
+      .totals-grid {
+        width: 100%;
+        table-layout: fixed;
+      }
+      .info-grid td {
+        padding: 2px;
+        font-size: 12px;
+        line-height: 15px;
+      }
+      .info-box {
+        padding: 3px;
+        border-bottom: 1px dotted #687a61;
+      }
+      .items-grid td {
+        font-family: monospace;
+        font-size: 13px;
+        line-height: 16px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .head-cell {
+        border-bottom: 1px dotted #687a61;
+        font-weight: 700;
+      }
+      .item-cell {
+        border-bottom: 1px dotted #c9cec6;
+      }
+      .cell-content {
+        padding: 2px;
+      }
+      .totals-grid td {
+        padding: 3px;
+        font-family: monospace;
+        font-size: 13px;
+      }
+      .page-number {
+        padding: 6px;
+        font-size: 13px;
+        text-align: center;
+      }
+    </style>
+  </head>
+  <body>
+    <div
+      class="paper_width printform"
+      data-papersize-width="750"
+      data-papersize-height="600"
+      data-repeat-header="y"
+      data-repeat-rowheader="y"
+      data-repeat-footer-pagenum="y"
+    >
+      <table class="paper_width section-table pheader" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td style="width: 15px"></td>
+          <td style="width: inherit"></td>
+          <td style="width: 15px"></td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>
+            <div class="receipt">
+              <svg width="340" height="44" viewBox="0 0 340 44" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Fern retail mark">
+                <rect x="145" y="4" width="42" height="36" rx="18" fill="#687A61" />
+                <path d="M166 31c-9-10-5-18 6-22 1 10-1 16-6 22zm0 0-9-8" fill="none" stroke="white" stroke-width="2" />
+              </svg>
+              <div class="receipt-title">FERN &amp; FOUND</div>
+              <div style="text-align: center">REGISTER 02 · SALE 008421</div>
+              <div style="text-align: center">OCT 26 2026 · 14:32 · CASHIER J. EXAMPLE</div>
+              <div style="border-top: 1px dotted #687a61; margin-top: 5px"></div>
+            </div>
+          </td>
+          <td></td>
+        </tr>
+      </table>
+      <table class="paper_width section-table pdocinfo" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td style="width: 15px"></td>
+          <td style="width: inherit"></td>
+          <td style="width: 15px"></td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>
+            <div class="receipt">
+              <table class="info-grid">
+                <tr>
+                  <td style="width: 50%"></td>
+                  <td style="width: 50%"></td>
+                </tr>
+                <tr>
+                  <td>
+                    <div class="info-box">Cashier: J. Example<br />Sale: 008421</div>
+                  </td>
+                  <td>
+                    <div class="info-box">Currency: USD<br />Lane: 02</div>
+                  </td>
+                </tr>
+              </table>
+            </div>
+          </td>
+          <td></td>
+        </tr>
+      </table>
+      <table class="paper_width section-table prowheader" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td style="width: 15px"></td>
+          <td style="width: inherit"></td>
+          <td style="width: 15px"></td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>
+            <div class="receipt">
+              <table class="items-grid">
+                <tr>
+                  <td style="width: 145px"></td>
+                  <td style="width: 45px"></td>
+                  <td style="width: 65px"></td>
+                  <td style="width: 80px"></td>
+                </tr>
+                <tr>
+                  <td class="head-cell">Item</td>
+                  <td class="head-cell" align="right">Qty</td>
+                  <td class="head-cell" align="right">Price</td>
+                  <td class="head-cell" align="right">Amount</td>
+                </tr>
+              </table>
+            </div>
+          </td>
+          <td></td>
+        </tr>
+      </table>
+      <div id="rows"></div>
+      <table class="paper_width section-table pfooter" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td style="width: 15px"></td>
+          <td style="width: inherit"></td>
+          <td style="width: 15px"></td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>
+            <div class="receipt">
+              <table class="totals-grid">
+                <tr>
+                  <td>Discount</td>
+                  <td align="right" id="discount">-$0.00</td>
+                </tr>
+                <tr>
+                  <td>Tax</td>
+                  <td align="right" id="tax">$0.00</td>
+                </tr>
+                <tr>
+                  <td>Tendered</td>
+                  <td align="right">$150.00</td>
+                </tr>
+                <tr>
+                  <td>Change</td>
+                  <td align="right" id="change">$0.00</td>
+                </tr>
+                <tr>
+                  <td><strong>TOTAL</strong></td>
+                  <td align="right" id="total"><strong>$0.00</strong></td>
+                </tr>
+              </table>
+              <div style="text-align: center; border-top: 1px dotted #687a61; padding: 5px">|||| ||| |||| || ||| · 008421</div>
+            </div>
+          </td>
+          <td></td>
+        </tr>
+      </table>
+      <script>
+        const rows = [
+          ["Tea tin", 2, 12],
+          ["Mug", 1, 18],
+          ["Canvas bag", 1, 22],
+          ["Notebook", 3, 6],
+          ["Pencil set", 2, 5],
+          ["Desk plant", 1, 14],
+        ];
+        const target = document.getElementById("rows");
+        let subtotal = 0;
+        const formatMoney = (amount) => `$${amount.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+        rows.forEach(([item, quantity, price], index) => {
+          const amount = quantity * price;
+          subtotal += amount;
+          const values = [item, quantity, formatMoney(price), formatMoney(amount)];
+          const table = document.createElement("table");
+          table.className = "paper_width section-table prowitem";
+          table.innerHTML = `<tr><td style="width:15px"></td><td style="width:inherit"></td><td style="width:15px"></td></tr><tr><td></td><td><div class="receipt"><table class="items-grid"><tr><td style="width:145px"></td><td style="width:45px"></td><td style="width:65px"></td><td style="width:80px"></td></tr><tr>${values.map((value, cell) => `<td class="item-cell"${cell > 0 ? ' align="right"' : ""}><div class="cell-content">${value}</div></td>`).join("")}</tr></table></div></td><td></td></tr>`;
+          target.before(table);
+        });
+        target.remove();
+        const discount = 5;
+        const tax = (subtotal - discount) * 0.05;
+        const total = subtotal - discount + tax;
+        document.getElementById("discount").textContent = `-${formatMoney(discount)}`;
+        document.getElementById("tax").textContent = formatMoney(tax);
+        document.getElementById("total").innerHTML = `<strong>${formatMoney(total)}</strong>`;
+        document.getElementById("change").textContent = formatMoney(150 - total);
+      </script>
+      <table class="paper_width section-table pfooter_pagenum" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td style="width: 15px"></td>
+          <td style="width: inherit"></td>
+          <td style="width: 15px"></td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>
+            <div class="page-number" data-page-number-container>Page <span data-page-number></span> of <span data-page-total></span></div>
+          </td>
+          <td></td>
+        </tr>
+      </table>
+    </div>
+    <script src="../../dist/printform.js"></script>
+  </body>
+</html>
