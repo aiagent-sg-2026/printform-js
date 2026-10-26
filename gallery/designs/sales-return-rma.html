@@ -1,0 +1,248 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Sales Return Authorization</title>
+    <link rel="stylesheet" href="shared/page.css" />
+    <style>
+      body {
+        color: #38291f;
+        font-family: Arial, "Helvetica Neue", sans-serif;
+      }
+      .paper_width {
+        width: 750px;
+      }
+      .section-table {
+        table-layout: fixed;
+      }
+      .section-table td {
+        box-sizing: border-box;
+        vertical-align: top;
+      }
+      .inner,
+      .items {
+        width: 100%;
+        table-layout: fixed;
+      }
+      .box {
+        padding: 8px;
+        border: 1px solid #dfc9bd;
+        font-size: 13px;
+        line-height: 19px;
+      }
+      .label {
+        color: #ad5c33;
+        font-weight: 700;
+      }
+      .items td {
+        font-size: 13px;
+        line-height: 19px;
+      }
+      .head {
+        background: #ad5c33;
+        color: white;
+        font-weight: 700;
+      }
+      .cell {
+        border-bottom: 1px solid #e8ddd7;
+      }
+      .cell-content {
+        overflow: hidden;
+        padding: 4px;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+      }
+      .alt {
+        background: #faf3ef;
+      }
+      .footer {
+        padding: 8px;
+        border-left: 5px solid #ad5c33;
+        background: #f8eee8;
+        font-size: 13px;
+      }
+      .page-number {
+        padding: 8px;
+        text-align: center;
+        font-size: 13px;
+      }
+    </style>
+  </head>
+  <body>
+    <div
+      class="paper_width printform"
+      data-papersize-width="750"
+      data-papersize-height="1050"
+      data-repeat-header="y"
+      data-repeat-rowheader="y"
+      data-repeat-footer-pagenum="y"
+    >
+      <table cellpadding="0" cellspacing="0" border="0" class="paper_width section-table pheader">
+        <tr>
+          <td style="width: 15px"></td>
+          <td style="width: inherit"></td>
+          <td style="width: 15px"></td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>
+            <svg width="720" height="98" viewBox="0 0 720 98" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Copperline Returns">
+              <rect width="720" height="98" fill="#AD5C33" />
+              <circle cx="47" cy="49" r="25" fill="none" stroke="white" stroke-width="3" />
+              <path d="M55 38a14 14 0 1 0 3 18M55 31v10h-10" fill="none" stroke="white" stroke-width="3" />
+              <text x="88" y="43" fill="white" font-family="Arial,sans-serif" font-size="21" font-weight="700">COPPERLINE GOODS</text>
+              <text x="88" y="68" fill="#fff1e8" font-family="Arial,sans-serif" font-size="14">SALES RETURN AUTHORIZATION</text>
+              <text x="690" y="44" fill="white" font-family="Arial,sans-serif" font-size="19" text-anchor="end" font-weight="700">
+                RMA-260418
+              </text>
+              <text x="690" y="68" fill="#fff1e8" font-family="Arial,sans-serif" font-size="13" text-anchor="end">
+                AUTHORIZED · EXPIRES 18 NOV 2026
+              </text>
+            </svg>
+          </td>
+          <td></td>
+        </tr>
+      </table>
+      <table cellpadding="0" cellspacing="0" border="0" class="paper_width section-table pdocinfo">
+        <tr>
+          <td style="width: 15px"></td>
+          <td style="width: inherit"></td>
+          <td style="width: 15px"></td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>
+            <table class="inner">
+              <tr>
+                <td style="width: 33%"></td>
+                <td style="width: 34%"></td>
+                <td style="width: 33%"></td>
+              </tr>
+              <tr>
+                <td>
+                  <div class="box">
+                    <div class="label">CUSTOMER</div>
+                    Casey Example · C-2041<br />casey@example.invalid
+                  </div>
+                </td>
+                <td>
+                  <div class="box">
+                    <div class="label">ORIGINAL SALE</div>
+                    Invoice SI-10482<br />Sale date: 12 Oct 2026
+                  </div>
+                </td>
+                <td>
+                  <div class="box">
+                    <div class="label">RETURN ADDRESS</div>
+                    Copperline Returns Dock<br />14 Sample Road, Salem, OR
+                  </div>
+                </td>
+              </tr>
+            </table>
+          </td>
+          <td></td>
+        </tr>
+      </table>
+      <table cellpadding="0" cellspacing="0" border="0" class="paper_width section-table prowheader">
+        <tr>
+          <td style="width: 15px"></td>
+          <td style="width: inherit"></td>
+          <td style="width: 15px"></td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>
+            <table class="items">
+              <tr>
+                <td class="head"><div class="cell-content">SKU</div></td>
+                <td class="head"><div class="cell-content">Description</div></td>
+                <td class="head"><div class="cell-content">Serial Number</div></td>
+                <td class="head" align="right"><div class="cell-content">Return Qty</div></td>
+                <td class="head"><div class="cell-content">Reason</div></td>
+                <td class="head"><div class="cell-content">Condition</div></td>
+                <td class="head"><div class="cell-content">Resolution</div></td>
+              </tr>
+            </table>
+          </td>
+          <td></td>
+        </tr>
+      </table>
+      <div id="rma-rows"></div>
+      <table cellpadding="0" cellspacing="0" border="0" class="paper_width section-table pfooter">
+        <tr>
+          <td style="width: 15px"></td>
+          <td style="width: inherit"></td>
+          <td style="width: 15px"></td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>
+            <div class="footer">
+              <b>INSPECTION FINDINGS</b> · Packaging opened; items match authorization. <b>DECISION</b> · <span id="rma-decision"></span
+              ><br />
+              Inspector: Morgan Example __________________ &nbsp; Approved by: Avery Example __________________
+            </div>
+          </td>
+          <td></td>
+        </tr>
+      </table>
+      <script>
+        const widths = [70, 145, 110, 65, "inherit", 95, 135];
+        const widthRow = () =>
+          `<tr>${widths.map((width) => `<td style="width:${width === "inherit" ? "inherit" : `${width}px`}"></td>`).join("")}</tr>`;
+        document.querySelector(".prowheader .items").insertAdjacentHTML("afterbegin", widthRow());
+        const rmaRows = [
+          ["CL-101", "Canvas tote", "SN-10021", 1, "Size", "Good", "Refund"],
+          ["CL-102", "Desk lamp", "SN-10022", 1, "Defect", "Test", "Replace"],
+          ["CL-103", "Wool throw", "SN-10023", 2, "Color", "Good", "Refund"],
+          ["CL-104", "Ceramic mug", "SN-10024", 1, "Crack", "Damaged", "Refund"],
+          ["CL-105", "Oak tray", "SN-10025", 1, "Duplicate", "Good", "Refund"],
+          ["CL-106", "Linen apron", "SN-10026", 1, "Fit", "Good", "Replace"],
+          ["CL-107", "Glass carafe", "SN-10027", 1, "Leak", "Test", "Replace"],
+          ["CL-108", "Cotton napkins", "SN-10028", 2, "Color", "Good", "Refund"],
+          ["CL-109", "Wall clock", "SN-10029", 1, "Noise", "Test", "Replace"],
+          ["CL-110", "Tea canister", "SN-10030", 1, "Duplicate", "Good", "Refund"],
+          ["CL-111", "Woven basket", "SN-10031", 1, "Size", "Good", "Refund"],
+          ["CL-112", "Serving board", "SN-10032", 1, "Warp", "Damaged", "Refund"],
+        ];
+        const host = document.getElementById("rma-rows");
+        for (const [index, row] of rmaRows.entries()) {
+          const table = document.createElement("table");
+          table.className = "paper_width section-table prowitem";
+          table.innerHTML = `<tr><td style="width:15px"></td><td style="width:inherit"></td><td style="width:15px"></td></tr><tr><td></td><td><table class="items">${widthRow()}<tr>${row
+            .map((value, cell) => {
+              const alignment = cell === 3 ? ' align="right"' : "";
+              return `<td class="cell${index % 2 ? " alt" : ""}"${alignment}><div class="cell-content">${value}</div></td>`;
+            })
+            .join("")}</tr></table></td><td></td></tr>`;
+          host.before(table);
+        }
+        host.remove();
+        const totals = rmaRows.reduce(
+          (result, row) => {
+            result[row[6] === "Refund" ? "refund" : "replacement"] += row[3];
+            return result;
+          },
+          { refund: 0, replacement: 0 },
+        );
+        document.getElementById("rma-decision").textContent = `${totals.refund} refund units / ${totals.replacement} replacement units`;
+      </script>
+      <table cellpadding="0" cellspacing="0" border="0" class="paper_width section-table pfooter_pagenum">
+        <tr>
+          <td style="width: 15px"></td>
+          <td style="width: inherit"></td>
+          <td style="width: 15px"></td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>
+            <div class="page-number" data-page-number-container>Page <span data-page-number></span> of <span data-page-total></span></div>
+          </td>
+          <td></td>
+        </tr>
+      </table>
+    </div>
+    <script src="../../dist/printform.js"></script>
+  </body>
+</html>

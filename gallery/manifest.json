@@ -379,5 +379,157 @@
     "thumb": "thumbs/customer-order-confirmation.png",
     "width": 750,
     "height": 600
+  },
+  {
+    "id": "sales-return-rma",
+    "title": {
+      "en": "Sales Return Authorization",
+      "zh": "销售退货授权单"
+    },
+    "type": "RMA",
+    "paper": "A4",
+    "pages": 1,
+    "tags": [
+      "sales",
+      "returns",
+      "after-sales"
+    ],
+    "file": "designs/sales-return-rma.html",
+    "thumb": "thumbs/sales-return-rma.png",
+    "width": 750,
+    "height": 1050
+  },
+  {
+    "id": "sales-commission-statement",
+    "title": {
+      "en": "Commission Statement",
+      "zh": "销售佣金结算单"
+    },
+    "type": "Commission",
+    "paper": "LETTER",
+    "pages": 3,
+    "tags": [
+      "sales",
+      "commission",
+      "earnings"
+    ],
+    "file": "designs/sales-commission-statement.html",
+    "thumb": "thumbs/sales-commission-statement.png",
+    "width": 750,
+    "height": 971
+  },
+  {
+    "id": "inventory-stock-master",
+    "title": {
+      "en": "Stock Master List",
+      "zh": "库存商品主清单"
+    },
+    "type": "Stock List",
+    "paper": "A4",
+    "pages": 3,
+    "tags": [
+      "inventory",
+      "catalog",
+      "availability"
+    ],
+    "file": "designs/inventory-stock-master.html",
+    "thumb": "thumbs/inventory-stock-master.png",
+    "width": 750,
+    "height": 1050
+  },
+  {
+    "id": "blind-stock-count",
+    "title": {
+      "en": "Stock Take Sheet",
+      "zh": "库存盘点表"
+    },
+    "type": "Stock Count",
+    "paper": "A4",
+    "pages": 2,
+    "tags": [
+      "inventory",
+      "stocktake",
+      "audit"
+    ],
+    "file": "designs/blind-stock-count.html",
+    "thumb": "thumbs/blind-stock-count.png",
+    "width": 750,
+    "height": 1050
+  },
+  {
+    "id": "interwarehouse-stock-transfer",
+    "title": {
+      "en": "Stock Transfer Note",
+      "zh": "库存调拨单"
+    },
+    "type": "Stock Transfer",
+    "paper": "A4",
+    "pages": 2,
+    "tags": [
+      "inventory",
+      "transfer",
+      "warehouse"
+    ],
+    "file": "designs/interwarehouse-stock-transfer.html",
+    "thumb": "thumbs/interwarehouse-stock-transfer.png",
+    "width": 750,
+    "height": 1050
+  },
+  {
+    "id": "inventory-adjustment-note",
+    "title": {
+      "en": "Stock Adjustment Note",
+      "zh": "库存调整单"
+    },
+    "type": "Adjustment",
+    "paper": "A4",
+    "pages": 1,
+    "tags": [
+      "inventory",
+      "adjustment",
+      "control"
+    ],
+    "file": "designs/inventory-adjustment-note.html",
+    "thumb": "thumbs/inventory-adjustment-note.png",
+    "width": 750,
+    "height": 1050
+  },
+  {
+    "id": "low-stock-reorder-report",
+    "title": {
+      "en": "Low-Stock Reorder Report",
+      "zh": "低库存补货清单"
+    },
+    "type": "Reorder Report",
+    "paper": "LETTER",
+    "pages": 3,
+    "tags": [
+      "inventory",
+      "replenishment",
+      "planning"
+    ],
+    "file": "designs/low-stock-reorder-report.html",
+    "thumb": "thumbs/low-stock-reorder-report.png",
+    "width": 750,
+    "height": 971
+  },
+  {
+    "id": "warehouse-bin-labels",
+    "title": {
+      "en": "Bin Location Label Sheet",
+      "zh": "仓库库位标签页"
+    },
+    "type": "Bin Labels",
+    "paper": "A4",
+    "pages": 2,
+    "tags": [
+      "inventory",
+      "labels",
+      "locations"
+    ],
+    "file": "designs/warehouse-bin-labels.html",
+    "thumb": "thumbs/warehouse-bin-labels.png",
+    "width": 750,
+    "height": 1050
   }
 ]

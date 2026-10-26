@@ -1,0 +1,190 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Stock Take Sheet</title>
+    <link rel="stylesheet" href="shared/page.css" />
+    <style>
+      body {
+        color: #3b302b;
+        font-family: Arial, "Helvetica Neue", sans-serif;
+      }
+      .paper_width {
+        width: 750px;
+      }
+      .section-table {
+        table-layout: fixed;
+      }
+      .section-table td {
+        box-sizing: border-box;
+        vertical-align: top;
+      }
+      .inner,
+      .items {
+        width: 100%;
+        table-layout: fixed;
+      }
+      .items td {
+        font-size: 13px;
+        line-height: 17px;
+      }
+      .cell-content {
+        padding: 3px 4px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .cell {
+        padding: 0;
+        border: 1px solid #ddd3ce;
+      }
+      .head {
+        background: #8d6e63;
+        color: white;
+        font-weight: 700;
+      }
+      .worksheet {
+        padding: 10px;
+        background: #f4efeb;
+        font-size: 14px;
+      }
+      .page-number {
+        padding: 6px;
+        text-align: center;
+        font-size: 13px;
+      }
+    </style>
+  </head>
+  <body>
+    <div
+      class="paper_width printform"
+      data-papersize-width="750"
+      data-papersize-height="1050"
+      data-repeat-header="y"
+      data-repeat-rowheader="y"
+      data-repeat-footer-pagenum="y"
+    >
+      <table cellpadding="0" cellspacing="0" border="0" class="paper_width section-table pheader">
+        <tr>
+          <td style="width: 15px"></td>
+          <td style="width: inherit"></td>
+          <td style="width: 15px"></td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>
+            <div class="worksheet">
+              <b>FIELD WORKSHEET · STOCK TAKE</b><br />Session ST-261026-04 &nbsp; | &nbsp; Cutoff: 26 Oct 2026, 06:00<br />Write physical
+              counts only. Expected quantities intentionally omitted.
+            </div>
+          </td>
+          <td></td>
+        </tr>
+      </table>
+      <table cellpadding="0" cellspacing="0" border="0" class="paper_width section-table pdocinfo">
+        <tr>
+          <td style="width: 15px"></td>
+          <td style="width: inherit"></td>
+          <td style="width: 15px"></td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>
+            <table class="inner">
+              <tr>
+                <td style="width: 33%"></td>
+                <td style="width: 34%"></td>
+                <td style="width: 33%"></td>
+              </tr>
+              <tr>
+                <td style="padding: 8px; font-size: 13px">Warehouse zone<br />North Dock · Aisles A–C</td>
+                <td style="padding: 8px; font-size: 13px">Counter<br />Sam Example</td>
+                <td style="padding: 8px; font-size: 13px">Verifier<br />Lee Example</td>
+              </tr>
+            </table>
+          </td>
+          <td></td>
+        </tr>
+      </table>
+      <table cellpadding="0" cellspacing="0" border="0" class="paper_width section-table prowheader">
+        <tr>
+          <td style="width: 15px"></td>
+          <td style="width: inherit"></td>
+          <td style="width: 15px"></td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>
+            <table class="items">
+              <tr id="count-header"></tr>
+            </table>
+          </td>
+          <td></td>
+        </tr>
+      </table>
+      <div id="count-rows"></div>
+      <table cellpadding="0" cellspacing="0" border="0" class="paper_width section-table pfooter">
+        <tr>
+          <td style="width: 15px"></td>
+          <td style="width: inherit"></td>
+          <td style="width: 15px"></td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>
+            <div style="padding: 10px; border-top: 1px solid #8d6e63; font-size: 13px">
+              Exceptions / recount references: _________________________________________________<br />Count completed by
+              ____________________ &nbsp; Verifier ____________________ &nbsp; Date __________
+            </div>
+          </td>
+          <td></td>
+        </tr>
+      </table>
+      <script>
+        const columnWidths = [70, 85, 180, 55, 95, 95, "inherit"];
+        const widthRow = () =>
+          `<tr>${columnWidths.map((width) => `<td style="width:${width === "inherit" ? width : `${width}px`}"></td>`).join("")}</tr>`;
+        const alignments = ["", "", "", "", "", "", ""];
+        const headers = ["Bin", "SKU", "Description", "UOM", "First Count", "Recount", "Notes"];
+        const headerCells = headers
+          .map((label, index) => `<td class="cell head"${alignments[index]}><div class="cell-content">${label}</div></td>`)
+          .join("");
+        document.getElementById("count-header").outerHTML = `<tr>${headerCells}</tr>`;
+        document.querySelector(".prowheader .items").insertAdjacentHTML("afterbegin", widthRow());
+        const countRows = Array.from({ length: 30 }, (_, index) => [
+          `A-${String(index + 1).padStart(2, "0")}`,
+          `CT-${String(index + 301).padStart(3, "0")}`,
+          `Counted sample item ${index + 1}`,
+          "EA",
+          "",
+          "",
+          "",
+        ]);
+        const target = document.getElementById("count-rows");
+        for (const row of countRows) {
+          const table = document.createElement("table");
+          table.className = "paper_width section-table prowitem";
+          table.innerHTML = `<tr><td style="width:15px"></td><td style="width:inherit"></td><td style="width:15px"></td></tr><tr><td></td><td><table class="items">${widthRow()}<tr>${row.map((value, index) => `<td class="cell"${alignments[index]}><div class="cell-content">${value}</div></td>`).join("")}</tr></table></td><td></td></tr>`;
+          target.before(table);
+        }
+        target.remove();
+      </script>
+      <table cellpadding="0" cellspacing="0" border="0" class="paper_width section-table pfooter_pagenum">
+        <tr>
+          <td style="width: 15px"></td>
+          <td style="width: inherit"></td>
+          <td style="width: 15px"></td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>
+            <div class="page-number" data-page-number-container>Page <span data-page-number></span> of <span data-page-total></span></div>
+          </td>
+          <td></td>
+        </tr>
+      </table>
+    </div>
+    <script src="../../dist/printform.js"></script>
+  </body>
+</html>

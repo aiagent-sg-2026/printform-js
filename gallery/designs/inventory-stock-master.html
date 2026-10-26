@@ -1,0 +1,223 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Stock Master List</title>
+    <link rel="stylesheet" href="shared/page.css" />
+    <style>
+      body {
+        color: #26343a;
+        font-family: Arial, "Helvetica Neue", sans-serif;
+      }
+      .paper_width {
+        width: 750px;
+      }
+      .section-table {
+        table-layout: fixed;
+      }
+      .section-table td {
+        box-sizing: border-box;
+        vertical-align: top;
+      }
+      .inner,
+      .items {
+        width: 100%;
+        table-layout: fixed;
+      }
+      .items td {
+        font-size: 13px;
+        line-height: 18px;
+      }
+      .head {
+        background: #607d8b;
+        color: white;
+        font-weight: 700;
+      }
+      .cell {
+        border-bottom: 1px solid #d9e0e3;
+      }
+      .cell-content {
+        padding: 3px 4px;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+      }
+      .alt {
+        background: #eef2f4;
+      }
+      .category {
+        padding: 3px 6px;
+        background: #dce5e9;
+        color: #425b66;
+        font-weight: 700;
+        font-size: 13px;
+      }
+      .page-number {
+        padding: 6px;
+        text-align: center;
+        font-size: 13px;
+      }
+    </style>
+  </head>
+  <body>
+    <div
+      class="paper_width printform"
+      data-papersize-width="750"
+      data-papersize-height="1050"
+      data-repeat-header="y"
+      data-repeat-rowheader="y"
+      data-repeat-footer-pagenum="y"
+    >
+      <table cellpadding="0" cellspacing="0" border="0" class="paper_width section-table pheader">
+        <tr>
+          <td style="width: 15px"></td>
+          <td style="width: inherit"></td>
+          <td style="width: 15px"></td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>
+            <svg
+              width="720"
+              height="86"
+              viewBox="0 0 720 86"
+              xmlns="http://www.w3.org/2000/svg"
+              role="img"
+              aria-label="Harbor Stock Directory"
+            >
+              <rect width="720" height="86" fill="#607D8B" />
+              <path d="M30 26h44v34H30zM37 34h30M37 42h30M37 50h22" fill="none" stroke="white" stroke-width="2" />
+              <text x="92" y="43" fill="white" font-family="Arial,sans-serif" font-size="22" font-weight="700">HARBOR STOCK DIRECTORY</text>
+              <text x="92" y="66" fill="#e5eef1" font-family="Arial,sans-serif" font-size="13">INVENTORY SNAPSHOT · 26 OCT 2026</text>
+              <text x="690" y="51" fill="white" font-family="Arial,sans-serif" font-size="16" text-anchor="end">ACTIVE ITEMS</text>
+            </svg>
+          </td>
+          <td></td>
+        </tr>
+      </table>
+      <table cellpadding="0" cellspacing="0" border="0" class="paper_width section-table pdocinfo">
+        <tr>
+          <td style="width: 15px"></td>
+          <td style="width: inherit"></td>
+          <td style="width: 15px"></td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>
+            <table class="inner">
+              <tr>
+                <td style="width: 50%"></td>
+                <td style="width: 50%"></td>
+              </tr>
+              <tr>
+                <td style="padding: 8px; font-size: 13px">
+                  Warehouse scope: North Dock + Annex<br />Filters: Active stock · All categories
+                </td>
+                <td style="padding: 8px; font-size: 13px">Generated: 26 Oct 2026, 08:30<br />Owner: Riley Example · Inventory Control</td>
+              </tr>
+            </table>
+          </td>
+          <td></td>
+        </tr>
+      </table>
+      <script>
+        const columnWidths = ["85px", "inherit", "115px", "65px", "85px", "85px", "95px"];
+        const widthRow = () => `<tr>${columnWidths.map((width) => `<td style="width: ${width}"></td>`).join("")}</tr>`;
+      </script>
+      <table cellpadding="0" cellspacing="0" border="0" class="paper_width section-table prowheader">
+        <tr>
+          <td style="width: 15px"></td>
+          <td style="width: inherit"></td>
+          <td style="width: 15px"></td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>
+            <table class="items">
+              <tbody id="stock-header">
+                <tr id="stock-header-widths"></tr>
+                <tr>
+                  <td class="head"><div class="cell-content">SKU</div></td>
+                  <td class="head"><div class="cell-content">Description</div></td>
+                  <td class="head"><div class="cell-content">Category</div></td>
+                  <td class="head"><div class="cell-content">UOM</div></td>
+                  <td class="head" align="right"><div class="cell-content">On Hand</div></td>
+                  <td class="head" align="right"><div class="cell-content">Reserved</div></td>
+                  <td class="head" align="right"><div class="cell-content">Available</div></td>
+                </tr>
+              </tbody>
+            </table>
+          </td>
+          <td></td>
+        </tr>
+      </table>
+      <div id="stock-rows"></div>
+      <script>
+        document.getElementById("stock-header-widths").outerHTML = widthRow();
+        const stockRows = Array.from({ length: 45 }, (_, index) => {
+          const category = ["Hardware", "Lighting", "Fixtures"][Math.floor(index / 15)];
+          const onHand = 18 + index * 2;
+          const reserved = index % 5;
+          return [
+            `HB-${String(index + 101).padStart(3, "0")}`,
+            `Sample ${category} ${index + 1}`,
+            category,
+            "EA",
+            onHand,
+            reserved,
+            onHand - reserved,
+          ];
+        });
+        const target = document.getElementById("stock-rows");
+        stockRows.forEach((row, index) => {
+          if (index % 15 === 0) {
+            const divider = document.createElement("table");
+            divider.className = "paper_width section-table prowitem";
+            divider.innerHTML = `<tr><td style="width:15px"></td><td style="width:inherit"></td><td style="width:15px"></td></tr><tr><td></td><td><table class="items"><tbody>${widthRow()}<tr><td colspan="7"><div class="category">${row[2]} · ${index + 1}–${index + 15}</div></td></tr></tbody></table></td><td></td></tr>`;
+            target.before(divider);
+          }
+          const table = document.createElement("table");
+          table.className = "paper_width section-table prowitem";
+          table.innerHTML = `<tr><td style="width:15px"></td><td style="width:inherit"></td><td style="width:15px"></td></tr><tr><td></td><td><table class="items"><tbody>${widthRow()}<tr>${row.map((value, cell) => `<td class="cell${index % 2 ? " alt" : ""}"${cell >= 4 ? ' align="right"' : ""}><div class="cell-content">${value}</div></td>`).join("")}</tr></tbody></table></td><td></td></tr>`;
+          target.before(table);
+        });
+        target.remove();
+      </script>
+      <table cellpadding="0" cellspacing="0" border="0" class="paper_width section-table pfooter">
+        <tr>
+          <td style="width: 15px"></td>
+          <td style="width: inherit"></td>
+          <td style="width: 15px"></td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>
+            <div style="padding: 8px; border-top: 2px solid #607d8b; font-size: 13px">
+              Item count: <b id="item-count"></b> &nbsp; Report owner: Riley Example · Inventory Control
+            </div>
+          </td>
+          <td></td>
+        </tr>
+      </table>
+      <script>
+        document.getElementById("item-count").textContent = stockRows.length;
+      </script>
+      <table cellpadding="0" cellspacing="0" border="0" class="paper_width section-table pfooter_pagenum">
+        <tr>
+          <td style="width: 15px"></td>
+          <td style="width: inherit"></td>
+          <td style="width: 15px"></td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>
+            <div class="page-number" data-page-number-container>Page <span data-page-number></span> of <span data-page-total></span></div>
+          </td>
+          <td></td>
+        </tr>
+      </table>
+    </div>
+    <script src="../../dist/printform.js"></script>
+  </body>
+</html>

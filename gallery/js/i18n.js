@@ -10,7 +10,10 @@ export const translations = {
     typeWorkOrder: "Work Order", typeTimesheet: "Timesheet", typeOrderForm: "Order Form",
     typeRFQ: "RFQ", typeGoodsReceipt: "Goods Receipt", typeSupplierInvoice: "Supplier Invoice",
     typePurchaseReturn: "Purchase Return", typeVendorStatement: "Vendor Statement",
-    typeSalesOrder: "Sales Order", typeProforma: "Proforma", typeConfirmation: "Confirmation"
+    typeSalesOrder: "Sales Order", typeProforma: "Proforma", typeConfirmation: "Confirmation",
+    typeRMA: "RMA", typeCommission: "Commission", typeStockList: "Stock List",
+    typeStockCount: "Stock Count", typeStockTransfer: "Stock Transfer",
+    typeAdjustment: "Adjustment", typeReorderReport: "Reorder Report", typeBinLabels: "Bin Labels"
   },
   zh: {
     eyebrow: "打印文档设计库", heading: "为打印而设计的表单。",
@@ -23,7 +26,10 @@ export const translations = {
     typeWorkOrder: "工作单", typeTimesheet: "工时表", typeOrderForm: "定制订单",
     typeRFQ: "采购询价", typeGoodsReceipt: "采购收货", typeSupplierInvoice: "供应商发票",
     typePurchaseReturn: "采购退货", typeVendorStatement: "供应商对账单",
-    typeSalesOrder: "销售订单", typeProforma: "形式发票", typeConfirmation: "订单确认"
+    typeSalesOrder: "销售订单", typeProforma: "形式发票", typeConfirmation: "订单确认",
+    typeRMA: "退货授权", typeCommission: "销售佣金", typeStockList: "库存清单",
+    typeStockCount: "库存盘点", typeStockTransfer: "库存调拨",
+    typeAdjustment: "库存调整", typeReorderReport: "补货报告", typeBinLabels: "库位标签"
   }
 };
 

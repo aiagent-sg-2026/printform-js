@@ -1,0 +1,226 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Low-Stock Reorder Report</title>
+    <link rel="stylesheet" href="shared/page.css" />
+    <style>
+      body {
+        color: #40351f;
+        font-family: Arial, "Helvetica Neue", sans-serif;
+      }
+      .paper_width {
+        width: 750px;
+      }
+      .section-table {
+        table-layout: fixed;
+      }
+      .section-table td {
+        box-sizing: border-box;
+        vertical-align: top;
+      }
+      .inner,
+      .items {
+        width: 100%;
+        table-layout: fixed;
+      }
+      .alert {
+        padding: 8px 12px;
+        background: #c08a24;
+        color: white;
+        font-size: 14px;
+        font-weight: 700;
+      }
+      .items td {
+        font-size: 13px;
+        line-height: 19px;
+      }
+      .head {
+        background: #f3ead6;
+        color: #73551d;
+        font-weight: 700;
+      }
+      .cell {
+        border-bottom: 1px solid #e6dcc8;
+      }
+      .cell-content {
+        overflow: hidden;
+        padding: 5px 4px;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      .priority {
+        color: #a24b22;
+        font-weight: 700;
+      }
+      .page-number {
+        padding: 6px;
+        text-align: center;
+        font-size: 13px;
+      }
+      .priority {
+        color: #a24b22;
+        font-weight: 700;
+      }
+      .page-number {
+        padding: 6px;
+        text-align: center;
+        font-size: 13px;
+      }
+    </style>
+  </head>
+  <body>
+    <div
+      class="paper_width printform"
+      data-papersize-width="750"
+      data-papersize-height="971"
+      data-repeat-header="y"
+      data-repeat-rowheader="y"
+      data-repeat-footer-pagenum="y"
+    >
+      <table cellpadding="0" cellspacing="0" border="0" class="paper_width section-table pheader">
+        <tr>
+          <td style="width: 15px"></td>
+          <td style="width: inherit"></td>
+          <td style="width: 15px"></td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>
+            <svg
+              width="720"
+              height="82"
+              viewBox="0 0 720 82"
+              xmlns="http://www.w3.org/2000/svg"
+              role="img"
+              aria-label="Amber Supply Planning"
+            >
+              <rect width="720" height="82" fill="#fff8e8" />
+              <rect x="0" width="720" height="8" fill="#C08A24" />
+              <path d="M34 28h38v32H34zM43 35h20M43 43h20M43 51h13" fill="none" stroke="#C08A24" stroke-width="3" />
+              <text x="88" y="43" fill="#40351f" font-family="Arial,sans-serif" font-size="21" font-weight="700">
+                AMBER SUPPLY PLANNING
+              </text>
+              <text x="88" y="64" fill="#8a6822" font-family="Arial,sans-serif" font-size="13">LOW-STOCK REORDER REPORT · 26 OCT 2026</text>
+              <text x="690" y="49" fill="#a24b22" font-family="Arial,sans-serif" font-size="14" text-anchor="end" font-weight="700">
+                32 SHORTAGES
+              </text>
+            </svg>
+          </td>
+          <td></td>
+        </tr>
+      </table>
+      <table cellpadding="0" cellspacing="0" border="0" class="paper_width section-table pdocinfo">
+        <tr>
+          <td style="width: 15px"></td>
+          <td style="width: inherit"></td>
+          <td style="width: 15px"></td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>
+            <div class="alert">REPLENISHMENT WATCH &nbsp; · &nbsp; Available stock below reorder point</div>
+            <table class="inner">
+              <tr>
+                <td style="width: 50%"></td>
+                <td style="width: 50%"></td>
+              </tr>
+              <tr>
+                <td style="padding: 8px; font-size: 13px">
+                  Warehouse: North Dock · All active bins<br />Shortage filter: Available &lt; reorder point
+                </td>
+                <td style="padding: 8px; font-size: 13px">Planning horizon: 21 days<br />Buyer: Taylor Example · Review before PO</td>
+              </tr>
+            </table>
+          </td>
+          <td></td>
+        </tr>
+      </table>
+      <table cellpadding="0" cellspacing="0" border="0" class="paper_width section-table prowheader">
+        <tr>
+          <td style="width: 15px"></td>
+          <td style="width: inherit"></td>
+          <td style="width: 15px"></td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>
+            <table class="items">
+              <tr id="reorder-header"></tr>
+            </table>
+          </td>
+          <td></td>
+        </tr>
+      </table>
+      <div id="reorder-rows"></div>
+      <table cellpadding="0" cellspacing="0" border="0" class="paper_width section-table pfooter">
+        <tr>
+          <td style="width: 15px"></td>
+          <td style="width: inherit"></td>
+          <td style="width: 15px"></td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>
+            <div style="padding: 8px; border-top: 2px solid #c08a24; font-size: 13px">
+              Proposed purchasing quantity: <b id="proposed-qty"></b> units &nbsp; · &nbsp; Lines: <b id="line-count"></b><br />Buyer review
+              ____________________ &nbsp; PO release approval ____________________
+            </div>
+          </td>
+          <td></td>
+        </tr>
+      </table>
+      <script>
+        const widths = [75, "inherit", 75, 90, 90, 105, 120];
+        const alignments = ["left", "left", "right", "right", "right", "right", "left"];
+        const headers = ["SKU", "Description", "Available", "Reorder Point", "Target Stock", "Suggested Qty", "Supplier"];
+        const widthRow = () =>
+          `<tr>${widths.map((width) => `<td style="width:${width === "inherit" ? width : `${width}px`}"></td>`).join("")}</tr>`;
+        const header = document.getElementById("reorder-header");
+        header.outerHTML = `${widthRow()}<tr>${headers.map((label, cell) => `<td class="head" align="${alignments[cell]}"><div class="cell-content">${label}</div></td>`).join("")}</tr>`;
+        const reorderRows = Array.from({ length: 32 }, (_, index) => {
+          const available = 2 + (index % 7);
+          const reorder = 12 + (index % 5);
+          const targetStock = reorder + 18;
+          return [
+            `RP-${String(index + 1).padStart(3, "0")}`,
+            `Reorder sample product ${index + 1}`,
+            available,
+            reorder,
+            targetStock,
+            targetStock - available,
+            `Vendor ${(index % 6) + 1}`,
+          ];
+        });
+        const target = document.getElementById("reorder-rows");
+        let proposed = 0;
+        reorderRows.forEach((row, index) => {
+          proposed += row[5];
+          const table = document.createElement("table");
+          table.className = "paper_width section-table prowitem";
+          table.innerHTML = `<tr><td style="width:15px"></td><td style="width:inherit"></td><td style="width:15px"></td></tr><tr><td></td><td><table class="items">${widthRow()}<tr>${row.map((value, cell) => `<td class="cell${cell === 5 ? " priority" : ""}" align="${alignments[cell]}"><div class="cell-content">${value}</div></td>`).join("")}</tr></table></td><td></td></tr>`;
+          target.before(table);
+        });
+        target.remove();
+        document.getElementById("proposed-qty").textContent = proposed;
+        document.getElementById("line-count").textContent = reorderRows.length;
+      </script>
+      <table cellpadding="0" cellspacing="0" border="0" class="paper_width section-table pfooter_pagenum">
+        <tr>
+          <td style="width: 15px"></td>
+          <td style="width: inherit"></td>
+          <td style="width: 15px"></td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>
+            <div class="page-number" data-page-number-container>Page <span data-page-number></span> of <span data-page-total></span></div>
+          </td>
+          <td></td>
+        </tr>
+      </table>
+    </div>
+    <script src="../../dist/printform.js"></script>
+  </body>
+</html>
