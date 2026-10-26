@@ -1,0 +1,263 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Sales Order · Blue Current</title>
+    <link rel="stylesheet" href="shared/page.css" />
+    <style>
+      body {
+        color: #26383a;
+        font-family: Arial, "Helvetica Neue", sans-serif;
+      }
+      .paper_width {
+        width: 750px;
+      }
+      .section-table {
+        table-layout: fixed;
+      }
+      .section-table td {
+        box-sizing: border-box;
+        vertical-align: top;
+      }
+      .info-grid,
+      .items-grid,
+      .totals-grid {
+        width: 100%;
+        table-layout: fixed;
+      }
+      .info-grid td {
+        width: 50%;
+        padding: 4px;
+        font-size: 13px;
+        line-height: 18px;
+      }
+      .info-box {
+        padding: 7px;
+        border-left: 4px solid #008b8b;
+        background: #eff8f7;
+      }
+      .items-grid td {
+        font-size: 13px;
+        line-height: 17px;
+      }
+      .head-cell {
+        background: #008b8b;
+        color: white;
+        font-weight: bold;
+      }
+      .item-cell {
+        border-bottom: 1px solid #d7e7e5;
+      }
+      .alternate {
+        background: #f3f9f8;
+      }
+      .cell-content {
+        padding: 3px 4px;
+      }
+      .milestone {
+        margin: 8px 4px;
+        padding: 7px;
+        background: #e7f3f1;
+        font-size: 13px;
+      }
+      .totals-grid td {
+        padding: 5px;
+        font-size: 13px;
+      }
+      .grand-total {
+        background: #008b8b;
+        color: white;
+        font-weight: bold;
+      }
+      .page-number {
+        padding: 6px;
+        font-size: 13px;
+        text-align: center;
+      }
+    </style>
+  </head>
+  <body>
+    <div
+      class="paper_width printform"
+      data-papersize-width="750"
+      data-papersize-height="1050"
+      data-repeat-header="y"
+      data-repeat-rowheader="y"
+      data-repeat-footer-pagenum="y"
+    >
+      <table cellpadding="0" cellspacing="0" border="0" class="paper_width section-table pheader">
+        <tr>
+          <td style="width: 15px"></td>
+          <td style="width: inherit"></td>
+          <td style="width: 15px"></td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>
+            <svg width="720" height="82" viewBox="0 0 720 82" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Blue Current Sales">
+              <rect width="720" height="82" fill="#e9f5f3" />
+              <rect width="12" height="82" fill="#008B8B" />
+              <path d="M34 22h38v38H34zM43 31h20M43 41h20M43 51h12" fill="none" stroke="#008B8B" stroke-width="3" />
+              <text x="88" y="38" fill="#245052" font-family="Arial,sans-serif" font-size="21" font-weight="700">
+                BLUE CURRENT · SALES ORDER
+              </text>
+              <text x="88" y="62" fill="#008B8B" font-family="Arial,sans-serif" font-size="13">SO-26109 · STATUS: ACCEPTED</text>
+              <text x="690" y="51" fill="#008B8B" font-family="Arial,sans-serif" font-size="17" text-anchor="end">26 OCT 2026</text>
+            </svg>
+          </td>
+          <td></td>
+        </tr>
+      </table>
+      <table cellpadding="0" cellspacing="0" border="0" class="paper_width section-table pdocinfo">
+        <tr>
+          <td style="width: 15px"></td>
+          <td style="width: inherit"></td>
+          <td style="width: 15px"></td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>
+            <table class="info-grid">
+              <tr>
+                <td style="width: 50%"></td>
+                <td style="width: 50%"></td>
+              </tr>
+              <tr>
+                <td>
+                  <div class="info-box"><strong>CUSTOMER / BILL TO</strong><br />Sample Studio LLC<br />44 Example Avenue, Portland</div>
+                  <div class="info-box"><strong>SHIP TO</strong><br />Receiving Desk · 200 Fiction Street</div>
+                </td>
+                <td>
+                  <div class="info-box"><strong>REQUESTED DELIVERY</strong><br />12 November 2026 · Ground<br />Payment: Net 30</div>
+                  <div class="info-box"><strong>ORDER CONTACT</strong><br />Taylor Example · orders@example.invalid</div>
+                </td>
+              </tr>
+            </table>
+            <div class="milestone">ORDER ACCEPTED 26 OCT → PICK &amp; PACK 03 NOV → DISPATCH 09 NOV → DELIVERY 12 NOV</div>
+          </td>
+          <td></td>
+        </tr>
+      </table>
+      <table cellpadding="0" cellspacing="0" border="0" class="paper_width section-table prowheader">
+        <tr>
+          <td style="width: 15px"></td>
+          <td style="width: inherit"></td>
+          <td style="width: 15px"></td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>
+            <table class="items-grid">
+              <tr>
+                <td style="width: 75px"></td>
+                <td style="width: 205px"></td>
+                <td style="width: 65px"></td>
+                <td style="width: 55px"></td>
+                <td style="width: 95px"></td>
+                <td style="width: 75px"></td>
+                <td style="width: 95px"></td>
+              </tr>
+              <tr>
+                <td class="head-cell">SKU</td>
+                <td class="head-cell">Description</td>
+                <td class="head-cell" align="right">Quantity</td>
+                <td class="head-cell">UOM</td>
+                <td class="head-cell" align="right">Unit Price</td>
+                <td class="head-cell" align="right">Discount</td>
+                <td class="head-cell" align="right">Amount</td>
+              </tr>
+            </table>
+          </td>
+          <td></td>
+        </tr>
+      </table>
+      <div id="order-rows"></div>
+      <table cellpadding="0" cellspacing="0" border="0" class="paper_width section-table pfooter">
+        <tr>
+          <td style="width: 15px"></td>
+          <td style="width: inherit"></td>
+          <td style="width: 15px"></td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>
+            <table class="totals-grid">
+              <tr>
+                <td></td>
+                <td>Freight / charges</td>
+                <td>$25.00</td>
+              </tr>
+              <tr class="grand-total">
+                <td></td>
+                <td>ORDER TOTAL</td>
+                <td id="total" align="right">$0.00</td>
+              </tr>
+            </table>
+            <div style="padding: 6px; font-size: 13px">
+              Customer acceptance: ________________________ Date: __________ · Questions: sales@example.invalid
+            </div>
+          </td>
+          <td></td>
+        </tr>
+      </table>
+      <script>
+        const descriptions = [
+          "Recycled paper ream",
+          "Desk organizer",
+          "Canvas tote",
+          "LED task lamp",
+          "Ceramic mug set",
+          "Notebook bundle",
+          "Steel bottle",
+          "Packing tape",
+          "Pencil set",
+          "Archive box",
+          "Felt desk pad",
+          "Glass jar",
+          "File folder",
+          "Pen bundle",
+          "Cable clips",
+          "Desk calendar",
+          "Storage tray",
+          "Label sheets",
+        ];
+        const target = document.getElementById("order-rows");
+        let subtotal = 0;
+        const fmt = (value) => `$${(value / 100).toFixed(2)}`;
+        for (let index = 0; index < descriptions.length; index += 1) {
+          const qty = (index % 4) + 1;
+          const unit = 850 + index * 95;
+          const discount = Math.round(unit * qty * 0.05);
+          const amount = unit * qty - discount;
+          subtotal += amount;
+          const cells = [`BC-${String(index + 1).padStart(3, "0")}`, descriptions[index], qty, "ea", fmt(unit), fmt(discount), fmt(amount)];
+          const table = document.createElement("table");
+          table.cellPadding = "0";
+          table.cellSpacing = "0";
+          table.border = "0";
+          table.className = "paper_width section-table prowitem";
+          table.innerHTML = `<tr><td style="width:15px"></td><td style="width:inherit"></td><td style="width:15px"></td></tr><tr><td></td><td><table class="items-grid"><tr><td style="width:75px"></td><td style="width:205px"></td><td style="width:65px"></td><td style="width:55px"></td><td style="width:95px"></td><td style="width:75px"></td><td style="width:95px"></td></tr><tr>${cells.map((value, cell) => `<td class="item-cell${index % 2 ? " alternate" : ""}"${cell === 2 || cell >= 4 ? ' align="right"' : ""}><div class="cell-content">${value}</div></td>`).join("")}</tr></table></td><td></td></tr>`;
+          target.before(table);
+        }
+        target.remove();
+        document.getElementById("total").textContent = fmt(subtotal + 2500);
+      </script>
+      <table cellpadding="0" cellspacing="0" border="0" class="paper_width section-table pfooter_pagenum">
+        <tr>
+          <td style="width: 15px"></td>
+          <td style="width: inherit"></td>
+          <td style="width: 15px"></td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>
+            <div class="page-number" data-page-number-container>Page <span data-page-number></span> of <span data-page-total></span></div>
+          </td>
+          <td></td>
+        </tr>
+      </table>
+    </div>
+    <script src="../../dist/printform.js"></script>
+  </body>
+</html>

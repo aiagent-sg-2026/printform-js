@@ -1,0 +1,266 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Purchase Return Note · Rosebay</title>
+    <link rel="stylesheet" href="shared/page.css" />
+    <style>
+      body {
+        color: #3b3034;
+        font-family: Arial, "Helvetica Neue", sans-serif;
+      }
+      .paper_width {
+        width: 750px;
+      }
+      .section-table {
+        table-layout: fixed;
+      }
+      .section-table td {
+        box-sizing: border-box;
+        vertical-align: top;
+      }
+      .info-grid,
+      .items-grid,
+      .totals-grid {
+        width: 100%;
+        table-layout: fixed;
+      }
+      .info-grid td {
+        width: 50%;
+        padding: 4px;
+        font-size: 13px;
+        line-height: 18px;
+      }
+      .info-box {
+        padding: 8px;
+        background: #faf1f3;
+      }
+      .label {
+        color: #a34d63;
+        font-weight: bold;
+      }
+      .items-grid td {
+        font-size: 13px;
+        line-height: 17px;
+      }
+      .head-cell {
+        background: #a34d63;
+        color: white;
+        font-weight: bold;
+      }
+      .item-cell {
+        border-bottom: 1px solid #ead9de;
+      }
+      .alternate {
+        background: #fbf6f7;
+      }
+      .cell-content {
+        padding: 3px 4px;
+      }
+      .chip {
+        display: inline-block;
+        margin: 4px;
+        padding: 5px 8px;
+        border: 1px solid #a34d63;
+        font-size: 13px;
+      }
+      .note {
+        padding: 8px;
+        border-top: 2px solid #a34d63;
+        font-size: 13px;
+        line-height: 19px;
+      }
+      .totals-grid td {
+        padding: 5px;
+        font-size: 13px;
+      }
+      .page-number {
+        padding: 6px;
+        font-size: 13px;
+        text-align: center;
+      }
+    </style>
+  </head>
+  <body>
+    <div
+      class="paper_width printform"
+      data-papersize-width="750"
+      data-papersize-height="1050"
+      data-repeat-header="y"
+      data-repeat-rowheader="y"
+      data-repeat-footer-pagenum="y"
+    >
+      <table cellpadding="0" cellspacing="0" border="0" class="paper_width section-table pheader">
+        <tr>
+          <td style="width: 15px"></td>
+          <td style="width: inherit"></td>
+          <td style="width: 15px"></td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>
+            <svg width="720" height="88" viewBox="0 0 720 88" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Rosebay Returns">
+              <rect width="720" height="88" fill="#A34D63" />
+              <circle cx="48" cy="44" r="23" fill="none" stroke="white" stroke-width="3" />
+              <path d="M36 44h24M48 32v24" stroke="white" stroke-width="3" />
+              <text x="86" y="40" fill="white" font-family="Arial,sans-serif" font-size="21" font-weight="700">ROSEBAY RETURNS</text>
+              <text x="86" y="64" fill="#f7e5e9" font-family="Arial,sans-serif" font-size="13">PURCHASE RETURN NOTE · RT-26031</text>
+              <text x="690" y="55" fill="white" font-family="Arial,sans-serif" font-size="19" text-anchor="end">26 OCT 2026</text>
+            </svg>
+            <div style="padding: 4px">
+              <span class="chip">DMG · damaged</span><span class="chip">WRG · wrong item</span><span class="chip">EXC · excess</span>
+            </div>
+          </td>
+          <td></td>
+        </tr>
+      </table>
+      <table cellpadding="0" cellspacing="0" border="0" class="paper_width section-table pdocinfo">
+        <tr>
+          <td style="width: 15px"></td>
+          <td style="width: inherit"></td>
+          <td style="width: 15px"></td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>
+            <table class="info-grid">
+              <tr>
+                <td style="width: 50%"></td>
+                <td style="width: 50%"></td>
+              </tr>
+              <tr>
+                <td>
+                  <div class="info-box">
+                    <span class="label">SUPPLIER</span><br />Fictional Parts Depot<br />Return authorization: RA-5908
+                  </div>
+                </td>
+                <td>
+                  <div class="info-box">
+                    <span class="label">ORIGINAL RECEIPT / DESTINATION</span><br />GRN-26114 · PO-26073<br />Return dock: Bay 1, Sample
+                    Warehouse
+                  </div>
+                </td>
+              </tr>
+            </table>
+          </td>
+          <td></td>
+        </tr>
+      </table>
+      <table cellpadding="0" cellspacing="0" border="0" class="paper_width section-table prowheader">
+        <tr>
+          <td style="width: 15px"></td>
+          <td style="width: inherit"></td>
+          <td style="width: 15px"></td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>
+            <table class="items-grid">
+              <tr>
+                <td style="width: 80px"></td>
+                <td style="width: 160px"></td>
+                <td style="width: 90px"></td>
+                <td style="width: 70px"></td>
+                <td style="width: 90px"></td>
+                <td style="width: 90px"></td>
+                <td style="width: 90px"></td>
+              </tr>
+              <tr>
+                <td class="head-cell">Item Code</td>
+                <td class="head-cell">Description</td>
+                <td class="head-cell">Receipt Ref</td>
+                <td class="head-cell" align="right">Return Qty</td>
+                <td class="head-cell" align="right">Unit Cost</td>
+                <td class="head-cell">Reason</td>
+                <td class="head-cell" align="right">Amount</td>
+              </tr>
+            </table>
+          </td>
+          <td></td>
+        </tr>
+      </table>
+      <div id="return-rows"></div>
+      <table cellpadding="0" cellspacing="0" border="0" class="paper_width section-table pfooter">
+        <tr>
+          <td style="width: 15px"></td>
+          <td style="width: inherit"></td>
+          <td style="width: 15px"></td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>
+            <table class="totals-grid">
+              <tr>
+                <td></td>
+                <td>Credit requested</td>
+                <td id="credit" align="right">$0.00</td>
+              </tr>
+            </table>
+            <div class="note">
+              Dispatch: Ground freight · collect authorization RA-5908<br />Supplier approval: __________________ Receiver:
+              __________________ Date: __________
+            </div>
+          </td>
+          <td></td>
+        </tr>
+      </table>
+      <script>
+        const goods = [
+          "Valve set",
+          "Cable reel",
+          "Seal kit",
+          "Panel meter",
+          "Filter pack",
+          "Drive belt",
+          "Safety switch",
+          "Pipe coupling",
+          "Bearing pair",
+          "Control relay",
+        ];
+        const target = document.getElementById("return-rows");
+        let cents = 0;
+        const fmt = (value) => `$${(value / 100).toFixed(2)}`;
+        for (let index = 0; index < goods.length; index += 1) {
+          const qty = (index % 3) + 1;
+          const price = 900 + index * 125;
+          const amount = qty * price;
+          cents += amount;
+          const cells = [
+            `RT-${String(index + 1).padStart(3, "0")}`,
+            goods[index],
+            "GRN-26114",
+            qty,
+            fmt(price),
+            index % 2 ? "WRG" : "DMG",
+            fmt(amount),
+          ];
+          const table = document.createElement("table");
+          table.cellPadding = "0";
+          table.cellSpacing = "0";
+          table.border = "0";
+          table.className = "paper_width section-table prowitem";
+          table.innerHTML = `<tr><td style="width:15px"></td><td style="width:inherit"></td><td style="width:15px"></td></tr><tr><td></td><td><table class="items-grid"><tr><td style="width:80px"></td><td style="width:160px"></td><td style="width:90px"></td><td style="width:70px"></td><td style="width:90px"></td><td style="width:90px"></td><td style="width:90px"></td></tr><tr>${cells.map((value, cell) => `<td class="item-cell${index % 2 ? " alternate" : ""}"${cell === 3 || cell === 4 || cell === 6 ? ' align="right"' : ""}><div class="cell-content">${value}</div></td>`).join("")}</tr></table></td><td></td></tr>`;
+          target.before(table);
+        }
+        target.remove();
+        document.getElementById("credit").textContent = fmt(cents);
+      </script>
+      <table cellpadding="0" cellspacing="0" border="0" class="paper_width section-table pfooter_pagenum">
+        <tr>
+          <td style="width: 15px"></td>
+          <td style="width: inherit"></td>
+          <td style="width: 15px"></td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>
+            <div class="page-number" data-page-number-container>Page <span data-page-number></span> of <span data-page-total></span></div>
+          </td>
+          <td></td>
+        </tr>
+      </table>
+    </div>
+    <script src="../../dist/printform.js"></script>
+  </body>
+</html>

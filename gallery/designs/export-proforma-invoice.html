@@ -1,0 +1,264 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Proforma Invoice · Orchid Trade</title>
+    <link rel="stylesheet" href="shared/page.css" />
+    <style>
+      body {
+        color: #362d3a;
+        font-family: Arial, "Helvetica Neue", sans-serif;
+      }
+      .paper_width {
+        width: 750px;
+      }
+      .section-table {
+        table-layout: fixed;
+      }
+      .section-table td {
+        box-sizing: border-box;
+        vertical-align: top;
+      }
+      .info-grid,
+      .items-grid,
+      .totals-grid {
+        width: 100%;
+        table-layout: fixed;
+      }
+      .info-grid td {
+        width: 50%;
+        padding: 5px;
+        font-size: 13px;
+        line-height: 19px;
+      }
+      .info-box {
+        padding: 8px;
+        border: 1px solid #ded2e3;
+      }
+      .label {
+        color: #9457a6;
+        font-weight: bold;
+      }
+      .items-grid td {
+        font-size: 13px;
+        line-height: 18px;
+      }
+      .head-cell {
+        color: #643b70;
+        border-bottom: 2px solid #9457a6;
+        font-weight: bold;
+      }
+      .item-cell {
+        border-bottom: 1px solid #e7e0e9;
+      }
+      .cell-content {
+        padding: 4px;
+      }
+      .totals-grid td {
+        padding: 6px;
+        font-size: 13px;
+      }
+      .grand-total td {
+        border: 2px solid #9457a6;
+        color: #643b70;
+        font-size: 16px;
+        font-weight: bold;
+      }
+      .note {
+        margin-top: 8px;
+        padding: 8px;
+        background: #f6f1f8;
+        font-size: 13px;
+        line-height: 19px;
+      }
+      .page-number {
+        padding: 6px;
+        font-size: 13px;
+        text-align: center;
+      }
+    </style>
+  </head>
+  <body>
+    <div
+      class="paper_width printform"
+      data-papersize-width="750"
+      data-papersize-height="1050"
+      data-repeat-header="y"
+      data-repeat-rowheader="y"
+      data-repeat-footer-pagenum="y"
+    >
+      <table cellpadding="0" cellspacing="0" border="0" class="paper_width section-table pheader">
+        <tr>
+          <td style="width: 15px"></td>
+          <td style="width: inherit"></td>
+          <td style="width: 15px"></td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>
+            <svg width="720" height="96" viewBox="0 0 720 96" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Orchid Trade">
+              <rect width="720" height="96" fill="white" />
+              <path d="M30 22h44v44H30zM40 32h24M40 43h24M40 54h14" fill="none" stroke="#9457A6" stroke-width="3" />
+              <text x="90" y="42" fill="#49364e" font-family="Arial,sans-serif" font-size="22" font-weight="700">ORCHID TRADE</text>
+              <text x="90" y="67" fill="#9457A6" font-family="Arial,sans-serif" font-size="13">COMMERCIAL EXPORT DOCUMENT</text>
+              <text x="690" y="47" fill="#9457A6" font-family="Arial,sans-serif" font-size="22" font-weight="700" text-anchor="end">
+                PROFORMA
+              </text>
+              <text x="690" y="71" fill="#6f6273" font-family="Arial,sans-serif" font-size="13" text-anchor="end">
+                Valid through 15 Nov 2026
+              </text>
+            </svg>
+          </td>
+          <td></td>
+        </tr>
+      </table>
+      <table cellpadding="0" cellspacing="0" border="0" class="paper_width section-table pdocinfo">
+        <tr>
+          <td style="width: 15px"></td>
+          <td style="width: inherit"></td>
+          <td style="width: 15px"></td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>
+            <table class="info-grid">
+              <tr>
+                <td style="width: 50%"></td>
+                <td style="width: 50%"></td>
+              </tr>
+              <tr>
+                <td>
+                  <div class="info-box"><span class="label">BUYER</span><br />Example Import House<br />Fictional Harbor, Canada</div>
+                  <div class="info-box">
+                    <span class="label">CURRENCY / DELIVERY</span><br />USD · Incoterms FCA<br />Estimated dispatch: 12 Nov 2026
+                  </div>
+                </td>
+                <td>
+                  <div class="info-box"><span class="label">SELLER</span><br />Orchid Trade Sample Ltd.<br />Portland, United States</div>
+                  <div class="info-box">
+                    <span class="label">DOCUMENT DETAILS</span><br />PF-26042 · Advance payment 50%<br />Country of origin: United States
+                  </div>
+                </td>
+              </tr>
+            </table>
+          </td>
+          <td></td>
+        </tr>
+      </table>
+      <table cellpadding="0" cellspacing="0" border="0" class="paper_width section-table prowheader">
+        <tr>
+          <td style="width: 15px"></td>
+          <td style="width: inherit"></td>
+          <td style="width: 15px"></td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>
+            <table class="items-grid">
+              <tr>
+                <td style="width: 80px"></td>
+                <td style="width: 195px"></td>
+                <td style="width: 100px"></td>
+                <td style="width: 70px"></td>
+                <td style="width: 95px"></td>
+                <td style="width: 75px"></td>
+                <td style="width: 90px"></td>
+              </tr>
+              <tr>
+                <td class="head-cell">Item</td>
+                <td class="head-cell">Description</td>
+                <td class="head-cell">Origin</td>
+                <td class="head-cell" align="right">Quantity</td>
+                <td class="head-cell" align="right">Unit Price</td>
+                <td class="head-cell" align="right">Tax</td>
+                <td class="head-cell" align="right">Amount</td>
+              </tr>
+            </table>
+          </td>
+          <td></td>
+        </tr>
+      </table>
+      <div id="proforma-rows"></div>
+      <table cellpadding="0" cellspacing="0" border="0" class="paper_width section-table pfooter">
+        <tr>
+          <td style="width: 15px"></td>
+          <td style="width: inherit"></td>
+          <td style="width: 15px"></td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>
+            <table class="totals-grid">
+              <tr>
+                <td></td>
+                <td>Estimated total</td>
+                <td id="total" align="right">$0.00</td>
+              </tr>
+              <tr>
+                <td></td>
+                <td>Advance payment (50%)</td>
+                <td id="advance" align="right">$0.00</td>
+              </tr>
+            </table>
+            <div class="note">
+              Bank: Sample International Bank · SWIFT: EXAMUS00 · Account 001234567<br />This proforma invoice is for payment and customs
+              reference only; it is not a tax invoice.
+            </div>
+          </td>
+          <td></td>
+        </tr>
+      </table>
+      <script>
+        const names = [
+          "Desk lamp",
+          "Canvas bag",
+          "Steel bottle",
+          "Paper bundle",
+          "Wooden tray",
+          "Ceramic set",
+          "Storage case",
+          "Cotton apron",
+          "Glass vessel",
+          "Notebook set",
+        ];
+        const target = document.getElementById("proforma-rows");
+        let cents = 0;
+        const fmt = (value) => `$${(value / 100).toFixed(2)}`;
+        for (let index = 0; index < names.length; index += 1) {
+          const qty = (index % 3) + 1;
+          const unit = 2200 + index * 240;
+          const tax = Math.round(unit * qty * 0.05);
+          const amount = unit * qty + tax;
+          cents += amount;
+          const cells = [`EX-${String(index + 1).padStart(2, "0")}`, names[index], "United States", qty, fmt(unit), fmt(tax), fmt(amount)];
+          const table = document.createElement("table");
+          table.cellPadding = "0";
+          table.cellSpacing = "0";
+          table.border = "0";
+          table.className = "paper_width section-table prowitem";
+          table.innerHTML = `<tr><td style="width:15px"></td><td style="width:inherit"></td><td style="width:15px"></td></tr><tr><td></td><td><table class="items-grid"><tr><td style="width:80px"></td><td style="width:195px"></td><td style="width:100px"></td><td style="width:70px"></td><td style="width:95px"></td><td style="width:75px"></td><td style="width:90px"></td></tr><tr>${cells.map((value, cell) => `<td class="item-cell"${cell === 3 || cell >= 4 ? ' align="right"' : ""}><div class="cell-content">${value}</div></td>`).join("")}</tr></table></td><td></td></tr>`;
+          target.before(table);
+        }
+        target.remove();
+        document.getElementById("total").textContent = fmt(cents);
+        document.getElementById("advance").textContent = fmt(Math.round(cents / 2));
+      </script>
+      <table cellpadding="0" cellspacing="0" border="0" class="paper_width section-table pfooter_pagenum">
+        <tr>
+          <td style="width: 15px"></td>
+          <td style="width: inherit"></td>
+          <td style="width: 15px"></td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>
+            <div class="page-number" data-page-number-container>Page <span data-page-number></span> of <span data-page-total></span></div>
+          </td>
+          <td></td>
+        </tr>
+      </table>
+    </div>
+    <script src="../../dist/printform.js"></script>
+  </body>
+</html>

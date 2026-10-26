@@ -1,0 +1,261 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Vendor Statement · Greyline</title>
+    <link rel="stylesheet" href="shared/page.css" />
+    <style>
+      body {
+        color: #303943;
+        font-family: Arial, "Helvetica Neue", sans-serif;
+      }
+      .paper_width {
+        width: 750px;
+      }
+      .section-table {
+        table-layout: fixed;
+      }
+      .section-table td {
+        box-sizing: border-box;
+        vertical-align: top;
+      }
+      .info-grid,
+      .items-grid,
+      .totals-grid {
+        width: 100%;
+        table-layout: fixed;
+      }
+      .info-grid td {
+        width: 50%;
+        padding: 4px;
+        font-size: 13px;
+        line-height: 18px;
+      }
+      .info-box {
+        padding: 7px;
+        border: 1px solid #d5dbe0;
+      }
+      .label {
+        color: #596773;
+        font-weight: bold;
+      }
+      .items-grid td {
+        font-size: 13px;
+        line-height: 16px;
+      }
+      .head-cell {
+        background: #596773;
+        color: white;
+        font-weight: bold;
+      }
+      .item-cell {
+        border-bottom: 1px solid #e1e5e8;
+      }
+      .alternate {
+        background: #f5f7f8;
+      }
+      .cell-content {
+        padding: 2px 4px;
+      }
+      .ribbon {
+        margin: 6px 4px;
+        padding: 6px;
+        background: #edf0f2;
+        font-size: 13px;
+      }
+      .balance {
+        font-weight: bold;
+        color: #364652;
+      }
+      .totals-grid td {
+        padding: 4px;
+        font-size: 13px;
+      }
+      .page-number {
+        padding: 5px;
+        font-size: 13px;
+        text-align: center;
+      }
+    </style>
+  </head>
+  <body>
+    <div
+      class="paper_width printform"
+      data-papersize-width="750"
+      data-papersize-height="971"
+      data-repeat-header="y"
+      data-repeat-rowheader="y"
+      data-repeat-footer-pagenum="y"
+    >
+      <table cellpadding="0" cellspacing="0" border="0" class="paper_width section-table pheader">
+        <tr>
+          <td style="width: 15px"></td>
+          <td style="width: inherit"></td>
+          <td style="width: 15px"></td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>
+            <svg width="720" height="76" viewBox="0 0 720 76" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Greyline Accounts">
+              <rect width="720" height="76" fill="#596773" />
+              <path d="M28 18h38v40H28zM36 28h22M36 39h22M36 50h14" fill="none" stroke="white" stroke-width="3" />
+              <text x="82" y="36" fill="white" font-family="Arial,sans-serif" font-size="20" font-weight="700">GREYLINE ACCOUNTS</text>
+              <text x="82" y="59" fill="#e6ebee" font-family="Arial,sans-serif" font-size="13">
+                VENDOR STATEMENT · PERIOD 01–31 OCT 2026
+              </text>
+              <text x="690" y="48" fill="white" font-family="Arial,sans-serif" font-size="18" text-anchor="end">USD</text>
+            </svg>
+          </td>
+          <td></td>
+        </tr>
+      </table>
+      <table cellpadding="0" cellspacing="0" border="0" class="paper_width section-table pdocinfo">
+        <tr>
+          <td style="width: 15px"></td>
+          <td style="width: inherit"></td>
+          <td style="width: 15px"></td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>
+            <table class="info-grid">
+              <tr>
+                <td style="width: 50%"></td>
+                <td style="width: 50%"></td>
+              </tr>
+              <tr>
+                <td>
+                  <div class="info-box">
+                    <span class="label">VENDOR</span><br />Example Supply Group<br />Account V-00481 · Currency USD
+                  </div>
+                </td>
+                <td>
+                  <div class="info-box">
+                    <span class="label">ACCOUNT SUMMARY</span><br />Opening balance: <span id="opening">$0.00</span><br />Statement date: 31
+                    Oct 2026
+                  </div>
+                </td>
+              </tr>
+            </table>
+            <div class="ribbon">
+              CURRENT <strong id="aging-current">$0.00</strong> &nbsp; 1–30 DAYS <strong id="aging-1-30">$0.00</strong> &nbsp; 31–60 DAYS
+              <strong id="aging-31-60">$0.00</strong> &nbsp; 60+ <strong id="aging-60-plus">$0.00</strong>
+            </div>
+          </td>
+          <td></td>
+        </tr>
+      </table>
+      <table cellpadding="0" cellspacing="0" border="0" class="paper_width section-table prowheader">
+        <tr>
+          <td style="width: 15px"></td>
+          <td style="width: inherit"></td>
+          <td style="width: 15px"></td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>
+            <table class="items-grid">
+              <tr>
+                <td style="width: 80px"></td>
+                <td style="width: 90px"></td>
+                <td style="width: 190px"></td>
+                <td style="width: 90px"></td>
+                <td style="width: 75px"></td>
+                <td style="width: 75px"></td>
+                <td style="width: 100px"></td>
+              </tr>
+              <tr>
+                <td class="head-cell">Date</td>
+                <td class="head-cell">Reference</td>
+                <td class="head-cell">Transaction</td>
+                <td class="head-cell">Due Date</td>
+                <td class="head-cell" align="right">Debit</td>
+                <td class="head-cell" align="right">Credit</td>
+                <td class="head-cell" align="right">Balance</td>
+              </tr>
+            </table>
+          </td>
+          <td></td>
+        </tr>
+      </table>
+      <div id="statement-rows"></div>
+      <table cellpadding="0" cellspacing="0" border="0" class="paper_width section-table pfooter">
+        <tr>
+          <td style="width: 15px"></td>
+          <td style="width: inherit"></td>
+          <td style="width: 15px"></td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>
+            <table class="totals-grid">
+              <tr>
+                <td></td>
+                <td>Closing balance</td>
+                <td id="closing" align="right">$0.00</td>
+              </tr>
+              <tr>
+                <td></td>
+                <td>Payable aging</td>
+                <td align="right">Current · see listed due dates</td>
+              </tr>
+            </table>
+            <div style="padding: 5px; font-size: 13px">Reconciliation contact: accounts@example.invalid · Quote account V-00481.</div>
+          </td>
+          <td></td>
+        </tr>
+      </table>
+      <script>
+        const target = document.getElementById("statement-rows");
+        const openingBalance = 245000;
+        let balance = openingBalance;
+        const fmt = (value) => `$${(value / 100).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+        for (let index = 0; index < 42; index += 1) {
+          const debit = index % 3 === 0 ? 18000 + index * 125 : 0;
+          const credit = index % 3 === 1 ? 12000 + index * 75 : 0;
+          balance += debit - credit;
+          const day = String((index % 28) + 1).padStart(2, "0");
+          const cells = [
+            `${day} Oct`,
+            `TX-${String(index + 1).padStart(3, "0")}`,
+            index % 3 === 2 ? "Credit adjustment" : "Supplier invoice",
+            `${day} Nov`,
+            debit ? fmt(debit) : "—",
+            credit ? fmt(credit) : "—",
+            fmt(balance),
+          ];
+          const table = document.createElement("table");
+          table.cellPadding = "0";
+          table.cellSpacing = "0";
+          table.border = "0";
+          table.className = "paper_width section-table prowitem";
+          table.innerHTML = `<tr><td style="width:15px"></td><td style="width:inherit"></td><td style="width:15px"></td></tr><tr><td></td><td><table class="items-grid"><tr><td style="width:80px"></td><td style="width:90px"></td><td style="width:190px"></td><td style="width:90px"></td><td style="width:75px"></td><td style="width:75px"></td><td style="width:100px"></td></tr><tr>${cells.map((value, cell) => `<td class="item-cell${index % 2 ? " alternate" : ""}${cell === 6 ? " balance" : ""}"${cell >= 4 ? ' align="right"' : ""}><div class="cell-content">${value}</div></td>`).join("")}</tr></table></td><td></td></tr>`;
+          target.before(table);
+        }
+        target.remove();
+        document.getElementById("opening").textContent = fmt(openingBalance);
+        document.getElementById("closing").textContent = fmt(balance);
+        document.getElementById("aging-current").textContent = fmt(balance);
+        document.getElementById("aging-1-30").textContent = fmt(0);
+        document.getElementById("aging-31-60").textContent = fmt(0);
+        document.getElementById("aging-60-plus").textContent = fmt(0);
+      </script>
+      <table cellpadding="0" cellspacing="0" border="0" class="paper_width section-table pfooter_pagenum">
+        <tr>
+          <td style="width: 15px"></td>
+          <td style="width: inherit"></td>
+          <td style="width: 15px"></td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>
+            <div class="page-number" data-page-number-container>Page <span data-page-number></span> of <span data-page-total></span></div>
+          </td>
+          <td></td>
+        </tr>
+      </table>
+    </div>
+    <script src="../../dist/printform.js"></script>
+  </body>
+</html>

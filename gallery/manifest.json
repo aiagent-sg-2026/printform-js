@@ -227,5 +227,157 @@
     "thumb": "thumbs/rose-order-form.png",
     "width": 750,
     "height": 1050
+  },
+  {
+    "id": "supplier-rfq",
+    "title": {
+      "en": "Request for Quotation",
+      "zh": "采购询价单"
+    },
+    "type": "RFQ",
+    "paper": "A4",
+    "pages": 1,
+    "tags": [
+      "purchase",
+      "sourcing",
+      "supplier"
+    ],
+    "file": "designs/supplier-rfq.html",
+    "thumb": "thumbs/supplier-rfq.png",
+    "width": 750,
+    "height": 1050
+  },
+  {
+    "id": "warehouse-goods-receipt",
+    "title": {
+      "en": "Goods Receipt Note",
+      "zh": "采购收货单"
+    },
+    "type": "Goods Receipt",
+    "paper": "A4",
+    "pages": 2,
+    "tags": [
+      "purchase",
+      "receiving",
+      "warehouse"
+    ],
+    "file": "designs/warehouse-goods-receipt.html",
+    "thumb": "thumbs/warehouse-goods-receipt.png",
+    "width": 750,
+    "height": 1050
+  },
+  {
+    "id": "supplier-invoice-register",
+    "title": {
+      "en": "Supplier Invoice",
+      "zh": "供应商发票"
+    },
+    "type": "Supplier Invoice",
+    "paper": "LETTER",
+    "pages": 1,
+    "tags": [
+      "purchase",
+      "payables",
+      "invoice"
+    ],
+    "file": "designs/supplier-invoice-register.html",
+    "thumb": "thumbs/supplier-invoice-register.png",
+    "width": 750,
+    "height": 971
+  },
+  {
+    "id": "supplier-return-note",
+    "title": {
+      "en": "Purchase Return Note",
+      "zh": "采购退货单"
+    },
+    "type": "Purchase Return",
+    "paper": "A4",
+    "pages": 1,
+    "tags": [
+      "purchase",
+      "returns",
+      "supplier"
+    ],
+    "file": "designs/supplier-return-note.html",
+    "thumb": "thumbs/supplier-return-note.png",
+    "width": 750,
+    "height": 1050
+  },
+  {
+    "id": "vendor-account-statement",
+    "title": {
+      "en": "Vendor Statement",
+      "zh": "供应商往来对账单"
+    },
+    "type": "Vendor Statement",
+    "paper": "LETTER",
+    "pages": 2,
+    "tags": [
+      "purchase",
+      "payables",
+      "reconciliation"
+    ],
+    "file": "designs/vendor-account-statement.html",
+    "thumb": "thumbs/vendor-account-statement.png",
+    "width": 750,
+    "height": 971
+  },
+  {
+    "id": "sales-order-sheet",
+    "title": {
+      "en": "Sales Order",
+      "zh": "销售订单"
+    },
+    "type": "Sales Order",
+    "paper": "A4",
+    "pages": 1,
+    "tags": [
+      "sales",
+      "orders",
+      "fulfillment"
+    ],
+    "file": "designs/sales-order-sheet.html",
+    "thumb": "thumbs/sales-order-sheet.png",
+    "width": 750,
+    "height": 1050
+  },
+  {
+    "id": "export-proforma-invoice",
+    "title": {
+      "en": "Proforma Invoice",
+      "zh": "形式发票"
+    },
+    "type": "Proforma",
+    "paper": "A4",
+    "pages": 1,
+    "tags": [
+      "sales",
+      "export",
+      "advance-payment"
+    ],
+    "file": "designs/export-proforma-invoice.html",
+    "thumb": "thumbs/export-proforma-invoice.png",
+    "width": 750,
+    "height": 1050
+  },
+  {
+    "id": "customer-order-confirmation",
+    "title": {
+      "en": "Order Confirmation",
+      "zh": "订单确认单"
+    },
+    "type": "Confirmation",
+    "paper": "A5",
+    "pages": 1,
+    "tags": [
+      "sales",
+      "confirmation",
+      "customer"
+    ],
+    "file": "designs/customer-order-confirmation.html",
+    "thumb": "thumbs/customer-order-confirmation.png",
+    "width": 750,
+    "height": 600
   }
 ]

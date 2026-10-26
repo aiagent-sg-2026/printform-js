@@ -7,7 +7,10 @@ export const translations = {
     pageOne: "page", pageMany: "pages", resultOne: "design", resultMany: "designs", typeInvoice: "Invoice", typePurchaseOrder: "Purchase Order",
     typeDeliveryNote: "Delivery Note", typeQuotation: "Quotation", typePackingList: "Packing List",
     typeCreditNote: "Credit Note", typeExpenseReport: "Expense Report", typeStatement: "Statement",
-    typeWorkOrder: "Work Order", typeTimesheet: "Timesheet", typeOrderForm: "Order Form"
+    typeWorkOrder: "Work Order", typeTimesheet: "Timesheet", typeOrderForm: "Order Form",
+    typeRFQ: "RFQ", typeGoodsReceipt: "Goods Receipt", typeSupplierInvoice: "Supplier Invoice",
+    typePurchaseReturn: "Purchase Return", typeVendorStatement: "Vendor Statement",
+    typeSalesOrder: "Sales Order", typeProforma: "Proforma", typeConfirmation: "Confirmation"
   },
   zh: {
     eyebrow: "打印文档设计库", heading: "为打印而设计的表单。",
@@ -17,7 +20,10 @@ export const translations = {
     pageOne: "页", pageMany: "页", resultOne: "个设计", resultMany: "个设计", typeInvoice: "销售发票", typePurchaseOrder: "采购订单",
     typeDeliveryNote: "送货单", typeQuotation: "报价单", typePackingList: "装箱单",
     typeCreditNote: "退款单", typeExpenseReport: "费用报销单", typeStatement: "账户对账单",
-    typeWorkOrder: "工作单", typeTimesheet: "工时表", typeOrderForm: "定制订单"
+    typeWorkOrder: "工作单", typeTimesheet: "工时表", typeOrderForm: "定制订单",
+    typeRFQ: "采购询价", typeGoodsReceipt: "采购收货", typeSupplierInvoice: "供应商发票",
+    typePurchaseReturn: "采购退货", typeVendorStatement: "供应商对账单",
+    typeSalesOrder: "销售订单", typeProforma: "形式发票", typeConfirmation: "订单确认"
   }
 };
 
