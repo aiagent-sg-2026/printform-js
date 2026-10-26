@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Violet Pro Invoice</title>
+  <link rel="stylesheet" href="shared/page.css">
+  <style>
+    body { color: #2e2440; font-family: Arial, "Helvetica Neue", sans-serif; }
+    .paper_width { width: 750px; }
+    .section-table { table-layout: fixed; }
+    .section-table td { box-sizing: border-box; vertical-align: top; }
+    .header-art { display: block; width: 100%; height: 100px; }
+    .info-grid, .items-grid, .totals-grid { width: 100%; table-layout: fixed; }
+    .info-grid td { width: 50%; padding: 0 7px; font-size: 13px; line-height: 19px; }
+    .info-box { padding: 8px; border: 1px solid #ddd4eb; }
+    .info-label { color: #6d28d9; font-size: 13px; font-weight: 700; }
+    .items-grid td { font-size: 13px; line-height: 18px; }
+    .head-cell { background: #6d28d9; color: white; font-weight: 700; }
+    .item-cell { border-bottom: 1px solid #e5def0; }
+    .alternate { background: #f5f1fa; }
+    .cell-content { padding: 3px 5px; }
+    .totals-grid td { padding: 4px 8px; font-size: 13px; }
+    .grand-total td { border-top: 2px solid #6d28d9; color: #4c1d95; font-size: 16px; font-weight: 700; }
+    .payment { margin-top: 7px; padding: 7px; background: #f5f1fa; font-size: 13px; }
+    .page-number { padding: 6px; font-size: 13px; text-align: center; }
+  </style>
+</head>
+<body>
+  <div class="paper_width printform" data-papersize-width="750" data-papersize-height="1050"
+    data-repeat-header="y" data-repeat-rowheader="y" data-repeat-footer-pagenum="y">
+    <table cellpadding="0" cellspacing="0" border="0" class="paper_width section-table pheader">
+      <tr><td style="width:15px"></td><td style="width:inherit"></td><td style="width:15px"></td></tr>
+      <tr><td></td><td>
+        <svg class="header-art" viewBox="0 0 720 100" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Violet Ledger">
+          <rect width="720" height="100" fill="#4c1d95"/>
+          <rect width="720" height="78" fill="#6d28d9"/>
+          <path d="M30 24h34v42H30zM38 34h18M38 44h18M38 54h13" fill="none" stroke="white" stroke-width="3"/>
+          <text x="80" y="43" fill="white" font-family="Arial,sans-serif" font-size="22" font-weight="700">VIOLET LEDGER</text>
+          <text x="80" y="65" fill="#ede9fe" font-family="Arial,sans-serif" font-size="13">PROFESSIONAL SERVICES</text>
+          <text x="690" y="55" fill="white" font-family="Arial,sans-serif" font-size="28" font-weight="700" text-anchor="end">INVOICE</text>
+        </svg>
+      </td><td></td></tr>
+    </table>
+    <table cellpadding="0" cellspacing="0" border="0" class="paper_width section-table pdocinfo">
+      <tr><td style="width:15px"></td><td style="width:inherit"></td><td style="width:15px"></td></tr>
+      <tr><td></td><td>
+        <table class="info-grid"><tr><td style="width:50%"></td><td style="width:50%"></td></tr><tr>
+          <td><div class="info-box"><div class="info-label">BILL TO</div>Sample client · Alex Morgan<br>18 Fictional Oak Road<br>Portland, OR 97204</div></td>
+          <td><div class="info-box"><div class="info-label">INVOICE DETAILS</div>Invoice: VP-26042<br>Date: October 26, 2026<br>Due: November 25, 2026 · Net 30</div></td>
+        </tr></table>
+      </td><td></td></tr>
+    </table>
+    <table cellpadding="0" cellspacing="0" border="0" class="paper_width section-table prowheader">
+      <tr><td style="width:15px"></td><td style="width:inherit"></td><td style="width:15px"></td></tr>
+      <tr><td></td><td><table class="items-grid">
+        <tr><td style="width:45px"></td><td style="width:inherit"></td><td style="width:75px"></td><td style="width:90px"></td><td style="width:100px"></td></tr>
+        <tr><td class="head-cell">No.</td><td class="head-cell">Item</td><td class="head-cell" align="right">Hours</td><td class="head-cell" align="right">Rate</td><td class="head-cell" align="right">Amount</td></tr>
+      </table></td><td></td></tr>
+    </table>
+    <div id="invoice-items"></div>
+    <table cellpadding="0" cellspacing="0" border="0" class="paper_width section-table pfooter">
+      <tr><td style="width:15px"></td><td style="width:inherit"></td><td style="width:15px"></td></tr>
+      <tr><td></td><td>
+        <table class="totals-grid">
+          <tr><td></td><td>Subtotal</td><td id="subtotal" align="right">$0.00</td></tr>
+          <tr><td></td><td>Tax (8%)</td><td id="tax" align="right">$0.00</td></tr>
+          <tr class="grand-total"><td></td><td>Total due</td><td id="total" align="right">$0.00</td></tr>
+        </table>
+        <div class="payment">Please pay by November 25, 2026. Remit to Violet Ledger Studio, Account ending 2048.</div>
+      </td><td></td></tr>
+    </table>
+    <script>
+      const services = ["Design review", "Layout planning", "Brand consultation", "Production support", "Quality review"];
+      const target = document.getElementById("invoice-items");
+      let subtotalCents = 0;
+      for (let index = 0; index < 30; index += 1) {
+        const hours = index % 4 + 1;
+        const rateCents = 6500 + (index % 3) * 1000;
+        const amountCents = hours * rateCents;
+        subtotalCents += amountCents;
+        const cells = [index + 1, services[index % services.length], hours, `$${(rateCents / 100).toFixed(2)}`, `$${(amountCents / 100).toFixed(2)}`];
+        const table = document.createElement("table");
+        table.cellPadding = "0";
+        table.cellSpacing = "0";
+        table.border = "0";
+        table.className = "paper_width section-table prowitem";
+        table.innerHTML = `
+          <tr><td style="width:15px"></td><td style="width:inherit"></td><td style="width:15px"></td></tr>
+          <tr>
+            <td></td>
+            <td>
+              <table class="items-grid">
+                <tr><td style="width:45px"></td><td style="width:inherit"></td><td style="width:75px"></td><td style="width:90px"></td><td style="width:100px"></td></tr>
+                <tr>${cells.map((value, cell) => `
+                  <td class="item-cell${index % 2 ? " alternate" : ""}"${cell > 1 ? ' align="right"' : ""}>
+                    <div class="cell-content">${value}</div>
+                  </td>`).join("")}
+                </tr>
+              </table>
+            </td>
+            <td></td>
+          </tr>`;
+        target.before(table);
+      }
+      target.remove();
+      const taxCents = Math.round(subtotalCents * 0.08);
+      const money = (cents) => `$${(cents / 100).toLocaleString("en-US", { minimumFractionDigits: 2 })}`;
+      document.getElementById("subtotal").textContent = money(subtotalCents);
+      document.getElementById("tax").textContent = money(taxCents);
+      document.getElementById("total").textContent = money(subtotalCents + taxCents);
+    </script>
+    <table cellpadding="0" cellspacing="0" border="0" class="paper_width section-table pfooter_pagenum">
+      <tr><td style="width:15px"></td><td style="width:inherit"></td><td style="width:15px"></td></tr>
+      <tr><td></td><td><div class="page-number" data-page-number-container>Page <span data-page-number></span> of <span data-page-total></span></div></td><td></td></tr>
+    </table>
+  </div>
+  <script src="../../dist/printform.js"></script>
+</body>
+</html>

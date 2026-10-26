@@ -1,1 +1,171 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width"><title>Redwood Purchase Order</title><style>body{margin:0;background:#f3e9e7;font:14px Georgia,serif;color:#302321}.printform{width:750px;min-height:1050px;margin:auto;padding:38px 46px;background:#fff}.mast{border-left:9px solid #b22e31;padding:6px 20px;margin-bottom:24px;display:flex;justify-content:space-between}.brand{font-size:26px;color:#9f2429;font-weight:bold}.meta{text-align:right;line-height:1.7}.supplier{background:#fbf1ef;padding:18px;margin-bottom:22px}.prowheader,.prowitem{width:100%;border-collapse:collapse}.prowheader th{background:#a82d31;color:white;text-align:left}.prowheader th,.prowitem td{padding:9px;border-bottom:1px solid #ead5d2}.prowitem{page-break-inside:avoid}.prowitem td:last-child,.prowheader th:last-child{text-align:right}.terms{margin-top:20px;padding:14px;border:1px solid #e3c7c4}.pfooter{margin-top:30px;color:#755a57}</style></head><body><main class="printform" data-paper-size="LETTER" data-repeat-header="y"><header class="mast pheader"><div><div class="brand">REDWOOD SUPPLY CO.</div><div>Purchase orders · Portland, Oregon</div></div><div class="meta"><strong>PURCHASE ORDER</strong><br>PO-48219 · 18 Apr 2026<br>Requested delivery: 12 May</div></header><section class="supplier pdocinfo"><strong>Supplier</strong> · Summit Paper &amp; Pack<br>Attn: Morgan Lee · Salem, OR<br>Ship to: Redwood Receiving, Dock 4</section><table class="prowheader"><thead><tr><th>Line</th><th>Material / specification</th><th>Qty</th><th>Unit</th></tr></thead></table><div id="items"></div><section class="terms"><strong>Order notes</strong><br>Confirm lead time before shipment. Quote PO number on all cartons and invoices.</section><footer class="pfooter">Approved by: Jordan Reed · Finance terms: Net 30</footer></main><script>document.querySelector('#items').innerHTML=Array.from({length:38},(_,i)=>`<table class="prowitem"><tbody><tr><td>${i+1}</td><td>${['Recycled kraft sheets','White carton board','Shipping sleeves','Pallet wrap'][i%4]} · Grade ${i%3+1}</td><td>${(i+2)*12}</td><td>$${(18+i%9).toFixed(2)}</td></tr></tbody></table>`).join('');</script><script src="../../dist/printform.js"></script></body></html>
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Redwood Purchase Order</title>
+  <link rel="stylesheet" href="shared/page.css">
+  <style>
+    body { color: #332b2a; font-family: Arial, "Helvetica Neue", sans-serif; }
+    .paper_width { width: 750px; }
+    .section-table { table-layout: fixed; }
+    .section-table td { box-sizing: border-box; vertical-align: top; }
+    .header-art { display: block; width: 100%; height: 96px; }
+    .info-grid, .items-grid, .totals-grid { width: 100%; table-layout: fixed; }
+    .info-grid td { width: 50%; padding: 0 8px; font-size: 13px; line-height: 19px; }
+    .info-box { min-height: 74px; padding: 8px; border: 1px solid #ddd5d3; }
+    .info-label { color: #b3261e; font-weight: 700; }
+    .items-grid td { box-sizing: border-box; font-size: 13px; line-height: 18px; }
+    .head-cell { background: #b3261e; color: white; font-weight: 700; }
+    .item-cell { border-bottom: 1px solid #ded8d6; }
+    .alternate { background: #f2f0ef; }
+    .cell-content { padding: 4px; }
+    .totals-grid td { padding: 5px 8px; font-size: 13px; }
+    .signature { display: table; width: 100%; margin-top: 8px; font-size: 13px; }
+    .signature span { display: table-cell; width: 50%; padding: 8px; border-top: 1px solid #777; }
+    .page-number { padding: 8px 0; font-size: 13px; text-align: center; }
+  </style>
+</head>
+<body>
+  <div class="paper_width printform"
+    data-papersize-width="750" data-papersize-height="971"
+    data-repeat-header="y" data-repeat-rowheader="y" data-repeat-footer-pagenum="y">
+    <table cellpadding="0" cellspacing="0" border="0" class="paper_width section-table pheader">
+      <tr><td style="width:15px"></td><td style="width:inherit"></td><td style="width:15px"></td></tr>
+      <tr>
+        <td></td>
+        <td>
+          <svg class="header-art" viewBox="0 0 720 96" xmlns="http://www.w3.org/2000/svg"
+            role="img" aria-label="Redwood Procurement">
+            <rect width="720" height="96" fill="#b3261e"/>
+            <path d="M28 22h38v52H28zM37 33h20M37 44h20M37 55h14" fill="none" stroke="white" stroke-width="4"/>
+            <text x="82" y="44" fill="white" font-family="Arial,sans-serif" font-size="22" font-weight="700">REDWOOD PROCUREMENT</text>
+            <text x="82" y="69" fill="#f4d8d5" font-family="Arial,sans-serif" font-size="13">PURCHASE ORDER</text>
+            <text x="690" y="58" fill="white" font-family="Arial,sans-serif" font-size="18" text-anchor="end">PO-48217</text>
+          </svg>
+        </td>
+        <td></td>
+      </tr>
+    </table>
+    <table cellpadding="0" cellspacing="0" border="0" class="paper_width section-table pdocinfo">
+      <tr><td style="width:15px"></td><td style="width:inherit"></td><td style="width:15px"></td></tr>
+      <tr>
+        <td></td>
+        <td>
+          <table style="width:100%;table-layout:fixed">
+            <tr><td style="width:33%"></td><td style="width:34%"></td><td style="width:33%"></td></tr>
+            <tr>
+              <td><b>PO no.</b><br>PO-48217</td>
+              <td><b>Order date</b><br>October 26, 2026</td>
+              <td><b>Delivery date</b><br>November 12, 2026</td>
+            </tr>
+          </table>
+          <table class="info-grid" style="margin-top:8px">
+            <tr><td style="width:50%"></td><td style="width:50%"></td></tr>
+            <tr>
+              <td><div class="info-box"><div class="info-label">VENDOR</div>Maple &amp; Mill Supply<br>Jordan Reyes · 81 Foundry Lane<br>Salem, OR 97301</div></td>
+              <td><div class="info-box"><div class="info-label">DELIVER TO</div>Redwood Workshop · Receiving<br>2400 Alder Street<br>Portland, OR 97209</div></td>
+            </tr>
+          </table>
+        </td>
+        <td></td>
+      </tr>
+    </table>
+    <table cellpadding="0" cellspacing="0" border="0" class="paper_width section-table prowheader">
+      <tr><td style="width:15px"></td><td style="width:inherit"></td><td style="width:15px"></td></tr>
+      <tr>
+        <td></td>
+        <td>
+          <table class="items-grid">
+            <tr>
+              <td style="width:38px"></td><td style="width:82px"></td><td style="width:inherit"></td>
+              <td style="width:52px"></td><td style="width:66px"></td><td style="width:86px"></td>
+            </tr>
+            <tr>
+              <td class="head-cell">No.</td><td class="head-cell">Item code</td><td class="head-cell">Description</td>
+              <td class="head-cell" align="right">Qty</td><td class="head-cell" align="right">Unit</td>
+              <td class="head-cell" align="right">Amount</td>
+            </tr>
+          </table>
+        </td>
+        <td></td>
+      </tr>
+    </table>
+    <div id="po-items"></div>
+    <table cellpadding="0" cellspacing="0" border="0" class="paper_width section-table pfooter">
+      <tr><td style="width:15px"></td><td style="width:inherit"></td><td style="width:15px"></td></tr>
+      <tr>
+        <td></td>
+        <td>
+          <table class="totals-grid">
+            <tr><td></td><td><b>Order total</b></td><td id="po-total" align="right">$0.00</td></tr>
+          </table>
+          <div class="signature"><span>Approved by: ____________________</span><span>Date: ____________________</span></div>
+        </td>
+        <td></td>
+      </tr>
+    </table>
+    <script>
+      const products = [
+        "Recycled copy paper", "Steel shelf bracket", "Workshop apron", "LED bench lamp",
+        "Storage tote", "Utility knife set", "Cotton gloves", "Measuring tape",
+        "Wood glue bottle", "Safety glasses"
+      ];
+      const target = document.getElementById("po-items");
+      let totalCents = 0;
+
+      for (let index = 0; index < 40; index += 1) {
+        const quantity = index % 5 + 1;
+        const unitCents = 425 + index * 37;
+        const amountCents = quantity * unitCents;
+        totalCents += amountCents;
+        const cells = [
+          index + 1,
+          `MM-${String(310 + index).padStart(4, "0")}`,
+          products[index % products.length],
+          quantity,
+          `$${(unitCents / 100).toFixed(2)}`,
+          `$${(amountCents / 100).toFixed(2)}`
+        ];
+        const table = document.createElement("table");
+        table.cellPadding = "0";
+        table.cellSpacing = "0";
+        table.border = "0";
+        table.className = "paper_width section-table prowitem";
+        table.innerHTML = `
+          <tr><td style="width:15px"></td><td style="width:inherit"></td><td style="width:15px"></td></tr>
+          <tr>
+            <td></td>
+            <td>
+              <table class="items-grid">
+                <tr>
+                  <td style="width:38px"></td><td style="width:82px"></td><td style="width:inherit"></td>
+                  <td style="width:52px"></td><td style="width:66px"></td><td style="width:86px"></td>
+                </tr>
+                <tr>${cells.map((value, cell) => `
+                  <td class="item-cell${index % 2 ? " alternate" : ""}"${cell > 2 ? ' align="right"' : ""}>
+                    <div class="cell-content">${value}</div>
+                  </td>`).join("")}
+                </tr>
+              </table>
+            </td>
+            <td></td>
+          </tr>`;
+        target.before(table);
+      }
+      target.remove();
+      document.getElementById("po-total").textContent =
+        `$${(totalCents / 100).toLocaleString("en-US", { minimumFractionDigits: 2 })}`;
+    </script>
+    <table cellpadding="0" cellspacing="0" border="0" class="paper_width section-table pfooter_pagenum">
+      <tr><td style="width:15px"></td><td style="width:inherit"></td><td style="width:15px"></td></tr>
+      <tr>
+        <td></td>
+        <td><div class="page-number" data-page-number-container>Page <span data-page-number></span> of <span data-page-total></span></div></td>
+        <td></td>
+      </tr>
+    </table>
+  </div>
+  <script src="../../dist/printform.js"></script>
+</body>
+</html>

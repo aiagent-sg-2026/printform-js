@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Gold Account Statement</title>
+  <link rel="stylesheet" href="shared/page.css">
+  <style>
+    body { color: #292421; font-family: Arial, "Helvetica Neue", sans-serif; }
+    .paper_width { width: 750px; }
+    .section-table { table-layout: fixed; }
+    .section-table td { box-sizing: border-box; vertical-align: top; }
+    .header-art { display: block; width: 100%; height: 96px; }
+    .info-grid, .items-grid, .totals-grid { width: 100%; table-layout: fixed; }
+    .info-grid td { width: 50%; padding: 0 7px; font-size: 13px; line-height: 18px; }
+    .info-box { padding: 7px; border: 1px solid #e5d5bd; }
+    .info-label { color: #b45309; font-weight: 700; }
+    .items-grid td { font-size: 13px; line-height: 18px; }
+    .head-cell { background: #1c1917; color: #fef3c7; font-weight: 700; }
+    .item-cell { border-bottom: 1px solid #e7e1d9; }
+    .alternate { background: #f8f5f0; }
+    .cell-content { padding: 3px 5px; }
+    .totals-grid td { padding: 6px 8px; font-size: 13px; }
+    .closing td { border-top: 2px solid #b45309; color: #92400e; font-size: 16px; font-weight: 700; }
+    .page-number { padding: 6px; font-size: 13px; text-align: center; }
+  </style>
+</head>
+<body>
+  <div class="paper_width printform" data-papersize-width="750" data-papersize-height="1050"
+    data-repeat-header="y" data-repeat-rowheader="y" data-repeat-footer-pagenum="y">
+    <table cellpadding="0" cellspacing="0" border="0" class="paper_width section-table pheader">
+      <tr><td style="width:15px"></td><td style="width:inherit"></td><td style="width:15px"></td></tr>
+      <tr><td></td><td><svg class="header-art" viewBox="0 0 720 96" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Ledger House">
+        <rect width="720" height="96" fill="#1c1917"/>
+        <path d="M29 24h40v48H29zM38 35h22M38 47h22M38 59h22" fill="none" stroke="#d97706" stroke-width="4"/>
+        <text x="88" y="43" fill="#fff7ed" font-family="Arial,sans-serif" font-size="22" font-weight="700">LEDGER HOUSE</text>
+        <text x="88" y="67" fill="#fbbf24" font-family="Arial,sans-serif" font-size="13">ACCOUNT SERVICES</text>
+        <text x="690" y="57" fill="#fef3c7" font-family="Arial,sans-serif" font-size="21" font-weight="700" text-anchor="end">STATEMENT OF ACCOUNT</text>
+      </svg></td><td></td></tr>
+    </table>
+    <table cellpadding="0" cellspacing="0" border="0" class="paper_width section-table pdocinfo">
+      <tr><td style="width:15px"></td><td style="width:inherit"></td><td style="width:15px"></td></tr>
+      <tr><td></td><td><table class="info-grid"><tr><td style="width:50%"></td><td style="width:50%"></td></tr><tr>
+        <td><div class="info-box"><div class="info-label">ACCOUNT HOLDER</div>Sample account · Taylor Example<br>Account: LH-00928</div></td>
+        <td><div class="info-box"><div class="info-label">STATEMENT PERIOD</div>September 1–30, 2026<br>Issued October 1, 2026</div></td>
+      </tr></table></td><td></td></tr>
+    </table>
+    <table cellpadding="0" cellspacing="0" border="0" class="paper_width section-table prowheader">
+      <tr><td style="width:15px"></td><td style="width:inherit"></td><td style="width:15px"></td></tr>
+      <tr><td></td><td><table class="items-grid">
+        <tr><td style="width:110px"></td><td style="width:125px"></td><td style="width:125px"></td><td style="width:125px"></td><td style="width:inherit"></td></tr>
+        <tr><td class="head-cell">Date</td><td class="head-cell">Reference</td><td class="head-cell" align="right">Debit</td><td class="head-cell" align="right">Credit</td><td class="head-cell" align="right">Balance</td></tr>
+      </table></td><td></td></tr>
+    </table>
+    <div id="statement-items"></div>
+    <table cellpadding="0" cellspacing="0" border="0" class="paper_width section-table pfooter">
+      <tr><td style="width:15px"></td><td style="width:inherit"></td><td style="width:15px"></td></tr>
+      <tr><td></td><td><table class="totals-grid"><tr class="closing"><td></td><td>Closing balance</td><td id="closing-balance" align="right">$0.00</td></tr></table></td><td></td></tr>
+    </table>
+    <script>
+      const target = document.getElementById("statement-items");
+      let balanceCents = 250000;
+      for (let index = 0; index < 40; index += 1) {
+        const debitCents = index % 3 === 0 ? 0 : 1250 + (index % 5) * 575;
+        const creditCents = index % 3 === 0 ? 4200 + (index % 4) * 800 : 0;
+        balanceCents += creditCents - debitCents;
+        const date = `Sep ${String(index % 30 + 1).padStart(2, "0")}, 2026`;
+        const reference = `TX-${String(5100 + index)}`;
+        const money = (cents) => `$${(cents / 100).toLocaleString("en-US", { minimumFractionDigits: 2 })}`;
+        const cells = [date, reference, debitCents ? money(debitCents) : "—", creditCents ? money(creditCents) : "—", money(balanceCents)];
+        const table = document.createElement("table");
+        table.cellPadding = "0";
+        table.cellSpacing = "0";
+        table.border = "0";
+        table.className = "paper_width section-table prowitem";
+        table.innerHTML = `
+          <tr><td style="width:15px"></td><td style="width:inherit"></td><td style="width:15px"></td></tr>
+          <tr>
+            <td></td>
+            <td>
+              <table class="items-grid">
+                <tr><td style="width:110px"></td><td style="width:125px"></td><td style="width:125px"></td><td style="width:125px"></td><td style="width:inherit"></td></tr>
+                <tr>${cells.map((value, cell) => `
+                  <td class="item-cell${index % 2 ? " alternate" : ""}"${cell > 1 ? ' align="right"' : ""}>
+                    <div class="cell-content">${value}</div>
+                  </td>`).join("")}
+                </tr>
+              </table>
+            </td>
+            <td></td>
+          </tr>`;
+        target.before(table);
+      }
+      target.remove();
+      document.getElementById("closing-balance").textContent = `$${(balanceCents / 100).toLocaleString("en-US", { minimumFractionDigits: 2 })}`;
+    </script>
+    <table cellpadding="0" cellspacing="0" border="0" class="paper_width section-table pfooter_pagenum">
+      <tr><td style="width:15px"></td><td style="width:inherit"></td><td style="width:15px"></td></tr>
+      <tr><td></td><td><div class="page-number" data-page-number-container>Page <span data-page-number></span> of <span data-page-total></span></div></td><td></td></tr>
+    </table>
+  </div>
+  <script src="../../dist/printform.js"></script>
+</body>
+</html>

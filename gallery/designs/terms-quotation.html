@@ -1,1 +1,154 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width"><title>Studio Quotation</title><style>body{margin:0;background:#e9edf6;font:14px Arial,sans-serif;color:#24314b}.printform{width:750px;min-height:1050px;margin:auto;padding:42px 48px;background:white}.mast{display:flex;justify-content:space-between;border-bottom:1px solid #b7c6e3;padding-bottom:20px}.brand{font-size:26px;color:#405cb6;font-weight:bold}.meta{text-align:right;line-height:1.65}.client{margin:24px 0;padding:14px;background:#f3f5fb}.prowheader,.prowitem{width:100%;border-collapse:collapse}.prowheader th{background:#405cb6;color:white;text-align:left}.prowheader th,.prowitem td{padding:9px;border-bottom:1px solid #d9dfed}.prowitem td:last-child,.prowheader th:last-child{text-align:right}.total{text-align:right;font-size:21px;color:#405cb6;margin:22px 0}.terms{border-top:2px solid #405cb6;padding-top:18px;line-height:1.7}.pfooter{margin-top:28px;color:#65718a;font-size:12px}</style></head><body><main class="printform" data-paper-size="A4" data-repeat-header="y"><header class="mast pheader"><div><div class="brand">MORNING / STUDIO</div><div>Thoughtful spaces, carefully made</div></div><div class="meta"><strong>QUOTATION</strong><br>QT-2026-014 · 18 Apr 2026<br>Valid until 18 May 2026</div></header><section class="client pdocinfo"><b>Prepared for</b><br>Willow &amp; Pine Books · Avery Chen<br>Workspace refresh, Portland</section><table class="prowheader"><thead><tr><th>Service</th><th>Scope</th><th>Amount</th></tr></thead></table><div id="items"></div><div class="total">Estimated total · $8,420.00</div><section class="terms"><h2>Project terms</h2><p>Schedule: kickoff within ten business days of approval. Estimated completion: six weeks.</p><p>Payment: 40% deposit, 40% on installation, 20% at handover. Changes outside the agreed scope are quoted separately.</p><p>Quote includes standard materials and local delivery. This estimate remains valid for 30 days.</p></section><footer class="pfooter">Acceptance: __________________________ · Date: ______________</footer></main><script>document.querySelector('#items').innerHTML=Array.from({length:60},(_,i)=>`<table class="prowitem"><tbody><tr><td>${['Discovery &amp; planning','Custom shelving','Lighting plan','Installation support'][i%4]}</td><td>Phase ${i+1} · studio services</td><td>$${(240+i*31).toFixed(2)}</td></tr></tbody></table>`).join('');</script><script src="../../dist/printform.js"></script></body></html>
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Studio Quotation</title>
+  <link rel="stylesheet" href="shared/page.css">
+  <style>
+    body { color: #29344d; font-family: Arial, "Helvetica Neue", sans-serif; }
+    .paper_width { width: 750px; }
+    .section-table { table-layout: fixed; }
+    .section-table td { box-sizing: border-box; vertical-align: top; }
+    .header-art { display: block; width: 100%; height: 96px; }
+    .info-box, .items-grid, .totals-grid { width: 100%; table-layout: fixed; }
+    .info-box { padding: 8px; border: 1px solid #d9deed; font-size: 13px; line-height: 19px; }
+    .items-grid td { box-sizing: border-box; font-size: 13px; line-height: 19px; }
+    .head-cell { background: #405cb6; color: #fff; font-weight: 700; }
+    .item-cell { border-bottom: 1px solid #d9deed; }
+    .alternate { background: #f1f3f9; }
+    .cell-content { padding: 4px 6px; }
+    .totals-grid td { padding: 6px 8px; font-size: 13px; }
+    .grand-total td { border-top: 1px solid #8795c4; color: #405cb6; font-size: 16px; font-weight: 700; }
+    .terms { padding: 7px 10px; border-top: 2px solid #405cb6; font-size: 13px; line-height: 18px; }
+    .terms p { margin: 3px 0; }
+    .signature { margin-top: 8px; padding: 7px; border-top: 1px solid #6d7895; font-size: 13px; }
+    .page-number { padding: 8px 0; color: #66718a; font-size: 13px; text-align: center; }
+  </style>
+</head>
+<body>
+  <div class="paper_width printform"
+    data-papersize-width="750" data-papersize-height="1050"
+    data-repeat-header="y" data-repeat-rowheader="y" data-repeat-footer-pagenum="y">
+    <table cellpadding="0" cellspacing="0" border="0" class="paper_width section-table pheader">
+      <tr><td style="width:15px"></td><td style="width:inherit"></td><td style="width:15px"></td></tr>
+      <tr>
+        <td></td>
+        <td>
+          <svg class="header-art" viewBox="0 0 720 96" xmlns="http://www.w3.org/2000/svg"
+            role="img" aria-label="Morning Studio">
+            <rect width="720" height="96" fill="#405cb6"/>
+            <path d="M43 18 68 42 43 78 18 42Z" fill="#fff"/>
+            <circle cx="43" cy="42" r="7" fill="#405cb6"/>
+            <text x="82" y="42" fill="#fff" font-family="Arial,sans-serif" font-size="22" font-weight="700">MORNING / STUDIO</text>
+            <text x="82" y="66" fill="#e0e5f7" font-family="Arial,sans-serif" font-size="13">Thoughtful spaces, carefully made</text>
+            <text x="690" y="55" fill="#fff" font-family="Arial,sans-serif" font-size="21" text-anchor="end">QUOTATION</text>
+          </svg>
+        </td>
+        <td></td>
+      </tr>
+    </table>
+    <table cellpadding="0" cellspacing="0" border="0" class="paper_width section-table pdocinfo">
+      <tr><td style="width:15px"></td><td style="width:inherit"></td><td style="width:15px"></td></tr>
+      <tr>
+        <td></td>
+        <td>
+          <div class="info-box"><b>PREPARED FOR</b><br>Willow &amp; Pine Books · Avery Chen<br>Workspace refresh, 48 Cedar Street, Portland, OR 97204<br>QT-2026-014 · October 26, 2026 · Valid 30 days</div>
+        </td>
+        <td></td>
+      </tr>
+    </table>
+    <table cellpadding="0" cellspacing="0" border="0" class="paper_width section-table prowheader">
+      <tr><td style="width:15px"></td><td style="width:inherit"></td><td style="width:15px"></td></tr>
+      <tr>
+        <td></td>
+        <td>
+          <table class="items-grid">
+            <tr><td style="width:150px"></td><td style="width:inherit"></td><td style="width:110px"></td></tr>
+            <tr>
+              <td class="head-cell">Service</td><td class="head-cell">Scope</td>
+              <td class="head-cell" align="right">Amount</td>
+            </tr>
+          </table>
+        </td>
+        <td></td>
+      </tr>
+    </table>
+    <div id="quote-items"></div>
+    <table cellpadding="0" cellspacing="0" border="0" class="paper_width section-table pfooter">
+      <tr><td style="width:15px"></td><td style="width:inherit"></td><td style="width:15px"></td></tr>
+      <tr>
+        <td></td>
+        <td>
+          <table class="totals-grid">
+            <tr class="grand-total">
+              <td></td><td>Estimated total</td><td id="quote-total" align="right">$0.00</td>
+            </tr>
+          </table>
+          <div class="terms">
+            <b>Project terms</b>
+            <p>Kickoff begins within ten business days after approval; estimated delivery is six weeks.</p>
+            <p>Payment is 40% at booking, 40% at installation, and 20% at handover.</p>
+            <p>Work beyond the listed scope requires written approval and a separate estimate.</p>
+            <p>This quote includes standard materials and local delivery and remains valid for 30 days.</p>
+          </div>
+          <div class="signature">Accepted by: __________________________ &nbsp; Date: ______________</div>
+        </td>
+        <td></td>
+      </tr>
+    </table>
+    <script>
+      const services = [
+        "Discovery & planning", "Space measurement", "Custom shelving",
+        "Lighting plan", "Material selection", "Installation support"
+      ];
+      const target = document.getElementById("quote-items");
+      let totalCents = 0;
+
+      for (let index = 0; index < 30; index += 1) {
+        const amountCents = 18500 + index * 2375;
+        totalCents += amountCents;
+        const cells = [
+          services[index % services.length],
+          `Phase ${index + 1} · design and project service`,
+          `$${(amountCents / 100).toFixed(2)}`
+        ];
+        const table = document.createElement("table");
+        table.cellPadding = "0";
+        table.cellSpacing = "0";
+        table.border = "0";
+        table.className = "paper_width section-table prowitem";
+        table.innerHTML = `
+          <tr><td style="width:15px"></td><td style="width:inherit"></td><td style="width:15px"></td></tr>
+          <tr>
+            <td></td>
+            <td>
+              <table class="items-grid">
+                <tr><td style="width:150px"></td><td style="width:inherit"></td><td style="width:110px"></td></tr>
+                <tr>${cells.map((value, cell) => `
+                  <td class="item-cell${index % 2 ? " alternate" : ""}"${cell === 2 ? ' align="right"' : ""}>
+                    <div class="cell-content">${value}</div>
+                  </td>`).join("")}
+                </tr>
+              </table>
+            </td>
+            <td></td>
+          </tr>`;
+        target.before(table);
+      }
+      target.remove();
+      document.getElementById("quote-total").textContent =
+        `$${(totalCents / 100).toLocaleString("en-US", { minimumFractionDigits: 2 })}`;
+    </script>
+    <table cellpadding="0" cellspacing="0" border="0" class="paper_width section-table pfooter_pagenum">
+      <tr><td style="width:15px"></td><td style="width:inherit"></td><td style="width:15px"></td></tr>
+      <tr>
+        <td></td>
+        <td><div class="page-number" data-page-number-container>Page <span data-page-number></span> of <span data-page-total></span></div></td>
+        <td></td>
+      </tr>
+    </table>
+  </div>
+  <script src="../../dist/printform.js"></script>
+</body>
+</html>

@@ -7,7 +7,7 @@
     },
     "type": "Invoice",
     "paper": "A4",
-    "pages": 1,
+    "pages": 2,
     "tags": [
       "sales",
       "blue",
@@ -15,8 +15,8 @@
     ],
     "file": "designs/blue-sales-invoice.html",
     "thumb": "thumbs/blue-sales-invoice.png",
-    "width": 794,
-    "height": 1123
+    "width": 750,
+    "height": 1050
   },
   {
     "id": "red-purchase-order",
@@ -26,7 +26,7 @@
     },
     "type": "Purchase Order",
     "paper": "LETTER",
-    "pages": 2,
+    "pages": 3,
     "tags": [
       "purchase",
       "red",
@@ -34,8 +34,8 @@
     ],
     "file": "designs/red-purchase-order.html",
     "thumb": "thumbs/red-purchase-order.png",
-    "width": 816,
-    "height": 1056
+    "width": 750,
+    "height": 971
   },
   {
     "id": "delivery-note",
@@ -45,7 +45,7 @@
     },
     "type": "Delivery Note",
     "paper": "A5",
-    "pages": 1,
+    "pages": 2,
     "tags": [
       "delivery",
       "green",
@@ -53,8 +53,8 @@
     ],
     "file": "designs/delivery-note.html",
     "thumb": "thumbs/delivery-note.png",
-    "width": 559,
-    "height": 794
+    "width": 750,
+    "height": 530
   },
   {
     "id": "terms-quotation",
@@ -72,8 +72,8 @@
     ],
     "file": "designs/terms-quotation.html",
     "thumb": "thumbs/terms-quotation.png",
-    "width": 794,
-    "height": 1123
+    "width": 750,
+    "height": 1050
   },
   {
     "id": "packing-list",
@@ -83,7 +83,7 @@
     },
     "type": "Packing List",
     "paper": "LETTER",
-    "pages": 1,
+    "pages": 3,
     "tags": [
       "packing",
       "export",
@@ -91,8 +91,8 @@
     ],
     "file": "designs/packing-list.html",
     "thumb": "thumbs/packing-list.png",
-    "width": 816,
-    "height": 1056
+    "width": 750,
+    "height": 971
   },
   {
     "id": "mono-credit-receipt",
@@ -111,7 +111,121 @@
     ],
     "file": "designs/mono-credit-receipt.html",
     "thumb": "thumbs/mono-credit-receipt.png",
-    "width": 559,
-    "height": 794
+    "width": 750,
+    "height": 600
+  },
+  {
+    "id": "violet-pro-invoice",
+    "title": {
+      "en": "Violet Pro Invoice",
+      "zh": "紫罗兰专业发票"
+    },
+    "type": "Invoice",
+    "paper": "A4",
+    "pages": 2,
+    "tags": [
+      "invoice",
+      "violet",
+      "services"
+    ],
+    "file": "designs/violet-pro-invoice.html",
+    "thumb": "thumbs/violet-pro-invoice.png",
+    "width": 750,
+    "height": 1050
+  },
+  {
+    "id": "green-expense-report",
+    "title": {
+      "en": "Field Notes Expense Report",
+      "zh": "田野员工报销单"
+    },
+    "type": "Expense Report",
+    "paper": "LETTER",
+    "pages": 2,
+    "tags": [
+      "expenses",
+      "green",
+      "reimbursement"
+    ],
+    "file": "designs/green-expense-report.html",
+    "thumb": "thumbs/green-expense-report.png",
+    "width": 750,
+    "height": 971
+  },
+  {
+    "id": "gold-account-statement",
+    "title": {
+      "en": "Ledger House Account Statement",
+      "zh": "账簿屋账户对账单"
+    },
+    "type": "Statement",
+    "paper": "A4",
+    "pages": 2,
+    "tags": [
+      "statement",
+      "gold",
+      "account"
+    ],
+    "file": "designs/gold-account-statement.html",
+    "thumb": "thumbs/gold-account-statement.png",
+    "width": 750,
+    "height": 1050
+  },
+  {
+    "id": "orange-work-order",
+    "title": {
+      "en": "Cinder Service Work Order",
+      "zh": "烬火维修工作单"
+    },
+    "type": "Work Order",
+    "paper": "A5",
+    "pages": 1,
+    "tags": [
+      "work",
+      "orange",
+      "service"
+    ],
+    "file": "designs/orange-work-order.html",
+    "thumb": "thumbs/orange-work-order.png",
+    "width": 750,
+    "height": 600
+  },
+  {
+    "id": "navy-timesheet",
+    "title": {
+      "en": "Blue Peak Weekly Timesheet",
+      "zh": "蓝峰每周工时表"
+    },
+    "type": "Timesheet",
+    "paper": "LETTER",
+    "pages": 1,
+    "tags": [
+      "timesheet",
+      "navy",
+      "weekly"
+    ],
+    "file": "designs/navy-timesheet.html",
+    "thumb": "thumbs/navy-timesheet.png",
+    "width": 750,
+    "height": 971
+  },
+  {
+    "id": "rose-order-form",
+    "title": {
+      "en": "Rosewood Custom Order Form",
+      "zh": "玫瑰木定制订单"
+    },
+    "type": "Order Form",
+    "paper": "A4",
+    "pages": 1,
+    "tags": [
+      "custom",
+      "rose",
+      "order"
+    ],
+    "file": "designs/rose-order-form.html",
+    "thumb": "thumbs/rose-order-form.png",
+    "width": 750,
+    "height": 1050
   }
 ]

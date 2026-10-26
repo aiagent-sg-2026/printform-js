@@ -1,1 +1,177 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width"><title>Fieldway Delivery Note</title><style>body{margin:0;background:#e8eee9;font:14px Arial,sans-serif;color:#26362c}.printform{width:560px;min-height:790px;margin:auto;padding:32px 36px;background:#fff}.mast{background:#205d43;color:white;padding:20px;display:flex;justify-content:space-between}.brand{font-size:22px;font-weight:bold}.meta{text-align:right;line-height:1.6}.route{display:flex;justify-content:space-between;margin:25px 0;padding:14px;background:#f0f5f1}.prowheader,.prowitem{width:100%;border-collapse:collapse}.prowheader th{background:#e6efe8;color:#205d43;text-align:left}.prowheader th,.prowitem td{padding:9px 7px;border-bottom:1px solid #d8e3da}.prowitem td:last-child,.prowheader th:last-child{text-align:right}.signature{margin-top:45px;border-top:1px solid #a6b7aa;padding-top:10px}.pfooter{margin-top:34px;text-align:center;color:#68796c;font-size:12px}</style></head><body><main class="printform" data-paper-size="A5"><header class="mast pheader"><div><div class="brand">FIELDWAY</div><div>Local delivery network</div></div><div class="meta"><strong>DELIVERY NOTE</strong><br>DN-2084 · 18 Apr 2026</div></header><section class="route pdocinfo"><span><b>From</b><br>Fieldway Depot</span><span><b>Deliver to</b><br>Juniper Market</span></section><table class="prowheader"><thead><tr><th>Item delivered</th><th>Ref.</th><th>Cases</th></tr></thead></table><div id="items"></div><div class="signature">Received in good condition · Signature: __________________</div><footer class="pfooter">Please report shortages within two business days.</footer></main><script>document.querySelector('#items').innerHTML=Array.from({length:8},(_,i)=>`<table class="prowitem"><tbody><tr><td>${['Citrus boxes','Glass bottles','Market bags','Herb crates'][i%4]}</td><td>FW-${420+i}</td><td>${i+2}</td></tr></tbody></table>`).join('');</script><script src="../../dist/printform.js"></script></body></html>
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Fieldway Delivery Note</title>
+  <link rel="stylesheet" href="shared/page.css">
+  <style>
+    body { color: #263432; font-family: Arial, "Helvetica Neue", sans-serif; }
+    .paper_width { width: 750px; }
+    .section-table { table-layout: fixed; }
+    .section-table td { box-sizing: border-box; vertical-align: top; }
+    .header-art { display: block; width: 100%; height: 88px; }
+    .info-box { padding: 8px; border: 1px solid #d1dfdc; font-size: 13px; line-height: 19px; }
+    .items-grid { width: 100%; table-layout: fixed; }
+    .items-grid td { box-sizing: border-box; font-size: 13px; line-height: 18px; }
+    .head-cell { background: #0f766e; color: #fff; font-weight: 700; }
+    .item-cell { border-bottom: 1px solid #d4dfdd; }
+    .alternate { background: #eff4f3; }
+    .cell-content { padding: 4px; }
+    .signatures { width: 100%; table-layout: fixed; margin-top: 10px; }
+    .signatures td { width: 33.3%; padding: 8px; border-top: 1px solid #8a9d99; font-size: 13px; }
+    .page-number { padding: 8px 0; font-size: 13px; text-align: center; }
+  </style>
+</head>
+<body>
+  <div class="paper_width printform"
+    data-papersize-width="750" data-papersize-height="530"
+    data-repeat-header="y" data-repeat-rowheader="y" data-repeat-footer-pagenum="y">
+    <table cellpadding="0" cellspacing="0" border="0" class="paper_width section-table pheader">
+      <tr>
+        <td style="width:15px"></td>
+        <td style="width:inherit"></td>
+        <td style="width:15px"></td>
+      </tr>
+      <tr>
+        <td></td>
+        <td>
+          <svg class="header-art" viewBox="0 0 720 88" xmlns="http://www.w3.org/2000/svg"
+            role="img" aria-label="Fieldway Delivery">
+            <rect width="720" height="88" fill="#0f766e"/>
+            <circle cx="43" cy="44" r="25" fill="#fff"/>
+            <path d="M31 44h24M43 32v24" stroke="#0f766e" stroke-width="5"/>
+            <text x="82" y="40" fill="#fff" font-family="Arial,sans-serif" font-size="21" font-weight="700">FIELDWAY</text>
+            <text x="82" y="64" fill="#d5eeea" font-family="Arial,sans-serif" font-size="13">DELIVERY NOTE</text>
+            <text x="690" y="53" fill="#fff" font-family="Arial,sans-serif" font-size="16" text-anchor="end">DN-2084 · OCT 26, 2026</text>
+          </svg>
+        </td>
+        <td></td>
+      </tr>
+    </table>
+    <table cellpadding="0" cellspacing="0" border="0" class="paper_width section-table pdocinfo">
+      <tr>
+        <td style="width:15px"></td>
+        <td style="width:inherit"></td>
+        <td style="width:15px"></td>
+      </tr>
+      <tr>
+        <td></td>
+        <td>
+          <div class="info-box"><b>CONSIGNEE</b><br>Juniper Market · Receiving, Casey Morgan<br>88 Harbor Road, Astoria, OR 97103 · Route FW-12</div>
+        </td>
+        <td></td>
+      </tr>
+    </table>
+    <table cellpadding="0" cellspacing="0" border="0" class="paper_width section-table prowheader">
+      <tr>
+        <td style="width:15px"></td>
+        <td style="width:inherit"></td>
+        <td style="width:15px"></td>
+      </tr>
+      <tr>
+        <td></td>
+        <td>
+          <table class="items-grid">
+            <tr>
+              <td style="width:70px"></td>
+              <td style="width:inherit"></td>
+              <td style="width:75px"></td>
+              <td style="width:80px"></td>
+              <td style="width:115px"></td>
+            </tr>
+            <tr>
+              <td class="head-cell">Item</td>
+              <td class="head-cell">Description</td>
+              <td class="head-cell" align="right">Ordered</td>
+              <td class="head-cell" align="right">Delivered</td>
+              <td class="head-cell">Remarks</td>
+            </tr>
+          </table>
+        </td>
+        <td></td>
+      </tr>
+    </table>
+    <div id="delivery-items"></div>
+    <table cellpadding="0" cellspacing="0" border="0" class="paper_width section-table pfooter">
+      <tr>
+        <td style="width:15px"></td>
+        <td style="width:inherit"></td>
+        <td style="width:15px"></td>
+      </tr>
+      <tr>
+        <td></td>
+        <td>
+          <table class="signatures" cellpadding="0" cellspacing="0" border="0">
+            <tr>
+              <td>Received by: ______________</td>
+              <td>Signature: ______________</td>
+              <td>Date: __________</td>
+            </tr>
+          </table>
+        </td>
+        <td></td>
+      </tr>
+    </table>
+    <script>
+      const goods = [
+        "Citrus boxes", "Glass bottles", "Market bags", "Herb crates",
+        "Oat milk cases", "Paper napkins", "Olive oil tins"
+      ];
+      const target = document.getElementById("delivery-items");
+
+      for (let index = 0; index < 14; index += 1) {
+        const delivered = index % 5 + 2;
+        const cells = [
+          `FW-${420 + index}`,
+          goods[index % goods.length],
+          delivered + (index % 4 === 0 ? 1 : 0),
+          delivered,
+          index % 4 === 0 ? "1 short" : "Checked"
+        ];
+        const table = document.createElement("table");
+        table.cellPadding = "0";
+        table.cellSpacing = "0";
+        table.border = "0";
+        table.className = "paper_width section-table prowitem";
+        table.innerHTML = `
+          <tr>
+            <td style="width:15px"></td><td style="width:inherit"></td><td style="width:15px"></td>
+          </tr>
+          <tr>
+            <td></td>
+            <td>
+              <table class="items-grid">
+                <tr>
+                  <td style="width:70px"></td><td style="width:inherit"></td><td style="width:75px"></td>
+                  <td style="width:80px"></td><td style="width:115px"></td>
+                </tr>
+                <tr>${cells.map((value, cell) => `
+                  <td class="item-cell${index % 2 ? " alternate" : ""}"${cell === 2 || cell === 3 ? ' align="right"' : ""}>
+                    <div class="cell-content">${value}</div>
+                  </td>`).join("")}
+                </tr>
+              </table>
+            </td>
+            <td></td>
+          </tr>`;
+        target.before(table);
+      }
+      target.remove();
+    </script>
+    <table cellpadding="0" cellspacing="0" border="0" class="paper_width section-table pfooter_pagenum">
+      <tr>
+        <td style="width:15px"></td>
+        <td style="width:inherit"></td>
+        <td style="width:15px"></td>
+      </tr>
+      <tr>
+        <td></td>
+        <td><div class="page-number" data-page-number-container>Page <span data-page-number></span> of <span data-page-total></span></div></td>
+        <td></td>
+      </tr>
+    </table>
+  </div>
+  <script src="../../dist/printform.js"></script>
+</body>
+</html>

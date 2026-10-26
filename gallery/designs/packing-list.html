@@ -1,1 +1,170 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width"><title>Cedar Packing List</title><style>body{margin:0;background:#f0ede6;font:14px Arial,sans-serif;color:#35332d}.printform{width:750px;min-height:1050px;margin:auto;padding:40px 46px;background:#fff}.mast{display:grid;grid-template-columns:1fr auto;align-items:center;border-top:8px solid #9a7543;padding-top:16px}.brand{font-size:25px;letter-spacing:.12em;font-weight:bold;color:#71522c}.meta{text-align:right;line-height:1.7}.shipment{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin:26px 0}.shipment div{padding:14px;background:#f6f3ed;line-height:1.6}.prowheader,.prowitem{width:100%;border-collapse:collapse}.prowheader th{background:#eee8dc;text-align:left}.prowheader th,.prowitem td{padding:9px;border-bottom:1px solid #ded8cc}.prowitem td:last-child,.prowheader th:last-child{text-align:right}.pfooter{margin-top:36px;padding-top:12px;border-top:1px solid #bfb5a2;color:#6d6557}</style></head><body><main class="printform" data-paper-size="LETTER"><header class="mast pheader"><div><div class="brand">CEDAR &amp; CO.</div><div>Distribution / Shipment record</div></div><div class="meta"><strong>PACKING LIST</strong><br>PL-77031 · 18 Apr 2026</div></header><section class="shipment pdocinfo"><div><b>Ship to</b><br>Bluebird Home<br>44 King Street, Seattle, WA</div><div><b>Carrier / tracking</b><br>Westline Freight<br>Tracking: WF-804226</div></section><table class="prowheader"><thead><tr><th>Carton</th><th>Description</th><th>Units</th><th>Weight</th></tr></thead></table><div id="items"></div><footer class="pfooter">Total: 7 cartons · 84 units · Gross weight 126 kg<br>Goods packed and checked by: Sam Rivera</footer></main><script>document.querySelector('#items').innerHTML=Array.from({length:10},(_,i)=>`<table class="prowitem"><tbody><tr><td>${String(i+1).padStart(2,'0')}</td><td>${['Linen throw','Ceramic vase','Cedar tray','Woven basket'][i%4]}</td><td>${(i+1)*3}</td><td>${(8.4+i*.7).toFixed(1)} kg</td></tr></tbody></table>`).join('');</script><script src="../../dist/printform.js"></script></body></html>
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Cedar Packing List</title>
+  <link rel="stylesheet" href="shared/page.css">
+  <style>
+    body { color: #302d29; font-family: Arial, "Helvetica Neue", sans-serif; }
+    .paper_width { width: 750px; }
+    .section-table { table-layout: fixed; }
+    .section-table td { box-sizing: border-box; vertical-align: top; }
+    .header-art { display: block; width: 100%; height: 94px; }
+    .info-grid, .items-grid, .totals-grid { width: 100%; table-layout: fixed; }
+    .info-grid td { width: 50%; padding: 0 5px; font-size: 13px; line-height: 18px; }
+    .info-box { padding: 7px; border: 1px solid #ded8cf; }
+    .items-grid td { box-sizing: border-box; font-size: 13px; line-height: 18px; }
+    .head-cell { background: #b45309; color: #fff; font-weight: 700; }
+    .item-cell { border-bottom: 1px solid #ded8cf; }
+    .alternate { background: #f4f1ec; }
+    .cell-content { padding: 4px; }
+    .totals-grid td { padding: 7px; border-top: 1px solid #222; font-size: 13px; font-weight: 700; }
+    .page-number { padding: 8px 0; font-size: 13px; text-align: center; }
+  </style>
+</head>
+<body>
+  <div class="paper_width printform"
+    data-papersize-width="750" data-papersize-height="971"
+    data-repeat-header="y" data-repeat-rowheader="y" data-repeat-footer-pagenum="y">
+    <table cellpadding="0" cellspacing="0" border="0" class="paper_width section-table pheader">
+      <tr><td style="width:15px"></td><td style="width:inherit"></td><td style="width:15px"></td></tr>
+      <tr>
+        <td></td>
+        <td>
+          <svg class="header-art" viewBox="0 0 720 94" xmlns="http://www.w3.org/2000/svg"
+            role="img" aria-label="Cedar and Company">
+            <rect width="720" height="94" fill="#222"/>
+            <rect x="22" y="20" width="48" height="54" rx="3" fill="#b45309"/>
+            <path d="M34 62 46 33 59 62M39 52h15" fill="none" stroke="#fff" stroke-width="4"/>
+            <text x="86" y="42" fill="#fff" font-family="Arial,sans-serif" font-size="22" font-weight="700">CEDAR &amp; CO.</text>
+            <text x="86" y="65" fill="#e6d5c3" font-family="Arial,sans-serif" font-size="13">DISTRIBUTION · SHIPMENT RECORD</text>
+            <text x="690" y="55" fill="#fff" font-family="Arial,sans-serif" font-size="20" text-anchor="end">PACKING LIST</text>
+          </svg>
+        </td>
+        <td></td>
+      </tr>
+    </table>
+    <table cellpadding="0" cellspacing="0" border="0" class="paper_width section-table pdocinfo">
+      <tr><td style="width:15px"></td><td style="width:inherit"></td><td style="width:15px"></td></tr>
+      <tr>
+        <td></td>
+        <td>
+          <table class="info-grid">
+            <tr><td style="width:50%"></td><td style="width:50%"></td></tr>
+            <tr>
+              <td><div class="info-box"><b>SHIP TO</b><br>Bluebird Home · Receiving<br>44 King Street, Seattle, WA 98104<br>PL-77031 · October 26, 2026</div></td>
+              <td><div class="info-box"><b>SHIPMENT DETAILS</b><br>Cartons: 8 · Gross weight: 309.4 kg<br>Dimensions: 60 × 40 × 35 cm / carton<br>Westline Freight · WF-804226</div></td>
+            </tr>
+          </table>
+        </td>
+        <td></td>
+      </tr>
+    </table>
+    <table cellpadding="0" cellspacing="0" border="0" class="paper_width section-table prowheader">
+      <tr><td style="width:15px"></td><td style="width:inherit"></td><td style="width:15px"></td></tr>
+      <tr>
+        <td></td>
+        <td>
+          <table class="items-grid">
+            <tr>
+              <td style="width:65px"></td><td style="width:inherit"></td><td style="width:54px"></td>
+              <td style="width:70px"></td><td style="width:75px"></td><td style="width:70px"></td>
+            </tr>
+            <tr>
+              <td class="head-cell">Carton</td><td class="head-cell">Item</td>
+              <td class="head-cell" align="right">Qty</td><td class="head-cell" align="right">Net kg</td>
+              <td class="head-cell" align="right">Gross kg</td><td class="head-cell" align="right">CBM</td>
+            </tr>
+          </table>
+        </td>
+        <td></td>
+      </tr>
+    </table>
+    <div id="packing-items"></div>
+    <table cellpadding="0" cellspacing="0" border="0" class="paper_width section-table pfooter">
+      <tr><td style="width:15px"></td><td style="width:inherit"></td><td style="width:15px"></td></tr>
+      <tr>
+        <td></td>
+        <td>
+          <table class="totals-grid">
+            <tr>
+              <td id="packing-totals">Shipment totals</td>
+              <td align="right">Checked by: Sam Rivera</td>
+            </tr>
+          </table>
+        </td>
+        <td></td>
+      </tr>
+    </table>
+    <script>
+      const goods = [
+        "Linen throw", "Ceramic vase", "Cedar tray", "Woven basket",
+        "Cotton cushion", "Oak serving board", "Wool runner", "Glass carafe"
+      ];
+      const target = document.getElementById("packing-items");
+      let quantityTotal = 0;
+      let netTotal = 0;
+      let grossTotal = 0;
+      let cbmTotal = 0;
+
+      for (let index = 0; index < 44; index += 1) {
+        const quantity = index % 5 + 2;
+        const net = 4.2 + index % 7 * 0.6;
+        const gross = net + 1.1;
+        const cbm = 0.042 + index % 4 * 0.006;
+        quantityTotal += quantity;
+        netTotal += net;
+        grossTotal += gross;
+        cbmTotal += cbm;
+        const cells = [
+          String(index + 1).padStart(2, "0"),
+          goods[index % goods.length],
+          quantity,
+          net.toFixed(1),
+          gross.toFixed(1),
+          cbm.toFixed(3)
+        ];
+        const table = document.createElement("table");
+        table.cellPadding = "0";
+        table.cellSpacing = "0";
+        table.border = "0";
+        table.className = "paper_width section-table prowitem";
+        table.innerHTML = `
+          <tr><td style="width:15px"></td><td style="width:inherit"></td><td style="width:15px"></td></tr>
+          <tr>
+            <td></td>
+            <td>
+              <table class="items-grid">
+                <tr>
+                  <td style="width:65px"></td><td style="width:inherit"></td><td style="width:54px"></td>
+                  <td style="width:70px"></td><td style="width:75px"></td><td style="width:70px"></td>
+                </tr>
+                <tr>${cells.map((value, cell) => `
+                  <td class="item-cell${index % 2 ? " alternate" : ""}"${cell > 1 ? ' align="right"' : ""}>
+                    <div class="cell-content">${value}</div>
+                  </td>`).join("")}
+                </tr>
+              </table>
+            </td>
+            <td></td>
+          </tr>`;
+        target.before(table);
+      }
+      target.remove();
+      document.getElementById("packing-totals").textContent =
+        `Totals: 8 cartons · ${quantityTotal} units · ${netTotal.toFixed(1)} kg net · ` +
+        `${grossTotal.toFixed(1)} kg gross · ${cbmTotal.toFixed(3)} CBM`;
+    </script>
+    <table cellpadding="0" cellspacing="0" border="0" class="paper_width section-table pfooter_pagenum">
+      <tr><td style="width:15px"></td><td style="width:inherit"></td><td style="width:15px"></td></tr>
+      <tr>
+        <td></td>
+        <td><div class="page-number" data-page-number-container>Page <span data-page-number></span> of <span data-page-total></span></div></td>
+        <td></td>
+      </tr>
+    </table>
+  </div>
+  <script src="../../dist/printform.js"></script>
+</body>
+</html>

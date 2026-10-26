@@ -6,7 +6,8 @@ export const translations = {
     paperLabel: "Paper", all: "All", empty: "No designs match these filters.", openDesign: "Open design",
     pageOne: "page", pageMany: "pages", resultOne: "design", resultMany: "designs", typeInvoice: "Invoice", typePurchaseOrder: "Purchase Order",
     typeDeliveryNote: "Delivery Note", typeQuotation: "Quotation", typePackingList: "Packing List",
-    typeCreditNote: "Credit Note"
+    typeCreditNote: "Credit Note", typeExpenseReport: "Expense Report", typeStatement: "Statement",
+    typeWorkOrder: "Work Order", typeTimesheet: "Timesheet", typeOrderForm: "Order Form"
   },
   zh: {
     eyebrow: "打印文档设计库", heading: "为打印而设计的表单。",
@@ -15,7 +16,8 @@ export const translations = {
     all: "全部", empty: "没有符合筛选条件的设计。", openDesign: "打开设计",
     pageOne: "页", pageMany: "页", resultOne: "个设计", resultMany: "个设计", typeInvoice: "销售发票", typePurchaseOrder: "采购订单",
     typeDeliveryNote: "送货单", typeQuotation: "报价单", typePackingList: "装箱单",
-    typeCreditNote: "退款单"
+    typeCreditNote: "退款单", typeExpenseReport: "费用报销单", typeStatement: "账户对账单",
+    typeWorkOrder: "工作单", typeTimesheet: "工时表", typeOrderForm: "定制订单"
   }
 };
 

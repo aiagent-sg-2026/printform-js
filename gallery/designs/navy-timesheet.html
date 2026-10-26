@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Navy Weekly Timesheet</title>
+  <link rel="stylesheet" href="shared/page.css">
+  <style>
+    body { color: #24314b; font-family: Arial, "Helvetica Neue", sans-serif; }
+    .paper_width { width: 750px; }
+    .section-table { table-layout: fixed; }
+    .section-table td { box-sizing: border-box; vertical-align: top; }
+    .header-art { display: block; width: 100%; height: 88px; }
+    .info-grid, .items-grid, .totals-grid { width: 100%; table-layout: fixed; }
+    .info-grid td { width: 50%; padding: 0 7px; font-size: 13px; line-height: 18px; }
+    .info-box { padding: 7px; border: 1px solid #cbd5e8; }
+    .info-label { color: #1e3a8a; font-weight: 700; }
+    .items-grid td { font-size: 13px; line-height: 19px; }
+    .head-cell { background: #1e3a8a; color: white; font-weight: 700; }
+    .item-cell { border-bottom: 1px solid #dce2ed; }
+    .alternate { background: #f2f5fa; }
+    .cell-content { padding: 4px 5px; }
+    .totals-grid td { padding: 7px 8px; font-size: 13px; }
+    .grand-total td { border-top: 2px solid #1e3a8a; color: #1e3a8a; font-size: 16px; font-weight: 700; }
+    .signature { margin-top: 8px; padding: 9px 6px; border-top: 1px solid #697790; font-size: 13px; }
+    .page-number { padding: 6px; font-size: 13px; text-align: center; }
+  </style>
+</head>
+<body>
+  <div class="paper_width printform" data-papersize-width="750" data-papersize-height="971"
+    data-repeat-header="y" data-repeat-rowheader="y" data-repeat-footer-pagenum="y">
+    <table cellpadding="0" cellspacing="0" border="0" class="paper_width section-table pheader">
+      <tr><td style="width:15px"></td><td style="width:inherit"></td><td style="width:15px"></td></tr>
+      <tr><td></td><td><svg class="header-art" viewBox="0 0 720 88" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Blue Peak Studio">
+        <rect width="720" height="88" fill="#1e3a8a"/>
+        <path d="M25 62 45 23l20 39H25z" fill="none" stroke="#bfdbfe" stroke-width="4"/>
+        <text x="82" y="40" fill="white" font-family="Arial,sans-serif" font-size="22" font-weight="700">BLUE PEAK STUDIO</text>
+        <text x="82" y="64" fill="#dbeafe" font-family="Arial,sans-serif" font-size="13">WEEKLY HOURS RECORD</text>
+        <text x="690" y="55" fill="white" font-family="Arial,sans-serif" font-size="22" font-weight="700" text-anchor="end">WEEKLY TIMESHEET</text>
+      </svg></td><td></td></tr>
+    </table>
+    <table cellpadding="0" cellspacing="0" border="0" class="paper_width section-table pdocinfo">
+      <tr><td style="width:15px"></td><td style="width:inherit"></td><td style="width:15px"></td></tr>
+      <tr><td></td><td><table class="info-grid"><tr><td style="width:50%"></td><td style="width:50%"></td></tr><tr>
+        <td><div class="info-box"><div class="info-label">EMPLOYEE</div>Casey Sample · Design associate<br>Employee ID: BP-032</div></td>
+        <td><div class="info-box"><div class="info-label">WORK WEEK</div>Monday, October 19–Sunday, October 25, 2026<br>Department: Creative</div></td>
+      </tr></table></td><td></td></tr>
+    </table>
+    <table cellpadding="0" cellspacing="0" border="0" class="paper_width section-table prowheader">
+      <tr><td style="width:15px"></td><td style="width:inherit"></td><td style="width:15px"></td></tr>
+      <tr><td></td><td><table class="items-grid">
+        <tr><td style="width:85px"></td><td style="width:inherit"></td><td style="width:90px"></td><td style="width:90px"></td><td style="width:80px"></td></tr>
+        <tr><td class="head-cell">Day</td><td class="head-cell">Project</td><td class="head-cell" align="right">Start</td><td class="head-cell" align="right">End</td><td class="head-cell" align="right">Hours</td></tr>
+      </table></td><td></td></tr>
+    </table>
+    <div id="timesheet-items"></div>
+    <table cellpadding="0" cellspacing="0" border="0" class="paper_width section-table pfooter">
+      <tr><td style="width:15px"></td><td style="width:inherit"></td><td style="width:15px"></td></tr>
+      <tr><td></td><td><table class="totals-grid"><tr class="grand-total"><td></td><td>Total hours</td><td id="hours-total" align="right">0.0</td></tr></table>
+      <div class="signature">Manager signature: __________________________________ &nbsp; Date: ______________</div></td><td></td></tr>
+    </table>
+    <script>
+      const days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
+      const projects = ["Orchard catalog", "Sample brand refresh", "Studio admin"];
+      const target = document.getElementById("timesheet-items");
+      let totalHours = 0;
+      for (let index = 0; index < 12; index += 1) {
+        const hours = index < 5 ? 7.5 : index < 10 ? 8 : 2;
+        totalHours += hours;
+        const day = days[index % days.length];
+        const cells = [day, projects[index % projects.length], "09:00", hours > 6 ? "17:30" : "11:00", hours.toFixed(1)];
+        const table = document.createElement("table");
+        table.cellPadding = "0";
+        table.cellSpacing = "0";
+        table.border = "0";
+        table.className = "paper_width section-table prowitem";
+        table.innerHTML = `
+          <tr><td style="width:15px"></td><td style="width:inherit"></td><td style="width:15px"></td></tr>
+          <tr>
+            <td></td>
+            <td>
+              <table class="items-grid">
+                <tr><td style="width:85px"></td><td style="width:inherit"></td><td style="width:90px"></td><td style="width:90px"></td><td style="width:80px"></td></tr>
+                <tr>${cells.map((value, cell) => `
+                  <td class="item-cell${index % 2 ? " alternate" : ""}"${cell > 1 ? ' align="right"' : ""}>
+                    <div class="cell-content">${value}</div>
+                  </td>`).join("")}
+                </tr>
+              </table>
+            </td>
+            <td></td>
+          </tr>`;
+        target.before(table);
+      }
+      target.remove();
+      document.getElementById("hours-total").textContent = totalHours.toFixed(1);
+    </script>
+    <table cellpadding="0" cellspacing="0" border="0" class="paper_width section-table pfooter_pagenum">
+      <tr><td style="width:15px"></td><td style="width:inherit"></td><td style="width:15px"></td></tr>
+      <tr><td></td><td><div class="page-number" data-page-number-container>Page <span data-page-number></span> of <span data-page-total></span></div></td><td></td></tr>
+    </table>
+  </div>
+  <script src="../../dist/printform.js"></script>
+</body>
+</html>

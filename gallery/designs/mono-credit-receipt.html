@@ -1,1 +1,150 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width"><title>Mono Credit Receipt</title><style>body{margin:0;background:#ececec;font:14px "Courier New",monospace;color:#151515}.printform{width:560px;min-height:790px;margin:auto;padding:34px 38px;background:#fff}.mast{text-align:center;border-bottom:2px dashed #333;padding:8px 0 20px}.brand{font-size:23px;font-weight:bold;letter-spacing:.08em}.meta{line-height:1.8;margin-top:12px}.customer{margin:24px 0;line-height:1.8}.prowheader,.prowitem{width:100%;border-collapse:collapse}.prowheader th{text-align:left;border-bottom:1px solid #111;padding:8px 4px}.prowitem td{padding:10px 4px;border-bottom:1px dotted #999}.prowitem td:last-child,.prowheader th:last-child{text-align:right}.credit{text-align:right;margin-top:24px;font-size:18px}.pfooter{margin-top:34px;border-top:2px dashed #333;padding-top:16px;text-align:center;line-height:1.7}</style></head><body><main class="printform" data-paper-size="A5"><header class="mast pheader"><div class="brand">PLAIN / GOODS</div><div class="meta"><b>CREDIT NOTE</b><br>CN-01902 · 18 Apr 2026<br>Original sale: S-18244</div></header><section class="customer pdocinfo">Customer: Robin Ellis<br>Reason: Returned unopened item<br>Refund method: Original payment card</section><table class="prowheader"><thead><tr><th>Returned item</th><th>Qty</th><th>Credit</th></tr></thead></table><div id="items"></div><div class="credit"><b>Credit total: $46.00</b></div><footer class="pfooter">REFUND RECEIPT<br>Keep this copy for your records.<br>Plain Goods · 12 Market Street</footer></main><script>document.querySelector('#items').innerHTML=Array.from({length:5},(_,i)=>`<table class="prowitem"><tbody><tr><td>${['Cotton market tote','Glass water bottle','Pocket notebook'][i%3]}</td><td>1</td><td>$${(12+i*4).toFixed(2)}</td></tr></tbody></table>`).join('');</script><script src="../../dist/printform.js"></script></body></html>
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Mono Credit Receipt</title>
+  <link rel="stylesheet" href="shared/page.css">
+  <style>
+    body { color: #111; font-family: Arial, "Helvetica Neue", sans-serif; }
+    .paper_width { width: 750px; }
+    .section-table { table-layout: fixed; }
+    .section-table td { box-sizing: border-box; vertical-align: top; }
+    .header-art { display: block; width: 100%; height: 86px; }
+    .info-box, .items-grid, .totals-grid { width: 100%; table-layout: fixed; }
+    .info-box { padding: 6px; border: 1px solid #111; font-size: 13px; line-height: 19px; }
+    .items-grid td { box-sizing: border-box; font-size: 13px; line-height: 18px; }
+    .head-cell { background: #111; color: #fff; font-weight: 700; }
+    .item-cell { border-bottom: 1px solid #777; }
+    .alternate { background: #f1f1f1; }
+    .cell-content { padding: 4px; }
+    .totals-grid td { padding: 5px; border-top: 2px solid #111; font-size: 16px; font-weight: 700; }
+    .signature { padding: 5px 8px; margin-top: 5px; border-top: 1px solid #111; font-size: 13px; }
+    .page-number { padding: 8px 0; font-size: 13px; text-align: center; }
+  </style>
+</head>
+<body>
+  <div class="paper_width printform"
+    data-papersize-width="750" data-papersize-height="600"
+    data-repeat-header="y" data-repeat-rowheader="y" data-repeat-footer-pagenum="y">
+    <table cellpadding="0" cellspacing="0" border="0" class="paper_width section-table pheader">
+      <tr><td style="width:15px"></td><td style="width:inherit"></td><td style="width:15px"></td></tr>
+      <tr>
+        <td></td>
+        <td>
+          <svg class="header-art" viewBox="0 0 720 86" xmlns="http://www.w3.org/2000/svg"
+            role="img" aria-label="Plain Goods credit note">
+            <rect width="720" height="86" fill="#fff" stroke="#111" stroke-width="2"/>
+            <circle cx="43" cy="43" r="24" fill="none" stroke="#111" stroke-width="2"/>
+            <path d="M31 43h24M43 31v24" stroke="#111" stroke-width="3"/>
+            <text x="82" y="39" fill="#111" font-family="Arial,sans-serif" font-size="21" font-weight="700">PLAIN / GOODS</text>
+            <text x="82" y="62" fill="#111" font-family="Arial,sans-serif" font-size="13">CREDIT NOTE</text>
+            <text x="690" y="52" fill="#111" font-family="Arial,sans-serif" font-size="16" text-anchor="end">CN-01902 · OCT 26, 2026</text>
+          </svg>
+        </td>
+        <td></td>
+      </tr>
+    </table>
+    <table cellpadding="0" cellspacing="0" border="0" class="paper_width section-table pdocinfo">
+      <tr><td style="width:15px"></td><td style="width:inherit"></td><td style="width:15px"></td></tr>
+      <tr>
+        <td></td>
+        <td>
+          <div class="info-box"><b>CUSTOMER</b> Robin Ellis · 12 Market Street<br><b>ORIGINAL INVOICE</b> INV-18244 · October 12, 2026<br><b>REASON / REFUND</b> Returned unopened item · Original payment card</div>
+        </td>
+        <td></td>
+      </tr>
+    </table>
+    <table cellpadding="0" cellspacing="0" border="0" class="paper_width section-table prowheader">
+      <tr><td style="width:15px"></td><td style="width:inherit"></td><td style="width:15px"></td></tr>
+      <tr>
+        <td></td>
+        <td>
+          <table class="items-grid">
+            <tr>
+              <td style="width:54px"></td><td style="width:inherit"></td>
+              <td style="width:58px"></td><td style="width:105px"></td>
+            </tr>
+            <tr>
+              <td class="head-cell">No.</td><td class="head-cell">Credited item</td>
+              <td class="head-cell" align="right">Qty</td><td class="head-cell" align="right">Credit</td>
+            </tr>
+          </table>
+        </td>
+        <td></td>
+      </tr>
+    </table>
+    <div id="credit-items"></div>
+    <table cellpadding="0" cellspacing="0" border="0" class="paper_width section-table pfooter">
+      <tr><td style="width:15px"></td><td style="width:inherit"></td><td style="width:15px"></td></tr>
+      <tr>
+        <td></td>
+        <td>
+          <table class="totals-grid">
+            <tr><td>Refund total</td><td id="credit-total" align="right">$0.00</td></tr>
+          </table>
+          <div class="signature">Authorized signature: ______________________________ &nbsp; Date: ____________</div>
+        </td>
+        <td></td>
+      </tr>
+    </table>
+    <script>
+      const products = [
+        "Cotton market tote", "Glass water bottle", "Pocket notebook", "Linen tea towel",
+        "Steel lunch tin", "Recycled paper set", "Ceramic travel cup", "Canvas pencil case"
+      ];
+      const target = document.getElementById("credit-items");
+      let totalCents = 0;
+
+      for (let index = 0; index < 8; index += 1) {
+        const quantity = index % 3 + 1;
+        const amountCents = 675 + index * 425;
+        totalCents += amountCents;
+        const cells = [
+          index + 1,
+          products[index],
+          quantity,
+          `$${(amountCents / 100).toFixed(2)}`
+        ];
+        const table = document.createElement("table");
+        table.cellPadding = "0";
+        table.cellSpacing = "0";
+        table.border = "0";
+        table.className = "paper_width section-table prowitem";
+        table.innerHTML = `
+          <tr><td style="width:15px"></td><td style="width:inherit"></td><td style="width:15px"></td></tr>
+          <tr>
+            <td></td>
+            <td>
+              <table class="items-grid">
+                <tr>
+                  <td style="width:54px"></td><td style="width:inherit"></td>
+                  <td style="width:58px"></td><td style="width:105px"></td>
+                </tr>
+                <tr>${cells.map((value, cell) => `
+                  <td class="item-cell${index % 2 ? " alternate" : ""}"${cell > 1 ? ' align="right"' : ""}>
+                    <div class="cell-content">${value}</div>
+                  </td>`).join("")}
+                </tr>
+              </table>
+            </td>
+            <td></td>
+          </tr>`;
+        target.before(table);
+      }
+      target.remove();
+      document.getElementById("credit-total").textContent =
+        `$${(totalCents / 100).toLocaleString("en-US", { minimumFractionDigits: 2 })}`;
+    </script>
+    <table cellpadding="0" cellspacing="0" border="0" class="paper_width section-table pfooter_pagenum">
+      <tr><td style="width:15px"></td><td style="width:inherit"></td><td style="width:15px"></td></tr>
+      <tr>
+        <td></td>
+        <td><div class="page-number" data-page-number-container>Page <span data-page-number></span> of <span data-page-total></span></div></td>
+        <td></td>
+      </tr>
+    </table>
+  </div>
+  <script src="../../dist/printform.js"></script>
+</body>
+</html>

@@ -8,8 +8,67 @@ export function createModal(dialog, manifest) {
   const studio = dialog.querySelector("[data-studio]");
   let returnFocus = null;
   const close = () => dialog.close();
+  const frameWrap = dialog.querySelector(".frame-wrap");
+  const frameStage = document.createElement("div");
+  frameStage.className = "frame-stage";
+  frame.parentNode.insertBefore(frameStage, frame);
+  frameStage.appendChild(frame);
+  let frameContentHeight = 0;
+  let framePoll = null;
+
+  function fitFrame() {
+    const availableWidth = frameWrap.clientWidth;
+    if (!availableWidth) return;
+    const scale = Math.min(1, availableWidth / 794);
+    frame.style.width = "794px";
+    frame.style.height = `${frameContentHeight}px`;
+    frame.style.transform = `scale(${scale})`;
+    frameStage.style.width = `${794 * scale}px`;
+    frameStage.style.height = `${frameContentHeight * scale}px`;
+  }
+
+  function cancelFramePoll() {
+    if (framePoll !== null) {
+      clearTimeout(framePoll);
+      framePoll = null;
+    }
+  }
+
+  function readFrameHeight() {
+    try {
+      frameContentHeight = frame.contentDocument.documentElement.scrollHeight;
+    } catch {
+      frameContentHeight = 0;
+    }
+    fitFrame();
+  }
+
+  frame.addEventListener("load", () => {
+    cancelFramePoll();
+    const started = Date.now();
+    const poll = () => {
+      let processed = false;
+      try {
+        processed = frame.contentWindow.__printFormProcessed === true;
+      } catch {
+        // Keep polling; the timeout path still attempts to read the height.
+      }
+      if (processed || Date.now() - started >= 5000) {
+        framePoll = null;
+        readFrameHeight();
+        return;
+      }
+      framePoll = setTimeout(poll, 100);
+    };
+    poll();
+  });
+
+  window.addEventListener("resize", fitFrame);
 
   function show(design, trigger) {
+    cancelFramePoll();
+    frameContentHeight = 0;
+    frameStage.style.height = "0px";
     returnFocus = trigger;
     title.textContent = design.title[currentLanguage()];
     meta.textContent = `${typeName(design.type)} · ${design.paper} · ${pageCount(design.pages)}`;
@@ -23,12 +82,15 @@ export function createModal(dialog, manifest) {
       studio.textContent = text("openStudio");
     }
     dialog.showModal();
+    fitFrame();
     dialog.querySelector("[data-close]").focus();
   }
-
   dialog.querySelector("[data-close]").addEventListener("click", close);
   dialog.addEventListener("click", (event) => { if (event.target === dialog) close(); });
   dialog.addEventListener("close", () => {
+    cancelFramePoll();
+    frameContentHeight = 0;
+    frameStage.style.height = "0px";
     frame.removeAttribute("src");
     returnFocus?.focus();
   });

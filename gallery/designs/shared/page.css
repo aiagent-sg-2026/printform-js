@@ -1,0 +1,43 @@
+body {
+  margin: 0;
+  background: #eef0f4;
+}
+
+.printform_formatter_processed {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+  padding: 24px 16px;
+  margin: 0 auto;
+}
+
+.printform_formatter_processed .physical_page_wrapper {
+  align-items: center !important;
+  margin: 0;
+}
+
+.printform_formatter_processed .printform_page {
+  background: #fff;
+  box-shadow: 0 3px 16px rgba(24, 35, 54, 0.14);
+}
+
+@media print {
+  body {
+    background: #fff;
+  }
+
+  .printform_formatter_processed {
+    display: block;
+    gap: 0;
+    padding: 0;
+  }
+
+  .printform_formatter_processed .physical_page_wrapper {
+    margin: 0;
+  }
+
+  .printform_formatter_processed .printform_page {
+    box-shadow: none;
+  }
+}
