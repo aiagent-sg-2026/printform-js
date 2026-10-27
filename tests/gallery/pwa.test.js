@@ -35,6 +35,9 @@ describe("gallery PWA", () => {
     fs.rmSync(site, { recursive: true, force: true });
     for (const item of data) expect(files).toContain(item.file);
     expect(files).toContain("../dist/printform.js");
+    for (const color of ["green", "blue"]) {
+      for (const extension of ["css", "js"]) expect(files).toContain(`designs/assets/sanyo-${color}-quotation.${extension}`);
+    }
     for (const module of ["categories", "filter-state", "filter-controls"]) expect(files).toContain(`js/${module}.js`);
     expect(files.some((file) => file.startsWith("designs/shared/"))).toBe(true);
     expect(files.some((file) => file.startsWith("designs/assets/"))).toBe(true);
