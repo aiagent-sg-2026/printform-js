@@ -1305,5 +1305,19 @@
     "thumb": "thumbs/sanyo-blue-sales-quotation.png",
     "width": 746,
     "height": 1075
+  },
+  {
+    "id": "corporate-insurance-proposal-agreement",
+    "no": "PF-055",
+    "style": { "en": "Rose Assurance Sample", "zh": "Rose Assurance Sample" },
+    "title": { "en": "Corporate Insurance Proposal and Agreement", "zh": "企业保险方案及协议" },
+    "type": "Proposal and Agreement",
+    "paper": "A4",
+    "pages": 20,
+    "tags": ["sales", "corporate", "insurance", "proposal", "agreement", "rose", "pink", "sample", "demo", "mixed-flow", "two-columns", "terms", "appendix"],
+    "file": "designs/corporate-insurance-proposal-agreement.html",
+    "thumb": "thumbs/corporate-insurance-proposal-agreement.png",
+    "width": 746,
+    "height": 1075
   }
 ]

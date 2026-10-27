@@ -4,6 +4,7 @@ import { DomHelpers } from "../dom.js";
 import { renderSpecialRow } from "./pagination-render-special.js";
 import { fitsWithinHeight } from "./pagination-fit.js";
 import { shouldMoveKeepWithNextGroup } from "./pagination-keep-next.js";
+import { renderColumnFlow } from "./column-flow.js";
 
 const ROW_HEIGHT_PREDICTION_SAFETY_MARGIN_PX = 50;
 
@@ -103,6 +104,14 @@ export function renderRows(outputContainer, sections, heights, footerState, heig
         );
         currentHeight = this.measureContentHeight(nextContainer, pageContext.repeatingHeight);
       }
+    }
+
+    if (row.dataset.pfColumns === "2") {
+      currentHeight = renderColumnFlow(this, {
+        row, outputContainer, sections, heights, footerState,
+        footerSpacerTemplate, logFn, pageContext
+      });
+      continue;
     }
 
     DomHelpers.markAsProcessed(row, baseClass);

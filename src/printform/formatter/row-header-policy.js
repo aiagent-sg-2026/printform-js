@@ -8,7 +8,8 @@ function hasTableMap(sections) {
 }
 
 export function shouldCarryOneTimeTableHeader(formatter, container, sections, tableId) {
-  if (formatter.isRowHeaderRepeated(sections, tableId)) return false;
+  const keepWithRow = formatter.getSectionRowHeader(sections, tableId)?.dataset?.pfKeepWithNext === "true";
+  if (formatter.isRowHeaderRepeated(sections, tableId) && !keepWithRow) return false;
   return !Array.from(container.querySelectorAll(".prowitem_processed, .ptac-rowitem_processed, .paddt-rowitem_processed"))
     .some((row) => formatter.getRowTableId(row) === tableId);
 }

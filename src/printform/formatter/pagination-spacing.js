@@ -18,8 +18,8 @@ export function attachPaginationSpacingMethods(FormatterClass) {
     tableId = "default"
   ) {
     const container = this.getCurrentPageContainer(outputContainer);
-    // Keep a nonrepeating table's first header with its first business row,
-    // including explicit page breaks and rows that overflow after header insert.
+    // Keep nonrepeating headers (and opt-in repeated keep-with-next headers)
+    // with a business row, including overflow after header insertion.
     if (shouldCarryOneTimeTableHeader(this, container, sections, tableId)) {
       Array.from(container.querySelectorAll(".prowheader_processed"))
         .filter((header) => this.getRowTableId(header) === tableId)
