@@ -1,0 +1,131 @@
+@font-face { font-family: DemoCondensed; src: url('DejaVuSansCondensed.ttf'); font-weight: 400; }
+@font-face { font-family: DemoCondensed; src: url('DejaVuSansCondensed-Bold.ttf'); font-weight: 700; }
+@font-face { font-family: DemoCondensed; src: url('DejaVuSansCondensed-Oblique.ttf'); font-style: italic; }
+@page { size: A4 portrait; margin: 0; }
+* { box-sizing: border-box; }
+html { text-size-adjust: 100%; -webkit-text-size-adjust: 100%; }
+body { color: #111; font-family: DemoCondensed, sans-serif; }
+.screen-warning { position: sticky; top: 0; z-index: 10; margin: 10px auto; padding: 8px 12px; max-width: 794px; text-align: center; font: 700 12px/18px DemoCondensed, sans-serif; color: #713122; background: #fff5eb; }
+h1, h2, h3, p { margin: 0; }
+.demobank { font-size: 7.3pt; line-height: 9pt; }
+.demobank.paper_width { width: 595.27559055pt; }
+.demobank.printform, .demobank .printform_page { padding: 0 43.13559055pt 0 42.5pt; }
+.demobank .printform_page { width: 595.27559055pt !important; }
+.demobank .printform_page > .paper_width { width: 100%; }
+.demobank .pheader, .demobank .pfooter, .demobank .ptac, .demobank .prowitem, .demobank .prowheader { max-width: 510.27559055pt; }
+.demobank .pheader_processed, .demobank .pfooter_processed, .demobank .ptac-rowitem_processed,
+.demobank .prowitem_processed, .demobank .prowheader_processed { width: 100%; }
+.demobank .pheader, .demobank .pheader_processed { position: relative; }
+.logo { position: absolute; left: -2.9pt; top: 14.16pt; width: 205pt; height: 35pt; }
+.site { position: absolute; right: 0; top: 20pt; font-size: 6.3pt; line-height: 10pt; text-align: right; color: #31545c; }
+.demobank .pfooter, .demobank .pfooter_processed { position: relative; height: 28pt; padding-top: 3pt; font-size: 6pt; display: flex; flex-wrap: wrap; align-content: start; gap: 3pt; }
+.demobank footer strong { display: block; width: 100%; font-size: 7pt; line-height: 9pt; color: #713122; }
+.demobank footer .page-number { position: absolute; right: 0; top: 3pt; font-size: 7pt; }
+i { display: block; font-weight: 400; }
+.summary-top { height: 118pt; position: relative; }
+.customer { padding: 5pt 0 0 19.66pt; line-height: 10pt; font-size: 8pt; }
+.customer small { display: block; font-size: 6pt; line-height: 10pt; }
+.customer b { display: block; margin: 3pt 0; font-size: 10pt; }
+.barcode { display: block; width: 211.2pt; height: 11.28pt; object-fit: fill; object-position: left; }
+.dates { position: absolute; right: 0; top: 8.8pt; width: 183.6pt; border-collapse: collapse; table-layout: fixed; font-size: 7.3pt; }
+.dates th, .dates td { border: .65pt solid #111; height: 28.2pt; padding: 2pt 4pt; }
+.dates th { background: #ccc; text-align: left; width: 108pt; }
+.dates td { text-align: center; }
+.account-summary { height: 83pt; }
+.account-summary table { border-collapse: collapse; width: 100%; table-layout: fixed; }
+.account-summary th { border: .65pt solid; background: #ccc; height: 36pt; padding: 1pt; font-size: 6.5pt; line-height: 8pt; }
+.account-summary th:first-child, .account-summary th:nth-child(3) { vertical-align: top; padding-top: 5pt; }
+.account-summary td { text-align: right; padding: 1pt 7pt 0 3pt; height: 15.1pt; border-left: .65pt solid; font-size: 7.2pt; }
+.account-summary tbody tr:last-child td { border-bottom: .65pt solid; padding-bottom: 3pt; }
+.account-summary td:last-child { border-right: .65pt solid; }
+.account-summary td.identifier { font-size: 5.3pt; white-space: nowrap; text-align: center; padding: 0 1pt; }
+.account-summary td.card-type { text-align: left; font-size: 6.8pt; }
+.total-boxes { height: 37pt; padding-top: 5pt; display: flex; justify-content: flex-end; gap: 8pt; }
+.total-boxes > div { position: relative; padding-right: 83pt; min-width: 180pt; font-size: 7pt; line-height: 8pt; }
+.total-boxes > div:first-child { text-align: center; }
+.total-boxes small { font-size: 6.5pt; }
+.total-boxes strong { position: absolute; top: 7pt; right: 0; width: 82pt; height: 14pt; border: .65pt solid; text-align: center; padding: 2pt; }
+.promo-space { height: 303.92pt; padding-top: 95.92pt; }
+.promo { width: 100%; height: 198pt; position: relative; }
+.promo > img { position: absolute; inset: 0; width: 100%; height: 100%; }
+.promo > div { position: relative; padding: 24pt 20pt; color: #163f4a; width: 335pt; }
+.promo small { font-size: 7pt; letter-spacing: 1.5pt; }
+.promo h1 { font-size: 25pt; line-height: 29pt; margin: 12pt 0; }
+.promo p { font-size: 8pt; line-height: 12pt; margin-bottom: 13pt; }
+.promo b { font-size: 9pt; }
+.payment-notice { border: .65pt solid; height: 166pt; padding: 5pt; font-size: 9pt; line-height: 12pt; }
+.payment-notice h2 { font-size: 10pt; line-height: 13pt; }
+.payment-notice p { margin: 6pt 0; }
+/* Continuation chrome is measured by the engine at its actual output width. */
+.transactions .physical_page_wrapper ~ .physical_page_wrapper .pheader_processed { height: 126.56pt !important; }
+.tx-header, .tx-row { width: 100%; table-layout: fixed; border-collapse: collapse; }
+.tx-header caption { text-align: left; height: 36pt; }
+.tx-header caption > b { font-size: 10pt; line-height: 13pt; }
+.tx-header h2 { font-size: 9pt; line-height: 12pt; padding-top: 12pt; }
+.tx-header h2 i, .notices h2 i { display: inline; }
+.tx-header td { border: .65pt solid; background: #ccc; text-align: center; height: 50pt; padding: 2pt; font-size: 6.5pt; line-height: 9pt; }
+.tx-header td i { font-size: 6.5pt; }
+.account-title { height: 22pt; padding-top: 8pt; font-size: 8.5pt; font-weight: 700; }
+.tx-row { font-size: 7pt; line-height: 10pt; }
+.tx-row td { border-left: .65pt solid #111; padding: 0 3pt; vertical-align: top; height: 11.3pt; }
+.tx-row td:last-child { border-right: .65pt solid; }
+.tx-row .c0, .tx-row .c1 { text-align: center; font-size: 6.8pt; padding: 0; }
+.tx-row .c5 { text-align: right; padding-right: 10pt; white-space: nowrap; }
+.tx-row .c4 { text-align: right; font-size: 6.5pt; }
+.tx-row small { display: block; font-size: 7pt; line-height: 11.3pt; }
+.opening td { border-top: .65pt solid; padding-top: 5pt; }
+.account-title + .opening:last-of-type td { border-bottom: .65pt solid; }
+.tx-row.payment-label td { padding-top: 2pt; }
+.tx-row.subtotal td { border-bottom: .65pt solid; vertical-align: bottom; padding-bottom: 3pt; }
+.tx-row.review td { padding-top: 4pt; }
+.continuation-payment .tx-row.review td { padding-top: 12pt; }
+.continuation-payment { min-height: 139pt; }
+.continued-label { font-weight: 700; padding: 8pt 0 5pt; border-bottom: .65pt solid; font-size: 8.5pt; }
+.continuation-payment .transaction td { padding-top: 6pt; }
+.combined-total td { border: 0 !important; padding-top: 8pt; }
+.notices { padding-top: 5.5pt; }
+.notices h2 { font-size: 8.5pt; line-height: 14pt; margin-bottom: 5pt; }
+.notices section { margin-bottom: 7pt; }
+.notices h3 { font-size: 7.5pt; line-height: 10pt; background: #ccc; padding: 3pt 8pt; }
+.notices p { padding: 3pt 8pt 0; font-size: 7pt; line-height: 8.5pt; }
+.information.printform, .information .printform_page { padding-left: 36.96pt; padding-right: 34pt; }
+.information .ptac { max-width: 524.315pt; }
+.important { font-size: 6.9pt; line-height: 8.8pt; }
+h1.important { font-size: 10pt; line-height: 13pt; margin-bottom: 1pt; }
+h1.important span { float: right; font-size: 7pt; }
+.important h1 { font-size: 10pt; line-height: 13pt; margin-bottom: 1pt; }
+.important h1 span { float: right; font-size: 7pt; }
+.important h2 { font-size: 7.6pt; line-height: 10pt; }
+.important h3 { font-size: 8pt; font-weight: 400; text-decoration: underline; line-height: 10pt; }
+.important p { margin-bottom: 3pt; }
+.important table { border-collapse: collapse; width: 100%; table-layout: fixed; font-size: 6.8pt; line-height: 8.5pt; margin: 5.5pt 0 4pt; }
+.important th, .important td { border: .6pt solid; padding: 1pt 3pt; text-align: left; }
+.important .rates td:last-child, .important .rates th:last-child { width: 136pt; text-align: center; }
+.finance-terms { min-height: 227pt; }
+.finance-terms h3:first-of-type + p { margin-bottom: 0; }
+.important .rates { margin-top: 8.5pt; }
+.repayment-terms { min-height: 157pt; }
+.important .repayment { margin-top: 11pt; }
+.repayment th { font-weight: 400; }
+.repayment td { text-align: center; }
+.repayment thead th, .repayment thead td { height: 12.5pt; }
+.repayment tbody tr:nth-child(-n+2) th, .repayment tbody tr:nth-child(-n+2) td { height: 20pt; }
+.repayment tbody tr:nth-child(3) th, .repayment tbody tr:nth-child(3) td { height: 11.3pt; }
+.repayment tbody tr:nth-child(4) th, .repayment tbody tr:nth-child(4) td { height: 12.5pt; }
+.qr-terms { min-height: 57pt; }
+.qr-line { display: flex; gap: 10pt; align-items: center; }
+.qr-line img { width: 44pt; height: 44pt; }
+.qr-line p { flex: 1; }
+.lower-terms h2 { margin-top: 3pt; }
+.end-mark { text-align: right; font-size: 6pt; margin-top: 8pt; }
+@media screen and (max-width: 830px) {
+  .demobank.printform_formatter_processed { width: 100% !important; padding: 12px 0; gap: 14px; overflow: auto; }
+  body.demobank-ready .demobank .physical_page_wrapper { zoom: calc((100vw - 24px) / 793.7007874px); }
+}
+@media print {
+  .screen-warning { display: none; }
+  .demobank.printform_formatter_processed { padding: 0; gap: 0; }
+  .demobank .physical_page_wrapper { zoom: 1; }
+  .printform_page { break-inside: avoid; }
+  .div_page_break_before { break-before: page; }
+}

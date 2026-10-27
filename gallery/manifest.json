@@ -1319,5 +1319,19 @@
     "thumb": "thumbs/corporate-insurance-proposal-agreement.png",
     "width": 746,
     "height": 1075
+  },
+  {
+    "id": "demobank-fourpage-statement",
+    "no": "PF-056",
+    "style": { "en": "DemoBank Condensed Sample", "zh": "DemoBank 窄体示例" },
+    "title": { "en": "DemoBank Fictional Four-page Statement", "zh": "DemoBank 虚构四页账单" },
+    "type": "Bank Statement",
+    "paper": "A4",
+    "pages": 4,
+    "tags": ["finance", "statement", "fictional", "sample", "demo", "four-pages", "bilingual", "offline"],
+    "file": "designs/demobank-fourpage-statement.html",
+    "thumb": "thumbs/demobank-fourpage-statement.png",
+    "width": 794,
+    "height": 1123
   }
 ]
