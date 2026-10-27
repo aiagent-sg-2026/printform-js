@@ -1275,5 +1275,35 @@
     "thumb": "thumbs/sanyo-green-sales-quotation.png",
     "width": 746,
     "height": 1075
+  },
+  {
+    "id": "sanyo-blue-sales-quotation",
+    "no": "PF-054",
+    "style": {
+      "en": "Navy Blue",
+      "zh": "深蓝色"
+    },
+    "title": {
+      "en": "SANYO Singapore Sales Quotation - Five Pages",
+      "zh": "SANYO 新加坡销售报价单 - 五页版"
+    },
+    "type": "Quotation",
+    "paper": "A4",
+    "pages": 5,
+    "tags": [
+      "sales",
+      "quotation",
+      "blue",
+      "navy",
+      "sanyo",
+      "equipment",
+      "spare-parts",
+      "sample",
+      "five-pages"
+    ],
+    "file": "designs/sanyo-blue-sales-quotation.html",
+    "thumb": "thumbs/sanyo-blue-sales-quotation.png",
+    "width": 746,
+    "height": 1075
   }
 ]
