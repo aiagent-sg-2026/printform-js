@@ -82,7 +82,7 @@ export function renderColumnFlow(formatter, state) {
   const gap = getComputedStyle(row).columnGap;
   const fragments = [];
   let cursor = 0;
-  let movedWithoutProgress = false;
+  let onFreshContinuation = false;
   const advance = () => {
     const page = formatter.getCurrentPageContainer(outputContainer);
     formatter.prepareNextPage(outputContainer, sections, logFn, pageContext.limit,
@@ -90,6 +90,7 @@ export function renderColumnFlow(formatter, state) {
       footerSpacerTemplate, true, true, pageContext.repeatingHeight, pageContext.tableId);
     formatter.refreshPageContextForRow(pageContext, row, heights, sections);
     pageContext.repeatingHeight = formatter.computeRepeatingHeightForPage(sections, heights, true, pageContext.tableId);
+    onFreshContinuation = true;
   };
   if (row.classList.contains("tb_page_break_before") && formatter.getCurrentPageContainer(outputContainer)
     .querySelector(".prowitem_processed, .ptac-rowitem_processed")) advance();
@@ -98,16 +99,17 @@ export function renderColumnFlow(formatter, state) {
     const result = packColumnFragment(row, children, cursor, page,
       formatter.config.papersizeHeight - footerState.repeating, gap);
     if (!result) {
-      if (movedWithoutProgress || !page.querySelector(".prowitem_processed, .ptac-rowitem_processed")) {
+      // First-page-only chrome can fill a page even without prior body rows.
+      // Measure one real continuation; failure there must not create more pages.
+      if (onFreshContinuation) {
         throw new RangeError(`Printform column clause exceeds continuation budget (${children[cursor].id || cursor})`);
       }
       advance();
-      movedWithoutProgress = true;
       continue;
     }
     fragments.push(result.fragment);
     cursor = result.end;
-    movedWithoutProgress = false;
+    onFreshContinuation = false;
     if (cursor < children.length) advance();
   }
   fragments.forEach((fragment, index) => {
