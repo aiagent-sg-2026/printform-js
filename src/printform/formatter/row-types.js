@@ -56,6 +56,8 @@ export function attachRowTypeMethods(FormatterClass) {
       return false;
     }
 
+    if (row.dataset?.pfColumns === "2") return true;
+
     // prowitem: allow per-page opt-out via row class (override PTAC/PADDT defaults).
     if (row.classList.contains("without_prowheader") || row.classList.contains("tb_without_rowheader")) {
       return true;

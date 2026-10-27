@@ -1,4 +1,5 @@
 import { fragmentMeasuredRow } from "./fragment-row.js";
+import { columnFlowChildren } from "./column-flow.js";
 import { DEFAULT_READABILITY_WORD_LIMIT } from "../text.js";
 import { isKeepTogetherContent } from "../text-ranges.js";
 
@@ -16,6 +17,10 @@ export function expandMeasuredRows(formatter, sections, heights, footerState) {
   const headerHeight = heights.header || 0;
   const docInfoHeight = sections.docInfos.reduce((sum, info) => sum + (heights.docInfos[info.key] || 0), 0);
   return sections.rows.flatMap((row, index) => {
+    if (row.hasAttribute("data-pf-columns")) {
+      columnFlowChildren(row);
+      return [row]; // Its first fragment depends on the actual current-page remainder.
+    }
     // Totals/subtotal combinations retain their atomic business semantics.
     if (formatter.isSubtotalRow(row) || formatter.isFooterRow(row)) return [row];
     const tableId = formatter.getRowTableId(row);
