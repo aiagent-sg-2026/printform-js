@@ -4,7 +4,7 @@ test.use({ serviceWorkers: "block" });
 
 test("categories combine with compact filters, keep focus and restore history", async ({ page }) => {
   await page.goto("/gallery/index.html");
-  await expect(page.locator(".gallery-card")).toHaveCount(52);
+  await expect(page.locator(".gallery-card")).toHaveCount(53);
   await expect(page.locator("#category-filters button")).toHaveCount(8);
   await page.locator('[data-language="zh"]').focus();
   await page.keyboard.press("Tab");
@@ -12,9 +12,9 @@ test("categories combine with compact filters, keep focus and restore history", 
   await page.keyboard.press("Tab");
   await page.keyboard.press("Enter");
   await expect(category(page, "sales")).toBeFocused();
-  await expect(page.locator("#result-count")).toHaveText("9/52 designs");
+  await expect(page.locator("#result-count")).toHaveText("10/53 designs");
   await page.locator("#type-filter").selectOption("Quotation");
-  await expect(page.locator(".gallery-card")).toHaveCount(1);
+  await expect(page.locator(".gallery-card")).toHaveCount(2);
   await page.locator("#paper-filter").selectOption("A4");
   await page.locator("#search").fill("PF-004");
   await expect(page.locator("#search")).toBeFocused();
@@ -23,11 +23,11 @@ test("categories combine with compact filters, keep focus and restore history", 
   await expect(page.locator("#empty-state")).toBeVisible();
   await page.goBack();
   await expect(page.locator("#search")).toHaveValue("");
-  await expect(page.locator(".gallery-card")).toHaveCount(1);
+  await expect(page.locator(".gallery-card")).toHaveCount(2);
   await page.goForward();
   await expect(page.locator("#search")).toHaveValue("no such design");
   await page.locator("#clear-filters").click();
-  await expect(page.locator(".gallery-card")).toHaveCount(52);
+  await expect(page.locator(".gallery-card")).toHaveCount(53);
   await expect(page).not.toHaveURL(/category=|type=|paper=|q=/);
   await page.locator("#type-filter").selectOption("Quotation");
   await category(page, "purchasing").click();
@@ -41,7 +41,7 @@ test("URL state is safe, reloadable and bilingual", async ({ page }) => {
   await page.reload();
   await expect(page.locator("#search")).toHaveValue("PF-004");
   await page.locator('[data-language="zh"]').click();
-  await expect(category(page, "sales")).toHaveText("销售 (9)");
+  await expect(category(page, "sales")).toHaveText("销售 (10)");
   await expect(page.locator("#active-filters")).toContainText("当前筛选");
   await page.locator("#clear-filters").click();
   await page.locator("#search").fill("北辰");
@@ -68,7 +68,7 @@ test("loading and failed manifests can be retried without duplicate controls", a
   await page.unroute("**/gallery/manifest.json");
   await page.locator("#retry-load").focus();
   await page.keyboard.press("Enter");
-  await expect(page.locator(".gallery-card")).toHaveCount(52);
+  await expect(page.locator(".gallery-card")).toHaveCount(53);
   await expect(page.locator("#search")).toBeFocused();
   await expect(page.locator("#category-filters button")).toHaveCount(8);
   await expect(page.locator("#load-status")).toBeHidden();
@@ -100,7 +100,7 @@ for (const [name, width, colorScheme, language] of [["desktop-light", 1200, "lig
     await page.setViewportSize({ width, height: 900 });
     await page.emulateMedia({ colorScheme });
     await page.goto("/gallery/index.html");
-    await expect(page.locator(".gallery-card")).toHaveCount(52);
+    await expect(page.locator(".gallery-card")).toHaveCount(53);
     await page.locator(`[data-language="${language}"]`).click();
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
     for (const control of await page.locator("#category-filters button, .controls select, #search").all()) {
@@ -121,7 +121,7 @@ test("malformed data shows a recoverable error rather than an empty gallery", as
   await expect(page.locator("#empty-state")).toBeHidden();
   await page.unroute("**/gallery/manifest.json");
   await page.locator("#retry-load").click();
-  await expect(page.locator(".gallery-card")).toHaveCount(52);
+  await expect(page.locator(".gallery-card")).toHaveCount(53);
 });
 
 test.describe("offline category navigation", () => {
@@ -130,14 +130,20 @@ test.describe("offline category navigation", () => {
     await page.goto("/gallery/index.html");
     await page.evaluate(() => navigator.serviceWorker.ready);
     await page.reload();
-    await expect(page.locator(".gallery-card")).toHaveCount(52);
+    await expect(page.locator(".gallery-card")).toHaveCount(53);
     await context.setOffline(true);
     await page.reload();
-    await expect(page.locator(".gallery-card")).toHaveCount(52);
+    await expect(page.locator(".gallery-card")).toHaveCount(53);
     await category(page, "hr-administration").click();
-    await expect(page.locator("#result-count")).toHaveText("4/52 designs");
+    await expect(page.locator("#result-count")).toHaveText("4/53 designs");
     await page.locator("#type-filter").selectOption("Work Order");
     await expect(page.locator(".gallery-card")).toHaveCount(1);
+    await category(page, "sales").click();
+    await page.locator("#search").fill("PF-053");
+    await expect(page.locator(".gallery-card")).toHaveCount(1);
+    await page.locator(".gallery-card").click();
+    await expect(page.locator("[data-print]")).toBeEnabled();
+    await expect(page.frameLocator("iframe").locator(".printform_page")).toHaveCount(1);
     await context.setOffline(false);
   });
 });
@@ -147,6 +153,7 @@ test("closing a modal after history navigation restores a connected focus target
   await category(page, "sales").click();
   const id = await page.locator(".gallery-card").first().getAttribute("data-design-id");
   await page.locator(".gallery-card").first().click();
+  await expect(page.locator("[data-print]")).toBeEnabled();
   await page.goBack();
   await expect(category(page, "all")).toHaveAttribute("aria-pressed", "true");
   await page.locator("[data-close]").click();
@@ -155,8 +162,49 @@ test("closing a modal after history navigation restores a connected focus target
   await category(page, "purchasing").click();
   await category(page, "sales").click();
   await page.locator(".gallery-card").first().click();
+  await expect(page.locator("[data-print]")).toBeEnabled();
   await page.goBack();
   await expect(category(page, "purchasing")).toHaveAttribute("aria-pressed", "true");
   await page.locator("[data-close]").click();
   await expect(page.locator("#search")).toBeFocused();
 });
+
+for (const overflow of [false, true]) {
+  test(`PF053 real-engine ${overflow ? "overflow" : "default"} keeps rows and final totals intact`, async ({ page, browserName }, testInfo) => {
+    const errors = [];
+    page.on("pageerror", (error) => errors.push(error.message));
+    await page.goto(`/gallery/designs/sanyo-green-sales-quotation.html${overflow ? "?overflow=1" : ""}`);
+    await page.waitForFunction(() => window.__printFormProcessed === true);
+    const pages = page.locator(".printform_page");
+    const count = await pages.count();
+    if (overflow) expect(count).toBeGreaterThan(1);
+    else expect(count).toBe(1);
+    const metrics = await pages.evaluateAll((pages) => pages.map((page) => {
+      const bounds = page.getBoundingClientRect();
+      return {
+        rows: [...page.querySelectorAll("[data-sample-row]")].map((row) => Number(row.dataset.sampleRow)),
+        totals: page.querySelectorAll("#total").length,
+        header: page.querySelectorAll("h1").length,
+        number: page.querySelector("[data-page-number]")?.textContent,
+        totalPages: page.querySelector("[data-page-total]")?.textContent,
+        outside: [...page.querySelectorAll(".item-grid,.summary,.terms,.acceptance,.page-foot,.brand,.parties")].filter((node) => {
+          const box = node.getBoundingClientRect();
+          return box.left < bounds.left - .1 || box.right > bounds.right + .1 || box.top < bounds.top - .1 || box.bottom > bounds.bottom + .1;
+        }).map((node) => node.className)
+      };
+    }));
+    expect(metrics.flatMap(({ rows }) => rows)).toEqual(Array.from({ length: overflow ? 35 : 5 }, (_, index) => index + 1));
+    expect(metrics.reduce((sum, value) => sum + value.totals, 0)).toBe(1);
+    expect(metrics.at(-1).totals).toBe(1);
+    for (const [index, item] of metrics.entries()) {
+      expect(item.header).toBe(1);
+      expect(item.number).toBe(String(index + 1));
+      expect(item.totalPages).toBe(String(count));
+      expect(item.outside).toEqual([]);
+    }
+    await expect(page.locator("#total")).toHaveText(overflow ? "27,032.25" : "3,861.75");
+    expect(errors).toEqual([]);
+    if (browserName === "chromium") await page.pdf({ path: testInfo.outputPath(`sanyo-${overflow ? "overflow" : "default"}.pdf`), preferCSSPageSize: true, printBackground: true });
+    await page.screenshot({ path: testInfo.outputPath(`sanyo-${overflow ? "overflow" : "default"}.jpg`), type: "jpeg", quality: 60, fullPage: true });
+  });
+}

@@ -88,7 +88,8 @@ export function createModal(dialog, manifest) {
     title.textContent = `${design.no} · ${design.title[currentLanguage()]}`;
     meta.textContent = `${typeName(design.type)} · ${design.style[currentLanguage()]} · ${design.paper} · ${pageCount(design.pages)}`;
     designUrl = new URL(`../${design.file}`, import.meta.url).href;
-    frame.src = designUrl;
+    // Preview navigation must not add iframe entries to gallery filter history.
+    frame.contentWindow.location.replace(designUrl);
     open.href = designUrl;
     open.textContent = text("openDesign");
     const safeStudioUrl = design.studioUrl && /^\.\/studio-v3(?:\/|$)/.test(design.studioUrl);
@@ -107,7 +108,7 @@ export function createModal(dialog, manifest) {
     cancelFramePoll();
     frameContentHeight = 0;
     frameStage.style.height = "0px";
-    frame.removeAttribute("src");
+    frame.contentWindow.location.replace("about:blank");
     const currentCard = [...document.querySelectorAll(".gallery-card")].find((card) => card.dataset.designId === returnFocus?.dataset.designId);
     const target = returnFocus?.isConnected ? returnFocus : currentCard || document.querySelector("#search");
     target?.focus();
