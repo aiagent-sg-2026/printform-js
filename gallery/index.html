@@ -2,9 +2,19 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="color-scheme" content="light dark">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline'; frame-src 'self'; script-src 'self'; base-uri 'self'; object-src 'none'">
+  <meta name="theme-color" media="(prefers-color-scheme: light)" content="#ffffff">
+  <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#191f2a">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="PrintForm Gallery">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <title>PrintForm Gallery</title>
+  <link rel="manifest" href="./manifest.webmanifest">
+  <link rel="icon" href="./icons/icon.svg" type="image/svg+xml">
+  <link rel="icon" href="./icons/icon-192.png" sizes="192x192" type="image/png">
+  <link rel="apple-touch-icon" href="./icons/apple-touch-icon-180.png">
   <link rel="stylesheet" href="./gallery.css">
   <script type="module" src="./js/main.js"></script>
 </head>
@@ -31,6 +41,10 @@
     <section id="gallery-grid" class="gallery-grid" aria-label="Print form designs"></section>
     <p id="empty-state" class="empty-state" hidden data-i18n="empty">No designs match these filters.</p>
   </main>
+  <div id="connection-status" class="status-chip" role="status" hidden></div>
+  <div id="update-banner" class="update-banner" role="status" hidden><span></span><button id="update-button" type="button"></button></div>
+  <div id="update-overlay" class="update-overlay" role="status" aria-live="polite" hidden><span class="loader"></span><span data-i18n="updating">Updating PrintForm Gallery...</span></div>
+  <button id="scroll-top" class="scroll-top" type="button" aria-label="Scroll to top" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 14 6-6 6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
   <dialog id="design-modal" aria-labelledby="modal-title">
     <div class="modal-header"><div><h2 id="modal-title"></h2><p id="modal-meta"></p></div><button type="button" class="icon-button" data-close aria-label="Close viewer">×</button></div>
     <div class="frame-wrap"><iframe title="Live print form preview"></iframe></div>

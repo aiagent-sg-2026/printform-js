@@ -14,6 +14,7 @@ import { buildPi03 } from "./build-pi-03.mjs";
 import { buildPi04 } from "./build-pi-04.mjs";
 import { buildStudioV3 } from './build-studio-v3.mjs';
 import { finalizeStudioV3Pwa } from './studio-v3-pwa.mjs';
+import { finalizeGalleryPwa } from "./gallery-pwa-build.mjs";
 
 const root = process.cwd();
 const output = path.resolve(root, "site-dist");
@@ -99,4 +100,5 @@ await buildPi03({ root, output });
 await buildPi04({ root, output });
 finalizePwa();
 finalizeStudioV3Pwa(output);
+finalizeGalleryPwa(output);
 console.log(`GitHub Pages artifact ready: ${output}`);

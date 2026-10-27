@@ -2,6 +2,7 @@ import { loadManifest } from "./manifest-loader.js";
 import { filterDesigns, uniqueValues } from "./filter.js";
 import { createModal } from "./modal.js";
 import { currentLanguage, pageCount, setLanguage, text, typeName } from "./i18n.js";
+import "./pwa.js";
 
 const manifest = await loadManifest();
 const grid = document.querySelector("#gallery-grid");
