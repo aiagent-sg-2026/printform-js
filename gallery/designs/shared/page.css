@@ -62,3 +62,10 @@ body[data-pf-label]::before {
     display: none;
   }
 }
+
+/* Keep header bands, zebra rows and white header text when "Background graphics" is off in the print dialog. */
+.printform_formatter_processed,
+.printform_formatter_processed * {
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
