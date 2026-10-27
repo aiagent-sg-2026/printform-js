@@ -5,6 +5,7 @@ export function createModal(dialog, manifest) {
   const title = dialog.querySelector("#modal-title");
   const meta = dialog.querySelector("#modal-meta");
   const open = dialog.querySelector("[data-open]");
+  const print = dialog.querySelector("[data-print]");
   const studio = dialog.querySelector("[data-studio]");
   let returnFocus = null;
   const close = () => dialog.close();
@@ -15,6 +16,7 @@ export function createModal(dialog, manifest) {
   frameStage.appendChild(frame);
   let frameContentHeight = 0;
   let framePoll = null;
+  let designUrl = "";
 
   function fitFrame() {
     const availableWidth = frameWrap.clientWidth;
@@ -54,6 +56,7 @@ export function createModal(dialog, manifest) {
         // Keep polling; the timeout path still attempts to read the height.
       }
       if (processed || Date.now() - started >= 5000) {
+        print.disabled = !processed;
         framePoll = null;
         readFrameHeight();
         return;
@@ -63,17 +66,30 @@ export function createModal(dialog, manifest) {
     poll();
   });
 
+  print.addEventListener("click", () => {
+    try {
+      if (!frame.contentWindow || frame.contentWindow.__printFormProcessed !== true) {
+        throw new Error("Print preview is not ready");
+      }
+      frame.contentWindow.focus();
+      frame.contentWindow.print();
+    } catch {
+      window.open(designUrl, "_blank");
+    }
+  });
   window.addEventListener("resize", fitFrame);
 
   function show(design, trigger) {
+    print.disabled = true;
     cancelFramePoll();
     frameContentHeight = 0;
     frameStage.style.height = "0px";
     returnFocus = trigger;
     title.textContent = `${design.no} · ${design.title[currentLanguage()]}`;
     meta.textContent = `${typeName(design.type)} · ${design.style[currentLanguage()]} · ${design.paper} · ${pageCount(design.pages)}`;
-    frame.src = new URL(`../${design.file}`, import.meta.url).href;
-    open.href = new URL(`../${design.file}`, import.meta.url).href;
+    designUrl = new URL(`../${design.file}`, import.meta.url).href;
+    frame.src = designUrl;
+    open.href = designUrl;
     open.textContent = text("openDesign");
     const safeStudioUrl = design.studioUrl && /^\.\/studio-v3(?:\/|$)/.test(design.studioUrl);
     studio.hidden = !safeStudioUrl;

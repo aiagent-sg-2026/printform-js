@@ -34,7 +34,16 @@
   <dialog id="design-modal" aria-labelledby="modal-title">
     <div class="modal-header"><div><h2 id="modal-title"></h2><p id="modal-meta"></p></div><button type="button" class="icon-button" data-close aria-label="Close viewer">×</button></div>
     <div class="frame-wrap"><iframe title="Live print form preview"></iframe></div>
-    <footer class="modal-actions"><a class="button secondary" data-open target="_blank" rel="noopener"></a><a class="button primary" data-studio target="_blank" rel="noopener" hidden></a></footer>
+    <footer class="modal-actions">
+      <button type="button" class="button secondary" data-print disabled>
+        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+          <path d="M7 8V3h10v5M7 17H5a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2M7 14h10v7H7z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <span data-i18n="printDesign">Print</span>
+      </button>
+      <a class="button secondary" data-open target="_blank" rel="noopener"></a>
+      <a class="button primary" data-studio target="_blank" rel="noopener" hidden></a>
+    </footer>
   </dialog>
 </body>
 </html>

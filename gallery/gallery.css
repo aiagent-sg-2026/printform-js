@@ -35,10 +35,13 @@ main { max-width: 1440px; margin: auto; padding: 36px clamp(16px, 4vw, 54px) 80p
 .frame-wrap { height: min(70vh, 850px); overflow-y: auto; overflow-x: hidden; background: #e9ebef; display: flex; justify-content: center; align-items: flex-start; }
 .frame-stage { position: relative; flex: 0 0 auto; }
 .frame-wrap iframe { position: absolute; top: 0; left: 0; width: 794px; border: 0; background: #fff; transform-origin: top left; }
-.modal-actions { display: flex; justify-content: flex-end; gap: 10px; padding: 15px 22px; }
+.modal-actions { display: flex; justify-content: flex-end; flex-wrap: wrap; gap: 10px; padding: 15px 22px; }
 .button { border-radius: 8px; padding: 10px 14px; text-decoration: none; font-size: 13px; font-weight: 650; }
 .button.primary { background: #2268e4; color: white; }
 .button.secondary { border: 1px solid #d9dee8; color: inherit; }
+.button[data-print] { display: inline-flex; align-items: center; gap: 8px; font-family: inherit; cursor: pointer; }
+.button[data-print] svg { width: 16px; height: 16px; flex: 0 0 auto; }
+.button[data-print]:disabled { cursor: default; opacity: .55; }
 dialog { width: min(1000px, calc(100% - 24px)); max-width: none; max-height: calc(100% - 24px); padding: 0; border: 0; border-radius: 14px; box-shadow: 0 22px 80px #0004; color: inherit; background: #fff; }
 dialog::backdrop { background: #111827a8; }
 @media (max-width: 900px) { .gallery-grid { columns: 2 210px; } }
