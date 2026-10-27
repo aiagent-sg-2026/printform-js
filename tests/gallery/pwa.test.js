@@ -1,3 +1,4 @@
+import os from "node:os";
 import fs from "node:fs";
 import path from "node:path";
 import { describe, expect, it } from "vitest";
@@ -25,7 +26,13 @@ describe("gallery PWA", () => {
   });
   it("precache includes all designs, shared/assets/runtime and excludes thumbnails", () => {
     const data = JSON.parse(fs.readFileSync(path.join(root, "gallery/manifest.json"), "utf8"));
-    const files = buildGalleryPrecache(path.join(root, "gallery"), root);
+    // dist/ is a build output and absent on a clean checkout, so check against a stub site root.
+    const site = fs.mkdtempSync(path.join(os.tmpdir(), "pf-gallery-site-"));
+    fs.mkdirSync(path.join(site, "dist"));
+    fs.writeFileSync(path.join(site, "dist/printform.js"), "");
+    fs.symlinkSync(path.join(root, "gallery"), path.join(site, "gallery"));
+    const files = buildGalleryPrecache(path.join(root, "gallery"), site);
+    fs.rmSync(site, { recursive: true, force: true });
     for (const item of data) expect(files).toContain(item.file);
     expect(files).toContain("../dist/printform.js");
     expect(files.some((file) => file.startsWith("designs/shared/"))).toBe(true);
