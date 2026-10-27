@@ -41,3 +41,24 @@ body {
     box-shadow: none;
   }
 }
+
+/* Design reference chip (ID, name, style) so issues can be reported by ID; hidden in print. */
+body[data-pf-label]::before {
+  content: attr(data-pf-label);
+  display: block;
+  width: max-content;
+  max-width: calc(100% - 32px);
+  margin: 12px auto 0;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: rgba(20, 28, 46, 0.86);
+  color: #fff;
+  font: 600 12px/1.3 Arial, "Helvetica Neue", sans-serif;
+  letter-spacing: 0.02em;
+}
+
+@media print {
+  body[data-pf-label]::before {
+    display: none;
+  }
+}

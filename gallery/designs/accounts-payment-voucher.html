@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Payment Voucher</title>
     <link rel="stylesheet" href="shared/page.css" />
+    <link rel="stylesheet" href="shared/tight-tables.css" />
     <style>
       body {
         color: #303629;
@@ -87,7 +88,7 @@
       }
     </style>
   </head>
-  <body>
+  <body data-pf-label="PF-031 · Payment Voucher · Olive green">
     <div
       class="paper_width printform"
       data-papersize-width="750"
@@ -168,19 +169,13 @@
           <td></td>
           <td>
             <table class="items-grid">
-              <tr>
-                <td style="width: 95px"></td>
-                <td style="width: inherit"></td>
-                <td style="width: 110px"></td>
-                <td style="width: 100px"></td>
-                <td style="width: 120px"></td>
-              </tr>
-              <tr>
-                <td class="head-cell">Account Code</td>
-                <td class="head-cell">Description</td>
-                <td class="head-cell">Invoice Ref</td>
-                <td class="head-cell">Cost Center</td>
-                <td class="head-cell" align="right">Amount</td>
+              <tr id="widths"></tr>
+              <tr id="headers">
+                <td class="head-cell"><div class="cell-content">Account</div></td>
+                <td class="head-cell"><div class="cell-content">Description</div></td>
+                <td class="head-cell"><div class="cell-content">Invoice Ref</div></td>
+                <td class="head-cell"><div class="cell-content">Cost Center</div></td>
+                <td class="head-cell" align="right"><div class="cell-content" style="text-align:right">Amount</div></td>
               </tr>
             </table>
           </td>
@@ -197,17 +192,31 @@
         <tr>
           <td></td>
           <td>
-            <table class="totals-grid">
-              <tr class="grand-total">
-                <td>Approved disbursement</td>
-                <td id="total" align="right">$0.00</td>
-              </tr>
-            </table>
+            <div style="display: flex; align-items: center; gap: 8px">
+              <table class="totals-grid" style="flex: 1">
+                <tr class="grand-total">
+                  <td>Approved disbursement</td>
+                  <td id="total" align="right">$0.00</td>
+                </tr>
+              </table>
+              <div style="position: relative; width: 110px; height: 55px; flex: 0 0 110px">
+                <img
+                  src="assets/stamp-approved.svg"
+                  alt="Approved sample stamp"
+                  width="110"
+                  style="position: absolute; inset: 0; width: 110px"
+                />
+              </div>
+            </div>
             <div style="padding: 8px; font-size: 13px">
               Supporting documents: ☑ Invoice &nbsp; ☑ Purchase approval &nbsp; ☑ Receiving record
             </div>
             <div class="approval">
-              <span>Prepared by: ______________</span><span>Reviewed by: ______________</span><span>Authorized by: ______________</span>
+              <span>Prepared by: ______________</span><span>Reviewed by: ______________</span>
+              <span>
+                <img src="assets/signature-sample.svg" alt="Sample authorized signature" width="120" />
+                Authorized by: ______________
+              </span>
             </div>
           </td>
           <td></td>
@@ -216,13 +225,31 @@
       <script>
         const formatMoney = (amount) =>
           `${amount < 0 ? "−" : ""}$${Math.abs(amount).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
-        const rows = Array.from({ length: 12 }, (_, i) => [
+        const descriptions = [
+          "Copy paper cartons", "Archive folders", "Desk supplies",
+          "Printer toner", "Shipping labels", "File boxes",
+          "Ink cartridges", "Presentation binders", "Mailing envelopes",
+          "Storage dividers", "Notepads", "Cleaning supplies",
+          "Ballpoint pens", "Permanent markers", "Staples and staplers",
+          "Document wallets", "Whiteboard markers", "Adhesive notes",
+          "Letterhead paper", "Packing tape", "Bubble wrap rolls",
+          "Shipping cartons", "Label printer rolls", "Paper clips",
+          "Binder clips", "Desk organizers", "USB flash drives",
+          "Laptop sleeves", "Ergonomic mouse pads", "Keyboard cleaning kits",
+          "Presentation folders", "Receipt books", "Carbonless forms",
+          "Receipt printer paper", "Name badge holders", "Index cards",
+          "Document shredding bags", "Reusable mailing pouches",
+        ];
+        const rows = Array.from({ length: 38 }, (_, i) => [
           `61${String(20 + i).padStart(3, "0")}`,
-          ["Copy paper cartons", "Archive folders", "Desk supplies"][i % 3],
+          descriptions[i % descriptions.length],
           `WS-${401 + i}`,
           `OPS-${(i % 4) + 1}`,
-          84.5 + i * 7.25,
+          84.5 + (i % 12) * 7.25 + Math.floor(i / 12) * 13.5,
         ]);
+        const widths = [95, 220, 110, 110, 185];
+        const widthRow = widths.map((width) => `<td style="width:${width}px"></td>`).join("");
+        document.getElementById("widths").innerHTML = widthRow;
         const target = document.getElementById("rows");
         let total = 0;
         rows.forEach(([account, description, invoice, center, amount], index) => {
@@ -230,7 +257,21 @@
           const values = [account, description, invoice, center, formatMoney(amount)];
           const table = document.createElement("table");
           table.className = "paper_width section-table prowitem";
-          table.innerHTML = `<tr><td style="width:15px"></td><td style="width:inherit"></td><td style="width:15px"></td></tr><tr><td></td><td><table class="items-grid"><tr><td style="width:95px"></td><td style="width:inherit"></td><td style="width:110px"></td><td style="width:100px"></td><td style="width:120px"></td></tr><tr>${values.map((value, cell) => `<td class="item-cell${index % 2 ? " alternate" : ""}"${cell === 4 ? ' align="right"' : ""}><div class="cell-content">${value}</div></td>`).join("")}</tr></table></td><td></td></tr>`;
+          table.innerHTML = `
+            <tr><td style="width:15px"></td><td style="width:inherit"></td><td style="width:15px"></td></tr><tr>
+              <td></td>
+              <td>
+                <table class="items-grid">
+                  <tr>${widthRow}</tr>
+                  <tr>${values.map((value, cell) => {
+                    const alignment = cell === 4 ? ' align="right"' : "";
+                    return `<td class="item-cell${index % 2 ? " alternate" : ""}"${alignment}>` +
+                      `<div class="cell-content">${value}</div></td>`;
+                  }).join("")}</tr>
+                </table>
+              </td>
+              <td></td>
+            </tr>`;
           target.before(table);
         });
         target.remove();

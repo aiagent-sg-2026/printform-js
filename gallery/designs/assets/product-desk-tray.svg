@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" role="img" aria-label="Desk tray fictional sample product illustration">
+  <title>Desk tray fictional sample product illustration</title>
+  <rect width="200" height="200" rx="16" fill="#eaece9"/>
+  <ellipse cx="100" cy="170" rx="59" ry="8" fill="#323d36" opacity="0.08"/>
+  <g>
+    <path d="m33 76 109-22 27 69-110 29Z" fill="#9f7e59"/>
+    <path d="m43 80 94-17 21 52-96 25Z" fill="#c9ac84"/>
+    <path d="m51 84 81-15 17 40-82 21Z" fill="#b6986f"/>
+    <path d="m33 76 10 4 19 60-3 12Zm109-22-5 9 21 52 11 8Z" fill="#d5bb97"/>
+    <path d="m59 152 110-29v9L59 161 33 85v-9Z" fill="#8e6d4b"/>
+  </g>
+  <text x="100" y="191" text-anchor="middle" font-family="system-ui, sans-serif" font-size="6" letter-spacing="1.4" fill="#716f68">SAMPLE PRODUCT</text>
+</svg>

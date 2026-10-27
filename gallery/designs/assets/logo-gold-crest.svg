@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 64" role="img" aria-label="GOLD CREST fictional sample company logo">
+  <title>GOLD CREST fictional sample company logo</title>
+  <g color="#a7812c">
+    <path d="M10 12 32 5 54 12v20c0 13-13 23-22 27-9-4-22-14-22-27Z" fill="currentColor"/>
+    <path d="m19 25 7 7 6-13 6 13 7-7-4 18H23Z" fill="#fff5d9"/>
+    <g fill="currentColor" font-family="system-ui, sans-serif">
+      <text x="70" y="30" font-size="21" font-weight="700">GOLD CREST</text>
+      <text x="71" y="44" font-size="7" letter-spacing="1.2">FINE STATIONERY</text>
+      <text x="71" y="56" font-size="6" letter-spacing="1">FICTIONAL SAMPLE CO.</text>
+    </g>
+  </g>
+</svg>

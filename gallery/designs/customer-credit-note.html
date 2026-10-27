@@ -4,6 +4,7 @@
     <meta charset="utf-8" />
     <title>Credit Note</title>
     <link rel="stylesheet" href="shared/page.css" />
+    <link rel="stylesheet" href="shared/tight-tables.css" />
     <style>
       body {
         color: #303c3b;
@@ -42,6 +43,7 @@
         background: #4d908e;
         color: white;
         font-weight: bold;
+        border-bottom: 1px solid #dce7e5;
       }
       .item-cell {
         border-bottom: 1px solid #dce7e5;
@@ -61,7 +63,7 @@
       }
     </style>
   </head>
-  <body>
+  <body data-pf-label="PF-050 · Credit Note · Teal">
     <div
       class="paper_width printform"
       data-papersize-width="750"
@@ -79,14 +81,21 @@
         <tr>
           <td></td>
           <td>
-            <svg width="720" height="88" viewBox="0 0 720 88" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Example Finance">
+            <svg
+              width="720"
+              height="88"
+              viewBox="0 0 720 88"
+              xmlns="http://www.w3.org/2000/svg"
+              role="img"
+              aria-label="Teal Grid Credit Note"
+            >
               <rect width="720" height="88" fill="#4D908E" />
-              <circle cx="45" cy="44" r="24" fill="none" stroke="white" stroke-width="3" />
-              <path d="m33 44 8 8 17-18" fill="none" stroke="white" stroke-width="4" />
-              <text x="84" y="39" fill="white" font-family="Arial,sans-serif" font-size="23" font-weight="700">
-                EXAMPLE FINANCE · CREDIT NOTE
+              <rect x="12" y="11" width="181" height="66" rx="8" fill="#fff" />
+              <image href="assets/logo-teal-grid.svg" x="20" y="22" width="165" height="44" aria-label="Teal Grid logo" />
+              <text x="205" y="39" fill="white" font-family="Arial,sans-serif" font-size="23" font-weight="700">
+                TEAL GRID · CREDIT NOTE
               </text>
-              <text x="84" y="65" fill="white" font-family="Arial,sans-serif" font-size="16">CN-26091 · ISSUED 26 OCTOBER 2026</text>
+              <text x="205" y="65" fill="white" font-family="Arial,sans-serif" font-size="16">CN-26091 · ISSUED 26 OCTOBER 2026</text>
             </svg>
           </td>
           <td></td>
@@ -148,7 +157,21 @@
         <tr>
           <td></td>
           <td>
-            <div style="padding: 9px; border-top: 2px solid #4d908e; font-size: 13px">
+            <div style="padding: 9px; border-top: 2px solid #4d908e; font-size: 13px; position:relative">
+              <img
+                src="assets/footer-logo-1.svg"
+                width="82"
+                height="22"
+                alt="Northstar footer logo mark"
+                style="height:22px; vertical-align:middle; color:#4d908e; margin-right:8px"
+              />
+              <img
+                src="assets/stamp-paid.svg"
+                width="110"
+                height="55"
+                alt="Paid stamp"
+                style="position:absolute; right:8px; top:-54px; width:110px; height:auto"
+              />
               Credit total: <b id="total"></b> · Tax impact: <span id="tax"></span><br />Apply against account balance or request a refund
               through billing support.
             </div>
@@ -160,7 +183,7 @@
         const columns = ["Item", "Description", "Credit Qty", "Unit Price", "Tax Adjustment", "Credit Amount"];
         const widths = [65, 190, 90, 110, 120, 145];
         const align = ["left", "left", "right", "right", "right", "right"];
-        const rows = Array.from({ length: 12 }, (_, i) => {
+        const rows = Array.from({ length: 43 }, (_, i) => {
           const unit = 12500 + i * 875,
             qty = 1 + (i % 3),
             tax = Math.round(unit * 0.08);
@@ -176,7 +199,10 @@
         const widthRow = widths.map((w) => `<td style="width:${w}px"></td>`).join("");
         document.getElementById("widths").innerHTML = widthRow;
         document.getElementById("headers").innerHTML = columns
-          .map((v, i) => `<td class="head-cell" align="${align[i]}"><div class="cell-content">${v}</div></td>`)
+          .map(
+            (v, i) =>
+              `<td class="head-cell" align="${align[i]}"><div class="cell-content" style="text-align:${align[i]}">${v}</div></td>`,
+          )
           .join("");
         const money = (n) => `$${(n / 100).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
         rows.forEach((row, index) => {
@@ -185,7 +211,29 @@
           table.cellSpacing = "0";
           table.border = "0";
           table.className = "paper_width section-table prowitem";
-          table.innerHTML = `<tr><td style="width:15px"></td><td style="width:inherit"></td><td style="width:15px"></td></tr><tr><td></td><td><table class="items-grid"><tr>${widthRow}</tr><tr>${row.map((v, i) => `<td class="item-cell${index % 2 ? " alternate" : ""}" align="${align[i]}"><div class="cell-content">${i >= 3 ? money(v) : v}</div></td>`).join("")}</tr></table></td><td></td></tr>`;
+          table.innerHTML = `
+            <tr>
+              <td style="width:15px"></td><td style="width:inherit"></td><td style="width:15px"></td>
+            </tr>
+            <tr>
+              <td></td>
+              <td>
+                <table class="items-grid">
+                  <tr>${widthRow}</tr>
+                  <tr>
+                    ${row
+                      .map((v, i) => {
+                        const value = i >= 3 ? money(v) : v;
+                        return `<td class="item-cell${index % 2 ? " alternate" : ""}" align="${align[i]}">` +
+                          `<div class="cell-content">${value}</div></td>`;
+                      })
+                      .join("")}
+                  </tr>
+                </table>
+              </td>
+              <td></td>
+            </tr>
+          `;
           document.getElementById("rows").before(table);
         });
         document.getElementById("rows").remove();

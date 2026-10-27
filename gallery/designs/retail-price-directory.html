@@ -4,6 +4,7 @@
     <meta charset="utf-8" />
     <title>Retail Price List</title>
     <link rel="stylesheet" href="shared/page.css" />
+    <link rel="stylesheet" href="shared/tight-tables.css" />
     <style>
       body {
         color: #33291f;
@@ -65,7 +66,7 @@
       }
     </style>
   </head>
-  <body>
+  <body data-pf-label="PF-037 · Retail Price List · Orange">
     <div
       class="paper_width printform"
       data-papersize-width="750"
@@ -83,13 +84,14 @@
         <tr>
           <td></td>
           <td>
-            <svg width="720" height="76" viewBox="0 0 720 76" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Copper Market">
+            <svg width="720" height="76" viewBox="0 0 720 76" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Eucalyptus Retail Price Directory">
               <rect width="720" height="76" fill="#A86F32" />
-              <path d="M22 20h34v34H22zM29 28h20M29 36h20M29 44h13" fill="none" stroke="white" stroke-width="2" />
-              <text x="70" y="35" fill="white" font-family="Arial,sans-serif" font-size="20" font-weight="700">
-                COPPER MARKET · SELECTED GOODS
+              <rect x="16" y="12" width="180" height="52" rx="8" fill="#fff" />
+              <image href="assets/logo-eucalyptus.svg" x="22" y="16" width="168" height="45" />
+              <text x="212" y="35" fill="white" font-family="Arial,sans-serif" font-size="18" font-weight="700">
+                EUCALYPTUS · SELECTED GOODS
               </text>
-              <text x="70" y="57" fill="#fff2df" font-family="Arial,sans-serif" font-size="13">
+              <text x="212" y="57" fill="#fff2df" font-family="Arial,sans-serif" font-size="13">
                 RETAIL PRICE DIRECTORY · EFFECTIVE 01 OCT 2026
               </text>
               <text x="695" y="48" fill="white" font-family="Arial,sans-serif" font-size="18" font-weight="700" text-anchor="end">
@@ -151,12 +153,12 @@
                 <td style="width: 140px"></td>
               </tr>
               <tr>
-                <td class="head-cell">SKU</td>
-                <td class="head-cell">Product</td>
-                <td class="head-cell">Variant</td>
-                <td class="head-cell">Unit</td>
-                <td class="head-cell" align="right">Regular Price</td>
-                <td class="head-cell" align="right">Promo Price</td>
+                <td class="head-cell"><div class="cell-content">SKU</div></td>
+                <td class="head-cell"><div class="cell-content">Product</div></td>
+                <td class="head-cell"><div class="cell-content">Variant</div></td>
+                <td class="head-cell"><div class="cell-content">Unit</div></td>
+                <td class="head-cell" align="right"><div class="cell-content">Regular Price</div></td>
+                <td class="head-cell" align="right"><div class="cell-content">Promo Price</div></td>
               </tr>
             </table>
           </td>
@@ -174,6 +176,7 @@
           <td></td>
           <td>
             <div class="footer">
+              <img src="assets/footer-logo-2.svg" alt="Copper Market footer mark" style="width:90px;height:24px;color:#a86f32;vertical-align:middle" />
               Promotions cannot be combined; listed offers end 31 Dec 2026 or when stock runs out.<br />Pricing contact: Morgan Example ·
               prices@example.invalid · +1 555 010 0142
             </div>
@@ -211,12 +214,13 @@
         const widths = [75, 185, 130, 70, 120, 140];
         const rows = document.getElementById("rows");
         const widthRow = widths.map((width) => `<td style="width:${width}px"></td>`).join("");
-        for (let index = 0; index < products.length; index += 1) {
+        for (let index = 0; index < 124; index += 1) {
+          const product = products[index % products.length];
           const regular = 1299 + index * 175;
-          const promo = regular - 150;
+          const promo = regular - (150 + (index % 4) * 25);
           const cells = [
             `CM-${String(index + 1).padStart(3, "0")}`,
-            products[index],
+            product,
             index % 2 ? "Natural / L" : "Classic",
             "each",
             `$${(regular / 100).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`,

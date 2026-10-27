@@ -41,6 +41,14 @@
         color: #d97786;
         font-weight: bold;
       }
+      .head-cell {
+        box-sizing: border-box;
+        border: 1px solid #f1e4e6;
+        border-radius: 6px;
+      }
+      .item-cell {
+        box-sizing: border-box;
+      }
       .items-grid td {
         font-size: 13px;
         line-height: 18px;
@@ -84,7 +92,7 @@
       }
     </style>
   </head>
-  <body>
+  <body data-pf-label="PF-020 · Order Confirmation · Rose">
     <div
       class="paper_width printform"
       data-papersize-width="750"
@@ -102,14 +110,12 @@
         <tr>
           <td></td>
           <td>
-            <svg width="720" height="82" viewBox="0 0 720 82" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Coral Lane">
+            <svg width="720" height="82" viewBox="0 0 720 82" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Rose Bloom Order Confirmation">
               <rect width="720" height="82" rx="12" fill="#fff0f2" />
-              <circle cx="44" cy="41" r="22" fill="#D97786" />
-              <path d="M34 41h20M44 31v20" stroke="white" stroke-width="3" />
-              <text x="82" y="37" fill="#613d44" font-family="Arial,sans-serif" font-size="21" font-weight="700">
-                CORAL LANE · ORDER CONFIRMED
-              </text>
-              <text x="82" y="61" fill="#9c5966" font-family="Arial,sans-serif" font-size="13">OC-26172 · ACCEPTED 26 OCT 2026</text>
+              <rect x="20" y="7" width="204" height="68" rx="8" fill="#fff" />
+              <image x="26" y="17" width="180" height="48" href="assets/logo-rose-bloom.svg" />
+              <text x="690" y="37" fill="#613d44" font-family="Arial,sans-serif" font-size="21" font-weight="700" text-anchor="end">ORDER CONFIRMED</text>
+              <text x="690" y="61" fill="#9c5966" font-family="Arial,sans-serif" font-size="13" text-anchor="end">OC-26172 · ACCEPTED 26 OCT 2026</text>
             </svg>
           </td>
           <td></td>
@@ -164,11 +170,11 @@
                 <td style="width: 100px"></td>
               </tr>
               <tr>
-                <td class="head-cell">Item</td>
-                <td class="head-cell">Description</td>
-                <td class="head-cell" align="right">Quantity</td>
-                <td class="head-cell" align="right">Unit Price</td>
-                <td class="head-cell" align="right">Amount</td>
+                <td class="head-cell"><div class="cell-content">Item</div></td>
+                <td class="head-cell"><div class="cell-content">Description</div></td>
+                <td class="head-cell" align="right"><div class="cell-content">Qty</div></td>
+                <td class="head-cell" align="right"><div class="cell-content">Unit Price</div></td>
+                <td class="head-cell" align="right"><div class="cell-content">Amount</div></td>
               </tr>
             </table>
           </td>
@@ -199,21 +205,28 @@
       </table>
       <script>
         const products = ["Linen cushion", "Oak side table", "Woven basket", "Ceramic vase", "Cotton throw"];
+        const productAssets = ["canvas-tote", "stoneware-cup", "linen-pouch", "desk-journal", "steel-bottle", "wool-coaster", "glass-jar", "bamboo-pen", "cork-mat", "storage-tin", "cotton-towel", "desk-tray", "pencil-set", "tea-canister", "gift-box", "parcel-box"];
         const target = document.getElementById("confirmation-rows");
         let cents = 0;
         const fmt = (value) => `$${(value / 100).toFixed(2)}`;
-        for (let index = 0; index < products.length; index += 1) {
+        for (let index = 0; index < 11; index += 1) {
           const qty = (index % 2) + 1;
           const unit = 1800 + index * 350;
           const amount = qty * unit;
           cents += amount;
-          const cells = [`CL-${String(index + 1).padStart(2, "0")}`, products[index], qty, fmt(unit), fmt(amount)];
+          const cells = [
+            `CL-${String(index + 1).padStart(2, "0")}`,
+            products[index % products.length],
+            qty,
+            fmt(unit),
+            fmt(amount),
+          ];
           const table = document.createElement("table");
           table.cellPadding = "0";
           table.cellSpacing = "0";
           table.border = "0";
           table.className = "paper_width section-table prowitem";
-          table.innerHTML = `<tr><td style="width:15px"></td><td style="width:inherit"></td><td style="width:15px"></td></tr><tr><td></td><td><table class="items-grid"><tr><td style="width:110px"></td><td style="width:300px"></td><td style="width:80px"></td><td style="width:110px"></td><td style="width:100px"></td></tr><tr>${cells.map((value, cell) => `<td class="item-cell"${cell >= 2 ? ' align="right"' : ""}><div class="cell-content">${value}</div></td>`).join("")}</tr></table></td><td></td></tr>`;
+          table.innerHTML = `<tr><td style="width:15px"></td><td style="width:inherit"></td><td style="width:15px"></td></tr><tr><td></td><td><table class="items-grid"><tr><td style="width:110px"></td><td style="width:300px"></td><td style="width:80px"></td><td style="width:110px"></td><td style="width:100px"></td></tr><tr>${cells.map((value, cell) => `<td class="item-cell"${cell >= 2 ? ' align="right"' : ""}><div class="cell-content">${cell === 1 ? `<img src="assets/product-${productAssets[index % productAssets.length]}.svg" width="24" height="24" alt="${products[index % products.length]} sample product" style="vertical-align:middle;margin-right:6px;" />` : ""}${value}</div></td>`).join("")}</tr></table></td><td></td></tr>`;
           target.before(table);
         }
         target.remove();

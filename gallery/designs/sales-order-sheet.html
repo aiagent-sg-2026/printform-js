@@ -77,7 +77,7 @@
       }
     </style>
   </head>
-  <body>
+  <body data-pf-label="PF-018 · Sales Order · Teal">
     <div
       class="paper_width printform"
       data-papersize-width="750"
@@ -95,15 +95,14 @@
         <tr>
           <td></td>
           <td>
-            <svg width="720" height="82" viewBox="0 0 720 82" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Blue Current Sales">
+            <svg width="720" height="82" viewBox="0 0 720 82" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Northstar sales order">
               <rect width="720" height="82" fill="#e9f5f3" />
               <rect width="12" height="82" fill="#008B8B" />
-              <path d="M34 22h38v38H34zM43 31h20M43 41h20M43 51h12" fill="none" stroke="#008B8B" stroke-width="3" />
-              <text x="88" y="38" fill="#245052" font-family="Arial,sans-serif" font-size="21" font-weight="700">
-                BLUE CURRENT · SALES ORDER
-              </text>
-              <text x="88" y="62" fill="#008B8B" font-family="Arial,sans-serif" font-size="13">SO-26109 · STATUS: ACCEPTED</text>
+              <rect x="18" y="15" width="184" height="52" rx="8" fill="#fff" />
+              <image href="assets/logo-northstar.svg" x="27" y="19" width="165" height="44" role="img" aria-label="Northstar logo" />
+              <text x="220" y="55" fill="#008B8B" font-family="Arial,sans-serif" font-size="13">SO-26109 · STATUS: ACCEPTED</text>
               <text x="690" y="51" fill="#008B8B" font-family="Arial,sans-serif" font-size="17" text-anchor="end">26 OCT 2026</text>
+              <text x="690" y="29" fill="#245052" font-family="Arial,sans-serif" font-size="19" font-weight="700" text-anchor="end">SALES ORDER</text>
             </svg>
           </td>
           <td></td>
@@ -159,13 +158,13 @@
                 <td style="width: 95px"></td>
               </tr>
               <tr>
-                <td class="head-cell">SKU</td>
-                <td class="head-cell">Description</td>
-                <td class="head-cell" align="right">Quantity</td>
-                <td class="head-cell">UOM</td>
-                <td class="head-cell" align="right">Unit Price</td>
-                <td class="head-cell" align="right">Discount</td>
-                <td class="head-cell" align="right">Amount</td>
+                <td class="head-cell"><div class="cell-content">SKU</div></td>
+                <td class="head-cell"><div class="cell-content">Description</div></td>
+                <td class="head-cell" align="right"><div class="cell-content">Qty</div></td>
+                <td class="head-cell"><div class="cell-content">UOM</div></td>
+                <td class="head-cell" align="right"><div class="cell-content">Unit Price</div></td>
+                <td class="head-cell" align="right"><div class="cell-content">Discount</div></td>
+                <td class="head-cell" align="right"><div class="cell-content">Amount</div></td>
               </tr>
             </table>
           </td>
@@ -194,6 +193,8 @@
                 <td id="total" align="right">$0.00</td>
               </tr>
             </table>
+              <img src="assets/footer-logo-1.svg" alt="Sample footer company logo" width="90" height="24"
+                style="color:#008b8b; vertical-align:middle; margin-right:8px" />
             <div style="padding: 6px; font-size: 13px">
               Customer acceptance: ________________________ Date: __________ · Questions: sales@example.invalid
             </div>
@@ -222,22 +223,38 @@
           "Storage tray",
           "Label sheets",
         ];
+        const productAssets = {
+          "Canvas tote": "canvas-tote",
+          "Ceramic mug set": "stoneware-cup",
+          "Notebook bundle": "desk-journal",
+          "Steel bottle": "steel-bottle",
+          "Pencil set": "pencil-set",
+          "Glass jar": "glass-jar",
+        };
         const target = document.getElementById("order-rows");
         let subtotal = 0;
-        const fmt = (value) => `$${(value / 100).toFixed(2)}`;
-        for (let index = 0; index < descriptions.length; index += 1) {
+        const fmt = (value) => `$${(value / 100).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+        for (let index = 0; index < 71; index += 1) {
           const qty = (index % 4) + 1;
           const unit = 850 + index * 95;
           const discount = Math.round(unit * qty * 0.05);
           const amount = unit * qty - discount;
           subtotal += amount;
-          const cells = [`BC-${String(index + 1).padStart(3, "0")}`, descriptions[index], qty, "ea", fmt(unit), fmt(discount), fmt(amount)];
+          const cells = [
+            `BC-${String(index + 1).padStart(3, "0")}`,
+            descriptions[index % descriptions.length],
+            qty,
+            "ea",
+            fmt(unit),
+            fmt(discount),
+            fmt(amount),
+          ];
           const table = document.createElement("table");
           table.cellPadding = "0";
           table.cellSpacing = "0";
           table.border = "0";
           table.className = "paper_width section-table prowitem";
-          table.innerHTML = `<tr><td style="width:15px"></td><td style="width:inherit"></td><td style="width:15px"></td></tr><tr><td></td><td><table class="items-grid"><tr><td style="width:75px"></td><td style="width:205px"></td><td style="width:65px"></td><td style="width:55px"></td><td style="width:95px"></td><td style="width:75px"></td><td style="width:95px"></td></tr><tr>${cells.map((value, cell) => `<td class="item-cell${index % 2 ? " alternate" : ""}"${cell === 2 || cell >= 4 ? ' align="right"' : ""}><div class="cell-content">${value}</div></td>`).join("")}</tr></table></td><td></td></tr>`;
+          table.innerHTML = `<tr><td style="width:15px"></td><td style="width:inherit"></td><td style="width:15px"></td></tr><tr><td></td><td><table class="items-grid"><tr><td style="width:75px"></td><td style="width:205px"></td><td style="width:65px"></td><td style="width:55px"></td><td style="width:95px"></td><td style="width:75px"></td><td style="width:95px"></td></tr><tr>${cells.map((value, cell) => `<td class="item-cell${index % 2 ? " alternate" : ""}"${cell === 2 || cell >= 4 ? ' align="right"' : ""}><div class="cell-content">${cell === 1 && productAssets[value] ? `<img src="assets/product-${productAssets[value]}.svg" alt="${value} sample product" width="24" height="24" style="vertical-align:middle; margin-right:6px" />` : ""}${value}</div></td>`).join("")}</tr></table></td><td></td></tr>`;
           target.before(table);
         }
         target.remove();

@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" role="img" aria-label="Wool coaster fictional sample product illustration">
+  <title>Wool coaster fictional sample product illustration</title>
+  <rect width="200" height="200" rx="16" fill="#eeeae6"/>
+  <ellipse cx="100" cy="170" rx="59" ry="8" fill="#323d36" opacity="0.08"/>
+  <g>
+    <ellipse cx="100" cy="112" rx="62" ry="44" fill="#a89990"/>
+    <ellipse cx="100" cy="104" rx="62" ry="44" fill="#c3b1a3"/>
+    <ellipse cx="100" cy="104" rx="51" ry="34" fill="none" stroke="#e2d4c6" stroke-width="3"/>
+    <path d="m66 85 68 38m-78-25 64 36m-33-61 60 34m-72 18 42-49m-59 35 35-41m-13 62 45-50" stroke="#ad9a8a" stroke-width="2" stroke-linecap="round"/>
+  </g>
+  <text x="100" y="191" text-anchor="middle" font-family="system-ui, sans-serif" font-size="6" letter-spacing="1.4" fill="#716f68">SAMPLE PRODUCT</text>
+</svg>

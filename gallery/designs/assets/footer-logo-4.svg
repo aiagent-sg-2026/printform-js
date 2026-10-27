@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 32" role="img" aria-label="GOLD CREST fictional sample footer logo">
+  <title>GOLD CREST fictional sample footer logo</title>
+  <g fill="currentColor">
+    <path d="m16 2 13 5v10c0 7-7 12-13 14C10 29 3 24 3 17V7Zm0 5-8 3v7c0 4 4 8 8 10 4-2 8-6 8-10v-7Z"/>
+    <g font-family="system-ui, sans-serif">
+      <text x="38" y="16" font-size="8" font-weight="700">GOLD CREST</text>
+      <text x="38" y="25" font-size="5" letter-spacing="1">SAMPLE COMPANY</text>
+    </g>
+  </g>
+</svg>

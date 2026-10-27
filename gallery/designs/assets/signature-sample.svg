@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 60" role="img" aria-label="Fictional handwritten sample signature">
+  <title>Fictional handwritten sample signature</title>
+  <g fill="none" stroke="#253f6a" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M12 35C27 17 41 8 39 18S18 57 17 42 39 7 43 14s-7 24-1 22 9-15 12-12-6 13 0 11 10-16 13-13-7 13-1 12 15-12 16-9-9 11-3 10 11-14 15-11-7 14-1 10 19-22 19-15-19 25-18 28 11-7 20-17 9-9 6-3-3 9 2 5 9-11 10-7-6 10-1 8 10-8 14-6" stroke-width="1.9"/>
+    <path d="M26 45q48-9 118-3M112 17l1-2" stroke-width="1.2"/>
+  </g>
+  <text x="147" y="55" text-anchor="end" font-family="system-ui, sans-serif" font-size="5" letter-spacing="1" fill="#76829a">SAMPLE SIGNATURE</text>
+</svg>

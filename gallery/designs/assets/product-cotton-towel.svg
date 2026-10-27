@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" role="img" aria-label="Cotton towel fictional sample product illustration">
+  <title>Cotton towel fictional sample product illustration</title>
+  <rect width="200" height="200" rx="16" fill="#edeae7"/>
+  <ellipse cx="100" cy="170" rx="59" ry="8" fill="#323d36" opacity="0.08"/>
+  <g>
+    <rect x="42" y="83" width="116" height="67" rx="8" fill="#b9bcb0"/>
+    <path d="M44 56h105q9 0 9 9v69H51q-9 0-9-9V65Z" fill="#d9dbcd"/>
+    <path d="M54 65v59h103M65 64v60m6-60v60" fill="none" stroke="#a5b4aa" stroke-width="3"/>
+    <path d="M51 142h98" stroke="#919f93" stroke-width="2"/>
+    <path d="M56 134v8m10-8v8m10-8v8m10-8v8m10-8v8m10-8v8m10-8v8m10-8v8m10-8v8m10-8v8" stroke="#e8e9df" stroke-width="2"/>
+  </g>
+  <text x="100" y="191" text-anchor="middle" font-family="system-ui, sans-serif" font-size="6" letter-spacing="1.4" fill="#716f68">SAMPLE PRODUCT</text>
+</svg>

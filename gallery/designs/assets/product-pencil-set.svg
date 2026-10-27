@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" role="img" aria-label="Pencil set fictional sample product illustration">
+  <title>Pencil set fictional sample product illustration</title>
+  <rect width="200" height="200" rx="16" fill="#eeebe3"/>
+  <ellipse cx="100" cy="170" rx="59" ry="8" fill="#323d36" opacity="0.08"/>
+  <g>
+    <g transform="rotate(19 100 100)">
+      <path d="M67 40h16v108l-8 22-8-22Z" fill="#d6b467"/><path d="m67 148 8 22 8-22Z" fill="#e2c6a0"/><path d="m72 162 3 8 3-8Z" fill="#45474a"/>
+      <path d="M92 32h16v116l-8 22-8-22Z" fill="#7b9c8a"/><path d="m92 148 8 22 8-22Z" fill="#e2c6a0"/><path d="m97 162 3 8 3-8Z" fill="#45474a"/>
+      <path d="M117 45h16v103l-8 22-8-22Z" fill="#b87d75"/><path d="m117 148 8 22 8-22Z" fill="#e2c6a0"/><path d="m122 162 3 8 3-8Z" fill="#45474a"/>
+      <path d="M67 48h16m9-8h16m9 13h16" stroke="#e4d8b9" stroke-width="5"/>
+    </g>
+  </g>
+  <text x="100" y="191" text-anchor="middle" font-family="system-ui, sans-serif" font-size="6" letter-spacing="1.4" fill="#716f68">SAMPLE PRODUCT</text>
+</svg>

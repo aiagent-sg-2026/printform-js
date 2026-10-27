@@ -4,6 +4,7 @@
     <meta charset="utf-8" />
     <title>Debit Note</title>
     <link rel="stylesheet" href="shared/page.css" />
+    <link rel="stylesheet" href="shared/tight-tables.css" />
     <style>
       body {
         color: #41352c;
@@ -42,6 +43,7 @@
         background: #bc6c25;
         color: white;
         font-weight: bold;
+        border-bottom: 1px solid #eaded2;
       }
       .item-cell {
         border-bottom: 1px solid #eaded2;
@@ -61,7 +63,7 @@
       }
     </style>
   </head>
-  <body>
+  <body data-pf-label="PF-051 · Debit Note · Orange">
     <div
       class="paper_width printform"
       data-papersize-width="750"
@@ -79,13 +81,14 @@
         <tr>
           <td></td>
           <td>
-            <svg width="720" height="88" viewBox="0 0 720 88" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Example Billing">
+            <svg width="720" height="88" viewBox="0 0 720 88" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Ember Debit Note">
               <rect width="720" height="88" fill="#BC6C25" />
-              <path d="M26 24h42v40H26zM36 34h22M36 44h22M36 54h14" fill="none" stroke="white" stroke-width="3" />
-              <text x="84" y="39" fill="white" font-family="Arial,sans-serif" font-size="22" font-weight="700">
-                EXAMPLE BILLING · DEBIT NOTE
+              <rect x="12" y="11" width="181" height="66" rx="8" fill="#fff" />
+              <image href="assets/logo-ember.svg" x="20" y="22" width="165" height="44" aria-label="Ember logo" />
+              <text x="205" y="39" fill="white" font-family="Arial,sans-serif" font-size="22" font-weight="700">
+                EMBER · DEBIT NOTE
               </text>
-              <text x="84" y="65" fill="white" font-family="Arial,sans-serif" font-size="16">DN-26042 · POSTED 26 OCTOBER 2026</text>
+              <text x="205" y="65" fill="white" font-family="Arial,sans-serif" font-size="16">DN-26042 · POSTED 26 OCTOBER 2026</text>
             </svg>
           </td>
           <td></td>
@@ -150,18 +153,33 @@
         <tr>
           <td></td>
           <td>
-            <div style="padding: 9px; border-top: 2px solid #bc6c25; font-size: 13px">
+            <div style="padding: 9px; border-top: 2px solid #bc6c25; font-size: 13px; position:relative; padding-right:90px">
+              <img
+                src="assets/footer-logo-3.svg"
+                width="82"
+                height="22"
+                alt="Violet Loop footer logo mark"
+                style="height:22px; vertical-align:middle; color:#bc6c25; margin-right:8px"
+              />
               Additional amount due: <b id="total"></b> · Revised balance: <span id="revised"></span><br />Pay within 14 days of posting.
+              <img
+                src="assets/qr-paynow-sample.svg"
+                width="68"
+                height="68"
+                alt="Sample PayNow QR code, not for payment"
+                style="position:absolute; right:4px; top:-4px"
+              />
+              <small style="position:absolute; right:0; top:65px">Scan to pay (sample)</small>
             </div>
           </td>
           <td></td>
         </tr>
       </table>
       <script>
-        const columns = ["Charge Code", "Description", "Reference", "Quantity", "Unit Charge", "Tax", "Amount"];
-        const widths = [90, 160, 105, 75, 100, 75, 115];
+        const columns = ["Charge", "Description", "Reference", "Qty", "Unit", "Tax", "Amount"];
         const align = ["left", "left", "left", "right", "right", "right", "right"];
-        const rows = Array.from({ length: 10 }, (_, i) => {
+        const widths = [90, 165, 100, 55, 95, 70, 145];
+        const rows = Array.from({ length: 41 }, (_, i) => {
           const unit = 18500 + i * 650,
             qty = 1 + (i % 2),
             tax = Math.round(unit * 0.08);
@@ -178,7 +196,10 @@
         const widthRow = widths.map((w) => `<td style="width:${w}px"></td>`).join("");
         document.getElementById("widths").innerHTML = widthRow;
         document.getElementById("headers").innerHTML = columns
-          .map((v, i) => `<td class="head-cell" align="${align[i]}"><div class="cell-content">${v}</div></td>`)
+          .map(
+            (v, i) =>
+              `<td class="head-cell" align="${align[i]}"><div class="cell-content" style="text-align:${align[i]}">${v}</div></td>`,
+          )
           .join("");
         const money = (n) => `$${(n / 100).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
         rows.forEach((row, index) => {
@@ -187,13 +208,35 @@
           table.cellSpacing = "0";
           table.border = "0";
           table.className = "paper_width section-table prowitem";
-          table.innerHTML = `<tr><td style="width:15px"></td><td style="width:inherit"></td><td style="width:15px"></td></tr><tr><td></td><td><table class="items-grid"><tr>${widthRow}</tr><tr>${row.map((v, i) => `<td class="item-cell${index % 2 ? " alternate" : ""}" align="${align[i]}"><div class="cell-content">${[4, 5, 6].includes(i) ? money(v) : v}</div></td>`).join("")}</tr></table></td><td></td></tr>`;
+          table.innerHTML = `
+            <tr>
+              <td style="width:15px"></td><td style="width:inherit"></td><td style="width:15px"></td>
+            </tr>
+            <tr>
+              <td></td>
+              <td>
+                <table class="items-grid">
+                  <tr>${widthRow}</tr>
+                  <tr>
+                    ${row
+                      .map((v, i) => {
+                        const value = [4, 5, 6].includes(i) ? money(v) : v;
+                        return `<td class="item-cell${index % 2 ? " alternate" : ""}" align="${align[i]}">` +
+                          `<div class="cell-content">${value}</div></td>`;
+                      })
+                      .join("")}
+                  </tr>
+                </table>
+              </td>
+              <td></td>
+            </tr>
+          `;
           document.getElementById("rows").before(table);
         });
         document.getElementById("rows").remove();
         const total = rows.reduce((s, r) => s + r[6], 0);
         document.getElementById("total").textContent = money(total);
-        document.getElementById("revised").textContent = money(210000 + total);
+        document.getElementById("revised").textContent = money(total);
       </script>
       <table class="paper_width section-table pfooter_pagenum">
         <tr>

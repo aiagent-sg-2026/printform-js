@@ -4,7 +4,7 @@ export function filterDesigns(designs, { type = "all", paper = "all", query = ""
     if (type !== "all" && design.type !== type) return false;
     if (paper !== "all" && design.paper !== paper) return false;
     if (!needle) return true;
-    const searchable = [design.title.en, design.title.zh, design.type, design.paper, ...design.tags].join(" ").toLocaleLowerCase();
+    const searchable = [design.no, design.id, design.title.en, design.title.zh, design.style?.en, design.style?.zh, design.type, design.paper, ...design.tags].join(" ").toLocaleLowerCase();
     return searchable.includes(needle);
   });
 }

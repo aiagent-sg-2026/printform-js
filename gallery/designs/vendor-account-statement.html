@@ -79,7 +79,7 @@
       }
     </style>
   </head>
-  <body>
+  <body data-pf-label="PF-017 · Vendor Statement · Slate grey">
     <div
       class="paper_width printform"
       data-papersize-width="750"
@@ -97,11 +97,11 @@
         <tr>
           <td></td>
           <td>
-            <svg width="720" height="76" viewBox="0 0 720 76" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Greyline Accounts">
+            <svg width="720" height="76" viewBox="0 0 720 76" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Harbor vendor statement">
               <rect width="720" height="76" fill="#596773" />
-              <path d="M28 18h38v40H28zM36 28h22M36 39h22M36 50h14" fill="none" stroke="white" stroke-width="3" />
-              <text x="82" y="36" fill="white" font-family="Arial,sans-serif" font-size="20" font-weight="700">GREYLINE ACCOUNTS</text>
-              <text x="82" y="59" fill="#e6ebee" font-family="Arial,sans-serif" font-size="13">
+              <rect x="18" y="12" width="184" height="52" rx="8" fill="#fff" />
+              <image href="assets/logo-harbor.svg" x="27" y="16" width="165" height="44" role="img" aria-label="Harbor logo" />
+              <text x="220" y="47" fill="#e6ebee" font-family="Arial,sans-serif" font-size="13">
                 VENDOR STATEMENT · PERIOD 01–31 OCT 2026
               </text>
               <text x="690" y="48" fill="white" font-family="Arial,sans-serif" font-size="18" text-anchor="end">USD</text>
@@ -166,13 +166,13 @@
                 <td style="width: 100px"></td>
               </tr>
               <tr>
-                <td class="head-cell">Date</td>
-                <td class="head-cell">Reference</td>
-                <td class="head-cell">Transaction</td>
-                <td class="head-cell">Due Date</td>
-                <td class="head-cell" align="right">Debit</td>
-                <td class="head-cell" align="right">Credit</td>
-                <td class="head-cell" align="right">Balance</td>
+                <td class="head-cell"><div class="cell-content">Date</div></td>
+                <td class="head-cell"><div class="cell-content">Reference</div></td>
+                <td class="head-cell"><div class="cell-content">Transaction</div></td>
+                <td class="head-cell"><div class="cell-content">Due Date</div></td>
+                <td class="head-cell" align="right"><div class="cell-content">Debit</div></td>
+                <td class="head-cell" align="right"><div class="cell-content">Credit</div></td>
+                <td class="head-cell" align="right"><div class="cell-content">Balance</div></td>
               </tr>
             </table>
           </td>
@@ -201,7 +201,11 @@
                 <td align="right">Current · see listed due dates</td>
               </tr>
             </table>
-            <div style="padding: 5px; font-size: 13px">Reconciliation contact: accounts@example.invalid · Quote account V-00481.</div>
+            <div style="padding: 5px; font-size: 13px">
+              <img src="assets/footer-logo-4.svg" alt="Sample footer company logo" width="90" height="24"
+                style="color:#596773; vertical-align:middle; margin-right:8px" />
+              Reconciliation contact: accounts@example.invalid · Quote account V-00481.
+            </div>
           </td>
           <td></td>
         </tr>
@@ -211,16 +215,18 @@
         const openingBalance = 245000;
         let balance = openingBalance;
         const fmt = (value) => `$${(value / 100).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
-        for (let index = 0; index < 42; index += 1) {
+        for (let index = 0; index < 96; index += 1) {
           const debit = index % 3 === 0 ? 18000 + index * 125 : 0;
           const credit = index % 3 === 1 ? 12000 + index * 75 : 0;
           balance += debit - credit;
           const day = String((index % 28) + 1).padStart(2, "0");
+          const month = "Oct";
+          const dueMonth = "Nov";
           const cells = [
-            `${day} Oct`,
+            `${day} ${month}`,
             `TX-${String(index + 1).padStart(3, "0")}`,
             index % 3 === 2 ? "Credit adjustment" : "Supplier invoice",
-            `${day} Nov`,
+            `${day} ${dueMonth}`,
             debit ? fmt(debit) : "—",
             credit ? fmt(credit) : "—",
             fmt(balance),

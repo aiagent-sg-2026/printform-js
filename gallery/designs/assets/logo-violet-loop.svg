@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 64" role="img" aria-label="Violet Loop fictional sample company logo">
+  <title>Violet Loop fictional sample company logo</title>
+  <g color="#7955ad">
+    <g fill="none" stroke="currentColor" stroke-width="6"><ellipse cx="26" cy="31" rx="14" ry="22" transform="rotate(-36 26 31)"/><ellipse cx="38" cy="31" rx="14" ry="22" transform="rotate(36 38 31)"/></g>
+    <g fill="currentColor" font-family="system-ui, sans-serif">
+      <text x="70" y="30" font-size="19" font-weight="700">Violet Loop</text>
+      <text x="71" y="44" font-size="7" letter-spacing="1.2">DESIGN SUPPLIES</text>
+      <text x="71" y="56" font-size="6" letter-spacing="1">FICTIONAL SAMPLE CO.</text>
+    </g>
+  </g>
+</svg>

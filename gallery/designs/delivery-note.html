@@ -18,14 +18,20 @@
     .item-cell { border-bottom: 1px solid #d4dfdd; }
     .alternate { background: #eff4f3; }
     .cell-content { padding: 4px; }
+    .items-grid .head-cell .cell-content { padding: 4px; }
+    .product-cell .cell-content { display: inline-flex; align-items: center; gap: 6px; height: 18px; white-space: nowrap; }
+    .product-cell img { width: 24px; height: 24px; flex: none; }
+    .signature img { display: block; width: 120px; height: 45px; margin-bottom: 2px; }
+    .signature .footer-logo { display: inline-block; width: 90px; height: 24px; margin-left: 8px; }
+    .footer-logo { display: inline-block; vertical-align: middle; width: 90px; height: 24px; margin-left: 8px; color: #0f766e; }
     .signatures { width: 100%; table-layout: fixed; margin-top: 10px; }
     .signatures td { width: 33.3%; padding: 8px; border-top: 1px solid #8a9d99; font-size: 13px; }
     .page-number { padding: 8px 0; font-size: 13px; text-align: center; }
   </style>
 </head>
-<body>
+<body data-pf-label="PF-003 · Fieldway Delivery Note · Teal">
   <div class="paper_width printform"
-    data-papersize-width="750" data-papersize-height="530"
+    data-papersize-width="750" data-papersize-height="600"
     data-repeat-header="y" data-repeat-rowheader="y" data-repeat-footer-pagenum="y">
     <table cellpadding="0" cellspacing="0" border="0" class="paper_width section-table pheader">
       <tr>
@@ -37,12 +43,11 @@
         <td></td>
         <td>
           <svg class="header-art" viewBox="0 0 720 88" xmlns="http://www.w3.org/2000/svg"
-            role="img" aria-label="Fieldway Delivery">
+            role="img" aria-label="Eucalyptus sample company delivery note">
             <rect width="720" height="88" fill="#0f766e"/>
-            <circle cx="43" cy="44" r="25" fill="#fff"/>
-            <path d="M31 44h24M43 32v24" stroke="#0f766e" stroke-width="5"/>
-            <text x="82" y="40" fill="#fff" font-family="Arial,sans-serif" font-size="21" font-weight="700">FIELDWAY</text>
-            <text x="82" y="64" fill="#d5eeea" font-family="Arial,sans-serif" font-size="13">DELIVERY NOTE</text>
+            <rect x="18" y="17" width="184" height="54" rx="8" fill="#fff"/>
+            <image x="27" y="22" width="165" height="44" href="assets/logo-eucalyptus.svg" aria-label="Eucalyptus sample logo"/>
+            <text x="220" y="64" fill="#d5eeea" font-family="Arial,sans-serif" font-size="13">DELIVERY NOTE</text>
             <text x="690" y="53" fill="#fff" font-family="Arial,sans-serif" font-size="16" text-anchor="end">DN-2084 · OCT 26, 2026</text>
           </svg>
         </td>
@@ -81,11 +86,11 @@
               <td style="width:115px"></td>
             </tr>
             <tr>
-              <td class="head-cell">Item</td>
-              <td class="head-cell">Description</td>
-              <td class="head-cell" align="right">Ordered</td>
-              <td class="head-cell" align="right">Delivered</td>
-              <td class="head-cell">Remarks</td>
+              <td class="head-cell"><div class="cell-content">Item</div></td>
+              <td class="head-cell"><div class="cell-content">Description</div></td>
+              <td class="head-cell" align="right"><div class="cell-content">Ordered</div></td>
+              <td class="head-cell" align="right"><div class="cell-content">Delivered</div></td>
+              <td class="head-cell"><div class="cell-content">Remarks</div></td>
             </tr>
           </table>
         </td>
@@ -105,8 +110,13 @@
           <table class="signatures" cellpadding="0" cellspacing="0" border="0">
             <tr>
               <td>Received by: ______________</td>
-              <td>Signature: ______________</td>
-              <td>Date: __________</td>
+              <td>
+                <img src="assets/signature-sample.svg" alt="Fictional sample signature">
+                Signature: ______________
+              </td>
+              <td>Date: __________
+                <img class="footer-logo" src="assets/footer-logo-2.svg" alt="Eucalyptus sample footer logo">
+              </td>
             </tr>
           </table>
         </td>
@@ -116,7 +126,14 @@
     <script>
       const goods = [
         "Citrus boxes", "Glass bottles", "Market bags", "Herb crates",
-        "Oat milk cases", "Paper napkins", "Olive oil tins"
+        "Oat milk cases", "Paper napkins", "Olive oil tins", "Tea cartons",
+        "Coffee bags", "Produce crates", "Cereal boxes", "Spice jars"
+      ];
+      const productIcons = [
+        "canvas-tote", "stoneware-cup", "linen-pouch", "desk-journal",
+        "steel-bottle", "wool-coaster", "glass-jar", "bamboo-pen",
+        "cork-mat", "storage-tin", "cotton-towel", "desk-tray",
+        "pencil-set", "tea-canister", "gift-box", "parcel-box"
       ];
       const target = document.getElementById("delivery-items");
 
@@ -146,11 +163,17 @@
                   <td style="width:70px"></td><td style="width:inherit"></td><td style="width:75px"></td>
                   <td style="width:80px"></td><td style="width:115px"></td>
                 </tr>
-                <tr>${cells.map((value, cell) => `
-                  <td class="item-cell${index % 2 ? " alternate" : ""}"${cell === 2 || cell === 3 ? ' align="right"' : ""}>
-                    <div class="cell-content">${value}</div>
-                  </td>`).join("")}
-                </tr>
+                <tr>${cells.map((value, cell) => {
+                  const icon = cell === 1
+                    ? `<img src="assets/product-${productIcons[index % productIcons.length]}.svg" alt="${productIcons[index % productIcons.length]}">`
+                    : "";
+                  const productCell = cell === 1 ? " product-cell" : "";
+                  const alignment = cell === 2 || cell === 3 ? ' align="right"' : "";
+                  return `
+                    <td class="item-cell${index % 2 ? " alternate" : ""}${productCell}"${alignment}>
+                      <div class="cell-content">${icon}${value}</div>
+                    </td>`;
+                }).join("")}</tr>
               </table>
             </td>
             <td></td>

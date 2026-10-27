@@ -82,7 +82,7 @@
       }
     </style>
   </head>
-  <body>
+  <body data-pf-label="PF-016 · Purchase Return Note · Mauve">
     <div
       class="paper_width printform"
       data-papersize-width="750"
@@ -167,13 +167,13 @@
                 <td style="width: 90px"></td>
               </tr>
               <tr>
-                <td class="head-cell">Item Code</td>
-                <td class="head-cell">Description</td>
-                <td class="head-cell">Receipt Ref</td>
-                <td class="head-cell" align="right">Return Qty</td>
-                <td class="head-cell" align="right">Unit Cost</td>
-                <td class="head-cell">Reason</td>
-                <td class="head-cell" align="right">Amount</td>
+                <td class="head-cell"><div class="cell-content">Item Code</div></td>
+                <td class="head-cell"><div class="cell-content">Description</div></td>
+                <td class="head-cell"><div class="cell-content">Receipt Ref</div></td>
+                <td class="head-cell" align="right"><div class="cell-content">Rtn Qty</div></td>
+                <td class="head-cell" align="right"><div class="cell-content">Unit Cost</div></td>
+                <td class="head-cell"><div class="cell-content">Reason</div></td>
+                <td class="head-cell" align="right"><div class="cell-content">Amount</div></td>
               </tr>
             </table>
           </td>
@@ -197,6 +197,8 @@
                 <td id="credit" align="right">$0.00</td>
               </tr>
             </table>
+              <img src="assets/stamp-approved.svg" alt="Approved sample stamp" width="110"
+                style="position:absolute; right:32px; top:-38px; pointer-events:none" />
             <div class="note">
               Dispatch: Ground freight · collect authorization RA-5908<br />Supplier approval: __________________ Receiver:
               __________________ Date: __________
@@ -220,16 +222,16 @@
         ];
         const target = document.getElementById("return-rows");
         let cents = 0;
-        const fmt = (value) => `$${(value / 100).toFixed(2)}`;
-        for (let index = 0; index < goods.length; index += 1) {
+        const fmt = (value) => `$${(value / 100).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+        for (let index = 0; index < 33; index += 1) {
           const qty = (index % 3) + 1;
           const price = 900 + index * 125;
           const amount = qty * price;
           cents += amount;
           const cells = [
             `RT-${String(index + 1).padStart(3, "0")}`,
-            goods[index],
-            "GRN-26114",
+            goods[index % goods.length],
+            `GRN-${26114 + Math.floor(index / 4)}`,
             qty,
             fmt(price),
             index % 2 ? "WRG" : "DMG",

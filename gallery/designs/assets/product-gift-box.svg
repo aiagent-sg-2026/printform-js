@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" role="img" aria-label="Gift box fictional sample product illustration">
+  <title>Gift box fictional sample product illustration</title>
+  <rect width="200" height="200" rx="16" fill="#f0e9e7"/>
+  <ellipse cx="100" cy="170" rx="59" ry="8" fill="#323d36" opacity="0.08"/>
+  <g>
+    <rect x="48" y="77" width="104" height="81" rx="3" fill="#c78e8e"/>
+    <rect x="43" y="65" width="114" height="25" rx="3" fill="#d9a7a1"/>
+    <path d="M92 65h16v93H92Z" fill="#f2d8ae"/>
+    <path d="M100 65C56 63 61 27 82 40c12 7 18 25 18 25Zm0 0c44-2 39-38 18-25-12 7-18 25-18 25Z" fill="none" stroke="#dfbb86" stroke-width="8" stroke-linejoin="round"/>
+    <path d="m108 99 19 7-9 23-19-7Z" fill="#faf0db"/>
+    <circle cx="111" cy="105" r="2" fill="#c78e8e"/>
+  </g>
+  <text x="100" y="191" text-anchor="middle" font-family="system-ui, sans-serif" font-size="6" letter-spacing="1.4" fill="#716f68">SAMPLE PRODUCT</text>
+</svg>

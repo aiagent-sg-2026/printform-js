@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 64" role="img" aria-label="HARBOR fictional sample company logo">
+  <title>HARBOR fictional sample company logo</title>
+  <g color="#233e59">
+    <g fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><circle cx="32" cy="13" r="5"/><path d="M32 18v31M22 25h20M13 34c0 19 38 19 38 0M13 34l-3 8m3-8 8 3m30-3 3 8m-3-8-8 3M7 55q8-5 16 0t16 0 16 0"/></g>
+    <g fill="currentColor" font-family="system-ui, sans-serif">
+      <text x="70" y="30" font-size="21" font-weight="700">HARBOR</text>
+      <text x="71" y="44" font-size="7" letter-spacing="1.2">TRADE HOUSE</text>
+      <text x="71" y="56" font-size="6" letter-spacing="1">FICTIONAL SAMPLE CO.</text>
+    </g>
+  </g>
+</svg>

@@ -71,7 +71,7 @@
       }
     </style>
   </head>
-  <body>
+  <body data-pf-label="PF-014 · Goods Receipt Note · Olive green">
     <div
       class="paper_width printform"
       data-papersize-width="750"
@@ -89,11 +89,11 @@
         <tr>
           <td></td>
           <td>
-            <svg width="720" height="82" viewBox="0 0 720 82" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Mossline Warehouse">
+            <svg width="720" height="82" viewBox="0 0 720 82" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Eucalyptus goods receipt">
               <rect width="720" height="82" fill="#526B2D" />
-              <path d="M30 24h40v34H30zM38 32h24v18H38z" fill="none" stroke="white" stroke-width="3" />
-              <text x="84" y="39" fill="white" font-family="Arial,sans-serif" font-size="21" font-weight="700">MOSSLINE WAREHOUSE</text>
-              <text x="84" y="62" fill="#e8eddf" font-family="Arial,sans-serif" font-size="13">GOODS RECEIPT NOTE · GRN-26114</text>
+              <rect x="18" y="15" width="184" height="52" rx="8" fill="#fff" />
+              <image href="assets/logo-eucalyptus.svg" x="27" y="19" width="165" height="44" role="img" aria-label="Eucalyptus logo" />
+              <text x="220" y="55" fill="#e8eddf" font-family="Arial,sans-serif" font-size="13">GOODS RECEIPT NOTE · GRN-26114</text>
               <text x="690" y="52" fill="white" font-family="Arial,sans-serif" font-size="19" text-anchor="end">RECEIVED 26 OCT 2026</text>
             </svg>
           </td>
@@ -149,13 +149,13 @@
                 <td style="width: 100px"></td>
               </tr>
               <tr>
-                <td class="head-cell">Item Code</td>
-                <td class="head-cell">Description</td>
-                <td class="head-cell" align="right">Ordered</td>
-                <td class="head-cell" align="right">Received</td>
-                <td class="head-cell" align="right">Rejected</td>
-                <td class="head-cell">Bin</td>
-                <td class="head-cell">Condition</td>
+                <td class="head-cell"><div class="cell-content">Item Code</div></td>
+                <td class="head-cell"><div class="cell-content">Description</div></td>
+                <td class="head-cell" align="right"><div class="cell-content">Ordered</div></td>
+                <td class="head-cell" align="right"><div class="cell-content">Received</div></td>
+                <td class="head-cell" align="right"><div class="cell-content">Rejected</div></td>
+                <td class="head-cell"><div class="cell-content">Bin</div></td>
+                <td class="head-cell"><div class="cell-content">Condition</div></td>
               </tr>
             </table>
           </td>
@@ -173,6 +173,8 @@
           <td></td>
           <td>
             <div class="note">
+              <img src="assets/footer-logo-2.svg" alt="Eucalyptus sample company logo" width="90" height="24"
+                style="color:#526b2d; vertical-align:middle; margin-right:8px" />
               <strong>Discrepancy notes:</strong> <span id="discrepancies">0 rejected units; no shortages recorded.</span><br />Receiver
               verification: Avery Sample __________________ Date: 26 Oct 2026
             </div>
@@ -220,7 +222,8 @@
         const target = document.getElementById("receipt-rows");
         let rejected = 0;
         let shortages = 0;
-        for (let index = 0; index < products.length; index += 1) {
+        const rowCount = 82;
+        for (let index = 0; index < rowCount; index += 1) {
           const ordered = (index % 5) + 8;
           const damaged = index % 11 === 0 ? 1 : 0;
           const shortage = index % 7 === 0 ? 1 : 0;
@@ -229,7 +232,7 @@
           shortages += Math.max(ordered - received - damaged, 0);
           const cells = [
             `WH-${String(index + 1).padStart(3, "0")}`,
-            products[index],
+            products[index % products.length],
             ordered,
             received,
             damaged,

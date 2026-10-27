@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Bin Location Label Sheet</title>
     <link rel="stylesheet" href="shared/page.css" />
+    <link rel="stylesheet" href="shared/tight-tables.css" />
     <style>
       body {
         color: #263a3c;
@@ -62,7 +63,7 @@
       }
     </style>
   </head>
-  <body>
+  <body data-pf-label="PF-028 · Bin Location Label Sheet · Teal">
     <div
       class="paper_width printform"
       data-papersize-width="750"
@@ -154,25 +155,47 @@
         </tr>
       </table>
       <script>
-        const labelRecords = Array.from({ length: 18 }, (_, index) => ({
-          warehouse: "NORTH DOCK",
-          aisle: String.fromCharCode(65 + Math.floor(index / 6)),
-          rack: `R${String((index % 6) + 1).padStart(2, "0")}`,
-          bin: `${String.fromCharCode(65 + Math.floor(index / 6))}-R${String((index % 6) + 1).padStart(2, "0")}-B${String(index + 1).padStart(2, "0")}`,
-          barcode: `*${String(810000 + index)}*`,
-        }));
+        const labelRecords = Array.from({ length: 20 }, (_, index) => {
+          const aisle = String.fromCharCode(65 + (Math.floor(index / 6) % 3));
+          const rack = `R${String((index % 6) + 1).padStart(2, "0")}`;
+          const bin = `${aisle}-${rack}-B${String(index + 1).padStart(2, "0")}`;
+          return {
+            warehouse: "NORTH DOCK",
+            aisle,
+            rack,
+            bin,
+            barcode: `*${String(810000 + index)}*`,
+          };
+        });
         const target = document.getElementById("label-rows");
         for (let index = 0; index < labelRecords.length; index += 2) {
           const cells = labelRecords
             .slice(index, index + 2)
-            .map(
-              (record) =>
-                `<td class="label"><div>${record.warehouse}</div><div class="aisle">AISLE ${record.aisle} · RACK ${record.rack}</div><div class="code">${record.bin}</div><div class="barcode">${record.barcode}</div></td>`,
-            )
+            .map((record) => `
+              <td class="label">
+                <div>${record.warehouse}</div>
+                <div class="aisle">AISLE ${record.aisle} · RACK ${record.rack}</div>
+                <div class="code">${record.bin}</div>
+                <div class="barcode">${record.barcode}</div>
+              </td>`)
             .join("");
           const table = document.createElement("table");
           table.className = "paper_width section-table prowitem";
-          table.innerHTML = `<tr><td style="width:15px"></td><td style="width:inherit"></td><td style="width:15px"></td></tr><tr><td></td><td><table class="items"><tr><td style="width:50%"></td><td style="width:50%"></td></tr><tr>${cells}</tr></table></td><td></td></tr>`;
+          table.innerHTML = `
+            <tr>
+              <td style="width:15px"></td><td style="width:inherit"></td>
+              <td style="width:15px"></td>
+            </tr>
+            <tr>
+              <td></td>
+              <td>
+                <table class="items">
+                  <tr><td style="width:50%"></td><td style="width:50%"></td></tr>
+                  <tr>${cells}</tr>
+                </table>
+              </td>
+              <td></td>
+            </tr>`;
           target.before(table);
         }
         target.remove();

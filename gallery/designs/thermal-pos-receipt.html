@@ -77,7 +77,7 @@
       }
     </style>
   </head>
-  <body>
+  <body data-pf-label="PF-034 · POS Receipt · Sage green">
     <div
       class="paper_width printform"
       data-papersize-width="750"
@@ -156,10 +156,10 @@
                   <td style="width: 80px"></td>
                 </tr>
                 <tr>
-                  <td class="head-cell">Item</td>
-                  <td class="head-cell" align="right">Qty</td>
-                  <td class="head-cell" align="right">Price</td>
-                  <td class="head-cell" align="right">Amount</td>
+                  <td class="head-cell"><div class="cell-content">Item</div></td>
+                  <td class="head-cell" align="right"><div class="cell-content">Qty</div></td>
+                  <td class="head-cell" align="right"><div class="cell-content">Price</div></td>
+                  <td class="head-cell" align="right"><div class="cell-content">Amt</div></td>
                 </tr>
               </table>
             </div>
@@ -200,7 +200,9 @@
                   <td align="right" id="total"><strong>$0.00</strong></td>
                 </tr>
               </table>
-              <div style="text-align: center; border-top: 1px dotted #687a61; padding: 5px">|||| ||| |||| || ||| · 008421</div>
+              <div style="text-align: center; border-top: 1px dotted #687a61; padding: 5px">
+                <img src="assets/barcode-sample.svg" alt="Sample barcode, not scannable" height="28" />
+              </div>
             </div>
           </td>
           <td></td>
@@ -212,8 +214,6 @@
           ["Mug", 1, 18],
           ["Canvas bag", 1, 22],
           ["Notebook", 3, 6],
-          ["Pencil set", 2, 5],
-          ["Desk plant", 1, 14],
         ];
         const target = document.getElementById("rows");
         let subtotal = 0;
@@ -224,7 +224,28 @@
           const values = [item, quantity, formatMoney(price), formatMoney(amount)];
           const table = document.createElement("table");
           table.className = "paper_width section-table prowitem";
-          table.innerHTML = `<tr><td style="width:15px"></td><td style="width:inherit"></td><td style="width:15px"></td></tr><tr><td></td><td><div class="receipt"><table class="items-grid"><tr><td style="width:145px"></td><td style="width:45px"></td><td style="width:65px"></td><td style="width:80px"></td></tr><tr>${values.map((value, cell) => `<td class="item-cell"${cell > 0 ? ' align="right"' : ""}><div class="cell-content">${value}</div></td>`).join("")}</tr></table></div></td><td></td></tr>`;
+          table.innerHTML = `
+            <tr><td style="width:15px"></td><td style="width:inherit"></td><td style="width:15px"></td></tr>
+            <tr>
+              <td></td>
+              <td>
+                <div class="receipt">
+                  <table class="items-grid">
+                    <tr>
+                      <td style="width:145px"></td><td style="width:45px"></td>
+                      <td style="width:65px"></td><td style="width:80px"></td>
+                    </tr>
+                    <tr>${values.map((value, cell) => {
+                      const alignment = cell > 0 ? ' align="right"' : "";
+                      return `<td class="item-cell"${alignment}>
+                        <div class="cell-content">${value}</div>
+                      </td>`;
+                    }).join("")}</tr>
+                  </table>
+                </div>
+              </td>
+              <td></td>
+            </tr>`;
           target.before(table);
         });
         target.remove();

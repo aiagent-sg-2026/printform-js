@@ -26,18 +26,24 @@
     .page-number { padding: 6px; font-size: 13px; text-align: center; }
   </style>
 </head>
-<body>
+<body data-pf-label="PF-012 · Rosewood Custom Order Form · Red">
   <div class="paper_width printform" data-papersize-width="750" data-papersize-height="1050"
     data-repeat-header="y" data-repeat-rowheader="y" data-repeat-footer-pagenum="y">
     <table cellpadding="0" cellspacing="0" border="0" class="paper_width section-table pheader">
       <tr><td style="width:15px"></td><td style="width:inherit"></td><td style="width:15px"></td></tr>
-      <tr><td></td><td><svg class="header-art" viewBox="0 0 720 94" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Rosewood Atelier">
-        <rect width="720" height="94" fill="#be123c"/>
-        <path d="M47 20c-16 12-19 23-1 48 18-25 15-36-1-48zM47 31v30" fill="none" stroke="white" stroke-width="3"/>
-        <text x="82" y="42" fill="white" font-family="Arial,sans-serif" font-size="22" font-weight="700">ROSEWOOD ATELIER</text>
-        <text x="82" y="67" fill="#ffe4e6" font-family="Arial,sans-serif" font-size="13">MADE TO ORDER</text>
-        <text x="690" y="56" fill="white" font-family="Arial,sans-serif" font-size="24" font-weight="700" text-anchor="end">CUSTOM ORDER FORM</text>
-      </svg></td><td></td></tr>
+      <tr>
+        <td></td>
+        <td>
+          <svg class="header-art" viewBox="0 0 720 94" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Rose Bloom custom order form">
+            <rect width="720" height="94" fill="#be123c"/>
+            <rect x="18" y="21" width="184" height="52" rx="8" fill="#fff"/>
+            <image href="assets/logo-rose-bloom.svg" x="27" y="25" width="165" height="44" role="img" aria-label="Rose Bloom logo"/>
+            <text x="220" y="60" fill="#ffe4e6" font-family="Arial,sans-serif" font-size="13">MADE TO ORDER</text>
+            <text x="690" y="56" fill="white" font-family="Arial,sans-serif" font-size="24" font-weight="700" text-anchor="end">CUSTOM ORDER FORM</text>
+          </svg>
+        </td>
+        <td></td>
+      </tr>
     </table>
     <table cellpadding="0" cellspacing="0" border="0" class="paper_width section-table pdocinfo">
       <tr><td style="width:15px"></td><td style="width:inherit"></td><td style="width:15px"></td></tr>
@@ -51,7 +57,13 @@
       <tr><td style="width:15px"></td><td style="width:inherit"></td><td style="width:15px"></td></tr>
       <tr><td></td><td><table class="items-grid">
         <tr><td style="width:85px"></td><td style="width:160px"></td><td style="width:inherit"></td><td style="width:65px"></td><td style="width:95px"></td></tr>
-        <tr><td class="head-cell">Code</td><td class="head-cell">Product</td><td class="head-cell">Options</td><td class="head-cell" align="right">Qty</td><td class="head-cell" align="right">Price</td></tr>
+        <tr>
+          <td class="head-cell"><div class="cell-content">Code</div></td>
+          <td class="head-cell"><div class="cell-content">Product</div></td>
+          <td class="head-cell"><div class="cell-content">Options</div></td>
+          <td class="head-cell" align="right"><div class="cell-content">Qty</div></td>
+          <td class="head-cell" align="right"><div class="cell-content">Price</div></td>
+        </tr>
       </table></td><td></td></tr>
     </table>
     <div id="order-items"></div>
@@ -68,7 +80,7 @@
       const options = ["Natural · medium", "Ivory · set of 4", "Warm oak · 60 cm", "Sand · large"];
       const target = document.getElementById("order-items");
       let subtotalCents = 0;
-      for (let index = 0; index < 16; index += 1) {
+      for (let index = 0; index < 35; index += 1) {
         const quantity = index % 3 + 1;
         const unitCents = 2400 + (index % 7) * 850;
         subtotalCents += quantity * unitCents;

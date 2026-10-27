@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" role="img" aria-label="Bamboo pen fictional sample product illustration">
+  <title>Bamboo pen fictional sample product illustration</title>
+  <rect width="200" height="200" rx="16" fill="#eeede5"/>
+  <ellipse cx="100" cy="170" rx="59" ry="8" fill="#323d36" opacity="0.08"/>
+  <g>
+    <g transform="rotate(34 100 100)">
+      <rect x="91" y="33" width="18" height="116" rx="5" fill="#c5a66b"/>
+      <path d="m91 149 9 22 9-22Z" fill="#b6bfc1"/>
+      <path d="m97 164 3 7 3-7Z" fill="#3e4e53"/>
+      <rect x="91" y="31" width="18" height="15" rx="4" fill="#667a80"/>
+      <path d="M105 44h10v39q0 6-6 6" fill="none" stroke="#667a80" stroke-width="4" stroke-linecap="round"/>
+      <path d="M96 55v83m8-76v71" stroke="#ddc18a" stroke-width="2"/>
+    </g>
+  </g>
+  <text x="100" y="191" text-anchor="middle" font-family="system-ui, sans-serif" font-size="6" letter-spacing="1.4" fill="#716f68">SAMPLE PRODUCT</text>
+</svg>

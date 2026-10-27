@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Official Receipt</title>
     <link rel="stylesheet" href="shared/page.css" />
+    <link rel="stylesheet" href="shared/tight-tables.css" />
     <style>
       body {
         color: #332b36;
@@ -83,7 +84,7 @@
       }
     </style>
   </head>
-  <body>
+  <body data-pf-label="PF-032 · Official Receipt · Slate grey">
     <div
       class="paper_width printform"
       data-papersize-width="750"
@@ -111,11 +112,10 @@
               aria-label="Official receipt issuer"
             >
               <rect width="720" height="80" fill="#7E6688" />
-              <path d="M29 17h36v46H29zM37 27h20M37 37h20M37 47h14" fill="none" stroke="white" stroke-width="2" />
-              <text x="82" y="35" fill="white" font-family="Arial,sans-serif" font-size="20" font-weight="700">
-                RIVERBEND COMMUNITY SERVICES
+              <text x="190" y="35" fill="white" font-family="Arial,sans-serif" font-size="20" font-weight="700">
+                GOLD CREST
               </text>
-              <text x="82" y="58" fill="#f1eaf3" font-family="Arial,sans-serif" font-size="13">REGISTERED PAYMENT OFFICE</text>
+              <text x="190" y="58" fill="#f1eaf3" font-family="Arial,sans-serif" font-size="13">REGISTERED PAYMENT OFFICE</text>
               <text x="690" y="48" fill="white" font-family="Arial,sans-serif" font-size="22" font-weight="700" text-anchor="end">
                 OFFICIAL RECEIPT
               </text>
@@ -175,11 +175,11 @@
                 <td style="width: 105px"></td>
               </tr>
               <tr>
-                <td class="head-cell">Invoice Ref</td>
-                <td class="head-cell">Description</td>
-                <td class="head-cell" align="right">Original Amount</td>
-                <td class="head-cell" align="right">Payment Applied</td>
-                <td class="head-cell" align="right">Balance</td>
+                <td class="head-cell"><div class="cell-content">Invoice Ref</div></td>
+                <td class="head-cell"><div class="cell-content">Description</div></td>
+                <td class="head-cell" align="right"><div class="cell-content">Orig. Amt</div></td>
+                <td class="head-cell" align="right"><div class="cell-content">Paid</div></td>
+                <td class="head-cell" align="right"><div class="cell-content">Balance</div></td>
               </tr>
             </table>
           </td>
@@ -196,16 +196,33 @@
         <tr>
           <td></td>
           <td>
-            <table class="totals-grid">
-              <tr class="grand-total">
-                <td>Total received</td>
-                <td id="received" align="right">$0.00</td>
-                <td>Outstanding</td>
-                <td id="balance" align="right">$0.00</td>
-              </tr>
-            </table>
+            <div style="display: flex; align-items: center; gap: 8px">
+              <table class="totals-grid" style="flex: 1">
+                <tr class="grand-total">
+                  <td>Total received</td>
+                  <td id="received" align="right">$0.00</td>
+                  <td>Outstanding</td>
+                  <td id="balance" align="right">$0.00</td>
+                </tr>
+              </table>
+              <div style="position: relative; width: 110px; height: 55px; flex: 0 0 110px">
+                <img
+                  src="assets/stamp-paid.svg"
+                  alt="Paid sample stamp"
+                  width="110"
+                  style="position: absolute; inset: 0; width: 110px"
+                />
+              </div>
+              <div style="width: 72px; text-align: center; font-size: 11px">
+                <img src="assets/qr-paynow-sample.svg" alt="Sample PayNow QR, not for payment" width="68" height="68" />
+                <div>Scan to pay (sample)</div>
+              </div>
+            </div>
             <div class="seal">PAID · RECEIVED</div>
-            <div style="float: right; padding: 14px; font-size: 13px">Authorized: Casey Example __________________</div>
+            <div style="float: right; padding: 14px; font-size: 13px">
+              Authorized: Casey Example __________________
+              <img src="assets/footer-logo-4.svg" alt="Gold Crest sample company" height="22" style="color: #7e6688" />
+            </div>
           </td>
           <td></td>
         </tr>
@@ -228,7 +245,27 @@
           const values = [reference, description, formatMoney(original), formatMoney(applied), formatMoney(original - applied)];
           const table = document.createElement("table");
           table.className = "paper_width section-table prowitem";
-          table.innerHTML = `<tr><td style="width:15px"></td><td style="width:inherit"></td><td style="width:15px"></td></tr><tr><td></td><td><table class="items-grid"><tr><td style="width:105px"></td><td style="width:inherit"></td><td style="width:115px"></td><td style="width:120px"></td><td style="width:105px"></td></tr><tr>${values.map((value, cell) => `<td class="item-cell${index % 2 ? " alternate" : ""}"${cell > 1 ? ' align="right"' : ""}><div class="cell-content">${value}</div></td>`).join("")}</tr></table></td><td></td></tr>`;
+          table.innerHTML = `
+            <tr><td style="width:15px"></td><td style="width:inherit"></td><td style="width:15px"></td></tr>
+            <tr>
+              <td></td>
+              <td>
+                <table class="items-grid">
+                  <tr>
+                    <td style="width:105px"></td><td style="width:inherit"></td>
+                    <td style="width:115px"></td><td style="width:120px"></td>
+                    <td style="width:105px"></td>
+                  </tr>
+                  <tr>${values.map((value, cell) => {
+                    const alignment = cell > 1 ? ' align="right"' : "";
+                    return `<td class="item-cell${index % 2 ? " alternate" : ""}"${alignment}>
+                      <div class="cell-content">${value}</div>
+                    </td>`;
+                  }).join("")}</tr>
+                </table>
+              </td>
+              <td></td>
+            </tr>`;
           target.before(table);
         });
         target.remove();

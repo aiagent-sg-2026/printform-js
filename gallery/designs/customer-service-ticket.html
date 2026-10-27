@@ -4,6 +4,7 @@
     <meta charset="utf-8" />
     <title>Service Ticket</title>
     <link rel="stylesheet" href="shared/page.css" />
+    <link rel="stylesheet" href="shared/tight-tables.css" />
     <style>
       body {
         color: #34464a;
@@ -42,6 +43,7 @@
         background: #55828b;
         color: white;
         font-weight: 700;
+        border-bottom: 1px solid #dce4e4;
       }
       .item-cell {
         border-bottom: 1px solid #dce4e4;
@@ -61,7 +63,7 @@
       }
     </style>
   </head>
-  <body>
+  <body data-pf-label="PF-045 · Service Ticket · Teal">
     <div
       class="paper_width printform"
       data-papersize-width="750"
@@ -79,12 +81,19 @@
         <tr>
           <td></td>
           <td>
-            <svg width="720" height="96" viewBox="0 0 720 96" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Harbor Care">
+            <svg
+              width="720"
+              height="96"
+              viewBox="0 0 720 96"
+              xmlns="http://www.w3.org/2000/svg"
+              role="img"
+              aria-label="Teal Grid Service Ticket"
+            >
               <rect width="720" height="96" fill="#55828B" />
-              <circle cx="45" cy="48" r="23" fill="white" />
-              <path d="M45 34v28M31 48h28" stroke="#55828B" stroke-width="5" />
-              <text x="82" y="43" fill="white" font-family="Arial,sans-serif" font-size="23" font-weight="700">HARBOR CARE · ST-26084</text>
-              <text x="82" y="69" fill="white" font-family="Arial,sans-serif" font-size="17">
+              <rect x="12" y="13" width="181" height="70" rx="8" fill="#fff" />
+              <image href="assets/logo-teal-grid.svg" x="20" y="26" width="165" height="44" aria-label="Teal Grid logo" />
+              <text x="205" y="43" fill="white" font-family="Arial,sans-serif" font-size="23" font-weight="700">TEAL GRID · ST-26084</text>
+              <text x="205" y="69" fill="white" font-family="Arial,sans-serif" font-size="17">
                 SERVICE TICKET · PRIORITY P2 · RESPONSE DUE 16:00
               </text>
             </svg>
@@ -108,7 +117,13 @@
               </tr>
               <tr>
                 <td>
-                  <div class="info-box"><b>CUSTOMER</b><br />Harbor &amp; Pine Studio<br />Morgan Lee · 503-555-0142</div>
+                  <div class="info-box">
+                    <b>CUSTOMER</b><br />Harbor &amp; Pine Studio<br />
+                    <img src="assets/icon-phone.svg" width="16" height="16" alt="Phone" style="vertical-align:middle" />
+                    Morgan Lee · 503-555-0142<br />
+                    <img src="assets/icon-mail.svg" width="16" height="16" alt="Email" style="vertical-align:middle" />
+                    morgan@example.test
+                  </div>
                 </td>
                 <td>
                   <div class="info-box">
@@ -151,8 +166,19 @@
         <tr>
           <td></td>
           <td>
-            <div style="padding: 9px; border-top: 2px solid #55828b; font-size: 13px">
-              Resolution: Sync profile refreshed; customer confirmed service restored. Acknowledged by Morgan Lee · Closed 26 October 2026.
+            <div style="padding: 9px; border-top: 2px solid #55828b; font-size: 13px; position: relative">
+              <img
+                src="assets/qr-generic-sample.svg"
+                width="68"
+                height="68"
+                alt="Decorative sample pattern, not a real QR code"
+                style="position:absolute; right:8px; top:-4px"
+              />
+              <span style="display:block; padding-right:82px">
+                Resolution: Sync profile refreshed; customer confirmed service restored.
+                Acknowledged by Morgan Lee · Closed 26 October 2026.
+              </span>
+              <small style="position:absolute; right:5px; top:65px">Scan to track (sample)</small>
             </div>
           </td>
           <td></td>
@@ -162,11 +188,11 @@
         const columns = ["Time", "Action", "Agent", "Status", "Duration", "Notes"];
         const widths = [65, 150, 90, 85, 75, 255];
         const align = ["left", "left", "left", "left", "right", "left"];
-        const rows = Array.from({ length: 14 }, (_, i) => [
-          "09:" + String(5 + i * 3).padStart(2, "0"),
+        const rows = Array.from({ length: 41 }, (_, i) => [
+          `${String(9 + Math.floor((5 + i * 3) / 60)).padStart(2, "0")}:${String((5 + i * 3) % 60).padStart(2, "0")}`,
           ["Intake review", "Verify serial", "Reproduce fault", "Check logs", "Customer call", "Apply update", "Run validation"][i % 7],
           ["A. Chen", "M. Patel", "R. Kim"][i % 3],
-          i === 13 ? "Resolved" : "Complete",
+          i === 40 ? "Resolved" : "Complete",
           12 + (i % 6) + " min",
           ["Queue reviewed", "Serial confirmed", "Issue reproduced", "Logs attached", "Customer updated", "Patch staged", "Test passed"][
             i % 7
@@ -175,7 +201,10 @@
         const widthRow = widths.map((w) => `<td style="width:${w}px"></td>`).join("");
         document.getElementById("widths").innerHTML = widthRow;
         document.getElementById("headers").innerHTML = columns
-          .map((v, i) => `<td class="head-cell" align="${align[i]}"><div class="cell-content">${v}</div></td>`)
+          .map((value, index) => {
+            return `<td class="head-cell" align="${align[index]}">` +
+              `<div class="cell-content" style="text-align:${align[index]}">${value}</div></td>`;
+          })
           .join("");
         rows.forEach((row, index) => {
           const table = document.createElement("table");
@@ -183,7 +212,29 @@
           table.cellSpacing = "0";
           table.border = "0";
           table.className = "paper_width section-table prowitem";
-          table.innerHTML = `<tr><td style="width:15px"></td><td style="width:inherit"></td><td style="width:15px"></td></tr><tr><td></td><td><table class="items-grid"><tr>${widthRow}</tr><tr>${row.map((v, i) => `<td class="item-cell${index % 2 ? " alternate" : ""}" align="${align[i]}"><div class="cell-content">${v}</div></td>`).join("")}</tr></table></td><td></td></tr>`;
+          table.innerHTML = `
+            <tr>
+              <td style="width:15px"></td><td style="width:inherit"></td><td style="width:15px"></td>
+            </tr>
+            <tr>
+              <td></td>
+              <td>
+                <table class="items-grid">
+                  <tr>${widthRow}</tr>
+                  <tr>
+                    ${row
+                      .map(
+                        (v, i) =>
+                          `<td class="item-cell${index % 2 ? " alternate" : ""}" align="${align[i]}">` +
+                          `<div class="cell-content">${v}</div></td>`,
+                      )
+                      .join("")}
+                  </tr>
+                </table>
+              </td>
+              <td></td>
+            </tr>
+          `;
           document.getElementById("rows").before(table);
         });
         document.getElementById("rows").remove();

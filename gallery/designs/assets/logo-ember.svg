@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 64" role="img" aria-label="ember fictional sample company logo">
+  <title>ember fictional sample company logo</title>
+  <g color="#d96a32">
+    <path d="M33 5c5 17-13 17-7 31 3-8 8-10 10-17 18 15 18 35-3 38C7 57 7 34 21 23c-1 10 2 12 4 14C19 22 33 18 33 5Z" fill="currentColor"/>
+    <path d="M32 37c-10 10-6 17 1 17s11-8-1-17Z" fill="#ffe6bd"/>
+    <g fill="currentColor" font-family="system-ui, sans-serif">
+      <text x="70" y="30" font-size="21" font-weight="700">ember</text>
+      <text x="71" y="44" font-size="7" letter-spacing="1.2">WORKSHOP GOODS</text>
+      <text x="71" y="56" font-size="6" letter-spacing="1">FICTIONAL SAMPLE CO.</text>
+    </g>
+  </g>
+</svg>

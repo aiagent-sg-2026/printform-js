@@ -1,13 +1,18 @@
 [
   {
     "id": "blue-sales-invoice",
+    "no": "PF-001",
+    "style": {
+      "en": "Blue",
+      "zh": "蓝色"
+    },
     "title": {
       "en": "Northstar Sales Invoice",
       "zh": "北辰销售发票"
     },
     "type": "Invoice",
     "paper": "A4",
-    "pages": 2,
+    "pages": 3,
     "tags": [
       "sales",
       "blue",
@@ -20,13 +25,18 @@
   },
   {
     "id": "red-purchase-order",
+    "no": "PF-002",
+    "style": {
+      "en": "Red",
+      "zh": "红色"
+    },
     "title": {
       "en": "Redwood Purchase Order",
       "zh": "红木采购订单"
     },
     "type": "Purchase Order",
     "paper": "LETTER",
-    "pages": 3,
+    "pages": 4,
     "tags": [
       "purchase",
       "red",
@@ -39,6 +49,11 @@
   },
   {
     "id": "delivery-note",
+    "no": "PF-003",
+    "style": {
+      "en": "Teal",
+      "zh": "青绿色"
+    },
     "title": {
       "en": "Fieldway Delivery Note",
       "zh": "田野配送单"
@@ -54,17 +69,22 @@
     "file": "designs/delivery-note.html",
     "thumb": "thumbs/delivery-note.png",
     "width": 750,
-    "height": 530
+    "height": 600
   },
   {
     "id": "terms-quotation",
+    "no": "PF-004",
+    "style": {
+      "en": "Blue",
+      "zh": "蓝色"
+    },
     "title": {
       "en": "Studio Quotation + Terms",
       "zh": "工作室报价单与条款"
     },
     "type": "Quotation",
     "paper": "A4",
-    "pages": 2,
+    "pages": 3,
     "tags": [
       "quotation",
       "terms",
@@ -77,13 +97,18 @@
   },
   {
     "id": "packing-list",
+    "no": "PF-005",
+    "style": {
+      "en": "Orange",
+      "zh": "橙色"
+    },
     "title": {
       "en": "Cedar Packing List",
       "zh": "雪松装箱单"
     },
     "type": "Packing List",
     "paper": "LETTER",
-    "pages": 3,
+    "pages": 4,
     "tags": [
       "packing",
       "export",
@@ -96,6 +121,11 @@
   },
   {
     "id": "mono-credit-receipt",
+    "no": "PF-006",
+    "style": {
+      "en": "Monochrome",
+      "zh": "黑白单色"
+    },
     "title": {
       "en": "Mono Credit Receipt",
       "zh": "黑白退款收据"
@@ -116,13 +146,18 @@
   },
   {
     "id": "violet-pro-invoice",
+    "no": "PF-007",
+    "style": {
+      "en": "Violet",
+      "zh": "紫罗兰"
+    },
     "title": {
       "en": "Violet Pro Invoice",
       "zh": "紫罗兰专业发票"
     },
     "type": "Invoice",
     "paper": "A4",
-    "pages": 2,
+    "pages": 3,
     "tags": [
       "invoice",
       "violet",
@@ -135,13 +170,18 @@
   },
   {
     "id": "green-expense-report",
+    "no": "PF-008",
+    "style": {
+      "en": "Green",
+      "zh": "绿色"
+    },
     "title": {
       "en": "Field Notes Expense Report",
       "zh": "田野员工报销单"
     },
     "type": "Expense Report",
     "paper": "LETTER",
-    "pages": 2,
+    "pages": 4,
     "tags": [
       "expenses",
       "green",
@@ -154,13 +194,18 @@
   },
   {
     "id": "gold-account-statement",
+    "no": "PF-009",
+    "style": {
+      "en": "Amber gold",
+      "zh": "琥珀金"
+    },
     "title": {
       "en": "Ledger House Account Statement",
       "zh": "账簿屋账户对账单"
     },
     "type": "Statement",
     "paper": "A4",
-    "pages": 2,
+    "pages": 4,
     "tags": [
       "statement",
       "gold",
@@ -173,13 +218,18 @@
   },
   {
     "id": "orange-work-order",
+    "no": "PF-010",
+    "style": {
+      "en": "Orange",
+      "zh": "橙色"
+    },
     "title": {
       "en": "Cinder Service Work Order",
       "zh": "烬火维修工作单"
     },
     "type": "Work Order",
     "paper": "A5",
-    "pages": 1,
+    "pages": 2,
     "tags": [
       "work",
       "orange",
@@ -192,13 +242,18 @@
   },
   {
     "id": "navy-timesheet",
+    "no": "PF-011",
+    "style": {
+      "en": "Navy blue",
+      "zh": "海军蓝"
+    },
     "title": {
       "en": "Blue Peak Weekly Timesheet",
       "zh": "蓝峰每周工时表"
     },
     "type": "Timesheet",
     "paper": "LETTER",
-    "pages": 1,
+    "pages": 4,
     "tags": [
       "timesheet",
       "navy",
@@ -211,13 +266,18 @@
   },
   {
     "id": "rose-order-form",
+    "no": "PF-012",
+    "style": {
+      "en": "Red",
+      "zh": "红色"
+    },
     "title": {
       "en": "Rosewood Custom Order Form",
       "zh": "玫瑰木定制订单"
     },
     "type": "Order Form",
     "paper": "A4",
-    "pages": 1,
+    "pages": 2,
     "tags": [
       "custom",
       "rose",
@@ -230,13 +290,18 @@
   },
   {
     "id": "supplier-rfq",
+    "no": "PF-013",
+    "style": {
+      "en": "Teal",
+      "zh": "青绿色"
+    },
     "title": {
       "en": "Request for Quotation",
       "zh": "采购询价单"
     },
     "type": "RFQ",
     "paper": "A4",
-    "pages": 1,
+    "pages": 3,
     "tags": [
       "purchase",
       "sourcing",
@@ -249,13 +314,18 @@
   },
   {
     "id": "warehouse-goods-receipt",
+    "no": "PF-014",
+    "style": {
+      "en": "Olive green",
+      "zh": "橄榄绿"
+    },
     "title": {
       "en": "Goods Receipt Note",
       "zh": "采购收货单"
     },
     "type": "Goods Receipt",
     "paper": "A4",
-    "pages": 2,
+    "pages": 4,
     "tags": [
       "purchase",
       "receiving",
@@ -268,13 +338,18 @@
   },
   {
     "id": "supplier-invoice-register",
+    "no": "PF-015",
+    "style": {
+      "en": "Brown",
+      "zh": "棕色"
+    },
     "title": {
       "en": "Supplier Invoice",
       "zh": "供应商发票"
     },
     "type": "Supplier Invoice",
     "paper": "LETTER",
-    "pages": 1,
+    "pages": 4,
     "tags": [
       "purchase",
       "payables",
@@ -287,13 +362,18 @@
   },
   {
     "id": "supplier-return-note",
+    "no": "PF-016",
+    "style": {
+      "en": "Mauve",
+      "zh": "淡紫红"
+    },
     "title": {
       "en": "Purchase Return Note",
       "zh": "采购退货单"
     },
     "type": "Purchase Return",
     "paper": "A4",
-    "pages": 1,
+    "pages": 2,
     "tags": [
       "purchase",
       "returns",
@@ -306,13 +386,18 @@
   },
   {
     "id": "vendor-account-statement",
+    "no": "PF-017",
+    "style": {
+      "en": "Slate grey",
+      "zh": "石板灰"
+    },
     "title": {
       "en": "Vendor Statement",
       "zh": "供应商往来对账单"
     },
     "type": "Vendor Statement",
     "paper": "LETTER",
-    "pages": 2,
+    "pages": 5,
     "tags": [
       "purchase",
       "payables",
@@ -325,13 +410,18 @@
   },
   {
     "id": "sales-order-sheet",
+    "no": "PF-018",
+    "style": {
+      "en": "Teal",
+      "zh": "青绿色"
+    },
     "title": {
       "en": "Sales Order",
       "zh": "销售订单"
     },
     "type": "Sales Order",
     "paper": "A4",
-    "pages": 1,
+    "pages": 4,
     "tags": [
       "sales",
       "orders",
@@ -344,13 +434,18 @@
   },
   {
     "id": "export-proforma-invoice",
+    "no": "PF-019",
+    "style": {
+      "en": "Lavender",
+      "zh": "薰衣草紫"
+    },
     "title": {
       "en": "Proforma Invoice",
       "zh": "形式发票"
     },
     "type": "Proforma",
     "paper": "A4",
-    "pages": 1,
+    "pages": 3,
     "tags": [
       "sales",
       "export",
@@ -363,13 +458,18 @@
   },
   {
     "id": "customer-order-confirmation",
+    "no": "PF-020",
+    "style": {
+      "en": "Rose",
+      "zh": "玫瑰色"
+    },
     "title": {
       "en": "Order Confirmation",
       "zh": "订单确认单"
     },
     "type": "Confirmation",
     "paper": "A5",
-    "pages": 1,
+    "pages": 2,
     "tags": [
       "sales",
       "confirmation",
@@ -382,13 +482,18 @@
   },
   {
     "id": "sales-return-rma",
+    "no": "PF-021",
+    "style": {
+      "en": "Orange",
+      "zh": "橙色"
+    },
     "title": {
       "en": "Sales Return Authorization",
       "zh": "销售退货授权单"
     },
     "type": "RMA",
     "paper": "A4",
-    "pages": 1,
+    "pages": 3,
     "tags": [
       "sales",
       "returns",
@@ -401,13 +506,18 @@
   },
   {
     "id": "sales-commission-statement",
+    "no": "PF-022",
+    "style": {
+      "en": "Olive gold",
+      "zh": "橄榄金"
+    },
     "title": {
       "en": "Commission Statement",
       "zh": "销售佣金结算单"
     },
     "type": "Commission",
     "paper": "LETTER",
-    "pages": 3,
+    "pages": 5,
     "tags": [
       "sales",
       "commission",
@@ -420,13 +530,18 @@
   },
   {
     "id": "inventory-stock-master",
+    "no": "PF-023",
+    "style": {
+      "en": "Blue grey",
+      "zh": "蓝灰色"
+    },
     "title": {
       "en": "Stock Master List",
       "zh": "库存商品主清单"
     },
     "type": "Stock List",
     "paper": "A4",
-    "pages": 3,
+    "pages": 5,
     "tags": [
       "inventory",
       "catalog",
@@ -439,13 +554,18 @@
   },
   {
     "id": "blind-stock-count",
+    "no": "PF-024",
+    "style": {
+      "en": "Brown",
+      "zh": "棕色"
+    },
     "title": {
       "en": "Stock Take Sheet",
       "zh": "库存盘点表"
     },
     "type": "Stock Count",
     "paper": "A4",
-    "pages": 2,
+    "pages": 5,
     "tags": [
       "inventory",
       "stocktake",
@@ -458,13 +578,18 @@
   },
   {
     "id": "interwarehouse-stock-transfer",
+    "no": "PF-025",
+    "style": {
+      "en": "Olive green",
+      "zh": "橄榄绿"
+    },
     "title": {
       "en": "Stock Transfer Note",
       "zh": "库存调拨单"
     },
     "type": "Stock Transfer",
     "paper": "A4",
-    "pages": 2,
+    "pages": 4,
     "tags": [
       "inventory",
       "transfer",
@@ -477,13 +602,18 @@
   },
   {
     "id": "inventory-adjustment-note",
+    "no": "PF-026",
+    "style": {
+      "en": "Mauve",
+      "zh": "淡紫红"
+    },
     "title": {
       "en": "Stock Adjustment Note",
       "zh": "库存调整单"
     },
     "type": "Adjustment",
     "paper": "A4",
-    "pages": 1,
+    "pages": 3,
     "tags": [
       "inventory",
       "adjustment",
@@ -496,13 +626,18 @@
   },
   {
     "id": "low-stock-reorder-report",
+    "no": "PF-027",
+    "style": {
+      "en": "Amber",
+      "zh": "琥珀色"
+    },
     "title": {
       "en": "Low-Stock Reorder Report",
       "zh": "低库存补货清单"
     },
     "type": "Reorder Report",
     "paper": "LETTER",
-    "pages": 3,
+    "pages": 5,
     "tags": [
       "inventory",
       "replenishment",
@@ -515,6 +650,11 @@
   },
   {
     "id": "warehouse-bin-labels",
+    "no": "PF-028",
+    "style": {
+      "en": "Teal",
+      "zh": "青绿色"
+    },
     "title": {
       "en": "Bin Location Label Sheet",
       "zh": "仓库库位标签页"
@@ -534,13 +674,18 @@
   },
   {
     "id": "batch-serial-traceability",
+    "no": "PF-029",
+    "style": {
+      "en": "Lavender",
+      "zh": "薰衣草紫"
+    },
     "title": {
       "en": "Batch and Serial Register",
       "zh": "批次与序列号登记表"
     },
     "type": "Traceability",
     "paper": "A4",
-    "pages": 2,
+    "pages": 4,
     "tags": [
       "inventory",
       "traceability",
@@ -553,6 +698,11 @@
   },
   {
     "id": "cash-collection-receipt",
+    "no": "PF-030",
+    "style": {
+      "en": "Terracotta",
+      "zh": "陶土色"
+    },
     "title": {
       "en": "Cash Receipt",
       "zh": "现金收款单"
@@ -572,13 +722,18 @@
   },
   {
     "id": "accounts-payment-voucher",
+    "no": "PF-031",
+    "style": {
+      "en": "Olive green",
+      "zh": "橄榄绿"
+    },
     "title": {
       "en": "Payment Voucher",
       "zh": "付款凭单"
     },
     "type": "Payment Voucher",
     "paper": "A4",
-    "pages": 1,
+    "pages": 2,
     "tags": [
       "receipts",
       "payments",
@@ -591,6 +746,11 @@
   },
   {
     "id": "official-payment-receipt",
+    "no": "PF-032",
+    "style": {
+      "en": "Slate grey",
+      "zh": "石板灰"
+    },
     "title": {
       "en": "Official Receipt",
       "zh": "正式收据"
@@ -610,6 +770,11 @@
   },
   {
     "id": "customer-refund-slip",
+    "no": "PF-033",
+    "style": {
+      "en": "Rose",
+      "zh": "玫瑰色"
+    },
     "title": {
       "en": "Refund Slip",
       "zh": "退款凭条"
@@ -629,6 +794,11 @@
   },
   {
     "id": "thermal-pos-receipt",
+    "no": "PF-034",
+    "style": {
+      "en": "Sage green",
+      "zh": "鼠尾草绿"
+    },
     "title": {
       "en": "POS Receipt",
       "zh": "收银小票"
@@ -648,6 +818,11 @@
   },
   {
     "id": "retail-gift-receipt",
+    "no": "PF-035",
+    "style": {
+      "en": "Mauve",
+      "zh": "淡紫红"
+    },
     "title": {
       "en": "Gift Receipt",
       "zh": "礼品收据"
@@ -667,13 +842,18 @@
   },
   {
     "id": "pos-shift-closing",
+    "no": "PF-036",
+    "style": {
+      "en": "Slate blue",
+      "zh": "石板蓝"
+    },
     "title": {
       "en": "Shift Closing Report",
       "zh": "收银交班结算表"
     },
     "type": "Shift Closing",
     "paper": "A4",
-    "pages": 1,
+    "pages": 3,
     "tags": [
       "retail",
       "cash-control",
@@ -686,13 +866,18 @@
   },
   {
     "id": "retail-price-directory",
+    "no": "PF-037",
+    "style": {
+      "en": "Orange",
+      "zh": "橙色"
+    },
     "title": {
       "en": "Retail Price List",
       "zh": "零售商品价目表"
     },
     "type": "Price List",
     "paper": "LETTER",
-    "pages": 2,
+    "pages": 5,
     "tags": [
       "retail",
       "pricing",
@@ -705,13 +890,18 @@
   },
   {
     "id": "ecommerce-order-summary",
+    "no": "PF-038",
+    "style": {
+      "en": "Teal",
+      "zh": "青绿色"
+    },
     "title": {
       "en": "E-Commerce Order Summary",
       "zh": "电商订单明细"
     },
     "type": "Order Summary",
     "paper": "A4",
-    "pages": 1,
+    "pages": 4,
     "tags": [
       "ecommerce",
       "orders",
@@ -724,6 +914,11 @@
   },
   {
     "id": "parcel-shipping-waybill",
+    "no": "PF-039",
+    "style": {
+      "en": "Khaki",
+      "zh": "卡其色"
+    },
     "title": {
       "en": "Shipping Label and Waybill",
       "zh": "快递面单与运单"
@@ -743,6 +938,11 @@
   },
   {
     "id": "prepaid-return-label",
+    "no": "PF-040",
+    "style": {
+      "en": "Ochre",
+      "zh": "赭黄色"
+    },
     "title": {
       "en": "Return Shipping Label",
       "zh": "退货寄件标签"
@@ -762,13 +962,18 @@
   },
   {
     "id": "warehouse-order-pick-list",
+    "no": "PF-041",
+    "style": {
+      "en": "Sage green",
+      "zh": "鼠尾草绿"
+    },
     "title": {
       "en": "Order Pick List",
       "zh": "订单拣货单"
     },
     "type": "Pick List",
     "paper": "A4",
-    "pages": 1,
+    "pages": 5,
     "tags": [
       "ecommerce",
       "picking",
@@ -781,13 +986,18 @@
   },
   {
     "id": "marketplace-payout-settlement",
+    "no": "PF-042",
+    "style": {
+      "en": "Mauve",
+      "zh": "淡紫红"
+    },
     "title": {
       "en": "Marketplace Settlement",
       "zh": "电商平台结算单"
     },
     "type": "Settlement",
     "paper": "LETTER",
-    "pages": 2,
+    "pages": 5,
     "tags": [
       "ecommerce",
       "marketplace",
@@ -800,6 +1010,11 @@
   },
   {
     "id": "crm-customer-profile",
+    "no": "PF-043",
+    "style": {
+      "en": "Steel blue",
+      "zh": "钢蓝色"
+    },
     "title": {
       "en": "Customer Profile Card",
       "zh": "客户资料卡"
@@ -819,13 +1034,18 @@
   },
   {
     "id": "crm-opportunity-sheet",
+    "no": "PF-044",
+    "style": {
+      "en": "Rose",
+      "zh": "玫瑰色"
+    },
     "title": {
       "en": "Lead and Opportunity Sheet",
       "zh": "销售线索与商机跟进表"
     },
     "type": "Opportunity",
     "paper": "A4",
-    "pages": 1,
+    "pages": 3,
     "tags": [
       "crm",
       "pipeline",
@@ -838,13 +1058,18 @@
   },
   {
     "id": "customer-service-ticket",
+    "no": "PF-045",
+    "style": {
+      "en": "Teal",
+      "zh": "青绿色"
+    },
     "title": {
       "en": "Service Ticket",
       "zh": "客户服务工单"
     },
     "type": "Service Ticket",
     "paper": "A4",
-    "pages": 1,
+    "pages": 2,
     "tags": [
       "crm",
       "support",
@@ -857,13 +1082,18 @@
   },
   {
     "id": "customer-open-item-statement",
+    "no": "PF-046",
+    "style": {
+      "en": "Olive sage",
+      "zh": "橄榄灰绿"
+    },
     "title": {
       "en": "Customer Open-Item Statement",
       "zh": "客户未结款项对账单"
     },
     "type": "Customer Statement",
     "paper": "A4",
-    "pages": 2,
+    "pages": 5,
     "tags": [
       "crm",
       "receivables",
@@ -876,13 +1106,18 @@
   },
   {
     "id": "loyalty-points-activity",
+    "no": "PF-047",
+    "style": {
+      "en": "Mauve",
+      "zh": "淡紫红"
+    },
     "title": {
       "en": "Loyalty Points Statement",
       "zh": "会员积分明细单"
     },
     "type": "Loyalty Statement",
     "paper": "LETTER",
-    "pages": 2,
+    "pages": 5,
     "tags": [
       "crm",
       "loyalty",
@@ -895,13 +1130,18 @@
   },
   {
     "id": "crm-contact-directory",
+    "no": "PF-048",
+    "style": {
+      "en": "Sage green",
+      "zh": "鼠尾草绿"
+    },
     "title": {
       "en": "Business Contact List",
       "zh": "业务联系人名录"
     },
     "type": "Contact List",
     "paper": "LETTER",
-    "pages": 2,
+    "pages": 5,
     "tags": [
       "crm",
       "contacts",
@@ -914,6 +1154,11 @@
   },
   {
     "id": "employee-monthly-payslip",
+    "no": "PF-049",
+    "style": {
+      "en": "Lavender",
+      "zh": "薰衣草紫"
+    },
     "title": {
       "en": "Employee Payslip",
       "zh": "员工工资单"
@@ -933,13 +1178,18 @@
   },
   {
     "id": "customer-credit-note",
+    "no": "PF-050",
+    "style": {
+      "en": "Teal",
+      "zh": "青绿色"
+    },
     "title": {
       "en": "Credit Note",
       "zh": "贷项通知单"
     },
     "type": "Credit Note",
     "paper": "A4",
-    "pages": 1,
+    "pages": 2,
     "tags": [
       "finance",
       "credit",
@@ -952,13 +1202,18 @@
   },
   {
     "id": "customer-debit-note",
+    "no": "PF-051",
+    "style": {
+      "en": "Orange",
+      "zh": "橙色"
+    },
     "title": {
       "en": "Debit Note",
       "zh": "借项通知单"
     },
     "type": "Debit Note",
     "paper": "A4",
-    "pages": 1,
+    "pages": 2,
     "tags": [
       "finance",
       "debit",
@@ -971,13 +1226,18 @@
   },
   {
     "id": "bank-reconciliation-workpaper",
+    "no": "PF-052",
+    "style": {
+      "en": "Slate grey",
+      "zh": "石板灰"
+    },
     "title": {
       "en": "Bank Reconciliation",
       "zh": "银行存款余额调节表"
     },
     "type": "Reconciliation",
     "paper": "A4",
-    "pages": 2,
+    "pages": 5,
     "tags": [
       "finance",
       "banking",

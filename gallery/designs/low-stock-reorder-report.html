@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Low-Stock Reorder Report</title>
     <link rel="stylesheet" href="shared/page.css" />
+    <link rel="stylesheet" href="shared/tight-tables.css" />
     <style>
       body {
         color: #40351f;
@@ -41,6 +42,13 @@
         color: #73551d;
         font-weight: 700;
       }
+      .head {
+        box-sizing: border-box;
+        border-bottom: 1px solid #e6dcc8;
+      }
+      .cell {
+        box-sizing: border-box;
+      }
       .cell {
         border-bottom: 1px solid #e6dcc8;
       }
@@ -70,7 +78,7 @@
       }
     </style>
   </head>
-  <body>
+  <body data-pf-label="PF-027 · Low-Stock Reorder Report · Amber">
     <div
       class="paper_width printform"
       data-papersize-width="750"
@@ -174,18 +182,33 @@
       <script>
         const widths = [75, "inherit", 75, 90, 90, 105, 120];
         const alignments = ["left", "left", "right", "right", "right", "right", "left"];
-        const headers = ["SKU", "Description", "Available", "Reorder Point", "Target Stock", "Suggested Qty", "Supplier"];
+        const headers = ["SKU", "Description", "Avail.", "Reorder", "Target", "Suggest Qty", "Supplier"];
         const widthRow = () =>
           `<tr>${widths.map((width) => `<td style="width:${width === "inherit" ? width : `${width}px`}"></td>`).join("")}</tr>`;
         const header = document.getElementById("reorder-header");
         header.outerHTML = `${widthRow()}<tr>${headers.map((label, cell) => `<td class="head" align="${alignments[cell]}"><div class="cell-content">${label}</div></td>`).join("")}</tr>`;
-        const reorderRows = Array.from({ length: 32 }, (_, index) => {
+        const itemNames = [
+          "Hex Bolt M8",
+          "LED Panel 24W",
+          "Steel Bracket",
+          "Copper Wire 2mm",
+          "Safety Gloves",
+          "Water Valve 1in",
+          "Cable Tray 1m",
+          "Door Hinge",
+          "Work Light 12V",
+          "Pipe Clamp 20mm",
+          "Fuse 10A",
+          "Anchor Bolt M10",
+        ];
+        const productAssets = ["canvas-tote", "stoneware-cup", "linen-pouch", "desk-journal", "steel-bottle", "wool-coaster", "glass-jar", "bamboo-pen", "cork-mat", "storage-tin", "cotton-towel", "desk-tray", "pencil-set", "tea-canister", "gift-box", "parcel-box"];
+        const reorderRows = Array.from({ length: 92 }, (_, index) => {
           const available = 2 + (index % 7);
           const reorder = 12 + (index % 5);
-          const targetStock = reorder + 18;
+          const targetStock = reorder + 18 + (index % 4);
           return [
             `RP-${String(index + 1).padStart(3, "0")}`,
-            `Reorder sample product ${index + 1}`,
+            itemNames[index % itemNames.length],
             available,
             reorder,
             targetStock,
@@ -199,7 +222,7 @@
           proposed += row[5];
           const table = document.createElement("table");
           table.className = "paper_width section-table prowitem";
-          table.innerHTML = `<tr><td style="width:15px"></td><td style="width:inherit"></td><td style="width:15px"></td></tr><tr><td></td><td><table class="items">${widthRow()}<tr>${row.map((value, cell) => `<td class="cell${cell === 5 ? " priority" : ""}" align="${alignments[cell]}"><div class="cell-content">${value}</div></td>`).join("")}</tr></table></td><td></td></tr>`;
+          table.innerHTML = `<tr><td style="width:15px"></td><td style="width:inherit"></td><td style="width:15px"></td></tr><tr><td></td><td><table class="items">${widthRow()}<tr>${row.map((value, cell) => `<td class="cell${cell === 5 ? " priority" : ""}" align="${alignments[cell]}"><div class="cell-content">${cell === 1 ? `<img src="assets/product-${productAssets[index % productAssets.length]}.svg" width="24" height="24" alt="${row[1]} sample product" style="vertical-align:middle;margin-right:6px;" />` : ""}${value}</div></td>`).join("")}</tr></table></td><td></td></tr>`;
           target.before(table);
         });
         target.remove();

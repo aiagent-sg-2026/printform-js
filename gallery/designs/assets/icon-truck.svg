@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" role="img" aria-label="Truck icon">
+  <title>Truck icon</title>
+  <g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M3 5h11v12H7m-4 0H2V5h1m11 4h4l4 4v4h-3m-5 0h-3m3-8v8m4-8v4h4"/><circle cx="9" cy="18" r="2"/><circle cx="17" cy="18" r="2"/>
+  </g>
+</svg>

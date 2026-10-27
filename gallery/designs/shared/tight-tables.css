@@ -1,0 +1,9 @@
+/* Opt-in for designs whose nested tables lack cellpadding/cellspacing attributes:
+   the browser's default 2px cell spacing and 1px cell padding otherwise push them past the 15px gutter.
+   Zero specificity so each design's own rules still win. */
+:where(.printform_page table) {
+  border-spacing: 0;
+}
+:where(.printform_page td, .printform_page th) {
+  padding: 0;
+}

@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Stock Transfer Note</title>
     <link rel="stylesheet" href="shared/page.css" />
+    <link rel="stylesheet" href="shared/tight-tables.css" />
     <style>
       body {
         color: #30382a;
@@ -41,6 +42,13 @@
         color: white;
         font-weight: 700;
       }
+      .head {
+        box-sizing: border-box;
+        border: 1px solid #dfe4d8;
+      }
+      .cell {
+        box-sizing: border-box;
+      }
       .cell-content {
         padding: 3px 4px;
         white-space: nowrap;
@@ -61,7 +69,7 @@
       }
     </style>
   </head>
-  <body>
+  <body data-pf-label="PF-025 · Stock Transfer Note · Olive green">
     <div
       class="paper_width printform"
       data-papersize-width="750"
@@ -154,18 +162,32 @@
         const widthRow = () =>
           `<tr>${columnWidths.map((width) => `<td style="width:${width === "inherit" ? width : `${width}px`}"></td>`).join("")}</tr>`;
         const alignments = ["", "", "", "", ' align="right"', ' align="right"', ' align="right"'];
-        const headers = ["SKU", "Description", "From Bin", "To Bin", "Sent Qty", "Received Qty", "Variance"];
+        const headers = ["SKU", "Description", "From Bin", "To Bin", "Sent Qty", "Received", "Variance"];
         const headerCells = headers
           .map((label, index) => `<td class="cell head"${alignments[index]}><div class="cell-content">${label}</div></td>`)
           .join("");
         document.getElementById("transfer-header").outerHTML = `<tr>${headerCells}</tr>`;
         document.querySelector(".prowheader .items").insertAdjacentHTML("afterbegin", widthRow());
-        const transferRows = Array.from({ length: 20 }, (_, index) => {
+        const itemNames = [
+          "Hex Bolt M8",
+          "LED Panel 24W",
+          "Steel Bracket",
+          "Copper Wire 2mm",
+          "Safety Gloves",
+          "Water Valve 1in",
+          "Cable Tray 1m",
+          "Door Hinge",
+          "Work Light 12V",
+          "Pipe Clamp 20mm",
+          "Fuse 10A",
+          "Anchor Bolt M10",
+        ];
+        const transferRows = Array.from({ length: 122 }, (_, index) => {
           const sent = 6 + (index % 8);
-          const received = sent - (index === 8 ? 1 : 0);
+          const received = sent - (index % 19 === 8 ? 1 : 0);
           return [
             `MW-${String(index + 201).padStart(3, "0")}`,
-            `Transfer sample item ${index + 1}`,
+            itemNames[index % itemNames.length],
             `N-${String((index % 6) + 1).padStart(2, "0")}`,
             `R-${String((index % 5) + 1).padStart(2, "0")}`,
             sent,

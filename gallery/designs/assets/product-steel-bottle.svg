@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" role="img" aria-label="Steel bottle fictional sample product illustration">
+  <title>Steel bottle fictional sample product illustration</title>
+  <rect width="200" height="200" rx="16" fill="#e8ecee"/>
+  <ellipse cx="100" cy="170" rx="59" ry="8" fill="#323d36" opacity="0.08"/>
+  <g>
+    <rect x="83" y="26" width="34" height="17" rx="5" fill="#4e6471"/>
+    <path d="M83 43h34v18l14 17v82q0 13-14 13H83q-14 0-14-13V78l14-17Z" fill="#8fa5ad"/>
+    <path d="M83 47h34" stroke="#d3dde0" stroke-width="4"/>
+    <path d="M80 84v69" stroke="#c5d4d9" stroke-width="6" stroke-linecap="round"/>
+    <rect x="88" y="106" width="26" height="31" rx="13" fill="#5b7683"/>
+  </g>
+  <text x="100" y="191" text-anchor="middle" font-family="system-ui, sans-serif" font-size="6" letter-spacing="1.4" fill="#716f68">SAMPLE PRODUCT</text>
+</svg>

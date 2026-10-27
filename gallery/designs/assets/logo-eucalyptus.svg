@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 64" role="img" aria-label="Eucalyptus fictional sample company logo">
+  <title>Eucalyptus fictional sample company logo</title>
+  <g color="#69836b">
+    <path d="M16 47C9 23 23 7 51 10 54 36 38 50 16 47Z" fill="currentColor"/>
+    <path d="M15 51 42 20M24 39l-1-13m8 6 12 1" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round"/>
+    <g fill="currentColor" font-family="system-ui, sans-serif">
+      <text x="70" y="30" font-size="21" font-weight="700">Eucalyptus</text>
+      <text x="71" y="44" font-size="7" letter-spacing="1.2">HOME GOODS</text>
+      <text x="71" y="56" font-size="6" letter-spacing="1">FICTIONAL SAMPLE CO.</text>
+    </g>
+  </g>
+</svg>

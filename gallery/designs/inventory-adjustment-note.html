@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Stock Adjustment Note</title>
     <link rel="stylesheet" href="shared/page.css" />
+    <link rel="stylesheet" href="shared/tight-tables.css" />
     <style>
       body {
         color: #392f39;
@@ -41,6 +42,13 @@
         color: white;
         font-weight: 700;
       }
+      .head {
+        box-sizing: border-box;
+        border-bottom: 1px solid #e8dce5;
+      }
+      .cell {
+        box-sizing: border-box;
+      }
       .cell {
         border-bottom: 1px solid #e8dce5;
       }
@@ -61,7 +69,7 @@
       }
     </style>
   </head>
-  <body>
+  <body data-pf-label="PF-026 · Stock Adjustment Note · Mauve">
     <div
       class="paper_width printform"
       data-papersize-width="750"
@@ -159,6 +167,9 @@
           <td>
             <div class="box">
               Inventory value impact: <b id="impact"></b> &nbsp; Basis: sample cost $12.50/unit.<br />Authorized by ____________________
+              <img src="assets/stamp-approved.svg" width="110" height="55" alt="Approved sample stamp"
+                style="float: right; margin: -8px 8px 0 12px;" />
+              <div><img src="assets/signature-sample.svg" width="120" height="60" alt="Sample authorization signature" /></div>
               &nbsp; Posted by ____________________
             </div>
           </td>
@@ -173,13 +184,27 @@
           `<tr>${widths.map((width) => `<td style="width:${width === "inherit" ? width : `${width}px`}"></td>`).join("")}</tr>`;
         const header = document.getElementById("adjustment-header");
         header.outerHTML = `${widthRow()}<tr>${headers.map((label, cell) => `<td class="head" align="${alignments[cell]}"><div class="cell-content">${label}</div></td>`).join("")}</tr>`;
-        const adjustmentRows = Array.from({ length: 14 }, (_, index) => {
-          const before = 20 + index * 3;
+        const itemNames = [
+          "Hex Bolt M8",
+          "LED Panel 24W",
+          "Steel Bracket",
+          "Copper Wire 2mm",
+          "Safety Gloves",
+          "Water Valve 1in",
+          "Cable Tray 1m",
+          "Door Hinge",
+          "Work Light 12V",
+          "Pipe Clamp 20mm",
+          "Fuse 10A",
+          "Anchor Bolt M10",
+        ];
+        const adjustmentRows = Array.from({ length: 73 }, (_, index) => {
+          const before = 20 + ((index * 7) % 83);
           const adjustment = index % 2 ? 2 : -1;
           return [
             `AD-${String(index + 41).padStart(3, "0")}`,
-            `Sample stocked item ${index + 1}`,
-            `C-${index + 1}`,
+            itemNames[index % itemNames.length],
+            `C-${String((index % 24) + 1).padStart(2, "0")}`,
             before,
             adjustment,
             before + adjustment,
@@ -196,7 +221,12 @@
           target.before(table);
         });
         target.remove();
-        document.getElementById("impact").textContent = `${quantityChange >= 0 ? "+" : "−"}$${Math.abs(quantityChange * 12.5).toFixed(2)}`;
+        const impact = quantityChange * 12.5;
+        const formattedImpact = `$${Math.abs(impact).toLocaleString("en-US", {
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2,
+        })}`;
+        document.getElementById("impact").textContent = `${impact < 0 ? "−" : ""}${formattedImpact}`;
       </script>
       <table cellpadding="0" cellspacing="0" border="0" class="paper_width section-table pfooter_pagenum">
         <tr>

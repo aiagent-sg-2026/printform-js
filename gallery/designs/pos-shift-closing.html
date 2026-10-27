@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Shift Closing Report</title>
     <link rel="stylesheet" href="shared/page.css" />
+    <link rel="stylesheet" href="shared/tight-tables.css" />
     <style>
       body {
         color: #29343b;
@@ -96,7 +97,7 @@
       }
     </style>
   </head>
-  <body>
+  <body data-pf-label="PF-036 · Shift Closing Report · Slate blue">
     <div
       class="paper_width printform"
       data-papersize-width="750"
@@ -114,12 +115,22 @@
         <tr>
           <td></td>
           <td>
-            <svg width="720" height="82" viewBox="0 0 720 82" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Steel register summary">
+            <svg
+              width="720"
+              height="82"
+              viewBox="0 0 720 82"
+              xmlns="http://www.w3.org/2000/svg"
+              role="img"
+              aria-label="Steel register summary"
+            >
               <rect width="720" height="82" fill="#536878" />
-              <path d="M25 19h44v44H25zM34 51l10-13 8 8 8-12" fill="none" stroke="white" stroke-width="3" />
-              <text x="84" y="37" fill="white" font-family="Arial,sans-serif" font-size="21" font-weight="700">HARBOR STREET RETAIL</text>
-              <text x="84" y="60" fill="#e8eef2" font-family="Arial,sans-serif" font-size="13">STORE 04 · REGISTER 02 · SHIFT 07:00–15:00</text>
-              <text x="690" y="50" fill="white" font-family="Arial,sans-serif" font-size="20" font-weight="700" text-anchor="end">SHIFT CLOSE</text>
+              <rect x="16" y="14" width="160" height="50" rx="8" fill="#fff" />
+              <image href="assets/logo-ember.svg" x="21" y="19" width="150" height="40" />
+              <text x="190" y="60" fill="#e8eef2" font-family="Arial,sans-serif" font-size="13">
+                STORE 04 · REGISTER 02 · SHIFT 07:00–15:00
+              </text>
+              <text x="690" y="50" fill="white" font-family="Arial,sans-serif" font-size="20" font-weight="700"
+                text-anchor="end">SHIFT CLOSE</text>
             </svg>
           </td>
           <td></td>
@@ -183,13 +194,13 @@
                 <td style="width: 90px"></td>
               </tr>
               <tr>
-                <td class="head-cell">Tender Type</td>
-                <td class="head-cell" align="right">Transactions</td>
-                <td class="head-cell" align="right">Sales</td>
-                <td class="head-cell" align="right">Refunds</td>
-                <td class="head-cell" align="right">Expected</td>
-                <td class="head-cell" align="right">Counted</td>
-                <td class="head-cell" align="right">Variance</td>
+                <td class="head-cell"><div class="cell-content">Tender Type</div></td>
+                <td class="head-cell" align="right"><div class="cell-content">Txns</div></td>
+                <td class="head-cell" align="right"><div class="cell-content">Sales</div></td>
+                <td class="head-cell" align="right"><div class="cell-content">Refunds</div></td>
+                <td class="head-cell" align="right"><div class="cell-content">Expected</div></td>
+                <td class="head-cell" align="right"><div class="cell-content">Counted</div></td>
+                <td class="head-cell" align="right"><div class="cell-content">Variance</div></td>
               </tr>
             </table>
           </td>
@@ -213,44 +224,53 @@
               </tr>
             </table>
             <div style="padding: 7px; font-size: 13px">
-              Cash movement: float <span id="movement-float">$200.00</span> + cash sales − cash refunds = counted cash. Variances above $5 require supervisor review.
+              Cash movement: float <span id="movement-float">$200.00</span> + cash sales − cash refunds = counted cash.
+              Variances above $5 require supervisor review.
             </div>
-            <div style="padding: 8px 6px; font-size: 13px">Cashier handover: ____________________ &nbsp; Supervisor: ____________________</div>
+            <div style="padding: 8px 6px; font-size: 13px">
+              Cashier handover: ____________________ &nbsp; Supervisor: ____________________
+            </div>
           </td>
           <td></td>
         </tr>
       </table>
       <script>
-        const formatMoney = (amount) => `${amount < 0 ? "−" : ""}$${Math.abs(amount).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
-        const rows = [
-          ["Cash", 82, 1842, 42, 2000, 1998],
-          ["Visa", 64, 2910, 35, 2875, 2875],
-          ["Mastercard", 48, 2180, 20, 2160, 2160],
-          ["Debit", 31, 1240, 0, 1240, 1240],
-          ["Gift card", 12, 420, 0, 420, 420],
-          ["Mobile pay", 28, 1480, 15, 1465, 1465],
-          ["Store credit", 7, 210, 0, 210, 210],
-          ["Online pickup", 15, 875, 0, 875, 875],
-          ["Voucher", 5, 160, 0, 160, 160],
-          ["Loyalty", 11, 330, 0, 330, 330],
-          ["Partner card", 9, 520, 10, 510, 510],
-          ["Other", 3, 95, 0, 95, 95],
-        ];
+        const formatMoney = (amount) =>
+          `${amount < 0 ? "−" : ""}$${Math.abs(amount).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+        const openingFloat = 200;
+        const tenders = ["Cash", "Visa", "Mastercard", "Debit", "Gift card", "Mobile pay", "Store credit",
+          "Online pickup", "Voucher", "Loyalty", "Partner card", "Other"];
+        const rows = Array.from({ length: 80 }, (_, index) => {
+          const transactions = 3 + (index * 7) % 48;
+          const sales = 95 + (index * 137) % 3200; const refund = index % 4 === 0 ? 10 + (index * 11) % 90 : 0;
+          const expected = sales - refund;
+          const variance = index % 13 === 0 ? -2 : index % 17 === 0 ? 1 : 0;
+          return [tenders[index % tenders.length], transactions, sales, refund, expected, expected + variance];
+        });
         const target = document.getElementById("rows");
-        let gross = 0;
-        let refunds = 0;
-        let varianceTotal = 0;
-        let cashCounted = 0;
+        let gross = 0; let refunds = 0;
+        let varianceTotal = 0; let cashCounted = 0;
         rows.forEach(([type, transactions, sales, refund, expected, counted], index) => {
-          gross += sales;
-          refunds += refund;
+          gross += sales; refunds += refund;
           varianceTotal += counted - expected;
           if (type === "Cash") cashCounted = counted;
           const variance = counted - expected;
-          const values = [type, transactions, formatMoney(sales), formatMoney(refund), formatMoney(expected), formatMoney(counted), formatMoney(variance)];
+          const values = [type, transactions, formatMoney(sales), formatMoney(refund),
+            formatMoney(expected), formatMoney(counted), formatMoney(variance)];
           const table = document.createElement("table");
           table.className = "paper_width section-table prowitem";
-          table.innerHTML = `<tr><td style="width:15px"></td><td style="width:inherit"></td><td style="width:15px"></td></tr><tr><td></td><td><table class="items-grid"><tr><td style="width:105px"></td><td style="width:82px"></td><td style="width:90px"></td><td style="width:85px"></td><td style="width:95px"></td><td style="width:95px"></td><td style="width:90px"></td></tr><tr>${values.map((value, cell) => `<td class="item-cell${index % 2 ? " alternate" : ""}${cell === 6 && variance !== 0 ? " variance" : ""}"${cell > 0 ? ' align="right"' : ""}><div class="cell-content">${value}</div></td>`).join("")}</tr></table></td><td></td></tr>`;
+          table.innerHTML = `
+            <tr><td style="width:15px"></td><td style="width:inherit"></td><td style="width:15px"></td></tr>
+            <tr><td></td><td><table class="items-grid">
+              <tr><td style="width:105px"></td><td style="width:82px"></td><td style="width:90px"></td>
+                <td style="width:85px"></td><td style="width:95px"></td><td style="width:95px"></td>
+                <td style="width:90px"></td></tr>
+              <tr>${values.map((value, cell) => {
+                const className = `item-cell${index % 2 ? " alternate" : ""}${cell === 6 && variance !== 0 ? " variance" : ""}`;
+                const alignment = cell > 0 ? ' align="right"' : "";
+                return `<td class="${className}"${alignment}><div class="cell-content">${value}</div></td>`;
+              }).join("")}</tr>
+            </table></td><td></td></tr>`;
           target.before(table);
         });
         target.remove();
@@ -258,8 +278,8 @@
         document.getElementById("refunds").textContent = formatMoney(refunds);
         document.getElementById("variance").textContent = formatMoney(varianceTotal);
         document.getElementById("deposit").textContent = formatMoney(cashCounted);
-        document.getElementById("opening-float").textContent = formatMoney(200);
-        document.getElementById("movement-float").textContent = formatMoney(200);
+        document.getElementById("opening-float").textContent = formatMoney(openingFloat);
+        document.getElementById("movement-float").textContent = formatMoney(openingFloat);
       </script>
       <table class="paper_width section-table pfooter_pagenum" cellpadding="0" cellspacing="0" border="0">
         <tr>

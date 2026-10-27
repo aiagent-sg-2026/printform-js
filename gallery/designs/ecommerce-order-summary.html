@@ -4,6 +4,7 @@
     <meta charset="utf-8" />
     <title>E-Commerce Order Summary</title>
     <link rel="stylesheet" href="shared/page.css" />
+    <link rel="stylesheet" href="shared/tight-tables.css" />
     <style>
       body {
         color: #173638;
@@ -79,7 +80,7 @@
       }
     </style>
   </head>
-  <body>
+  <body data-pf-label="PF-038 · E-Commerce Order Summary · Teal">
     <div
       class="paper_width printform"
       data-papersize-width="750"
@@ -160,13 +161,13 @@
                 <td style="width: 140px"></td>
               </tr>
               <tr>
-                <td class="head-cell">SKU</td>
-                <td class="head-cell">Product</td>
-                <td class="head-cell">Variant</td>
-                <td class="head-cell" align="right">Qty</td>
-                <td class="head-cell" align="right">Unit Price</td>
-                <td class="head-cell" align="right">Discount</td>
-                <td class="head-cell" align="right">Subtotal</td>
+                <td class="head-cell"><div class="cell-content">SKU</div></td>
+                <td class="head-cell"><div class="cell-content">Product</div></td>
+                <td class="head-cell"><div class="cell-content">Variant</div></td>
+                <td class="head-cell" align="right"><div class="cell-content">Qty</div></td>
+                <td class="head-cell" align="right"><div class="cell-content">Unit Price</div></td>
+                <td class="head-cell" align="right"><div class="cell-content">Discount</div></td>
+                <td class="head-cell" align="right"><div class="cell-content">Subtotal</div></td>
               </tr>
             </table>
           </td>
@@ -211,6 +212,7 @@
         </tr>
       </table>
       <script>
+        const itemCount = 102;
         const products = [
           "Linen travel pouch",
           "Ceramic pour-over",
@@ -232,14 +234,14 @@
         const widthRow = widths.map((width) => `<td style="width:${width}px"></td>`).join("");
         let sum = 0;
         let savings = 0;
-        for (let index = 0; index < products.length; index += 1) {
+        for (let index = 0; index < itemCount; index += 1) {
           const quantity = (index % 3) + 1;
-          const unit = 1399 + index * 125;
+          const unit = 1399 + (index % 12) * 125 + Math.floor(index / 12) * 45;
           const discount = 100 * quantity;
           const line = quantity * unit - discount;
           sum += quantity * unit;
           savings += discount;
-          const cells = [`TP-${index + 101}`, products[index], index % 2 ? "Sea / medium" : "Natural / one", quantity, fmt(unit), fmt(discount), fmt(line)];
+          const cells = [`TP-${index + 101}`, products[index % products.length], index % 2 ? "Sea / medium" : "Natural / one", quantity, fmt(unit), fmt(discount), fmt(line)];
           const table = document.createElement("table");
           table.cellPadding = "0";
           table.cellSpacing = "0";
@@ -249,25 +251,13 @@
           target.before(table);
         }
         target.remove();
-      </script>
-      <script>
-        const footerOptions = { minimumFractionDigits: 2, maximumFractionDigits: 2 };
-        const money = (cents) => `$${(cents / 100).toLocaleString("en-US", footerOptions)}`;
-        let subtotalCents = 0;
-        let discountCents = 0;
-        for (let index = 0; index < 12; index += 1) {
-          const quantity = (index % 3) + 1;
-          const unit = 1399 + index * 125;
-          subtotalCents += quantity * unit;
-          discountCents += 100 * quantity;
-        }
         const shippingCents = 795;
-        const taxCents = Math.round((subtotalCents - discountCents) * 0.08);
-        document.getElementById("subtotal").textContent = money(subtotalCents);
-        document.getElementById("discount").textContent = `−${money(discountCents)}`;
-        document.getElementById("shipping").textContent = money(shippingCents);
-        document.getElementById("tax").textContent = money(taxCents);
-        document.getElementById("total").textContent = money(subtotalCents - discountCents + shippingCents + taxCents);
+        const taxCents = Math.round((sum - savings) * 0.08);
+        document.getElementById("subtotal").textContent = fmt(sum);
+        document.getElementById("discount").textContent = `−${fmt(savings)}`;
+        document.getElementById("shipping").textContent = fmt(shippingCents);
+        document.getElementById("tax").textContent = fmt(taxCents);
+        document.getElementById("total").textContent = fmt(sum - savings + shippingCents + taxCents);
       </script>
       <table cellpadding="0" cellspacing="0" border="0" class="paper_width section-table pfooter_pagenum">
         <tr>

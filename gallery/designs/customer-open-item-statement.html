@@ -4,6 +4,7 @@
     <meta charset="utf-8" />
     <title>Customer Open-Item Statement</title>
     <link rel="stylesheet" href="shared/page.css" />
+    <link rel="stylesheet" href="shared/tight-tables.css" />
     <style>
       body {
         color: #393b32;
@@ -42,6 +43,7 @@
         background: #7c8061;
         color: white;
         font-weight: bold;
+        border-bottom: 1px solid #deded7;
       }
       .item-cell {
         border-bottom: 1px solid #deded7;
@@ -65,7 +67,7 @@
       }
     </style>
   </head>
-  <body>
+  <body data-pf-label="PF-046 · Customer Open-Item Statement · Olive sage">
     <div
       class="paper_width printform"
       data-papersize-width="750"
@@ -83,13 +85,27 @@
         <tr>
           <td></td>
           <td>
-            <svg width="720" height="88" viewBox="0 0 720 88" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Example Accounts">
+            <svg
+              width="720"
+              height="88"
+              viewBox="0 0 720 88"
+              xmlns="http://www.w3.org/2000/svg"
+              role="img"
+              aria-label="Gold Crest Statement"
+            >
               <rect width="720" height="88" fill="#7C8061" />
-              <path d="M28 23h42v42H28zM37 33h24M37 44h24M37 55h15" fill="none" stroke="white" stroke-width="3" />
-              <text x="86" y="39" fill="white" font-family="Arial,sans-serif" font-size="21" font-weight="700">
-                EXAMPLE ACCOUNTS · C-10482
+              <rect x="12" y="11" width="181" height="66" rx="8" fill="#fff" />
+              <image href="assets/logo-gold-crest.svg" x="20" y="22" width="165" height="44" aria-label="Gold Crest logo" />
+              <text x="205" y="39" fill="white" font-family="Arial,sans-serif" font-size="21" font-weight="700">
+                GOLD CREST · C-10482
               </text>
-              <text x="86" y="64" fill="white" font-family="Arial,sans-serif" font-size="19">OPEN-ITEM STATEMENT · CUTOFF 26 OCT 2026</text>
+              <text
+                x="205"
+                y="64"
+                fill="white"
+                font-family="Arial,sans-serif"
+                font-size="19"
+              >OPEN-ITEM STATEMENT · CUTOFF 26 OCT 2026</text>
             </svg>
           </td>
           <td></td>
@@ -121,7 +137,8 @@
               </tr>
             </table>
             <div style="margin: 8px; padding: 9px; background: #efefe8; font-size: 13px">
-              Aging: current $4,120.00 · 1–30 days $8,450.00 · overdue items are marked for follow-up.
+              Aging: current <span id="aging-current"></span> · 1–30 days
+              <span id="aging-overdue"></span> · overdue items are marked for follow-up.
             </div>
           </td>
           <td></td>
@@ -155,34 +172,44 @@
           <td></td>
           <td>
             <div style="padding: 9px; border-top: 2px solid #7c8061; font-size: 13px">
-              Total outstanding: <b id="total">$0.00</b> · Submit payment with invoice references to Example Community Bank, account ending
-              4821.
+              <img
+                src="assets/footer-logo-4.svg"
+                width="82"
+                height="22"
+                alt="Gold Crest footer logo mark"
+                style="height:22px; vertical-align:middle; color:#7c8061; margin-right:8px"
+              />
+              Total outstanding: <b id="total">$0.00</b> · Submit payment with invoice
+              references to Example Community Bank, account ending 4821.
             </div>
           </td>
           <td></td>
         </tr>
       </table>
       <script>
-        const columns = ["Invoice Date", "Invoice Ref", "Due Date", "Invoice Total", "Paid", "Outstanding", "Days Overdue"];
-        const widths = [85, 100, 85, 105, 90, 115, 140];
+        const columns = ["Inv Date", "Inv Ref", "Due Date", "Inv Total", "Paid", "Outstanding", "Days Late"];
         const align = ["left", "left", "left", "right", "right", "right", "right"];
-        const rows = Array.from({ length: 25 }, (_, i) => {
+        const widths = [80, 105, 80, 115, 95, 160, 85];
+        const rows = Array.from({ length: 119 }, (_, i) => {
           const total = 102500 + ((i * 37129) % 245000);
           const paid = Math.floor((total * (i % 4)) / 5);
           return [
-            `2026-0${1 + (i % 9)}-${String((i % 27) + 1).padStart(2, "0")}`,
+            `2026-${String(1 + (i % 9)).padStart(2, "0")}-${String((i % 27) + 1).padStart(2, "0")}`,
             `INV-26-${410 + i}`,
-            `2026-${String(2 + (i % 8)).padStart(2, "0")}-${String((i % 27) + 1).padStart(2, "0")}`,
+            `2026-${String(2 + (i % 9)).padStart(2, "0")}-${String((i % 27) + 1).padStart(2, "0")}`,
             total,
             paid,
             total - paid,
-            Math.max(0, 5 + ((i * 2) % 48)),
+            i % 5 === 0 ? 0 : 5 + ((i * 2) % 48),
           ];
         });
         const widthRow = widths.map((w) => `<td style="width:${w}px"></td>`).join("");
         document.getElementById("widths").innerHTML = widthRow;
         document.getElementById("headers").innerHTML = columns
-          .map((v, i) => `<td class="head-cell" align="${align[i]}"><div class="cell-content">${v}</div></td>`)
+          .map(
+            (v, i) =>
+              `<td class="head-cell" align="${align[i]}"><div class="cell-content" style="text-align:${align[i]}">${v}</div></td>`,
+          )
           .join("");
         const money = (n) => `$${(n / 100).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
         rows.forEach((row, index) => {
@@ -191,11 +218,44 @@
           table.cellSpacing = "0";
           table.border = "0";
           table.className = "paper_width section-table prowitem";
-          table.innerHTML = `<tr><td style="width:15px"></td><td style="width:inherit"></td><td style="width:15px"></td></tr><tr><td></td><td><table class="items-grid"><tr>${widthRow}</tr><tr>${row.map((v, i) => `<td class="item-cell${index % 2 ? " alternate" : ""}" align="${align[i]}"><div class="cell-content">${i >= 3 && i <= 5 ? money(v) : v}</div></td>`).join("")}</tr></table></td><td></td></tr>`;
+          table.innerHTML = `
+            <tr>
+              <td style="width:15px"></td><td style="width:inherit"></td><td style="width:15px"></td>
+            </tr>
+            <tr>
+              <td></td>
+              <td>
+                <table class="items-grid">
+                  <tr>${widthRow}</tr>
+                  <tr>
+                    ${row
+                      .map((v, i) => {
+                        const value = i >= 3 && i <= 5 ? money(v) : v;
+                        return `<td class="item-cell${index % 2 ? " alternate" : ""}" align="${align[i]}">` +
+                          `<div class="cell-content">${value}</div></td>`;
+                      })
+                      .join("")}
+                  </tr>
+                </table>
+              </td>
+              <td></td>
+            </tr>
+          `;
           document.getElementById("rows").before(table);
         });
         document.getElementById("rows").remove();
         document.getElementById("total").textContent = money(rows.reduce((s, r) => s + r[5], 0));
+        window.statementRows = rows;
+      </script>
+      <script>
+        const agingRows = window.statementRows;
+        const formatAgingMoney = (n) => `$${(n / 100).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+        document.getElementById("aging-current").textContent = formatAgingMoney(
+          agingRows.reduce((sum, row) => sum + (row[6] === 0 ? row[5] : 0), 0),
+        );
+        document.getElementById("aging-overdue").textContent = formatAgingMoney(
+          agingRows.reduce((sum, row) => sum + (row[6] > 0 && row[6] <= 30 ? row[5] : 0), 0),
+        );
       </script>
       <table class="paper_width section-table pfooter_pagenum">
         <tr>

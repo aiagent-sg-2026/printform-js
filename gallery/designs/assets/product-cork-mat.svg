@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" role="img" aria-label="Cork mat fictional sample product illustration">
+  <title>Cork mat fictional sample product illustration</title>
+  <rect width="200" height="200" rx="16" fill="#ece9e2"/>
+  <ellipse cx="100" cy="170" rx="59" ry="8" fill="#323d36" opacity="0.08"/>
+  <g>
+    <path d="m32 86 108-28 30 68-109 30Z" fill="#98734c"/>
+    <path d="m32 80 108-28 30 68-109 30Z" fill="#c29a65"/>
+    <g fill="#a98051"><circle cx="63" cy="89" r="2"/><circle cx="90" cy="75" r="2"/><circle cx="125" cy="72" r="2"/><circle cx="144" cy="103" r="2"/><circle cx="102" cy="119" r="2"/><circle cx="73" cy="126" r="2"/><circle cx="110" cy="95" r="2"/><circle cx="58" cy="107" r="2"/><circle cx="131" cy="124" r="2"/></g>
+  </g>
+  <text x="100" y="191" text-anchor="middle" font-family="system-ui, sans-serif" font-size="6" letter-spacing="1.4" fill="#716f68">SAMPLE PRODUCT</text>
+</svg>

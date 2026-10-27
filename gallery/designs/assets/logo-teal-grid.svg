@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 64" role="img" aria-label="TEAL GRID fictional sample company logo">
+  <title>TEAL GRID fictional sample company logo</title>
+  <g color="#218682">
+    <g fill="none" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round"><path d="m32 6 24 13v27L32 59 8 46V19ZM8 19l24 14 24-14M32 33v26M20 13l24 14v26M44 13 20 27v26M8 33l24 14 24-14"/></g>
+    <g fill="currentColor" font-family="system-ui, sans-serif">
+      <text x="70" y="30" font-size="21" font-weight="700">TEAL GRID</text>
+      <text x="71" y="44" font-size="7" letter-spacing="1.2">OFFICE SYSTEMS</text>
+      <text x="71" y="56" font-size="6" letter-spacing="1">FICTIONAL SAMPLE CO.</text>
+    </g>
+  </g>
+</svg>

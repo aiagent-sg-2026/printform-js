@@ -80,7 +80,7 @@
       }
     </style>
   </head>
-  <body>
+  <body data-pf-label="PF-015 · Supplier Invoice · Brown">
     <div
       class="paper_width printform"
       data-papersize-width="750"
@@ -98,11 +98,11 @@
         <tr>
           <td></td>
           <td>
-            <svg width="720" height="86" viewBox="0 0 720 86" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Ledger and Company">
+            <svg width="720" height="86" viewBox="0 0 720 86" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Harbor supplier invoice">
               <rect width="720" height="86" fill="#faf8f6" />
-              <path d="M28 18h42v50H28zM37 28h24M37 39h24M37 50h17" fill="none" stroke="#795548" stroke-width="3" />
-              <text x="86" y="39" fill="#49372f" font-family="Arial,sans-serif" font-size="21" font-weight="700">LEDGER &amp; COMPANY</text>
-              <text x="86" y="62" fill="#795548" font-family="Arial,sans-serif" font-size="13">SUPPLIER INVOICE · USD</text>
+              <rect x="18" y="17" width="184" height="52" rx="8" fill="#fff" />
+              <image href="assets/logo-harbor.svg" x="27" y="21" width="165" height="44" role="img" aria-label="Harbor logo" />
+              <text x="220" y="60" fill="#795548" font-family="Arial,sans-serif" font-size="13">SUPPLIER INVOICE · USD</text>
               <text x="690" y="53" fill="#795548" font-family="Arial,sans-serif" font-size="21" font-weight="700" text-anchor="end">
                 SI-26088
               </text>
@@ -162,13 +162,13 @@
                 <td style="width: 90px"></td>
               </tr>
               <tr>
-                <td class="head-cell">Item Code</td>
-                <td class="head-cell">Description</td>
-                <td class="head-cell" align="right">Quantity</td>
-                <td class="head-cell" align="right">Unit Price</td>
-                <td class="head-cell" align="right">Discount</td>
-                <td class="head-cell" align="right">Tax</td>
-                <td class="head-cell" align="right">Amount</td>
+                <td class="head-cell"><div class="cell-content">Item Code</div></td>
+                <td class="head-cell"><div class="cell-content">Description</div></td>
+                <td class="head-cell" align="right"><div class="cell-content">Qty</div></td>
+                <td class="head-cell" align="right"><div class="cell-content">Unit Price</div></td>
+                <td class="head-cell" align="right"><div class="cell-content">Discount</div></td>
+                <td class="head-cell" align="right"><div class="cell-content">Tax</div></td>
+                <td class="head-cell" align="right"><div class="cell-content">Amount</div></td>
               </tr>
             </table>
           </td>
@@ -225,10 +225,11 @@
         const target = document.getElementById("invoice-rows");
         let netCents = 0;
         let taxCents = 0;
-        const fmt = (value) => `$${(value / 100).toFixed(2)}`;
-        for (let index = 0; index < names.length; index += 1) {
+        const fmt = (value) => `$${(value / 100).toLocaleString("en-US", { minimumFractionDigits: 2 })}`;
+        const rowCount = 64;
+        for (let index = 0; index < rowCount; index += 1) {
           const quantity = (index % 3) + 1;
-          const unit = 1250 + index * 175;
+          const unit = 1250 + (index % 12) * 175;
           const discount = Math.round(unit * quantity * 0.02);
           const tax = Math.round((unit * quantity - discount) * 0.08);
           const amount = unit * quantity - discount + tax;
@@ -236,7 +237,7 @@
           taxCents += tax;
           const cells = [
             `AP-${String(index + 1).padStart(3, "0")}`,
-            names[index],
+            names[index % names.length],
             quantity,
             fmt(unit),
             fmt(discount),

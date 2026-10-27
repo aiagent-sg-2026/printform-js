@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Sales Return Authorization</title>
     <link rel="stylesheet" href="shared/page.css" />
+    <link rel="stylesheet" href="shared/tight-tables.css" />
     <style>
       body {
         color: #38291f;
@@ -62,6 +63,13 @@
         background: #f8eee8;
         font-size: 13px;
       }
+      .head {
+        box-sizing: border-box;
+        border-bottom: 1px solid #e8ddd7;
+      }
+      .cell {
+        box-sizing: border-box;
+      }
       .page-number {
         padding: 8px;
         text-align: center;
@@ -69,7 +77,7 @@
       }
     </style>
   </head>
-  <body>
+  <body data-pf-label="PF-021 · Sales Return Authorization · Orange">
     <div
       class="paper_width printform"
       data-papersize-width="750"
@@ -157,8 +165,8 @@
               <tr>
                 <td class="head"><div class="cell-content">SKU</div></td>
                 <td class="head"><div class="cell-content">Description</div></td>
-                <td class="head"><div class="cell-content">Serial Number</div></td>
-                <td class="head" align="right"><div class="cell-content">Return Qty</div></td>
+                <td class="head"><div class="cell-content">Serial No.</div></td>
+                <td class="head" align="right"><div class="cell-content">Rtn Qty</div></td>
                 <td class="head"><div class="cell-content">Reason</div></td>
                 <td class="head"><div class="cell-content">Condition</div></td>
                 <td class="head"><div class="cell-content">Resolution</div></td>
@@ -182,6 +190,10 @@
               <b>INSPECTION FINDINGS</b> · Packaging opened; items match authorization. <b>DECISION</b> · <span id="rma-decision"></span
               ><br />
               Inspector: Morgan Example __________________ &nbsp; Approved by: Avery Example __________________
+              <div style="position: relative; float: right; width: 110px; height: 55px; margin-top: -8px;">
+                <img src="assets/stamp-approved.svg" width="110" height="55" alt="Approved sample stamp" />
+              </div>
+              <div><img src="assets/signature-sample.svg" width="120" height="60" alt="Sample inspector signature" /></div>
             </div>
           </td>
           <td></td>
@@ -192,20 +204,20 @@
         const widthRow = () =>
           `<tr>${widths.map((width) => `<td style="width:${width === "inherit" ? "inherit" : `${width}px`}"></td>`).join("")}</tr>`;
         document.querySelector(".prowheader .items").insertAdjacentHTML("afterbegin", widthRow());
-        const rmaRows = [
-          ["CL-101", "Canvas tote", "SN-10021", 1, "Size", "Good", "Refund"],
-          ["CL-102", "Desk lamp", "SN-10022", 1, "Defect", "Test", "Replace"],
-          ["CL-103", "Wool throw", "SN-10023", 2, "Color", "Good", "Refund"],
-          ["CL-104", "Ceramic mug", "SN-10024", 1, "Crack", "Damaged", "Refund"],
-          ["CL-105", "Oak tray", "SN-10025", 1, "Duplicate", "Good", "Refund"],
-          ["CL-106", "Linen apron", "SN-10026", 1, "Fit", "Good", "Replace"],
-          ["CL-107", "Glass carafe", "SN-10027", 1, "Leak", "Test", "Replace"],
-          ["CL-108", "Cotton napkins", "SN-10028", 2, "Color", "Good", "Refund"],
-          ["CL-109", "Wall clock", "SN-10029", 1, "Noise", "Test", "Replace"],
-          ["CL-110", "Tea canister", "SN-10030", 1, "Duplicate", "Good", "Refund"],
-          ["CL-111", "Woven basket", "SN-10031", 1, "Size", "Good", "Refund"],
-          ["CL-112", "Serving board", "SN-10032", 1, "Warp", "Damaged", "Refund"],
+        const products = [
+          "Canvas tote", "Desk lamp", "Wool throw", "Ceramic mug", "Oak tray", "Linen apron",
+          "Glass carafe", "Cotton napkins", "Wall clock", "Tea canister", "Woven basket", "Serving board",
         ];
+        const reasons = ["Size", "Defect", "Color", "Crack", "Duplicate", "Fit", "Leak", "Warp"];
+        const rmaRows = Array.from({ length: 77 }, (_, index) => [
+          `CL-${101 + index}`,
+          products[index % products.length],
+          `SN-${String(10021 + index).padStart(5, "0")}`,
+          (index % 2) + 1,
+          reasons[index % reasons.length],
+          index % 3 === 1 ? "Test" : "Good",
+          index % 3 === 1 ? "Replace" : "Refund",
+        ]);
         const host = document.getElementById("rma-rows");
         for (const [index, row] of rmaRows.entries()) {
           const table = document.createElement("table");

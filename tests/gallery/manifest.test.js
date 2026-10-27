@@ -11,7 +11,7 @@ describe("gallery manifest", () => {
     expect(manifest.length).toBeGreaterThan(0);
     expect(new Set(manifest.map(({ id }) => id)).size).toBe(manifest.length);
     for (const item of manifest) {
-      expect(item).toEqual(expect.objectContaining({ id: expect.any(String), title: { en: expect.any(String), zh: expect.any(String) }, type: expect.any(String), paper: expect.any(String), pages: expect.any(Number), tags: expect.any(Array), file: expect.any(String), thumb: expect.any(String), width: expect.any(Number), height: expect.any(Number) }));
+      expect(item).toEqual(expect.objectContaining({ id: expect.any(String), no: expect.stringMatching(/^PF-\d{3}$/), style: { en: expect.any(String), zh: expect.any(String) }, title: { en: expect.any(String), zh: expect.any(String) }, type: expect.any(String), paper: expect.any(String), pages: expect.any(Number), tags: expect.any(Array), file: expect.any(String), thumb: expect.any(String), width: expect.any(Number), height: expect.any(Number) }));
       expect(item.pages).toBeGreaterThan(0);
       expect(item.tags.length).toBeGreaterThan(0);
       expect(validPapers.has(item.paper)).toBe(true);
@@ -19,6 +19,10 @@ describe("gallery manifest", () => {
       expect(item.thumb).toMatch(/^thumbs\/[\w-]+\.png$/);
     }
     expect(manifest.filter((item) => item.pages >= 2).length).toBeGreaterThanOrEqual(2);
+  });
+
+  it("has unique PF numbers", () => {
+    expect(new Set(manifest.map(({ no }) => no)).size).toBe(manifest.length);
   });
 
   it("references existing design and thumbnail files", () => {

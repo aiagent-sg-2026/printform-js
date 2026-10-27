@@ -20,24 +20,28 @@
     .item-cell { border-bottom: 1px solid #e5def0; }
     .alternate { background: #f5f1fa; }
     .cell-content { padding: 3px 5px; }
+    .items-grid .head-cell .cell-content { padding: 3px 5px; }
+    .footer-logo { display: inline-block; vertical-align: middle; width: 90px; height: 24px; margin-left: 8px; color: #6d28d9; }
+    .info-qr { width: 68px; height: 68px; vertical-align: top; margin-left: 8px; }
+    .info-qr-caption { display: inline-block; width: 68px; margin-left: 8px; font-size: 10px; line-height: 12px; text-align: center; }
     .totals-grid td { padding: 4px 8px; font-size: 13px; }
     .grand-total td { border-top: 2px solid #6d28d9; color: #4c1d95; font-size: 16px; font-weight: 700; }
     .payment { margin-top: 7px; padding: 7px; background: #f5f1fa; font-size: 13px; }
     .page-number { padding: 6px; font-size: 13px; text-align: center; }
   </style>
 </head>
-<body>
+<body data-pf-label="PF-007 · Violet Pro Invoice · Violet">
   <div class="paper_width printform" data-papersize-width="750" data-papersize-height="1050"
     data-repeat-header="y" data-repeat-rowheader="y" data-repeat-footer-pagenum="y">
     <table cellpadding="0" cellspacing="0" border="0" class="paper_width section-table pheader">
       <tr><td style="width:15px"></td><td style="width:inherit"></td><td style="width:15px"></td></tr>
       <tr><td></td><td>
-        <svg class="header-art" viewBox="0 0 720 100" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Violet Ledger">
+        <svg class="header-art" viewBox="0 0 720 100" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Violet Loop sample invoice">
           <rect width="720" height="100" fill="#4c1d95"/>
           <rect width="720" height="78" fill="#6d28d9"/>
-          <path d="M30 24h34v42H30zM38 34h18M38 44h18M38 54h13" fill="none" stroke="white" stroke-width="3"/>
-          <text x="80" y="43" fill="white" font-family="Arial,sans-serif" font-size="22" font-weight="700">VIOLET LEDGER</text>
-          <text x="80" y="65" fill="#ede9fe" font-family="Arial,sans-serif" font-size="13">PROFESSIONAL SERVICES</text>
+          <rect x="18" y="12" width="184" height="54" rx="8" fill="#fff"/>
+          <image x="27" y="17" width="165" height="44" href="assets/logo-violet-loop.svg" aria-label="Violet Loop sample logo"/>
+          <text x="220" y="65" fill="#ede9fe" font-family="Arial,sans-serif" font-size="13">PROFESSIONAL SERVICES</text>
           <text x="690" y="55" fill="white" font-family="Arial,sans-serif" font-size="28" font-weight="700" text-anchor="end">INVOICE</text>
         </svg>
       </td><td></td></tr>
@@ -47,7 +51,8 @@
       <tr><td></td><td>
         <table class="info-grid"><tr><td style="width:50%"></td><td style="width:50%"></td></tr><tr>
           <td><div class="info-box"><div class="info-label">BILL TO</div>Sample client · Alex Morgan<br>18 Fictional Oak Road<br>Portland, OR 97204</div></td>
-          <td><div class="info-box"><div class="info-label">INVOICE DETAILS</div>Invoice: VP-26042<br>Date: October 26, 2026<br>Due: November 25, 2026 · Net 30</div></td>
+          <td><div class="info-box"><div class="info-label">INVOICE DETAILS</div>Invoice: VP-26042<br>Date: October 26, 2026<br>Due: November 25, 2026 · Net 30
+            <span style="float:right"><img class="info-qr" src="assets/qr-paynow-sample.svg" alt="PayNow sample QR pattern, not a real QR code"><span class="info-qr-caption">Scan to pay (sample)</span></span></div></td>
         </tr></table>
       </td><td></td></tr>
     </table>
@@ -55,7 +60,13 @@
       <tr><td style="width:15px"></td><td style="width:inherit"></td><td style="width:15px"></td></tr>
       <tr><td></td><td><table class="items-grid">
         <tr><td style="width:45px"></td><td style="width:inherit"></td><td style="width:75px"></td><td style="width:90px"></td><td style="width:100px"></td></tr>
-        <tr><td class="head-cell">No.</td><td class="head-cell">Item</td><td class="head-cell" align="right">Hours</td><td class="head-cell" align="right">Rate</td><td class="head-cell" align="right">Amount</td></tr>
+        <tr>
+          <td class="head-cell"><div class="cell-content">No.</div></td>
+          <td class="head-cell"><div class="cell-content">Item</div></td>
+          <td class="head-cell" align="right"><div class="cell-content">Hours</div></td>
+          <td class="head-cell" align="right"><div class="cell-content">Rate</div></td>
+          <td class="head-cell" align="right"><div class="cell-content">Amount</div></td>
+        </tr>
       </table></td><td></td></tr>
     </table>
     <div id="invoice-items"></div>
@@ -67,19 +78,30 @@
           <tr><td></td><td>Tax (8%)</td><td id="tax" align="right">$0.00</td></tr>
           <tr class="grand-total"><td></td><td>Total due</td><td id="total" align="right">$0.00</td></tr>
         </table>
-        <div class="payment">Please pay by November 25, 2026. Remit to Violet Ledger Studio, Account ending 2048.</div>
+        <div class="payment">Please pay by November 25, 2026. Remit to Violet Ledger Studio, Account ending 2048.
+          <img class="footer-logo" src="assets/footer-logo-3.svg" alt="Violet Loop sample footer logo">
+        </div>
       </td><td></td></tr>
     </table>
     <script>
-      const services = ["Design review", "Layout planning", "Brand consultation", "Production support", "Quality review"];
+      const services = [
+        "Design review", "Layout planning", "Brand consultation", "Production support",
+        "Quality review", "Visual direction", "Prototype feedback", "Asset preparation",
+        "Launch planning", "Client workshop", "Final review", "Handoff support"
+      ];
       const target = document.getElementById("invoice-items");
       let subtotalCents = 0;
-      for (let index = 0; index < 30; index += 1) {
+      const moneyOptions = { minimumFractionDigits: 2, maximumFractionDigits: 2 };
+      const formatMoney = (cents) => `$${(cents / 100).toLocaleString("en-US", moneyOptions)}`;
+      for (let index = 0; index < 52; index += 1) {
         const hours = index % 4 + 1;
         const rateCents = 6500 + (index % 3) * 1000;
         const amountCents = hours * rateCents;
         subtotalCents += amountCents;
-        const cells = [index + 1, services[index % services.length], hours, `$${(rateCents / 100).toFixed(2)}`, `$${(amountCents / 100).toFixed(2)}`];
+        const cells = [
+          index + 1, services[index % services.length], hours,
+          formatMoney(rateCents), formatMoney(amountCents)
+        ];
         const table = document.createElement("table");
         table.cellPadding = "0";
         table.cellSpacing = "0";

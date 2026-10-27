@@ -45,12 +45,15 @@
         line-height: 18px;
       }
       .head-cell {
-        color: #643b70;
-        border-bottom: 2px solid #9457a6;
-        font-weight: bold;
+        box-sizing: border-box;
+        border-bottom: 1px solid #e7e0e9;
+        border-left: 1px solid #e7e0e9;
+        border-right: 1px solid #e7e0e9;
       }
       .item-cell {
-        border-bottom: 1px solid #e7e0e9;
+        box-sizing: border-box;
+        border-left: 1px solid #e7e0e9;
+        border-right: 1px solid #e7e0e9;
       }
       .cell-content {
         padding: 4px;
@@ -79,7 +82,7 @@
       }
     </style>
   </head>
-  <body>
+  <body data-pf-label="PF-019 · Proforma Invoice · Lavender">
     <div
       class="paper_width printform"
       data-papersize-width="750"
@@ -97,17 +100,12 @@
         <tr>
           <td></td>
           <td>
-            <svg width="720" height="96" viewBox="0 0 720 96" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Orchid Trade">
+            <svg width="720" height="96" viewBox="0 0 720 96" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Northstar Proforma Invoice">
               <rect width="720" height="96" fill="white" />
-              <path d="M30 22h44v44H30zM40 32h24M40 43h24M40 54h14" fill="none" stroke="#9457A6" stroke-width="3" />
-              <text x="90" y="42" fill="#49364e" font-family="Arial,sans-serif" font-size="22" font-weight="700">ORCHID TRADE</text>
-              <text x="90" y="67" fill="#9457A6" font-family="Arial,sans-serif" font-size="13">COMMERCIAL EXPORT DOCUMENT</text>
-              <text x="690" y="47" fill="#9457A6" font-family="Arial,sans-serif" font-size="22" font-weight="700" text-anchor="end">
-                PROFORMA
-              </text>
-              <text x="690" y="71" fill="#6f6273" font-family="Arial,sans-serif" font-size="13" text-anchor="end">
-                Valid through 15 Nov 2026
-              </text>
+              <rect x="24" y="14" width="204" height="68" rx="8" fill="#fff" />
+              <image x="30" y="24" width="180" height="48" href="assets/logo-northstar.svg" />
+              <text x="690" y="47" fill="#9457A6" font-family="Arial,sans-serif" font-size="22" font-weight="700" text-anchor="end">PROFORMA</text>
+              <text x="690" y="71" fill="#6f6273" font-family="Arial,sans-serif" font-size="13" text-anchor="end">Valid through 15 Nov 2026</text>
             </svg>
           </td>
           <td></td>
@@ -166,13 +164,13 @@
                 <td style="width: 90px"></td>
               </tr>
               <tr>
-                <td class="head-cell">Item</td>
-                <td class="head-cell">Description</td>
-                <td class="head-cell">Origin</td>
-                <td class="head-cell" align="right">Quantity</td>
-                <td class="head-cell" align="right">Unit Price</td>
-                <td class="head-cell" align="right">Tax</td>
-                <td class="head-cell" align="right">Amount</td>
+                <td class="head-cell"><div class="cell-content">Item</div></td>
+                <td class="head-cell"><div class="cell-content">Description</div></td>
+                <td class="head-cell"><div class="cell-content">Origin</div></td>
+                <td class="head-cell" align="right"><div class="cell-content">Qty</div></td>
+                <td class="head-cell" align="right"><div class="cell-content">Unit Price</div></td>
+                <td class="head-cell" align="right"><div class="cell-content">Tax</div></td>
+                <td class="head-cell" align="right"><div class="cell-content">Amount</div></td>
               </tr>
             </table>
           </td>
@@ -201,9 +199,16 @@
                 <td id="advance" align="right">$0.00</td>
               </tr>
             </table>
-            <div class="note">
-              Bank: Sample International Bank · SWIFT: EXAMUS00 · Account 001234567<br />This proforma invoice is for payment and customs
-              reference only; it is not a tax invoice.
+            <div style="display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 4px 8px;">
+              <div style="color: #6f6273; font-size: 12px;">Bank: Sample International Bank · SWIFT: EXAMUS00 · Account 001234567<br />For payment and customs reference only; not a tax invoice.</div>
+              <div style="display: flex; flex-direction: column; align-items: center; font-size: 10px;">
+                <img src="assets/qr-paynow-sample.svg" width="68" height="68" alt="Sample PayNow QR code" />
+                <span>Scan to pay (sample)</span>
+              </div>
+            </div>
+            <div class="note" style="display: flex; align-items: center; justify-content: space-between; gap: 12px;">
+              <img src="assets/footer-logo-1.svg" width="90" height="24" alt="Sample footer logo" />
+              <span>Sample International Bank · SWIFT EXAMUS00 · Account 001234567<br />Payment and customs reference only; not a tax invoice.</span>
             </div>
           </td>
           <td></td>
@@ -222,22 +227,31 @@
           "Glass vessel",
           "Notebook set",
         ];
+        const productAssets = ["canvas-tote", "stoneware-cup", "linen-pouch", "desk-journal", "steel-bottle", "wool-coaster", "glass-jar", "bamboo-pen", "cork-mat", "storage-tin", "cotton-towel", "desk-tray", "pencil-set", "tea-canister", "gift-box", "parcel-box"];
         const target = document.getElementById("proforma-rows");
         let cents = 0;
-        const fmt = (value) => `$${(value / 100).toFixed(2)}`;
-        for (let index = 0; index < names.length; index += 1) {
+        const fmt = (value) => `$${(value / 100).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+        for (let index = 0; index < 38; index += 1) {
           const qty = (index % 3) + 1;
           const unit = 2200 + index * 240;
           const tax = Math.round(unit * qty * 0.05);
           const amount = unit * qty + tax;
           cents += amount;
-          const cells = [`EX-${String(index + 1).padStart(2, "0")}`, names[index], "United States", qty, fmt(unit), fmt(tax), fmt(amount)];
+          const cells = [
+            `EX-${String(index + 1).padStart(2, "0")}`,
+            names[index % names.length],
+            ["United States", "Canada", "Mexico"][index % 3],
+            qty,
+            fmt(unit),
+            fmt(tax),
+            fmt(amount),
+          ];
           const table = document.createElement("table");
           table.cellPadding = "0";
           table.cellSpacing = "0";
           table.border = "0";
           table.className = "paper_width section-table prowitem";
-          table.innerHTML = `<tr><td style="width:15px"></td><td style="width:inherit"></td><td style="width:15px"></td></tr><tr><td></td><td><table class="items-grid"><tr><td style="width:80px"></td><td style="width:195px"></td><td style="width:100px"></td><td style="width:70px"></td><td style="width:95px"></td><td style="width:75px"></td><td style="width:90px"></td></tr><tr>${cells.map((value, cell) => `<td class="item-cell"${cell === 3 || cell >= 4 ? ' align="right"' : ""}><div class="cell-content">${value}</div></td>`).join("")}</tr></table></td><td></td></tr>`;
+          table.innerHTML = `<tr><td style="width:15px"></td><td style="width:inherit"></td><td style="width:15px"></td></tr><tr><td></td><td><table class="items-grid"><tr><td style="width:80px"></td><td style="width:195px"></td><td style="width:100px"></td><td style="width:70px"></td><td style="width:95px"></td><td style="width:75px"></td><td style="width:90px"></td></tr><tr>${cells.map((value, cell) => `<td class="item-cell"${cell === 3 || cell >= 4 ? ' align="right"' : ""}><div class="cell-content">${cell === 1 ? `<img src="assets/product-${productAssets[index % productAssets.length]}.svg" width="24" height="24" alt="${names[index % names.length]} sample product" style="vertical-align:middle;margin-right:6px;" />` : ""}${value}</div></td>`).join("")}</tr></table></td><td></td></tr>`;
           target.before(table);
         }
         target.remove();

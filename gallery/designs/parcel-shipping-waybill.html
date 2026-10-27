@@ -4,6 +4,7 @@
     <meta charset="utf-8" />
     <title>Shipping Label and Waybill</title>
     <link rel="stylesheet" href="shared/page.css" />
+    <link rel="stylesheet" href="shared/tight-tables.css" />
     <style>
       body {
         color: #302b23;
@@ -72,7 +73,7 @@
       }
     </style>
   </head>
-  <body>
+  <body data-pf-label="PF-039 · Shipping Label and Waybill · Khaki">
     <div
       class="paper_width printform"
       data-papersize-width="750"
@@ -130,15 +131,13 @@
                 </td>
               </tr>
             </table>
-            <div class="route">DESTINATION SEA-04 · SORT 7B</div>
-            <svg class="barcode" viewBox="0 0 720 42" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Tracking barcode">
-              <rect width="720" height="42" fill="white" />
-              <path
-                d="M20 3v34m5-34v34m9-34v34m4-34v34m11-34v34m8-34v34m3-34v34m12-34v34m10-34v34m5-34v34m12-34v34m4-34v34m8-34v34m10-34v34m3-34v34m12-34v34m7-34v34m5-34v34m12-34v34m6-34v34m9-34v34m4-34v34m13-34v34m6-34v34m10-34v34m8-34v34m4-34v34m11-34v34m8-34v34m11-34v34m4-34v34m12-34v34m7-34v34m12-34v34m5-34v34m11-34v34m8-34v34m6-34v34m12-34v34m5-34v34m11-34v34m8-34v34m6-34v34m11-34v34m8-34v34m6-34v34m13-34v34m6-34v34m11-34v34m8-34v34"
-                stroke="#222"
-                stroke-width="3"
-              />
-            </svg>
+            <div class="route">
+              <img src="assets/icon-truck.svg" alt="Truck" width="16" height="16" />
+              DESTINATION SEA-04 · SORT 7B
+            </div>
+            <img src="assets/barcode-sample.svg" alt="Sample tracking barcode" class="barcode" />
+            <img src="assets/qr-generic-sample.svg" alt="Decorative sample QR code, not scannable" width="68" height="68" />
+            <div>Scan to track (sample)</div>
           </td>
           <td></td>
         </tr>
@@ -161,11 +160,11 @@
                 <td style="width: 130px"></td>
               </tr>
               <tr>
-                <td class="head-cell">Parcel</td>
-                <td class="head-cell">Contents</td>
-                <td class="head-cell" align="right">Quantity</td>
-                <td class="head-cell" align="right">Weight kg</td>
-                <td class="head-cell">Handling</td>
+                <td class="head-cell"><div class="cell-content">Parcel</div></td>
+                <td class="head-cell"><div class="cell-content">Contents</div></td>
+                <td class="head-cell" align="right"><div class="cell-content">Qty</div></td>
+                <td class="head-cell" align="right"><div class="cell-content">Weight kg</div></td>
+                <td class="head-cell"><div class="cell-content">Handling</div></td>
               </tr>
             </table>
           </td>

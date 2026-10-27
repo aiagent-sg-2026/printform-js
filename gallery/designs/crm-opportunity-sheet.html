@@ -4,6 +4,7 @@
     <meta charset="utf-8" />
     <title>Lead and Opportunity Sheet</title>
     <link rel="stylesheet" href="shared/page.css" />
+    <link rel="stylesheet" href="shared/tight-tables.css" />
     <style>
       body {
         color: #3b2d32;
@@ -71,7 +72,7 @@
       }
     </style>
   </head>
-  <body>
+  <body data-pf-label="PF-044 · Lead and Opportunity Sheet · Rose">
     <div
       class="paper_width printform"
       data-papersize-width="750"
@@ -158,13 +159,13 @@
                 <td style="width: 80px"></td>
               </tr>
               <tr>
-                <td class="head-cell">Date</td>
-                <td class="head-cell">Interaction</td>
-                <td class="head-cell">Stakeholder</td>
-                <td class="head-cell">Outcome</td>
-                <td class="head-cell">Next Action</td>
-                <td class="head-cell">Owner</td>
-                <td class="head-cell">Due Date</td>
+                <td class="head-cell"><div class="cell-content">Date</div></td>
+                <td class="head-cell"><div class="cell-content">Interaction</div></td>
+                <td class="head-cell"><div class="cell-content">Stakeholder</div></td>
+                <td class="head-cell"><div class="cell-content">Outcome</div></td>
+                <td class="head-cell"><div class="cell-content">Next Action</div></td>
+                <td class="head-cell"><div class="cell-content">Owner</div></td>
+                <td class="head-cell"><div class="cell-content">Due Date</div></td>
               </tr>
             </table>
           </td>
@@ -211,13 +212,19 @@
         const widths = [80, 145, 100, 100, 135, 80, 80];
         const target = document.getElementById("rows");
         const widthRow = widths.map((width) => `<td style="width:${width}px"></td>`).join("");
-        for (let index = 0; index < actions.length; index += 1) {
+        for (let index = 0; index < 87; index += 1) {
+          const action = actions[index % actions.length];
+          const date = new Date(Date.UTC(2026, 9, 26 - index));
+          const dueDate = new Date(Date.UTC(2026, 9, 28 - index));
+          const dateLabel = `${String(date.getUTCMonth() + 1).padStart(2, "0")}/${String(date.getUTCDate()).padStart(2, "0")}`;
+          const dueLabel = `${String(dueDate.getUTCMonth() + 1).padStart(2, "0")}/${String(dueDate.getUTCDate()).padStart(2, "0")}`;
+          const values = [dateLabel, ...action.slice(1, 6), dueLabel];
           const table = document.createElement("table");
           table.cellPadding = "0";
           table.cellSpacing = "0";
           table.border = "0";
           table.className = "paper_width section-table prowitem";
-          table.innerHTML = `<tr><td style="width:15px"></td><td style="width:inherit"></td><td style="width:15px"></td></tr><tr><td></td><td><table class="items-grid"><tr>${widthRow}</tr><tr>${actions[index].map((value) => `<td class="item-cell${index % 2 ? " alternate" : ""}"><div class="cell-content">${value}</div></td>`).join("")}</tr></table></td><td></td></tr>`;
+          table.innerHTML = `<tr><td style="width:15px"></td><td style="width:inherit"></td><td style="width:15px"></td></tr><tr><td></td><td><table class="items-grid"><tr>${widthRow}</tr><tr>${values.map((value) => `<td class="item-cell${index % 2 ? " alternate" : ""}"><div class="cell-content">${value}</div></td>`).join("")}</tr></table></td><td></td></tr>`;
           target.before(table);
         }
         target.remove();

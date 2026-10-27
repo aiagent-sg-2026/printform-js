@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Stock Take Sheet</title>
     <link rel="stylesheet" href="shared/page.css" />
+    <link rel="stylesheet" href="shared/tight-tables.css" />
     <style>
       body {
         color: #3b302b;
@@ -44,6 +45,10 @@
         color: white;
         font-weight: 700;
       }
+      .cell.head {
+        box-sizing: border-box;
+        padding: 0;
+      }
       .worksheet {
         padding: 10px;
         background: #f4efeb;
@@ -56,7 +61,7 @@
       }
     </style>
   </head>
-  <body>
+  <body data-pf-label="PF-024 · Stock Take Sheet · Brown">
     <div
       class="paper_width printform"
       data-papersize-width="750"
@@ -152,10 +157,24 @@
           .join("");
         document.getElementById("count-header").outerHTML = `<tr>${headerCells}</tr>`;
         document.querySelector(".prowheader .items").insertAdjacentHTML("afterbegin", widthRow());
-        const countRows = Array.from({ length: 30 }, (_, index) => [
-          `A-${String(index + 1).padStart(2, "0")}`,
+        const itemNames = [
+          "Hex Bolt M8",
+          "LED Panel 24W",
+          "Steel Bracket",
+          "Copper Wire 2mm",
+          "Safety Gloves",
+          "Water Valve 1in",
+          "Cable Tray 1m",
+          "Door Hinge",
+          "Work Light 12V",
+          "Pipe Clamp 20mm",
+          "Fuse 10A",
+          "Anchor Bolt M10",
+        ];
+        const countRows = Array.from({ length: 155 }, (_, index) => [
+          `${String.fromCharCode(65 + Math.floor(index / 37))}-${String((index % 37) + 1).padStart(2, "0")}`,
           `CT-${String(index + 301).padStart(3, "0")}`,
-          `Counted sample item ${index + 1}`,
+          itemNames[index % itemNames.length],
           "EA",
           "",
           "",

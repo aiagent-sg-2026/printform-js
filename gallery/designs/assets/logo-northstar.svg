@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 64" role="img" aria-label="NORTHSTAR fictional sample company logo">
+  <title>NORTHSTAR fictional sample company logo</title>
+  <g color="#2463a6">
+    <path d="M32 5 38 25 58 31 38 37 32 57 26 37 6 31 26 25Z" fill="currentColor"/>
+    <path d="m32 18 4 13-4 13-4-13Z" fill="#fff"/>
+    <g fill="currentColor" font-family="system-ui, sans-serif">
+      <text x="70" y="30" font-size="21" font-weight="700">NORTHSTAR</text>
+      <text x="71" y="44" font-size="7" letter-spacing="1.2">PAPER &amp; SUPPLY</text>
+      <text x="71" y="56" font-size="6" letter-spacing="1">FICTIONAL SAMPLE CO.</text>
+    </g>
+  </g>
+</svg>

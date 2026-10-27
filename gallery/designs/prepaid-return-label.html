@@ -4,6 +4,7 @@
     <meta charset="utf-8" />
     <title>Return Shipping Label</title>
     <link rel="stylesheet" href="shared/page.css" />
+    <link rel="stylesheet" href="shared/tight-tables.css" />
     <style>
       body {
         color: #342d1c;
@@ -68,7 +69,7 @@
       }
     </style>
   </head>
-  <body>
+  <body data-pf-label="PF-040 · Return Shipping Label · Ochre">
     <div
       class="paper_width printform"
       data-papersize-width="750"
@@ -166,10 +167,10 @@
                 <td style="width: 250px"></td>
               </tr>
               <tr>
-                <td class="head-cell">Return Item</td>
-                <td class="head-cell">SKU</td>
-                <td class="head-cell" align="right">Quantity</td>
-                <td class="head-cell">Reason</td>
+                <td class="head-cell"><div class="cell-content">Return Item</div></td>
+                <td class="head-cell"><div class="cell-content">SKU</div></td>
+                <td class="head-cell" align="right"><div class="cell-content">Quantity</div></td>
+                <td class="head-cell"><div class="cell-content">Reason</div></td>
               </tr>
             </table>
           </td>
@@ -203,6 +204,7 @@
           ["Cork desk mat", "TP-112", 1, "Not needed"],
         ];
         const widths = [250, 140, 80, 250];
+        const alignments = ["left", "left", "right", "left"];
         const target = document.getElementById("rows");
         const widthRow = widths.map((width) => `<td style="width:${width}px"></td>`).join("");
         for (let index = 0; index < items.length; index += 1) {
@@ -211,7 +213,23 @@
           table.cellSpacing = "0";
           table.border = "0";
           table.className = "paper_width section-table prowitem";
-          table.innerHTML = `<tr><td style="width:15px"></td><td style="width:inherit"></td><td style="width:15px"></td></tr><tr><td></td><td><table class="items-grid"><tr>${widthRow}</tr><tr>${items[index].map((value, cell) => `<td class="item-cell"><div class="cell-content">${value}</div></td>`).join("")}</tr></table></td><td></td></tr>`;
+          table.innerHTML = `
+            <tr><td style="width:15px"></td><td style="width:inherit"></td><td style="width:15px"></td></tr>
+            <tr>
+              <td></td>
+              <td>
+                <table class="items-grid">
+                  <tr>${widthRow}</tr>
+                  <tr>${items[index]
+                    .map(
+                      (value, cell) =>
+                        `<td class="item-cell" align="${alignments[cell]}"><div class="cell-content">${value}</div></td>`,
+                    )
+                    .join("")}</tr>
+                </table>
+              </td>
+              <td></td>
+            </tr>`;
           target.before(table);
         }
         target.remove();

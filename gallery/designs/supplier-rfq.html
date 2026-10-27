@@ -80,7 +80,7 @@
       }
     </style>
   </head>
-  <body>
+  <body data-pf-label="PF-013 · Request for Quotation · Teal">
     <div
       class="paper_width printform"
       data-papersize-width="750"
@@ -167,13 +167,13 @@
                 <td style="width: 85px"></td>
               </tr>
               <tr>
-                <td class="head-cell">Item Code</td>
-                <td class="head-cell">Description</td>
-                <td class="head-cell">Specification</td>
-                <td class="head-cell" align="right">Quantity</td>
-                <td class="head-cell">UOM</td>
-                <td class="head-cell" align="right">Quoted Price</td>
-                <td class="head-cell" align="right">Lead Time</td>
+                <td class="head-cell"><div class="cell-content">Item Code</div></td>
+                <td class="head-cell"><div class="cell-content">Description</div></td>
+                <td class="head-cell"><div class="cell-content">Specification</div></td>
+                <td class="head-cell" align="right"><div class="cell-content">Quantity</div></td>
+                <td class="head-cell"><div class="cell-content">UOM</div></td>
+                <td class="head-cell" align="right"><div class="cell-content">Quoted Price</div></td>
+                <td class="head-cell" align="right"><div class="cell-content">Lead Time</div></td>
               </tr>
             </table>
           </td>
@@ -216,15 +216,19 @@
           "Fuse assortment",
         ];
         const target = document.getElementById("rfq-rows");
-        for (let index = 0; index < items.length; index += 1) {
+        const rowCount = 50;
+        const money = (cents) => `$${(cents / 100).toLocaleString("en-US", { minimumFractionDigits: 2 })}`;
+        for (let index = 0; index < rowCount; index += 1) {
+          const quantity = (index % 4) + 2;
+          const priceCents = 1850 + (index % 9) * 725;
           const cells = [
             `RF-${String(index + 1).padStart(3, "0")}`,
-            items[index],
+            items[index % items.length],
             "Industrial grade",
-            (index % 4) + 2,
+            quantity,
             "ea",
-            "$0.00",
-            "TBC",
+            money(priceCents),
+            `${(index % 5) + 2} days`,
           ];
           const table = document.createElement("table");
           table.cellPadding = "0";

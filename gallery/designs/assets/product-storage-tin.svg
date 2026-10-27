@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" role="img" aria-label="Storage tin fictional sample product illustration">
+  <title>Storage tin fictional sample product illustration</title>
+  <rect width="200" height="200" rx="16" fill="#e9ecee"/>
+  <ellipse cx="100" cy="170" rx="59" ry="8" fill="#323d36" opacity="0.08"/>
+  <g>
+    <path d="M48 70h104v77q0 19-52 19t-52-19Z" fill="#8d9fa3"/>
+    <ellipse cx="100" cy="70" rx="52" ry="17" fill="#c7d0ce"/>
+    <ellipse cx="100" cy="66" rx="53" ry="17" fill="#aebcbd" stroke="#72878b" stroke-width="2"/>
+    <ellipse cx="100" cy="64" rx="42" ry="11" fill="#c7d0ce"/>
+    <rect x="75" y="101" width="50" height="35" rx="4" fill="#e8e3d5"/>
+    <path d="M58 88v53" stroke="#b8c6c6" stroke-width="4" stroke-linecap="round"/>
+  </g>
+  <text x="100" y="191" text-anchor="middle" font-family="system-ui, sans-serif" font-size="6" letter-spacing="1.4" fill="#716f68">SAMPLE PRODUCT</text>
+</svg>

@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" role="img" aria-label="Store icon">
+  <title>Store icon</title>
+  <g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M4 10v11h16V10M3 3h18l1 5c0 3-4 4-5 1-1 3-4 3-5 0-1 3-4 3-5 0-1 3-5 2-5-1Zm6 18v-7h6v7"/>
+  </g>
+</svg>

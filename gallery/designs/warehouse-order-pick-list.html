@@ -4,6 +4,7 @@
     <meta charset="utf-8" />
     <title>Order Pick List</title>
     <link rel="stylesheet" href="shared/page.css" />
+    <link rel="stylesheet" href="shared/tight-tables.css" />
     <style>
       body {
         color: #26362a;
@@ -67,7 +68,7 @@
       }
     </style>
   </head>
-  <body>
+  <body data-pf-label="PF-041 · Order Pick List · Sage green">
     <div
       class="paper_width printform"
       data-papersize-width="750"
@@ -154,13 +155,13 @@
                 <td style="width: 90px"></td>
               </tr>
               <tr>
-                <td class="head-cell">Bin</td>
-                <td class="head-cell">SKU</td>
-                <td class="head-cell">Description</td>
-                <td class="head-cell">Variant</td>
-                <td class="head-cell" align="right">Required</td>
-                <td class="head-cell" align="right">Picked</td>
-                <td class="head-cell">Check</td>
+                <td class="head-cell"><div class="cell-content">Bin</div></td>
+                <td class="head-cell"><div class="cell-content">SKU</div></td>
+                <td class="head-cell"><div class="cell-content">Description</div></td>
+                <td class="head-cell"><div class="cell-content">Variant</div></td>
+                <td class="head-cell" align="right"><div class="cell-content">Required</div></td>
+                <td class="head-cell" align="right"><div class="cell-content">Picked</div></td>
+                <td class="head-cell"><div class="cell-content">Check</div></td>
               </tr>
             </table>
           </td>
@@ -207,14 +208,14 @@
         const target = document.getElementById("rows");
         const widthRow = widths.map((width) => `<td style="width:${width}px"></td>`).join("");
         let shortage = 0;
-        for (let index = 0; index < products.length; index += 1) {
+        for (let index = 0; index < 137; index += 1) {
           const required = (index % 4) + 1;
-          const picked = index === 7 ? required - 1 : required;
+          const picked = index % 17 === 7 ? required - 1 : required;
           shortage += required - picked;
           const cells = [
             `C-${String(Math.floor(index / 5) + 1)}-${String(index + 1).padStart(2, "0")}`,
             `EW-${index + 201}`,
-            products[index],
+            products[index % products.length],
             index % 2 ? "Natural / S" : "Blue / M",
             required,
             picked,

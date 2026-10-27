@@ -18,6 +18,8 @@
     .item-cell { border-bottom: 1px solid #d9deed; }
     .alternate { background: #f1f3f9; }
     .cell-content { padding: 4px 6px; }
+    .items-grid .head-cell .cell-content { padding: 4px 6px; }
+    .footer-logo { display: inline-block; vertical-align: middle; width: 90px; height: 24px; margin-left: 8px; color: #405cb6; }
     .totals-grid td { padding: 6px 8px; font-size: 13px; }
     .grand-total td { border-top: 1px solid #8795c4; color: #405cb6; font-size: 16px; font-weight: 700; }
     .terms { padding: 7px 10px; border-top: 2px solid #405cb6; font-size: 13px; line-height: 18px; }
@@ -26,7 +28,7 @@
     .page-number { padding: 8px 0; color: #66718a; font-size: 13px; text-align: center; }
   </style>
 </head>
-<body>
+<body data-pf-label="PF-004 · Studio Quotation + Terms · Blue">
   <div class="paper_width printform"
     data-papersize-width="750" data-papersize-height="1050"
     data-repeat-header="y" data-repeat-rowheader="y" data-repeat-footer-pagenum="y">
@@ -36,12 +38,11 @@
         <td></td>
         <td>
           <svg class="header-art" viewBox="0 0 720 96" xmlns="http://www.w3.org/2000/svg"
-            role="img" aria-label="Morning Studio">
+            role="img" aria-label="Northstar sample company quotation">
             <rect width="720" height="96" fill="#405cb6"/>
-            <path d="M43 18 68 42 43 78 18 42Z" fill="#fff"/>
-            <circle cx="43" cy="42" r="7" fill="#405cb6"/>
-            <text x="82" y="42" fill="#fff" font-family="Arial,sans-serif" font-size="22" font-weight="700">MORNING / STUDIO</text>
-            <text x="82" y="66" fill="#e0e5f7" font-family="Arial,sans-serif" font-size="13">Thoughtful spaces, carefully made</text>
+            <rect x="18" y="21" width="184" height="54" rx="8" fill="#fff"/>
+            <image x="27" y="26" width="165" height="44" href="assets/logo-northstar.svg" aria-label="Northstar sample logo"/>
+            <text x="220" y="66" fill="#e0e5f7" font-family="Arial,sans-serif" font-size="13">Thoughtful spaces, carefully made</text>
             <text x="690" y="55" fill="#fff" font-family="Arial,sans-serif" font-size="21" text-anchor="end">QUOTATION</text>
           </svg>
         </td>
@@ -66,8 +67,9 @@
           <table class="items-grid">
             <tr><td style="width:150px"></td><td style="width:inherit"></td><td style="width:110px"></td></tr>
             <tr>
-              <td class="head-cell">Service</td><td class="head-cell">Scope</td>
-              <td class="head-cell" align="right">Amount</td>
+              <td class="head-cell"><div class="cell-content">Service</div></td>
+              <td class="head-cell"><div class="cell-content">Scope</div></td>
+              <td class="head-cell" align="right"><div class="cell-content">Amount</div></td>
             </tr>
           </table>
         </td>
@@ -92,7 +94,8 @@
             <p>Work beyond the listed scope requires written approval and a separate estimate.</p>
             <p>This quote includes standard materials and local delivery and remains valid for 30 days.</p>
           </div>
-          <div class="signature">Accepted by: __________________________ &nbsp; Date: ______________</div>
+          <div class="signature">Accepted by: __________________________ &nbsp; Date: ______________
+            <img class="footer-logo" src="assets/footer-logo-1.svg" alt="Northstar sample footer logo"></div>
         </td>
         <td></td>
       </tr>
@@ -100,18 +103,20 @@
     <script>
       const services = [
         "Discovery & planning", "Space measurement", "Custom shelving",
-        "Lighting plan", "Material selection", "Installation support"
+        "Lighting plan", "Material selection", "Installation support",
+        "Furniture layout", "Electrical review", "Finish consultation",
+        "Delivery coordination", "Site preparation", "Project handoff"
       ];
       const target = document.getElementById("quote-items");
       let totalCents = 0;
 
-      for (let index = 0; index < 30; index += 1) {
+      for (let index = 0; index < 50; index += 1) {
         const amountCents = 18500 + index * 2375;
         totalCents += amountCents;
         const cells = [
           services[index % services.length],
           `Phase ${index + 1} · design and project service`,
-          `$${(amountCents / 100).toFixed(2)}`
+          `$${(amountCents / 100).toLocaleString("en-US", { minimumFractionDigits: 2 })}`
         ];
         const table = document.createElement("table");
         table.cellPadding = "0";

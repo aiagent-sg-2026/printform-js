@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" role="img" aria-label="Linen pouch fictional sample product illustration">
+  <title>Linen pouch fictional sample product illustration</title>
+  <rect width="200" height="200" rx="16" fill="#f0ebe6"/>
+  <ellipse cx="100" cy="170" rx="59" ry="8" fill="#323d36" opacity="0.08"/>
+  <g>
+    <path d="m66 65 68 0 17 82q1 19-22 20H71q-23-1-22-20Z" fill="#c6b8a2"/>
+    <path d="m64 65 2-16 68 0 2 16Z" fill="#ddd1bc"/>
+    <path d="M64 66h72M73 83l-8 65m62-65 8 65" fill="none" stroke="#a59379" stroke-width="2"/>
+    <path d="M67 59c-31-12-30 23-8 13m74-13c31-12 30 23 8 13" fill="none" stroke="#7e725f" stroke-width="3"/>
+    <rect x="82" y="111" width="36" height="24" rx="2" fill="#eee5d5"/>
+  </g>
+  <text x="100" y="191" text-anchor="middle" font-family="system-ui, sans-serif" font-size="6" letter-spacing="1.4" fill="#716f68">SAMPLE PRODUCT</text>
+</svg>

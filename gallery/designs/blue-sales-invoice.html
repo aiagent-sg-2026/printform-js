@@ -20,13 +20,19 @@
     .items-grid .item-cell { border-bottom: 1px solid #d8dee8; }
     .items-grid .alternate { background: #f1f3f6; }
     .items-grid .cell-content { padding: 5px 6px; }
+    .items-grid .head-cell .cell-content { padding: 5px 6px; }
+    .product-cell .cell-content { display: inline-flex; align-items: center; gap: 6px; height: 18px; white-space: nowrap; }
+    .product-cell img { width: 24px; height: 24px; flex: none; }
+    .footer-logo { display: inline-block; vertical-align: middle; width: 90px; height: 24px; margin-left: 8px; color: #1763b5; }
+    .info-qr { float: right; width: 68px; height: 68px; margin-left: 8px; }
+    .info-qr-caption { display: block; font-size: 10px; line-height: 12px; text-align: center; }
     .totals-grid td { padding: 5px 8px; font-size: 13px; }
     .grand-total td { border-top: 1px solid #aeb8c7; color: #1763b5; font-size: 16px; font-weight: 700; }
     .payment { margin-top: 12px; padding: 10px 12px; background: #f1f3f6; font-size: 13px; line-height: 19px; }
     .page-number { padding: 8px 0; color: #657187; font-size: 11px; text-align: center; }
   </style>
 </head>
-<body>
+<body data-pf-label="PF-001 · Northstar Sales Invoice · Blue">
   <div class="paper_width printform"
     data-papersize-width="750" data-papersize-height="1050"
     data-repeat-header="y" data-repeat-rowheader="y" data-repeat-footer-pagenum="y">
@@ -36,10 +42,9 @@
       <tr><td></td><td>
         <svg class="header-art" viewBox="0 0 720 112" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Northstar Supply">
           <rect width="720" height="112" fill="#1763b5"/>
-          <circle cx="48" cy="56" r="26" fill="#fff"/>
-          <path d="M48 34 54 50 70 56 54 62 48 78 42 62 26 56 42 50Z" fill="#1763b5"/>
-          <text x="88" y="51" fill="#fff" font-family="Arial, sans-serif" font-size="24" font-weight="700">NORTHSTAR SUPPLY</text>
-          <text x="88" y="75" fill="#e7edf5" font-family="Arial, sans-serif" font-size="13">Everyday equipment, delivered with care</text>
+          <rect x="18" y="29" width="184" height="54" rx="8" fill="#fff"/>
+          <image x="27" y="34" width="165" height="44" href="assets/logo-northstar.svg" aria-label="Northstar Supply sample logo"/>
+          <text x="220" y="51" fill="#e7edf5" font-family="Arial, sans-serif" font-size="13">Everyday equipment, delivered with care</text>
           <text x="690" y="68" fill="#fff" font-family="Arial, sans-serif" font-size="26" font-weight="700" text-anchor="end">SALES INVOICE</text>
         </svg>
       </td><td></td></tr>
@@ -53,7 +58,16 @@
           <tr><td style="width:50%"></td><td style="width:50%"></td></tr>
           <tr>
             <td><div class="info-box"><div class="info-label">BILL TO</div>Harbor &amp; Pine Studio<br>Attn: Morgan Lee<br>48 Cedar Street, Portland, OR 97204</div></td>
-            <td><div class="info-box"><div class="info-label">SHIP TO</div>Harbor &amp; Pine Studio — Receiving<br>1200 River Road<br>Portland, OR 97211</div></td>
+            <td>
+              <div class="info-box">
+                <span style="float:right">
+                  <img class="info-qr" src="assets/qr-paynow-sample.svg" alt="PayNow sample QR pattern, not a real QR code">
+                  <span class="info-qr-caption">Scan to pay (sample)</span>
+                </span>
+                <div class="info-label">SHIP TO</div>
+                Harbor &amp; Pine Studio — Receiving<br>1200 River Road<br>Portland, OR 97211
+              </div>
+            </td>
           </tr>
         </table>
         <table cellpadding="0" cellspacing="0" border="0" style="width:100%;table-layout:fixed;margin-top:12px">
@@ -96,16 +110,26 @@
           <tr><td></td><td>Tax (8%)</td><td id="invoice-tax" align="right">$0.00</td></tr>
           <tr class="grand-total"><td></td><td>Total due</td><td id="invoice-total" align="right">$0.00</td></tr>
         </table>
-        <div class="payment"><strong>Bank transfer:</strong> First Community Bank · Account 00481276<br><strong>Beneficiary:</strong> Northstar Supply Co. &nbsp; · &nbsp; Thank you for your business.</div>
+        <div class="payment">
+          <strong>Bank transfer:</strong> First Community Bank · Account 00481276<br>
+          <strong>Beneficiary:</strong> Northstar Supply Co. &nbsp; · &nbsp; Thank you for your business.
+          <img class="footer-logo" src="assets/footer-logo-1.svg" alt="Northstar sample company footer logo">
+        </div>
       </td><td></td></tr>
       <tr><td style="height:12px"></td></tr>
     </table>
     <script>
       const products = ["Recycled paper ream", "Desk organizer", "Cotton canvas tote", "LED task lamp", "Ceramic mug set", "Notebook bundle", "Steel water bottle", "Packing tape roll", "Wooden pencil set", "Archive storage box", "Wool felt pad", "Glass desk jar"];
+      const productIcons = [
+        "canvas-tote", "stoneware-cup", "linen-pouch", "desk-journal",
+        "steel-bottle", "wool-coaster", "glass-jar", "bamboo-pen",
+        "cork-mat", "storage-tin", "cotton-towel", "desk-tray",
+        "pencil-set", "tea-canister", "gift-box", "parcel-box"
+      ];
       const target = document.getElementById("invoice-items");
       const moneyOptions = { minimumFractionDigits: 2, maximumFractionDigits: 2 };
       let subtotalCents = 0;
-      for (let index = 0; index < 36; index += 1) {
+      for (let index = 0; index < 50; index += 1) {
         const number = index + 1;
         const quantity = index % 3 + 1;
         const priceCents = 1200 + index * 250;
@@ -117,7 +141,24 @@
         table.cellSpacing = "0";
         table.border = "0";
         table.className = "paper_width section-table prowitem";
-        table.innerHTML = `<tr><td style="width:15px"></td><td style="width:inherit"></td><td style="width:15px"></td></tr><tr><td></td><td><table cellpadding="0" cellspacing="0" border="0" class="items-grid"><tr><td style="width:48px"></td><td style="width:inherit"></td><td style="width:58px"></td><td style="width:92px"></td><td style="width:100px"></td></tr><tr>${cells.map((value, cell) => `<td class="item-cell${index % 2 ? " alternate" : ""}"${cell === 0 ? ' style="border-left:1px solid #d8dee8"' : ""}${cell > 1 ? ' align="right"' : ""}><div class="cell-content">${value}</div></td>`).join("")}</tr></table></td><td></td></tr>`;
+        table.innerHTML = `
+          <tr><td style="width:15px"></td><td style="width:inherit"></td><td style="width:15px"></td></tr>
+          <tr><td></td><td><table cellpadding="0" cellspacing="0" border="0" class="items-grid">
+            <tr><td style="width:48px"></td><td style="width:inherit"></td><td style="width:58px"></td>
+              <td style="width:92px"></td><td style="width:100px"></td></tr>
+            <tr>${cells.map((value, cell) => {
+              const icon = cell === 1
+                ? `<img src="assets/product-${productIcons[index % productIcons.length]}.svg" alt="${productIcons[index % productIcons.length]}">`
+                : "";
+              const productCell = cell === 1 ? " product-cell" : "";
+              const border = cell === 0 ? ' style="border-left:1px solid #d8dee8"' : "";
+              const alignment = cell > 1 ? ' align="right"' : "";
+              return `
+                <td class="item-cell${index % 2 ? " alternate" : ""}${productCell}"${border}${alignment}>
+                  <div class="cell-content">${icon}${value}</div>
+                </td>`;
+            }).join("")}</tr>
+          </table></td><td></td></tr>`;
         target.before(table);
       }
       target.remove();

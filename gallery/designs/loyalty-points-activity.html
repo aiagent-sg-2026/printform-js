@@ -4,6 +4,7 @@
     <meta charset="utf-8" />
     <title>Loyalty Points Statement</title>
     <link rel="stylesheet" href="shared/page.css" />
+    <link rel="stylesheet" href="shared/tight-tables.css" />
     <style>
       body {
         color: #3d3440;
@@ -42,6 +43,7 @@
         background: #b07bac;
         color: white;
         font-weight: bold;
+        border-bottom: 1px solid #eadfea;
       }
       .item-cell {
         border-bottom: 1px solid #eadfea;
@@ -61,7 +63,7 @@
       }
     </style>
   </head>
-  <body>
+  <body data-pf-label="PF-047 · Loyalty Points Statement · Mauve">
     <div
       class="paper_width printform"
       data-papersize-width="750"
@@ -79,14 +81,21 @@
         <tr>
           <td></td>
           <td>
-            <svg width="720" height="94" viewBox="0 0 720 94" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Example Rewards">
+            <svg
+              width="720"
+              height="94"
+              viewBox="0 0 720 94"
+              xmlns="http://www.w3.org/2000/svg"
+              role="img"
+              aria-label="Violet Loop Rewards"
+            >
               <rect width="720" height="94" fill="#B07BAC" />
-              <circle cx="48" cy="47" r="27" fill="white" />
-              <path d="m48 28 5 13 14 6-14 5-5 14-5-14-14-5 14-6z" fill="#B07BAC" />
-              <text x="91" y="42" fill="white" font-family="Arial,sans-serif" font-size="22" font-weight="700">
-                EXAMPLE REWARDS · MEMBER L-208441
+              <rect x="12" y="12" width="181" height="70" rx="8" fill="#fff" />
+              <image href="assets/logo-violet-loop.svg" x="20" y="25" width="165" height="44" aria-label="Violet Loop logo" />
+              <text x="205" y="42" fill="white" font-family="Arial,sans-serif" font-size="22" font-weight="700">
+                VIOLET LOOP · MEMBER L-208441
               </text>
-              <text x="91" y="69" fill="white" font-family="Arial,sans-serif" font-size="18">LOYALTY POINTS STATEMENT · SILVER TIER</text>
+              <text x="205" y="69" fill="white" font-family="Arial,sans-serif" font-size="18">LOYALTY POINTS STATEMENT · SILVER TIER</text>
             </svg>
           </td>
           <td></td>
@@ -108,15 +117,19 @@
               </tr>
               <tr>
                 <td>
-                  <div class="info-box">Member: Riley Example<br />Opening points: 2,400<br />Statement: 1 Mar–30 Sep 2026</div>
+                  Member: Riley Example<br />Opening points: <span id="opening-points"></span><br />Statement: 1 Mar–30 Sep 2026
                 </td>
                 <td>
-                  <div class="info-box">Member ID: L-208441<br />Tier: Silver · Reward eligible<br />Closing balance: 4,100 points</div>
+                  <div class="info-box">
+                    Member ID: L-208441<br />Tier: Silver · Reward eligible<br />
+                    Closing balance: <span id="closing-points"></span> points
+                  </div>
                 </td>
               </tr>
             </table>
             <div style="margin: 8px; padding: 9px; background: #f5eaf4; font-size: 13px">
-              EXPIRY REMINDER · 300 points expire on 31 December 2026 · Balance medallion: 4,100 points
+              EXPIRY REMINDER · <span id="expired-points"></span> points expired in the period ·
+              Balance medallion: <span id="balance-points"></span> points
             </div>
           </td>
           <td></td>
@@ -150,7 +163,14 @@
           <td></td>
           <td>
             <div style="padding: 8px; border-top: 2px solid #b07bac; font-size: 13px">
-              Closing points: 4,100 · 300 points expire soon. Redeem online or at any Example Market location.
+              <img
+                src="assets/footer-logo-3.svg"
+                width="82"
+                height="22"
+                alt="Violet Loop footer logo mark"
+                style="height:22px; vertical-align:middle; color:#b07bac; margin-right:8px"
+              />
+              Closing points: <span id="footer-points"></span> · Redeem online or at any Example Market location.
             </div>
           </td>
           <td></td>
@@ -160,19 +180,32 @@
         const columns = ["Date", "Transaction", "Location", "Earned", "Redeemed", "Expired", "Balance"];
         const widths = [80, 130, 120, 85, 90, 80, 130];
         const align = ["left", "left", "left", "right", "right", "right", "right"];
-        const rows = Array.from({ length: 20 }, (_, i) => [
-          `2026-${String(3 + (i % 7)).padStart(2, "0")}-${String((i % 27) + 1).padStart(2, "0")}`,
-          ["Purchase", "Bonus offer", "Reward use", "Tier bonus"][i % 4],
-          ["Web store", "Portland", "Salem", "Mobile"][i % 4],
-          i % 4 === 2 ? 0 : 120 + i * 15,
-          i % 4 === 2 ? 250 : 0,
-          0,
-          2400 + i * 85,
-        ]);
+        const openingPoints = 2400;
+        let balance = openingPoints;
+        const rows = Array.from({ length: 106 }, (_, i) => {
+          const earned = i % 4 === 2 ? 0 : 120 + ((i * 15) % 240);
+          const redeemed = i % 4 === 2 ? 150 + ((i * 10) % 200) : 0;
+          const expired = i % 19 === 0 ? 25 + ((i * 5) % 50) : 0;
+          balance += earned - redeemed - expired;
+          return [
+            `2026-${String(3 + (i % 7)).padStart(2, "0")}-${String((i % 27) + 1).padStart(2, "0")}`,
+            ["Purchase", "Bonus offer", "Reward use", "Tier bonus"][i % 4],
+            ["Web store", "Portland", "Salem", "Mobile"][i % 4],
+            earned,
+            redeemed,
+            expired,
+            balance,
+          ];
+        });
+        window.loyaltyRows = rows;
+        window.loyaltyOpeningPoints = openingPoints;
         const widthRow = widths.map((w) => `<td style="width:${w}px"></td>`).join("");
         document.getElementById("widths").innerHTML = widthRow;
         document.getElementById("headers").innerHTML = columns
-          .map((v, i) => `<td class="head-cell" align="${align[i]}"><div class="cell-content">${v}</div></td>`)
+          .map(
+            (v, i) =>
+              `<td class="head-cell" align="${align[i]}"><div class="cell-content" style="text-align:${align[i]}">${v}</div></td>`,
+          )
           .join("");
         rows.forEach((row, index) => {
           const table = document.createElement("table");
@@ -180,10 +213,42 @@
           table.cellSpacing = "0";
           table.border = "0";
           table.className = "paper_width section-table prowitem";
-          table.innerHTML = `<tr><td style="width:15px"></td><td style="width:inherit"></td><td style="width:15px"></td></tr><tr><td></td><td><table class="items-grid"><tr>${widthRow}</tr><tr>${row.map((v, i) => `<td class="item-cell${index % 2 ? " alternate" : ""}" align="${align[i]}"><div class="cell-content">${v}</div></td>`).join("")}</tr></table></td><td></td></tr>`;
+          table.innerHTML = `
+            <tr>
+              <td style="width:15px"></td><td style="width:inherit"></td><td style="width:15px"></td>
+            </tr>
+            <tr>
+              <td></td>
+              <td>
+                <table class="items-grid">
+                  <tr>${widthRow}</tr>
+                  <tr>
+                    ${row
+                      .map(
+                        (v, i) =>
+                          `<td class="item-cell${index % 2 ? " alternate" : ""}" align="${align[i]}">` +
+                          `<div class="cell-content">${v}</div></td>`,
+                      )
+                      .join("")}
+                  </tr>
+                </table>
+              </td>
+              <td></td>
+            </tr>
+          `;
           document.getElementById("rows").before(table);
         });
         document.getElementById("rows").remove();
+      </script>
+      <script>
+        const loyaltyRows = window.loyaltyRows;
+        const closingPoints = loyaltyRows[loyaltyRows.length - 1][6];
+        const expiredPoints = loyaltyRows.reduce((sum, row) => sum + row[5], 0);
+        document.getElementById("opening-points").textContent = window.loyaltyOpeningPoints.toLocaleString("en-US");
+        document.getElementById("closing-points").textContent = closingPoints.toLocaleString("en-US");
+        document.getElementById("balance-points").textContent = closingPoints.toLocaleString("en-US");
+        document.getElementById("footer-points").textContent = closingPoints.toLocaleString("en-US");
+        document.getElementById("expired-points").textContent = expiredPoints.toLocaleString("en-US");
       </script>
       <table class="paper_width section-table pfooter_pagenum">
         <tr>

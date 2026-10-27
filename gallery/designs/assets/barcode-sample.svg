@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 60" role="img" aria-label="Fictional sample barcode illustration">
+  <title>Fictional sample barcode illustration</title>
+  <rect width="240" height="60" fill="#fff"/>
+  <g fill="#111">
+    <rect x="12.00" y="5" width="3.82" height="36"/>
+    <rect x="17.73" y="5" width="1.91" height="36"/>
+    <rect x="25.38" y="5" width="3.82" height="36"/>
+    <rect x="31.12" y="5" width="1.91" height="36"/>
+    <rect x="36.85" y="5" width="5.73" height="36"/>
+    <rect x="44.50" y="5" width="1.91" height="36"/>
+    <rect x="50.23" y="5" width="3.82" height="36"/>
+    <rect x="59.79" y="5" width="1.91" height="36"/>
+    <rect x="63.61" y="5" width="3.82" height="36"/>
+    <rect x="69.35" y="5" width="5.73" height="36"/>
+    <rect x="76.99" y="5" width="3.82" height="36"/>
+    <rect x="84.64" y="5" width="1.91" height="36"/>
+    <rect x="88.46" y="5" width="3.82" height="36"/>
+    <rect x="94.19" y="5" width="5.73" height="36"/>
+    <rect x="103.75" y="5" width="1.91" height="36"/>
+    <rect x="107.58" y="5" width="1.91" height="36"/>
+    <rect x="115.22" y="5" width="3.82" height="36"/>
+    <rect x="120.96" y="5" width="3.82" height="36"/>
+    <rect x="126.69" y="5" width="3.82" height="36"/>
+    <rect x="134.34" y="5" width="1.91" height="36"/>
+    <rect x="141.98" y="5" width="1.91" height="36"/>
+    <rect x="145.81" y="5" width="5.73" height="36"/>
+    <rect x="153.45" y="5" width="3.82" height="36"/>
+    <rect x="159.19" y="5" width="3.82" height="36"/>
+    <rect x="168.74" y="5" width="1.91" height="36"/>
+    <rect x="172.57" y="5" width="3.82" height="36"/>
+    <rect x="178.30" y="5" width="1.91" height="36"/>
+    <rect x="184.04" y="5" width="5.73" height="36"/>
+    <rect x="191.68" y="5" width="3.82" height="36"/>
+    <rect x="197.42" y="5" width="5.73" height="36"/>
+    <rect x="205.06" y="5" width="1.91" height="36"/>
+    <rect x="210.80" y="5" width="3.82" height="36"/>
+    <rect x="216.53" y="5" width="5.73" height="36"/>
+    <rect x="224.18" y="5" width="3.82" height="36"/>
+  </g>
+  <text x="120" y="54" text-anchor="middle" font-family="system-ui, sans-serif" font-size="12" letter-spacing="2" fill="#111">4 006381 333931</text>
+</svg>

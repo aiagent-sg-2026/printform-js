@@ -2,7 +2,7 @@ export const translations = {
   en: {
     eyebrow: "DOCUMENT DESIGN LIBRARY", heading: "Forms made for print.",
     subheading: "Explore live, paginated business documents built with PrintForm.js.",
-    searchLabel: "Search designs", searchPlaceholder: "Search by name or tag", typeLabel: "Document type",
+    searchLabel: "Search designs", searchPlaceholder: "Search by ID, name or tag", typeLabel: "Document type",
     paperLabel: "Paper", all: "All", empty: "No designs match these filters.", openDesign: "Open design",
     pageOne: "page", pageMany: "pages", resultOne: "design", resultMany: "designs", typeInvoice: "Invoice", typePurchaseOrder: "Purchase Order",
     typeDeliveryNote: "Delivery Note", typeQuotation: "Quotation", typePackingList: "Packing List",
@@ -27,7 +27,7 @@ export const translations = {
   zh: {
     eyebrow: "打印文档设计库", heading: "为打印而设计的表单。",
     subheading: "探索由 PrintForm.js 实时分页的商务文档。", searchLabel: "搜索设计",
-    searchPlaceholder: "按名称或标签搜索", typeLabel: "文档类型", paperLabel: "纸张",
+    searchPlaceholder: "按编号、名称或标签搜索", typeLabel: "文档类型", paperLabel: "纸张",
     all: "全部", empty: "没有符合筛选条件的设计。", openDesign: "打开设计",
     pageOne: "页", pageMany: "页", resultOne: "个设计", resultMany: "个设计", typeInvoice: "销售发票", typePurchaseOrder: "采购订单",
     typeDeliveryNote: "送货单", typeQuotation: "报价单", typePackingList: "装箱单",

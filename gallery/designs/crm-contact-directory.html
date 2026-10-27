@@ -4,6 +4,7 @@
     <meta charset="utf-8" />
     <title>Business Contact List</title>
     <link rel="stylesheet" href="shared/page.css" />
+    <link rel="stylesheet" href="shared/tight-tables.css" />
     <style>
       body {
         color: #344036;
@@ -43,6 +44,7 @@
         background: #71816d;
         color: white;
         font-weight: bold;
+        border-bottom: 1px solid #dfe3dc;
       }
       .item-cell {
         border-bottom: 1px solid #dfe3dc;
@@ -62,7 +64,7 @@
       }
     </style>
   </head>
-  <body>
+  <body data-pf-label="PF-048 · Business Contact List · Sage green">
     <div
       class="paper_width printform"
       data-papersize-width="750"
@@ -80,13 +82,21 @@
         <tr>
           <td></td>
           <td>
-            <svg width="720" height="82" viewBox="0 0 720 82" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Fern Directory">
+            <svg
+              width="720"
+              height="82"
+              viewBox="0 0 720 82"
+              xmlns="http://www.w3.org/2000/svg"
+              role="img"
+              aria-label="Eucalyptus Business Directory"
+            >
               <rect width="720" height="82" fill="#71816D" />
-              <path d="M30 62Q35 24 68 20M34 50l23-19M38 42l-2-13M46 36l13 1" fill="none" stroke="white" stroke-width="4" />
-              <text x="88" y="39" fill="white" font-family="Arial,sans-serif" font-size="23" font-weight="700">
-                FERN BUSINESS DIRECTORY
+              <rect x="12" y="8" width="181" height="66" rx="8" fill="#fff" />
+              <image href="assets/logo-eucalyptus.svg" x="20" y="19" width="165" height="44" aria-label="Eucalyptus logo" />
+              <text x="205" y="39" fill="white" font-family="Arial,sans-serif" font-size="23" font-weight="700">
+                EUCALYPTUS BUSINESS DIRECTORY
               </text>
-              <text x="88" y="64" fill="white" font-family="Arial,sans-serif" font-size="16">NORTHWEST ACCOUNTS · ACTIVE CONTACTS</text>
+              <text x="205" y="64" fill="white" font-family="Arial,sans-serif" font-size="16">NORTHWEST ACCOUNTS · ACTIVE CONTACTS</text>
             </svg>
           </td>
           <td></td>
@@ -166,7 +176,7 @@
         const contacts = ["Morgan Lee", "Riley Chen", "Casey Park", "Jordan Reed", "Taylor Quinn"];
         const roles = ["Purchasing", "Operations", "Finance", "Director", "Account lead"];
         const owners = ["A. Chen", "M. Patel", "R. Kim"];
-        const rows = Array.from({ length: 30 }, (_, i) => [
+        const rows = Array.from({ length: 110 }, (_, i) => [
           companies[i % 5],
           contacts[i % 5],
           roles[i % 5],
@@ -177,7 +187,10 @@
         const widthRow = widths.map((w) => `<td style="width:${w}px"></td>`).join("");
         document.getElementById("widths").innerHTML = widthRow;
         document.getElementById("headers").innerHTML = columns
-          .map((v, i) => `<td class="head-cell" align="${align[i]}"><div class="cell-content">${v}</div></td>`)
+          .map(
+            (v, i) =>
+              `<td class="head-cell" align="${align[i]}"><div class="cell-content" style="text-align:${align[i]}">${v}</div></td>`,
+          )
           .join("");
         rows.forEach((row, index) => {
           const table = document.createElement("table");
@@ -185,7 +198,34 @@
           table.cellSpacing = "0";
           table.border = "0";
           table.className = "paper_width section-table prowitem";
-          table.innerHTML = `<tr><td style="width:15px"></td><td style="width:inherit"></td><td style="width:15px"></td></tr><tr><td></td><td><table class="items-grid"><tr>${widthRow}</tr><tr>${row.map((v, i) => `<td class="item-cell${index % 2 ? " alternate" : ""}" align="${align[i]}"><div class="cell-content">${v}</div></td>`).join("")}</tr></table></td><td></td></tr>`;
+          table.innerHTML = `
+            <tr>
+              <td style="width:15px"></td><td style="width:inherit"></td><td style="width:15px"></td>
+            </tr>
+            <tr>
+              <td></td>
+              <td>
+                <table class="items-grid">
+                  <tr>${widthRow}</tr>
+                  <tr>
+                    ${row
+                      .map((v, i) => {
+                        const icon =
+                          i === 3
+                            ? '<img src="assets/icon-phone.svg" width="16" height="16" alt="Phone" style="vertical-align:middle" /> '
+                            : i === 4
+                              ? '<img src="assets/icon-mail.svg" width="16" height="16" alt="Email" style="vertical-align:middle" /> '
+                              : "";
+                        return `<td class="item-cell${index % 2 ? " alternate" : ""}" align="${align[i]}">` +
+                          `<div class="cell-content">${icon}${v}</div></td>`;
+                      })
+                      .join("")}
+                  </tr>
+                </table>
+              </td>
+              <td></td>
+            </tr>
+          `;
           document.getElementById("rows").before(table);
         });
         document.getElementById("rows").remove();

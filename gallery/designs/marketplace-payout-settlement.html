@@ -4,6 +4,7 @@
     <meta charset="utf-8" />
     <title>Marketplace Settlement</title>
     <link rel="stylesheet" href="shared/page.css" />
+    <link rel="stylesheet" href="shared/tight-tables.css" />
     <style>
       body {
         color: #352c38;
@@ -76,7 +77,7 @@
       }
     </style>
   </head>
-  <body>
+  <body data-pf-label="PF-042 · Marketplace Settlement · Mauve">
     <div
       class="paper_width printform"
       data-papersize-width="750"
@@ -163,13 +164,13 @@
                 <td style="width: 125px"></td>
               </tr>
               <tr>
-                <td class="head-cell">Order Ref</td>
-                <td class="head-cell" align="right">Gross Sales</td>
-                <td class="head-cell" align="right">Refunds</td>
-                <td class="head-cell" align="right">Platform Fees</td>
-                <td class="head-cell" align="right">Shipping Adj.</td>
-                <td class="head-cell" align="right">Other Adj.</td>
-                <td class="head-cell" align="right">Net Payout</td>
+                <td class="head-cell"><div class="cell-content">Order Ref</div></td>
+                <td class="head-cell" align="right"><div class="cell-content">Gross Sales</div></td>
+                <td class="head-cell" align="right"><div class="cell-content">Refunds</div></td>
+                <td class="head-cell" align="right"><div class="cell-content">Platform Fees</div></td>
+                <td class="head-cell" align="right"><div class="cell-content">Shipping Adj.</div></td>
+                <td class="head-cell" align="right"><div class="cell-content">Other Adj.</div></td>
+                <td class="head-cell" align="right"><div class="cell-content">Net Payout</div></td>
               </tr>
             </table>
           </td>
@@ -210,12 +211,12 @@
         const target = document.getElementById("rows");
         const widthRow = widths.map((width) => `<td style="width:${width}px"></td>`).join("");
         let net = 0;
-        for (let index = 0; index < 24; index += 1) {
-          const gross = 14500 + index * 783;
-          const refund = index % 4 === 0 ? 1200 : 0;
+        for (let index = 0; index < 132; index += 1) {
+          const gross = 14500 + (index % 24) * 783 + Math.floor(index / 24) * 127;
+          const refund = index % 4 === 0 ? 1200 + (index % 3) * 175 : 0;
           const fee = Math.round(gross * 0.12);
           const shipping = index % 3 === 0 ? -350 : 125;
-          const other = index === 5 ? -500 : 0;
+          const other = index % 5 === 0 ? -500 : 0;
           const payout = gross - refund - fee + shipping + other;
           net += payout;
           const cells = [`HM-${80401 + index}`, money(gross), money(-refund), money(-fee), money(shipping), money(other), money(payout)];

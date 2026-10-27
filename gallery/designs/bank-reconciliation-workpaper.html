@@ -4,6 +4,7 @@
     <meta charset="utf-8" />
     <title>Bank Reconciliation</title>
     <link rel="stylesheet" href="shared/page.css" />
+    <link rel="stylesheet" href="shared/tight-tables.css" />
     <style>
       body {
         color: #333a41;
@@ -42,6 +43,7 @@
         background: #6c7a89;
         color: white;
         font-weight: bold;
+        border-bottom: 1px solid #dce0e3;
       }
       .item-cell {
         border-bottom: 1px solid #dce0e3;
@@ -61,7 +63,7 @@
       }
     </style>
   </head>
-  <body>
+  <body data-pf-label="PF-052 · Bank Reconciliation · Slate grey">
     <div
       class="paper_width printform"
       data-papersize-width="750"
@@ -107,7 +109,10 @@
               </tr>
               <tr>
                 <td>
-                  <div class="info-box"><b>BANK STATEMENT BALANCE</b><br />$42,180.00 · 31 October 2026<br />Example Community Bank</div>
+                  <div class="info-box">
+                    <b>BANK STATEMENT BALANCE</b><br />
+                    <span id="statement-balance"></span> · 31 October 2026<br />Example Community Bank
+                  </div>
                 </td>
                 <td>
                   <div class="info-box">
@@ -162,7 +167,7 @@
         const columns = ["Date", "Reference", "Description", "Bank Amount", "Book Amount", "Difference", "Status"];
         const widths = [80, 90, 145, 110, 110, 100, 85];
         const align = ["left", "left", "left", "right", "right", "right", "left"];
-        const rows = Array.from({ length: 28 }, (_, i) => {
+        const rows = Array.from({ length: 119 }, (_, i) => {
           const bank = i % 5 === 0 ? 0 : 125000 + i * 5200,
             book = i % 4 === 0 ? bank - 7600 : bank;
           return [
@@ -178,7 +183,10 @@
         const widthRow = widths.map((w) => `<td style="width:${w}px"></td>`).join("");
         document.getElementById("widths").innerHTML = widthRow;
         document.getElementById("headers").innerHTML = columns
-          .map((v, i) => `<td class="head-cell" align="${align[i]}"><div class="cell-content">${v}</div></td>`)
+          .map(
+            (v, i) =>
+              `<td class="head-cell" align="${align[i]}"><div class="cell-content" style="text-align:${align[i]}">${v}</div></td>`,
+          )
           .join("");
         const money = (n) =>
           `${n < 0 ? "−" : ""}$${(Math.abs(n) / 100).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
@@ -188,15 +196,38 @@
           table.cellSpacing = "0";
           table.border = "0";
           table.className = "paper_width section-table prowitem";
-          table.innerHTML = `<tr><td style="width:15px"></td><td style="width:inherit"></td><td style="width:15px"></td></tr><tr><td></td><td><table class="items-grid"><tr>${widthRow}</tr><tr>${row.map((v, i) => `<td class="item-cell${index % 2 ? " alternate" : ""}" align="${align[i]}"><div class="cell-content">${i >= 3 && i <= 5 ? money(v) : v}</div></td>`).join("")}</tr></table></td><td></td></tr>`;
+          table.innerHTML = `
+            <tr>
+              <td style="width:15px"></td><td style="width:inherit"></td><td style="width:15px"></td>
+            </tr>
+            <tr>
+              <td></td>
+              <td>
+                <table class="items-grid">
+                  <tr>${widthRow}</tr>
+                  <tr>
+                    ${row
+                      .map((v, i) => {
+                        const value = i >= 3 && i <= 5 ? money(v) : v;
+                        return `<td class="item-cell${index % 2 ? " alternate" : ""}" align="${align[i]}">` +
+                          `<div class="cell-content">${value}</div></td>`;
+                      })
+                      .join("")}
+                  </tr>
+                </table>
+              </td>
+              <td></td>
+            </tr>
+          `;
           document.getElementById("rows").before(table);
         });
         document.getElementById("rows").remove();
         // The ledger balance is derived so that both sides reconcile once the listed items are applied.
-        const statement = 4218000;
-        const ledger = statement + rows.reduce((s, r) => s + r[5], 0);
-        const bank = statement + rows.reduce((s, r) => s + r[3], 0);
-        const book = ledger + rows.reduce((s, r) => s + r[4], 0);
+        const statement = rows.reduce((s, r) => s + r[3], 0);
+        const ledger = rows.reduce((s, r) => s + r[4], 0);
+        const bank = statement;
+        const book = ledger + rows.reduce((s, r) => s + r[5], 0);
+        document.getElementById("statement-balance").textContent = money(statement);
         document.getElementById("ledger").textContent = money(ledger);
         document.getElementById("bank-adjusted").textContent = money(bank);
         document.getElementById("book-adjusted").textContent = money(book);

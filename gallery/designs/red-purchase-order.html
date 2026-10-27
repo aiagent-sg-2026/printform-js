@@ -20,13 +20,15 @@
     .item-cell { border-bottom: 1px solid #ded8d6; }
     .alternate { background: #f2f0ef; }
     .cell-content { padding: 4px; }
+    .items-grid .head-cell .cell-content { padding: 4px; }
+    .footer-logo { display: inline-block; vertical-align: middle; width: 90px; height: 24px; margin-left: 8px; color: #b3261e; }
     .totals-grid td { padding: 5px 8px; font-size: 13px; }
     .signature { display: table; width: 100%; margin-top: 8px; font-size: 13px; }
     .signature span { display: table-cell; width: 50%; padding: 8px; border-top: 1px solid #777; }
     .page-number { padding: 8px 0; font-size: 13px; text-align: center; }
   </style>
 </head>
-<body>
+<body data-pf-label="PF-002 · Redwood Purchase Order · Red">
   <div class="paper_width printform"
     data-papersize-width="750" data-papersize-height="971"
     data-repeat-header="y" data-repeat-rowheader="y" data-repeat-footer-pagenum="y">
@@ -36,11 +38,11 @@
         <td></td>
         <td>
           <svg class="header-art" viewBox="0 0 720 96" xmlns="http://www.w3.org/2000/svg"
-            role="img" aria-label="Redwood Procurement">
+            role="img" aria-label="Harbor sample company purchase order">
             <rect width="720" height="96" fill="#b3261e"/>
-            <path d="M28 22h38v52H28zM37 33h20M37 44h20M37 55h14" fill="none" stroke="white" stroke-width="4"/>
-            <text x="82" y="44" fill="white" font-family="Arial,sans-serif" font-size="22" font-weight="700">REDWOOD PROCUREMENT</text>
-            <text x="82" y="69" fill="#f4d8d5" font-family="Arial,sans-serif" font-size="13">PURCHASE ORDER</text>
+            <rect x="18" y="21" width="184" height="54" rx="8" fill="#fff"/>
+            <image x="27" y="26" width="165" height="44" href="assets/logo-harbor.svg" aria-label="Harbor sample logo"/>
+            <text x="220" y="69" fill="#f4d8d5" font-family="Arial,sans-serif" font-size="13">PURCHASE ORDER</text>
             <text x="690" y="58" fill="white" font-family="Arial,sans-serif" font-size="18" text-anchor="end">PO-48217</text>
           </svg>
         </td>
@@ -82,9 +84,12 @@
               <td style="width:52px"></td><td style="width:66px"></td><td style="width:86px"></td>
             </tr>
             <tr>
-              <td class="head-cell">No.</td><td class="head-cell">Item code</td><td class="head-cell">Description</td>
-              <td class="head-cell" align="right">Qty</td><td class="head-cell" align="right">Unit</td>
-              <td class="head-cell" align="right">Amount</td>
+              <td class="head-cell"><div class="cell-content">No.</div></td>
+              <td class="head-cell"><div class="cell-content">Item code</div></td>
+              <td class="head-cell"><div class="cell-content">Description</div></td>
+              <td class="head-cell" align="right"><div class="cell-content">Qty</div></td>
+              <td class="head-cell" align="right"><div class="cell-content">Unit</div></td>
+              <td class="head-cell" align="right"><div class="cell-content">Amount</div></td>
             </tr>
           </table>
         </td>
@@ -100,7 +105,10 @@
           <table class="totals-grid">
             <tr><td></td><td><b>Order total</b></td><td id="po-total" align="right">$0.00</td></tr>
           </table>
-          <div class="signature"><span>Approved by: ____________________</span><span>Date: ____________________</span></div>
+          <div class="signature">
+            <span>Approved by: ____________________<img class="footer-logo" src="assets/footer-logo-2.svg" alt="Eucalyptus sample footer logo"></span>
+            <span>Date: ____________________</span>
+          </div>
         </td>
         <td></td>
       </tr>
@@ -109,12 +117,14 @@
       const products = [
         "Recycled copy paper", "Steel shelf bracket", "Workshop apron", "LED bench lamp",
         "Storage tote", "Utility knife set", "Cotton gloves", "Measuring tape",
-        "Wood glue bottle", "Safety glasses"
+        "Wood glue bottle", "Safety glasses", "Packing labels", "Work gloves"
       ];
       const target = document.getElementById("po-items");
       let totalCents = 0;
 
-      for (let index = 0; index < 40; index += 1) {
+      const moneyOptions = { minimumFractionDigits: 2, maximumFractionDigits: 2 };
+      const formatMoney = (cents) => `$${(cents / 100).toLocaleString("en-US", moneyOptions)}`;
+      for (let index = 0; index < 57; index += 1) {
         const quantity = index % 5 + 1;
         const unitCents = 425 + index * 37;
         const amountCents = quantity * unitCents;
@@ -124,8 +134,8 @@
           `MM-${String(310 + index).padStart(4, "0")}`,
           products[index % products.length],
           quantity,
-          `$${(unitCents / 100).toFixed(2)}`,
-          `$${(amountCents / 100).toFixed(2)}`
+          formatMoney(unitCents),
+          formatMoney(amountCents)
         ];
         const table = document.createElement("table");
         table.cellPadding = "0";

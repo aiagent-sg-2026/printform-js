@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" role="img" aria-label="Stoneware cup fictional sample product illustration">
+  <title>Stoneware cup fictional sample product illustration</title>
+  <rect width="200" height="200" rx="16" fill="#edece8"/>
+  <ellipse cx="100" cy="170" rx="59" ry="8" fill="#323d36" opacity="0.08"/>
+  <g>
+    <path d="M134 72h12c29 0 28 48-2 48h-12" fill="none" stroke="#947f71" stroke-width="13"/>
+    <path d="M56 65h82l-6 77c-2 24-68 24-70 0Z" fill="#b8a08b"/>
+    <ellipse cx="97" cy="65" rx="41" ry="10" fill="#d3c0aa"/>
+    <ellipse cx="97" cy="65" rx="32" ry="6" fill="#6b5547"/>
+    <path d="M70 88v45" stroke="#cdb8a1" stroke-width="5" stroke-linecap="round"/>
+  </g>
+  <text x="100" y="191" text-anchor="middle" font-family="system-ui, sans-serif" font-size="6" letter-spacing="1.4" fill="#716f68">SAMPLE PRODUCT</text>
+</svg>

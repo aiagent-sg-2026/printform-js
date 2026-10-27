@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" role="img" aria-label="Desk journal fictional sample product illustration">
+  <title>Desk journal fictional sample product illustration</title>
+  <rect width="200" height="200" rx="16" fill="#e9ecea"/>
+  <ellipse cx="100" cy="170" rx="59" ry="8" fill="#323d36" opacity="0.08"/>
+  <g>
+    <rect x="56" y="39" width="94" height="127" rx="7" fill="#c5bca9"/>
+    <rect x="49" y="34" width="95" height="127" rx="7" fill="#526c68"/>
+    <path d="M61 35v125" stroke="#3e5351" stroke-width="3"/>
+    <rect x="78" y="63" width="48" height="29" rx="2" fill="#e6ddc9"/>
+    <path d="M87 73h30m-30 8h22" stroke="#8f9b8b" stroke-width="2"/>
+    <path d="M130 34v127" stroke="#b78962" stroke-width="5"/>
+    <path d="M78 161v15l7-5 7 5v-15" fill="#c5a371"/>
+  </g>
+  <text x="100" y="191" text-anchor="middle" font-family="system-ui, sans-serif" font-size="6" letter-spacing="1.4" fill="#716f68">SAMPLE PRODUCT</text>
+</svg>

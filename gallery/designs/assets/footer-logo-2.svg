@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 32" role="img" aria-label="EUCALYPTUS fictional sample footer logo">
+  <title>EUCALYPTUS fictional sample footer logo</title>
+  <g fill="currentColor">
+    <path d="M5 24C3 10 13 4 28 5c1 16-9 23-23 19Z"/><path d="M7 26 23 10" fill="none" stroke="white" stroke-width="1.5"/>
+    <g font-family="system-ui, sans-serif">
+      <text x="38" y="16" font-size="8" font-weight="700">EUCALYPTUS</text>
+      <text x="38" y="25" font-size="5" letter-spacing="1">SAMPLE COMPANY</text>
+    </g>
+  </g>
+</svg>

@@ -18,12 +18,15 @@
     .item-cell { border-bottom: 1px solid #777; }
     .alternate { background: #f1f1f1; }
     .cell-content { padding: 4px; }
+    .items-grid .head-cell { padding: 0; }
+    .items-grid .head-cell .cell-content { padding: 4px; }
+    .items-grid .head-cell[align="right"] { text-align: right; }
     .totals-grid td { padding: 5px; border-top: 2px solid #111; font-size: 16px; font-weight: 700; }
     .signature { padding: 5px 8px; margin-top: 5px; border-top: 1px solid #111; font-size: 13px; }
     .page-number { padding: 8px 0; font-size: 13px; text-align: center; }
   </style>
 </head>
-<body>
+<body data-pf-label="PF-006 · Mono Credit Receipt · Monochrome">
   <div class="paper_width printform"
     data-papersize-width="750" data-papersize-height="600"
     data-repeat-header="y" data-repeat-rowheader="y" data-repeat-footer-pagenum="y">
@@ -66,8 +69,8 @@
               <td style="width:58px"></td><td style="width:105px"></td>
             </tr>
             <tr>
-              <td class="head-cell">No.</td><td class="head-cell">Credited item</td>
-              <td class="head-cell" align="right">Qty</td><td class="head-cell" align="right">Credit</td>
+              <td class="head-cell"><div class="cell-content">No.</div></td><td class="head-cell"><div class="cell-content">Credited item</div></td>
+              <td class="head-cell" align="right"><div class="cell-content">Qty</div></td><td class="head-cell" align="right"><div class="cell-content">Credit</div></td>
             </tr>
           </table>
         </td>

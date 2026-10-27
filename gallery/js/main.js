@@ -45,9 +45,12 @@ function render() {
     const labels = document.createElement("div");
     const heading = document.createElement("h2");
     heading.textContent = design.title[currentLanguage()];
+    const idLine = document.createElement("p");
+    idLine.className = "card-id";
+    idLine.textContent = design.no;
     const details = document.createElement("p");
-    details.textContent = `${design.paper} · ${pageCount(design.pages)}`;
-    labels.append(heading, details);
+    details.textContent = `${design.style[currentLanguage()]} · ${design.paper} · ${pageCount(design.pages)}`;
+    labels.append(idLine, heading, details);
     const type = document.createElement("span");
     type.className = "type-tag";
     type.textContent = typeName(design.type);

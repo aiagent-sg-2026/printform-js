@@ -24,18 +24,24 @@
     .page-number { padding: 5px; font-size: 13px; text-align: center; }
   </style>
 </head>
-<body>
+<body data-pf-label="PF-010 · Cinder Service Work Order · Orange">
   <div class="paper_width printform" data-papersize-width="750" data-papersize-height="600"
     data-repeat-header="y" data-repeat-rowheader="y" data-repeat-footer-pagenum="y">
     <table cellpadding="0" cellspacing="0" border="0" class="paper_width section-table pheader">
       <tr><td style="width:15px"></td><td style="width:inherit"></td><td style="width:15px"></td></tr>
-      <tr><td></td><td><svg class="header-art" viewBox="0 0 720 76" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Cinder Service">
-        <rect width="720" height="76" fill="#c2410c"/>
-        <path d="M27 20h42v37H27zM36 29h24M36 39h24M36 49h16" fill="none" stroke="white" stroke-width="3"/>
-        <text x="82" y="35" fill="white" font-family="Arial,sans-serif" font-size="21" font-weight="700">CINDER SERVICE CO.</text>
-        <text x="82" y="57" fill="#ffedd5" font-family="Arial,sans-serif" font-size="13">FIELD OPERATIONS</text>
-        <text x="690" y="49" fill="white" font-family="Arial,sans-serif" font-size="23" font-weight="700" text-anchor="end">WORK ORDER</text>
-      </svg></td><td></td></tr>
+      <tr>
+        <td></td>
+        <td>
+          <svg class="header-art" viewBox="0 0 720 76" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Ember Workshop Goods work order">
+            <rect width="720" height="76" fill="#c2410c"/>
+            <rect x="18" y="12" width="184" height="52" rx="8" fill="#fff"/>
+            <image href="assets/logo-ember.svg" x="27" y="16" width="165" height="44" role="img" aria-label="Ember Workshop Goods logo"/>
+            <text x="220" y="47" fill="#ffedd5" font-family="Arial,sans-serif" font-size="13">FIELD OPERATIONS</text>
+            <text x="690" y="49" fill="white" font-family="Arial,sans-serif" font-size="23" font-weight="700" text-anchor="end">WORK ORDER</text>
+          </svg>
+        </td>
+        <td></td>
+      </tr>
     </table>
     <table cellpadding="0" cellspacing="0" border="0" class="paper_width section-table pdocinfo">
       <tr><td style="width:15px"></td><td style="width:inherit"></td><td style="width:15px"></td></tr>
@@ -48,20 +54,30 @@
       <tr><td style="width:15px"></td><td style="width:inherit"></td><td style="width:15px"></td></tr>
       <tr><td></td><td><table class="items-grid">
         <tr><td style="width:inherit"></td><td style="width:140px"></td><td style="width:85px"></td><td style="width:110px"></td></tr>
-        <tr><td class="head-cell">Task</td><td class="head-cell" align="right">Parts</td><td class="head-cell" align="right">Hours</td><td class="head-cell">Status</td></tr>
+        <tr>
+          <td class="head-cell"><div class="cell-content">Task</div></td>
+          <td class="head-cell" align="right"><div class="cell-content">Parts</div></td>
+          <td class="head-cell" align="right"><div class="cell-content">Hours</div></td>
+          <td class="head-cell"><div class="cell-content">Status</div></td>
+        </tr>
       </table></td><td></td></tr>
     </table>
     <div id="work-items"></div>
     <table cellpadding="0" cellspacing="0" border="0" class="paper_width section-table pfooter">
       <tr><td style="width:15px"></td><td style="width:inherit"></td><td style="width:15px"></td></tr>
-      <tr><td></td><td><div class="signoff">Customer sign-off: __________________________________ &nbsp; Date: ______________</div></td><td></td></tr>
+      <tr><td></td><td><div class="signoff"><img src="assets/signature-sample.svg" alt="Sample signature" width="120" />Customer sign-off: __________________________________ &nbsp; Date: ______________</div></td><td></td></tr>
     </table>
     <script>
       const tasks = ["Inspect control panel", "Replace intake filter", "Test safety switch", "Tighten drive belt", "Clean vent housing", "Check pressure gauge", "Lubricate bearings", "Verify power connection", "Record final readings"];
       const parts = ["Filter kit", "Fuse set", "Seal pack", "None", "Belt set", "Connector"];
       const target = document.getElementById("work-items");
-      for (let index = 0; index < 9; index += 1) {
-        const cells = [tasks[index], parts[index % parts.length], (index % 3 + 1).toFixed(1), index < 8 ? "Complete" : "Checked"];
+      for (let index = 0; index < 16; index += 1) {
+        const cells = [
+          tasks[index % tasks.length],
+          parts[index % parts.length],
+          (index % 3 + 1).toFixed(1),
+          index < tasks.length - 1 ? "Complete" : "Checked",
+        ];
         const table = document.createElement("table");
         table.cellPadding = "0";
         table.cellSpacing = "0";

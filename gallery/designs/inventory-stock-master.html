@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Stock Master List</title>
     <link rel="stylesheet" href="shared/page.css" />
+    <link rel="stylesheet" href="shared/tight-tables.css" />
     <style>
       body {
         color: #26343a;
@@ -34,6 +35,13 @@
         color: white;
         font-weight: 700;
       }
+      .head {
+        box-sizing: border-box;
+        border-bottom: 1px solid #d9e0e3;
+      }
+      .cell {
+        box-sizing: border-box;
+      }
       .cell {
         border-bottom: 1px solid #d9e0e3;
       }
@@ -60,7 +68,7 @@
       }
     </style>
   </head>
-  <body>
+  <body data-pf-label="PF-023 · Stock Master List · Blue grey">
     <div
       class="paper_width printform"
       data-papersize-width="750"
@@ -137,15 +145,7 @@
             <table class="items">
               <tbody id="stock-header">
                 <tr id="stock-header-widths"></tr>
-                <tr>
-                  <td class="head"><div class="cell-content">SKU</div></td>
-                  <td class="head"><div class="cell-content">Description</div></td>
-                  <td class="head"><div class="cell-content">Category</div></td>
-                  <td class="head"><div class="cell-content">UOM</div></td>
-                  <td class="head" align="right"><div class="cell-content">On Hand</div></td>
-                  <td class="head" align="right"><div class="cell-content">Reserved</div></td>
-                  <td class="head" align="right"><div class="cell-content">Available</div></td>
-                </tr>
+                <tr id="stock-header-cells"></tr>
               </tbody>
             </table>
           </td>
@@ -155,13 +155,32 @@
       <div id="stock-rows"></div>
       <script>
         document.getElementById("stock-header-widths").outerHTML = widthRow();
-        const stockRows = Array.from({ length: 45 }, (_, index) => {
-          const category = ["Hardware", "Lighting", "Fixtures"][Math.floor(index / 15)];
-          const onHand = 18 + index * 2;
+        const columnLabels = ["SKU", "Description", "Category", "UOM", "On Hand", "Reserved", "Available"];
+        document.getElementById("stock-header-cells").outerHTML = `<tr>${columnLabels
+          .map((label, cell) => `<td class="head"${cell >= 4 ? ' align="right"' : ""}><div class="cell-content">${label}</div></td>`)
+          .join("")}</tr>`;
+        const itemNames = [
+          "Hex Bolt M8",
+          "LED Panel 24W",
+          "Steel Bracket",
+          "Copper Wire 2mm",
+          "Safety Gloves",
+          "Water Valve 1in",
+          "Cable Tray 1m",
+          "Door Hinge",
+          "Work Light 12V",
+          "Pipe Clamp 20mm",
+          "Fuse 10A",
+          "Anchor Bolt M10",
+        ];
+        const productAssets = ["canvas-tote", "stoneware-cup", "linen-pouch", "desk-journal", "steel-bottle", "wool-coaster", "glass-jar", "bamboo-pen", "cork-mat", "storage-tin", "cotton-towel", "desk-tray", "pencil-set", "tea-canister", "gift-box", "parcel-box"];
+        const stockRows = Array.from({ length: 124 }, (_, index) => {
+          const category = ["Hardware", "Lighting", "Fixtures"][Math.floor(index / 15) % 3];
+          const onHand = 18 + ((index * 7) % 83);
           const reserved = index % 5;
           return [
             `HB-${String(index + 101).padStart(3, "0")}`,
-            `Sample ${category} ${index + 1}`,
+            itemNames[index % itemNames.length],
             category,
             "EA",
             onHand,
@@ -174,12 +193,12 @@
           if (index % 15 === 0) {
             const divider = document.createElement("table");
             divider.className = "paper_width section-table prowitem";
-            divider.innerHTML = `<tr><td style="width:15px"></td><td style="width:inherit"></td><td style="width:15px"></td></tr><tr><td></td><td><table class="items"><tbody>${widthRow()}<tr><td colspan="7"><div class="category">${row[2]} · ${index + 1}–${index + 15}</div></td></tr></tbody></table></td><td></td></tr>`;
+            divider.innerHTML = `<tr><td style="width:15px"></td><td style="width:inherit"></td><td style="width:15px"></td></tr><tr><td></td><td><table class="items"><tbody>${widthRow()}<tr><td colspan="7"><div class="category">${row[2]} · ${index + 1}–${Math.min(index + 15, stockRows.length)}</div></td></tr></tbody></table></td><td></td></tr>`;
             target.before(divider);
           }
           const table = document.createElement("table");
           table.className = "paper_width section-table prowitem";
-          table.innerHTML = `<tr><td style="width:15px"></td><td style="width:inherit"></td><td style="width:15px"></td></tr><tr><td></td><td><table class="items"><tbody>${widthRow()}<tr>${row.map((value, cell) => `<td class="cell${index % 2 ? " alt" : ""}"${cell >= 4 ? ' align="right"' : ""}><div class="cell-content">${value}</div></td>`).join("")}</tr></tbody></table></td><td></td></tr>`;
+          table.innerHTML = `<tr><td style="width:15px"></td><td style="width:inherit"></td><td style="width:15px"></td></tr><tr><td></td><td><table class="items"><tbody>${widthRow()}<tr>${row.map((value, cell) => `<td class="cell${index % 2 ? " alt" : ""}"${cell >= 4 ? ' align="right"' : ""}><div class="cell-content">${cell === 1 ? `<img src="assets/product-${productAssets[index % productAssets.length]}.svg" width="24" height="24" alt="${row[1]} sample product" style="vertical-align:middle;margin-right:6px;" />` : ""}${value}</div></td>`).join("")}</tr></tbody></table></td><td></td></tr>`;
           target.before(table);
         });
         target.remove();

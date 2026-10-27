@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Gift Receipt</title>
     <link rel="stylesheet" href="shared/page.css" />
+    <link rel="stylesheet" href="shared/tight-tables.css" />
     <style>
       body {
         color: #3b3038;
@@ -61,6 +62,24 @@
       .cell-content {
         padding: 3px 5px;
       }
+      .product-cell-content {
+        position: relative;
+        padding-left: 35px;
+      }
+      .product-header .cell-content {
+        padding-left: 35px;
+      }
+      .items-grid td.product-item-cell {
+        overflow: visible;
+      }
+      .product-cell-content img {
+        position: absolute;
+        left: 5px;
+        top: 50%;
+        width: 24px;
+        height: 24px;
+        transform: translateY(-50%);
+      }
       .policy {
         margin-top: 8px;
         padding: 8px;
@@ -75,7 +94,7 @@
       }
     </style>
   </head>
-  <body>
+  <body data-pf-label="PF-035 · Gift Receipt · Mauve">
     <div
       class="paper_width printform"
       data-papersize-width="750"
@@ -93,16 +112,21 @@
         <tr>
           <td></td>
           <td>
-            <svg width="720" height="76" viewBox="0 0 720 76" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Mauve gift receipt">
+            <svg
+              width="720"
+              height="76"
+              viewBox="0 0 720 76"
+              xmlns="http://www.w3.org/2000/svg"
+              role="img"
+              aria-label="Rose Bloom gift receipt"
+            >
               <rect width="720" height="76" fill="#BE789A" />
-              <path
-                d="M27 22h42v34H27zM48 22v34M27 34h42M48 22c-18 0-15-18-5-14 8 3 5 14 5 14zm0 0c18 0 15-18 5-14-8 3-5 14-5 14z"
-                fill="none"
-                stroke="white"
-                stroke-width="2"
-              />
-              <text x="84" y="36" fill="white" font-family="Arial,sans-serif" font-size="22" font-weight="700">PETAL &amp; THREAD</text>
-              <text x="84" y="59" fill="#fff0f6" font-family="Arial,sans-serif" font-size="13">A GIFT FOR YOU</text>
+              <rect x="16" y="10" width="160" height="50" rx="8" fill="#fff" />
+              <image href="assets/logo-rose-bloom.svg" x="21" y="15" width="150" height="40" />
+              <text x="190" y="36" fill="white" font-family="Arial,sans-serif" font-size="22" font-weight="700">
+                ROSE BLOOM
+              </text>
+              <text x="190" y="59" fill="#fff0f6" font-family="Arial,sans-serif" font-size="13">A GIFT FOR YOU</text>
               <text x="690" y="49" fill="white" font-family="Arial,sans-serif" font-size="22" font-weight="700" text-anchor="end">
                 GIFT RECEIPT
               </text>
@@ -161,10 +185,10 @@
                 <td style="width: 80px"></td>
               </tr>
               <tr>
-                <td class="head-cell">Item Code</td>
-                <td class="head-cell">Gift Item</td>
-                <td class="head-cell">Variant</td>
-                <td class="head-cell" align="right">Quantity</td>
+                <td class="head-cell"><div class="cell-content">Item Code</div></td>
+                <td class="head-cell product-header"><div class="cell-content">Gift Item</div></td>
+                <td class="head-cell"><div class="cell-content">Variant</div></td>
+                <td class="head-cell" align="right"><div class="cell-content">Qty</div></td>
               </tr>
             </table>
           </td>
@@ -185,7 +209,9 @@
               <strong>EXCHANGE POLICY</strong><br />Items may be exchanged with this receipt and original tags within 30 days. Final-sale
               items excluded. No prices or purchaser details are shown.
             </div>
-            <div style="padding: 6px; text-align: center; font-family: monospace; font-size: 13px">|| |||| | ||| |||| | · GR-26072</div>
+            <div style="padding: 6px; text-align: center; font-family: monospace; font-size: 13px">
+              <img src="assets/barcode-sample.svg" alt="Sample barcode, not scannable" height="36" />
+            </div>
           </td>
           <td></td>
         </tr>
@@ -198,11 +224,57 @@
           ["PT-445", "Tea set", "Blue / 2-piece", 1],
           ["PT-452", "Candle pair", "Amber / Set", 1],
         ];
+        const productAssets = [
+          "canvas-tote",
+          "stoneware-cup",
+          "linen-pouch",
+          "desk-journal",
+          "steel-bottle",
+          "wool-coaster",
+          "glass-jar",
+          "bamboo-pen",
+          "cork-mat",
+          "storage-tin",
+          "cotton-towel",
+          "desk-tray",
+          "pencil-set",
+          "tea-canister",
+          "gift-box",
+          "parcel-box",
+        ];
         const target = document.getElementById("rows");
         rows.forEach((values, index) => {
           const table = document.createElement("table");
           table.className = "paper_width section-table prowitem";
-          table.innerHTML = `<tr><td style="width:15px"></td><td style="width:inherit"></td><td style="width:15px"></td></tr><tr><td></td><td><table class="items-grid"><tr><td style="width:105px"></td><td style="width:inherit"></td><td style="width:120px"></td><td style="width:80px"></td></tr><tr>${values.map((value) => `<td class="item-cell${index % 2 ? " alternate" : ""}"><div class="cell-content">${value}</div></td>`).join("")}</tr></table></td><td></td></tr>`;
+          table.innerHTML = `
+            <tr><td style="width:15px"></td><td style="width:inherit"></td><td style="width:15px"></td></tr>
+            <tr>
+              <td></td>
+              <td>
+                <table class="items-grid">
+                  <tr>
+                    <td style="width:105px"></td><td style="width:inherit"></td>
+                    <td style="width:120px"></td><td style="width:80px"></td>
+                  </tr>
+                  <tr>${values
+                    .map((value, cell) => {
+                      const product = productAssets[index % productAssets.length];
+                      const content = cell === 1
+                        ? `<img src="assets/product-${product}.svg" width="24" height="24"
+                          alt="Sample product illustration" />${value}`
+                        : value;
+                      const className = cell === 1 ? "cell-content product-cell-content" : "cell-content";
+                      const alignment = cell === 3 ? ' align="right"' : "";
+                      const productClass = cell === 1 ? " product-item-cell" : "";
+                      return `<td class="item-cell${index % 2 ? " alternate" : ""}${productClass}"${alignment}>
+                        <div class="${className}">${content}</div>
+                      </td>`;
+                    })
+                    .join("")}</tr>
+                </table>
+              </td>
+              <td></td>
+            </tr>`;
           target.before(table);
         });
         target.remove();

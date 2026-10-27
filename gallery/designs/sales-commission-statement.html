@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Commission Statement</title>
     <link rel="stylesheet" href="shared/page.css" />
+    <link rel="stylesheet" href="shared/tight-tables.css" />
     <style>
       body {
         color: #393b24;
@@ -40,6 +41,13 @@
         color: #5e5814;
         font-weight: 700;
       }
+      .head {
+        box-sizing: border-box;
+        border-bottom: 1px solid #dcdcc9;
+      }
+      .cell {
+        box-sizing: border-box;
+      }
       .cell {
         border-bottom: 1px solid #dcdcc9;
       }
@@ -62,7 +70,7 @@
       }
     </style>
   </head>
-  <body>
+  <body data-pf-label="PF-022 · Commission Statement · Olive gold">
     <div
       class="paper_width printform"
       data-papersize-width="750"
@@ -80,15 +88,13 @@
         <tr>
           <td></td>
           <td>
-            <svg width="720" height="92" viewBox="0 0 720 92" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Citron Sales">
+            <svg width="720" height="92" viewBox="0 0 720 92" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Gold Crest Commission Statement">
               <rect width="720" height="92" fill="#f7f6eb" />
               <rect width="13" height="92" fill="#827717" />
-              <path d="M39 27h35v35H39zM47 45l9 9 16-20" fill="none" stroke="#827717" stroke-width="4" />
-              <text x="91" y="43" fill="#393b24" font-family="Arial,sans-serif" font-size="22" font-weight="700">CITRON SALES GROUP</text>
-              <text x="91" y="67" fill="#666744" font-family="Arial,sans-serif" font-size="14">COMMISSION STATEMENT · OCT 2026</text>
-              <text x="690" y="47" fill="#827717" font-family="Arial,sans-serif" font-size="18" text-anchor="end" font-weight="700">
-                CS-2026-10-18
-              </text>
+              <rect x="24" y="12" width="204" height="68" rx="8" fill="#fff" />
+              <image x="30" y="22" width="180" height="48" href="assets/logo-gold-crest.svg" />
+              <text x="690" y="47" fill="#827717" font-family="Arial,sans-serif" font-size="18" text-anchor="end" font-weight="700">CS-2026-10-18</text>
+              <text x="690" y="67" fill="#666744" font-family="Arial,sans-serif" font-size="13" text-anchor="end">COMMISSION STATEMENT · OCT 2026</text>
             </svg>
           </td>
           <td></td>
@@ -133,12 +139,12 @@
           <td>
             <table class="items">
               <tr>
-                <td class="head"><div class="cell-content">Sale Date</div></td>
+                <td class="head"><div class="cell-content">Date</div></td>
                 <td class="head"><div class="cell-content">Invoice</div></td>
                 <td class="head"><div class="cell-content">Customer</div></td>
                 <td class="head" align="right"><div class="cell-content">Eligible Sales</div></td>
                 <td class="head" align="right"><div class="cell-content">Rate</div></td>
-                <td class="head" align="right"><div class="cell-content">Adjustment</div></td>
+                <td class="head" align="right"><div class="cell-content">Adj.</div></td>
                 <td class="head" align="right"><div class="cell-content">Commission</div></td>
               </tr>
             </table>
@@ -169,13 +175,14 @@
         const widthRow = () =>
           `<tr>${widths.map((width) => `<td style="width:${width === "inherit" ? "inherit" : `${width}px`}"></td>`).join("")}</tr>`;
         document.querySelector(".prowheader .items").insertAdjacentHTML("afterbegin", widthRow());
-        const commissionRows = Array.from({ length: 34 }, (_, index) => {
+        const commissionRows = Array.from({ length: 128 }, (_, index) => {
           const sales = 420 + index * 17;
           const adjustment = index % 6 === 0 ? -8 : 0;
+          const month = "Oct";
           return [
-            `${String((index % 28) + 1).padStart(2, "0")} Oct`,
+            `${String((index % 28) + 1).padStart(2, "0")} ${month}`,
             `SI-${10510 + index}`,
-            `Client ${String(index + 1).padStart(2, "0")}`,
+            `Client ${String((index % 24) + 1).padStart(2, "0")}`,
             sales,
             "5%",
             adjustment,

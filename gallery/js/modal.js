@@ -70,8 +70,8 @@ export function createModal(dialog, manifest) {
     frameContentHeight = 0;
     frameStage.style.height = "0px";
     returnFocus = trigger;
-    title.textContent = design.title[currentLanguage()];
-    meta.textContent = `${typeName(design.type)} · ${design.paper} · ${pageCount(design.pages)}`;
+    title.textContent = `${design.no} · ${design.title[currentLanguage()]}`;
+    meta.textContent = `${typeName(design.type)} · ${design.style[currentLanguage()]} · ${design.paper} · ${pageCount(design.pages)}`;
     frame.src = new URL(`../${design.file}`, import.meta.url).href;
     open.href = new URL(`../${design.file}`, import.meta.url).href;
     open.textContent = text("openDesign");
@@ -106,8 +106,8 @@ export function createModal(dialog, manifest) {
     if (dialog.open && returnFocus?.dataset.designId) {
       const design = manifest.find((item) => item.id === returnFocus.dataset.designId);
       if (design) {
-        title.textContent = design.title[currentLanguage()];
-        meta.textContent = `${typeName(design.type)} · ${design.paper} · ${pageCount(design.pages)}`;
+        title.textContent = `${design.no} · ${design.title[currentLanguage()]}`;
+        meta.textContent = `${typeName(design.type)} · ${design.style[currentLanguage()]} · ${design.paper} · ${pageCount(design.pages)}`;
         open.textContent = text("openDesign");
         if (!studio.hidden) studio.textContent = text("openStudio");
       }
