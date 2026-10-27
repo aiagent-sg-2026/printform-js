@@ -35,6 +35,7 @@ describe("gallery PWA", () => {
     fs.rmSync(site, { recursive: true, force: true });
     for (const item of data) expect(files).toContain(item.file);
     expect(files).toContain("../dist/printform.js");
+    for (const module of ["categories", "filter-state", "filter-controls"]) expect(files).toContain(`js/${module}.js`);
     expect(files.some((file) => file.startsWith("designs/shared/"))).toBe(true);
     expect(files.some((file) => file.startsWith("designs/assets/"))).toBe(true);
     expect(files.some((file) => file.startsWith("thumbs/"))).toBe(false);

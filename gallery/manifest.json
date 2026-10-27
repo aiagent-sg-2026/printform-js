@@ -1247,5 +1247,33 @@
     "thumb": "thumbs/bank-reconciliation-workpaper.png",
     "width": 750,
     "height": 1050
+  },
+  {
+    "id": "sanyo-green-sales-quotation",
+    "no": "PF-053",
+    "style": {
+      "en": "Green",
+      "zh": "绿色"
+    },
+    "title": {
+      "en": "SANYO Singapore Sales Quotation",
+      "zh": "SANYO 新加坡销售报价单"
+    },
+    "type": "Quotation",
+    "paper": "A4",
+    "pages": 1,
+    "tags": [
+      "sales",
+      "quotation",
+      "green",
+      "sanyo",
+      "equipment",
+      "spare-parts",
+      "sample"
+    ],
+    "file": "designs/sanyo-green-sales-quotation.html",
+    "thumb": "thumbs/sanyo-green-sales-quotation.png",
+    "width": 746,
+    "height": 1075
   }
 ]

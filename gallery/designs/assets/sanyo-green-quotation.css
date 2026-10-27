@@ -1,0 +1,49 @@
+body { color: #26332e; font-family: Arial, "Helvetica Neue", sans-serif; }
+* { box-sizing: border-box; }
+.paper_width { width: 745.7007874px; }
+.pheader, .pdocinfo, .prowheader, .prowitem, .pfooter, .pfooter_pagenum { padding-left: 15px; padding-right: 15px; }
+h1, h2, h3, p { margin: 0; }
+.brand { border-top: 7px solid #165b43; padding: 20px 0 17px; display: flex; justify-content: space-between; align-items: flex-start; }
+.eyebrow { color: #587566; font-size: 10px; font-weight: 700; letter-spacing: 1.4px; }
+h1 { color: #165b43; font-size: 23px; letter-spacing: -.4px; margin: 7px 0 8px; }
+.brand p { color: #617068; font-size: 12px; line-height: 18px; }
+.sample-badge { border: 1px solid #165b43; color: #165b43; background: #eff5f0; font-size: 11px; font-weight: bold; padding: 6px 10px; letter-spacing: 1px; }
+.title-row { display: flex; justify-content: space-between; align-items: center; padding: 16px 0 20px; border-top: 1px solid #cddbd2; }
+h2 { font-size: 34px; font-weight: 600; letter-spacing: -1px; margin-top: 7px; color: #165b43; }
+.title-row .eyebrow { font-size: 9px; letter-spacing: .8px; }
+.quote-meta { margin: 0; display: grid; grid-template-columns: 70px 140px; gap: 6px 5px; font-size: 12px; line-height: 16px; }
+.quote-meta dt { color: #617068; } .quote-meta dd { margin: 0; font-weight: bold; text-align: right; }
+.parties { display: grid; grid-template-columns: 1fr 1fr; background: #eff5f0; border-top: 1px solid #d8e4dc; border-bottom: 1px solid #d8e4dc; }
+.parties > div { padding: 14px 16px; } .parties > div + div { border-left: 1px solid #d8e4dc; }
+h3 { color: #165b43; font-size: 10px; letter-spacing: 1px; margin-bottom: 9px; }
+.parties strong { font-size: 13px; } .parties p { margin-top: 6px; font-size: 12px; line-height: 18px; }
+.intro { font-size: 11px; color: #617068; padding: 16px 0 12px; }
+.item-grid { display: grid; grid-template-columns: 34px 1fr 44px 48px 92px 100px; font-size: 12px; line-height: 18px; }
+.item-grid > div { padding: 11px 7px; min-width: 0; overflow-wrap: anywhere; }
+.column-head { background: #165b43; color: #fff; font-weight: 700; font-size: 11px; }
+.column-head > div { padding-top: 9px; padding-bottom: 9px; }
+.item-row { border-bottom: 1px solid #d8e4dc; } .prowitem:nth-of-type(even) .item-row { background: #f7f9f7; }
+.model { display: block; color: #165b43; font-size: 11px; letter-spacing: .3px; margin-bottom: 2px; }
+.num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.summary { display: grid; grid-template-columns: 1fr 290px; gap: 28px; padding: 20px 0; }
+.scope p { font-size: 11px; line-height: 17px; } .muted { color: #617068; margin-top: 9px; }
+.totals > div { display: flex; justify-content: space-between; font-size: 12px; padding: 8px 12px; }
+.totals strong { font-variant-numeric: tabular-nums; }
+.totals .grand-total { margin-top: 6px; padding: 13px 12px; color: #fff; background: #165b43; align-items: center; }
+.grand-total strong { font-size: 22px; letter-spacing: -.5px; } .grand-total small { display: block; font-size: 9px; margin-top: 5px; color: #dbece2; }
+.terms { border-top: 1px solid #cddbd2; padding-top: 14px; }
+.terms > div { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; }
+.terms p { font-size: 11px; line-height: 17px; } .terms strong { color: #334e3f; }
+.acceptance { margin-top: 17px; padding: 12px 14px 14px; border: 1px solid #d8e4dc; }
+.acceptance h3 { margin-bottom: 5px; } .acceptance p { color: #617068; font-size: 10px; }
+.acceptance > div { display: flex; justify-content: space-between; margin-top: 19px; font-size: 10px; color: #617068; }
+.page-foot { border-top: 1px solid #165b43; padding: 10px 0 5px; display: flex; justify-content: space-between; gap: 12px; align-items: center; }
+.page-foot > span:first-child { max-width: 615px; font-size: 8px; letter-spacing: .1px; color: #617068; }
+.pagination { white-space: nowrap; color: #165b43; font-size: 10px; } .pagination b { font-weight: normal; }
+/* Compact first-page rhythm leaves the complete commercial summary on one A4. */
+.brand { padding-top: 13px; padding-bottom: 12px; }
+.title-row { padding-top: 12px; padding-bottom: 14px; }
+.parties > div { padding-top: 11px; padding-bottom: 11px; }
+.item-row > div { padding-top: 7px; padding-bottom: 7px; }
+.summary { padding-top: 14px; padding-bottom: 14px; }
+.acceptance { margin-top: 12px; }
