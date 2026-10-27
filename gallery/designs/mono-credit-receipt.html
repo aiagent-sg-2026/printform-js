@@ -29,7 +29,7 @@
 </head>
 <body data-pf-label="PF-006 · Mono Credit Receipt · Monochrome">
   <div class="paper_width printform"
-    data-papersize-width="750" data-papersize-height="600"
+    data-papersize-width="750" data-papersize-height="530"
     data-repeat-header="y" data-repeat-rowheader="y" data-repeat-footer-pagenum="y">
     <table cellpadding="0" cellspacing="0" border="0" class="paper_width section-table pheader">
       <tr><td style="width:15px"></td><td style="width:inherit"></td><td style="width:15px"></td></tr>
@@ -100,7 +100,7 @@
       const target = document.getElementById("credit-items");
       let totalCents = 0;
 
-      for (let index = 0; index < 8; index += 1) {
+      for (let index = 0; index < 5; index += 1) {
         const quantity = index % 3 + 1;
         const amountCents = 675 + index * 425;
         totalCents += amountCents;

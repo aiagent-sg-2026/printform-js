@@ -69,7 +69,7 @@
     "file": "designs/delivery-note.html",
     "thumb": "thumbs/delivery-note.png",
     "width": 750,
-    "height": 600
+    "height": 530
   },
   {
     "id": "terms-quotation",
@@ -142,7 +142,7 @@
     "file": "designs/mono-credit-receipt.html",
     "thumb": "thumbs/mono-credit-receipt.png",
     "width": 750,
-    "height": 600
+    "height": 530
   },
   {
     "id": "violet-pro-invoice",
@@ -238,7 +238,7 @@
     "file": "designs/orange-work-order.html",
     "thumb": "thumbs/orange-work-order.png",
     "width": 750,
-    "height": 600
+    "height": 530
   },
   {
     "id": "navy-timesheet",
@@ -478,7 +478,7 @@
     "file": "designs/customer-order-confirmation.html",
     "thumb": "thumbs/customer-order-confirmation.png",
     "width": 750,
-    "height": 600
+    "height": 530
   },
   {
     "id": "sales-return-rma",
@@ -718,7 +718,7 @@
     "file": "designs/cash-collection-receipt.html",
     "thumb": "thumbs/cash-collection-receipt.png",
     "width": 750,
-    "height": 600
+    "height": 530
   },
   {
     "id": "accounts-payment-voucher",
@@ -766,7 +766,7 @@
     "file": "designs/official-payment-receipt.html",
     "thumb": "thumbs/official-payment-receipt.png",
     "width": 750,
-    "height": 600
+    "height": 530
   },
   {
     "id": "customer-refund-slip",
@@ -790,7 +790,7 @@
     "file": "designs/customer-refund-slip.html",
     "thumb": "thumbs/customer-refund-slip.png",
     "width": 750,
-    "height": 600
+    "height": 530
   },
   {
     "id": "thermal-pos-receipt",
@@ -814,7 +814,7 @@
     "file": "designs/thermal-pos-receipt.html",
     "thumb": "thumbs/thermal-pos-receipt.png",
     "width": 750,
-    "height": 600
+    "height": 530
   },
   {
     "id": "retail-gift-receipt",
@@ -838,7 +838,7 @@
     "file": "designs/retail-gift-receipt.html",
     "thumb": "thumbs/retail-gift-receipt.png",
     "width": 750,
-    "height": 600
+    "height": 530
   },
   {
     "id": "pos-shift-closing",
@@ -934,7 +934,7 @@
     "file": "designs/parcel-shipping-waybill.html",
     "thumb": "thumbs/parcel-shipping-waybill.png",
     "width": 750,
-    "height": 600
+    "height": 530
   },
   {
     "id": "prepaid-return-label",
@@ -958,7 +958,7 @@
     "file": "designs/prepaid-return-label.html",
     "thumb": "thumbs/prepaid-return-label.png",
     "width": 750,
-    "height": 600
+    "height": 530
   },
   {
     "id": "warehouse-order-pick-list",
@@ -1030,7 +1030,7 @@
     "file": "designs/crm-customer-profile.html",
     "thumb": "thumbs/crm-customer-profile.png",
     "width": 750,
-    "height": 600
+    "height": 530
   },
   {
     "id": "crm-opportunity-sheet",
@@ -1174,7 +1174,7 @@
     "file": "designs/employee-monthly-payslip.html",
     "thumb": "thumbs/employee-monthly-payslip.png",
     "width": 750,
-    "height": 600
+    "height": 530
   },
   {
     "id": "customer-credit-note",

@@ -97,7 +97,7 @@
     <div
       class="paper_width printform"
       data-papersize-width="750"
-      data-papersize-height="600"
+      data-papersize-height="530"
       data-repeat-header="y"
       data-repeat-rowheader="y"
       data-repeat-footer-pagenum="y"
@@ -210,7 +210,7 @@
         const target = document.getElementById("confirmation-rows");
         let cents = 0;
         const fmt = (value) => `$${(value / 100).toFixed(2)}`;
-        for (let index = 0; index < 11; index += 1) {
+        for (let index = 0; index < 7; index += 1) {
           const qty = (index % 2) + 1;
           const unit = 1800 + index * 350;
           const amount = qty * unit;
