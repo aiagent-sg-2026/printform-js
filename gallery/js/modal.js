@@ -108,7 +108,9 @@ export function createModal(dialog, manifest) {
     frameContentHeight = 0;
     frameStage.style.height = "0px";
     frame.removeAttribute("src");
-    returnFocus?.focus();
+    const currentCard = [...document.querySelectorAll(".gallery-card")].find((card) => card.dataset.designId === returnFocus?.dataset.designId);
+    const target = returnFocus?.isConnected ? returnFocus : currentCard || document.querySelector("#search");
+    target?.focus();
   });
   dialog.addEventListener("keydown", (event) => {
     if (event.key !== "Tab") return;

@@ -1,6 +1,9 @@
-export function filterDesigns(designs, { type = "all", paper = "all", query = "" } = {}) {
+import { categoryOf } from "./categories.js";
+
+export function filterDesigns(designs, { category = "all", type = "all", paper = "all", query = "" } = {}) {
   const needle = query.trim().toLocaleLowerCase();
   return designs.filter((design) => {
+    if (category !== "all" && categoryOf(design) !== category) return false;
     if (type !== "all" && design.type !== type) return false;
     if (paper !== "all" && design.paper !== paper) return false;
     if (!needle) return true;

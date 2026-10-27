@@ -33,10 +33,13 @@
       <p data-i18n="subheading">Explore live, paginated business documents built with PrintForm.js.</p>
     </section>
     <section class="controls" aria-label="Gallery filters">
-      <label class="search"><span data-i18n="searchLabel">Search designs</span><input id="search" type="search" data-i18n-placeholder="searchPlaceholder" placeholder="Search by name or tag"></label>
-      <div class="filter-group"><span data-i18n="typeLabel">Document type</span><div id="type-filters" class="chips" role="group" aria-label="Document type"></div></div>
-      <div class="filter-group"><span data-i18n="paperLabel">Paper</span><div id="paper-filters" class="chips" role="group" aria-label="Paper size"></div></div>
+      <div class="filter-group category-group"><span id="category-label" data-i18n="categoryLabel">Business category</span><div id="category-filters" class="chips" role="group" aria-labelledby="category-label"></div></div>
+      <label class="search"><span data-i18n="searchLabel">Search designs</span><input id="search" type="search" disabled data-i18n-placeholder="searchPlaceholder" placeholder="Search by name or tag"></label>
+      <label class="filter-group"><span data-i18n="typeLabel">Document type</span><select id="type-filter" disabled></select></label>
+      <label class="filter-group"><span data-i18n="paperLabel">Paper</span><select id="paper-filter" disabled></select></label>
+      <div class="filter-summary"><span id="active-filters"></span><button id="clear-filters" class="button secondary" type="button" data-i18n="clearFilters" disabled>Clear filters</button></div>
     </section>
+    <div id="load-status" class="load-status" role="status"><span data-i18n="loading">Loading designs…</span> <button id="retry-load" class="button secondary" type="button" data-i18n="retry" hidden>Retry</button></div>
     <p id="result-count" class="result-count" aria-live="polite"></p>
     <section id="gallery-grid" class="gallery-grid" aria-label="Print form designs"></section>
     <p id="empty-state" class="empty-state" hidden data-i18n="empty">No designs match these filters.</p>

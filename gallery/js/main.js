@@ -1,34 +1,29 @@
 import { loadManifest } from "./manifest-loader.js";
-import { filterDesigns, uniqueValues } from "./filter.js";
+import { filterDesigns } from "./filter.js";
+import { normalizeFilters, readFilters, filterURL } from "./filter-state.js";
+import { createFilters } from "./filter-controls.js";
 import { createModal } from "./modal.js";
 import { currentLanguage, pageCount, setLanguage, text, typeName } from "./i18n.js";
 import "./pwa.js";
 
-const manifest = await loadManifest();
 const grid = document.querySelector("#gallery-grid");
 const search = document.querySelector("#search");
 const empty = document.querySelector("#empty-state");
 const count = document.querySelector("#result-count");
-const modal = createModal(document.querySelector("#design-modal"), manifest);
-const filters = { type: "all", paper: "all", query: "" };
+const status = document.querySelector("#load-status");
+const retry = document.querySelector("#retry-load");
+let manifest, modal, syncControls, filters, loadState = "loading", editingQuery = false;
 
-function buildChips(container, key, values, label) {
-  const choices = ["all", ...values];
-  container.replaceChildren(...choices.map((value) => {
-    const button = document.createElement("button");
-    button.type = "button";
-    button.dataset.filterValue = value;
-    button.textContent = value === "all" ? text("all") : label(value);
-    button.classList.toggle("selected", filters[key] === value);
-    button.setAttribute("aria-pressed", String(filters[key] === value));
-    button.addEventListener("click", () => { filters[key] = value; render(); });
-    return button;
-  }));
+function update(patch, historyMode = "pushState") {
+  filters = normalizeFilters(manifest, { ...filters, ...patch });
+  const url = filterURL(location.href, filters);
+  if (url.href !== location.href) history[historyMode](null, "", url);
+  render();
 }
 
 function render() {
-  buildChips(document.querySelector("#type-filters"), "type", uniqueValues(manifest, "type"), typeName);
-  buildChips(document.querySelector("#paper-filters"), "paper", uniqueValues(manifest, "paper"), (value) => value);
+  syncControls(filters);
+  if (search.value !== filters.query) search.value = filters.query;
   const designs = filterDesigns(manifest, filters);
   grid.replaceChildren(...designs.map((design) => {
     const card = document.createElement("button");
@@ -62,12 +57,52 @@ function render() {
   }));
   empty.hidden = designs.length !== 0;
   const noun = designs.length === 1 ? text("resultOne") : text("resultMany");
-  count.textContent = `${designs.length} ${noun}`;
+  count.textContent = `${designs.length}/${manifest.length} ${noun}`;
 }
 
-search.addEventListener("input", () => { filters.query = search.value; render(); });
+function showLoadState() {
+  status.hidden = loadState === "ready";
+  status.querySelector("span").textContent = text(loadState === "error" ? "loadError" : "loading");
+  retry.hidden = loadState !== "error";
+  grid.setAttribute("aria-busy", String(loadState === "loading"));
+  document.querySelectorAll(".controls input, .controls select, #clear-filters").forEach((control) => { control.disabled = loadState !== "ready"; });
+}
+async function start() {
+  const restoreFocus = document.activeElement === retry;
+  loadState = "loading";
+  showLoadState();
+  try {
+    manifest = await loadManifest();
+    filters = readFilters(manifest, location.search);
+    modal = createModal(document.querySelector("#design-modal"), manifest);
+    syncControls = createFilters(manifest, (patch) => { editingQuery = false; update(patch); });
+    loadState = "ready";
+    showLoadState();
+    update({}, "replaceState");
+    if (restoreFocus) search.focus();
+  } catch {
+    loadState = "error";
+    showLoadState();
+  }
+}
+search.addEventListener("input", () => {
+  update({ query: search.value }, editingQuery ? "replaceState" : "pushState");
+  editingQuery = true;
+});
+search.addEventListener("blur", () => { editingQuery = false; });
+retry.addEventListener("click", start);
+window.addEventListener("popstate", () => {
+  if (loadState !== "ready") return;
+  editingQuery = false;
+  filters = readFilters(manifest, location.search);
+  update({}, "replaceState");
+});
 document.querySelectorAll("[data-language]").forEach((button) => {
-  button.addEventListener("click", () => { setLanguage(button.dataset.language); render(); });
+  button.addEventListener("click", () => {
+    setLanguage(button.dataset.language);
+    showLoadState();
+    if (loadState === "ready") render();
+  });
 });
 setLanguage(localStorage.getItem("printform_lang") || "en");
-render();
+start();

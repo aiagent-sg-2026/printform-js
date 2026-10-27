@@ -79,3 +79,13 @@ dialog::backdrop { background: #111827a8; }
  @media (prefers-reduced-motion: reduce) { *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; transition-duration: .01ms !important; } .topbar { transition: none; } }
  @media (prefers-color-scheme: dark) { .update-banner { background: #1f65db; } }
  .update-banner:not([hidden]) ~ .scroll-top { bottom: calc(88px + env(safe-area-inset-bottom, 0px)); }
+
+.category-group, .filter-summary { flex-basis: 100%; }
+.filter-group select { min-height: 44px; max-width: 100%; border: 1px solid #dfe3ea; border-radius: 9px; padding: 0 32px 0 12px; background: #fff; color: #172033; font: inherit; font-weight: 400; }
+.filter-summary { display: flex; align-items: center; justify-content: space-between; gap: 12px; font-size: 12px; color: #59657a; }
+#active-filters { overflow-wrap: anywhere; min-width: 0; }
+#clear-filters, #retry-load { background: transparent; color: inherit; font-family: inherit; cursor: pointer; flex-shrink: 0; }
+#clear-filters:disabled { opacity: .5; cursor: default; }
+.load-status { padding: 20px 0; }
+@media (max-width: 480px) { .search, .search input { width: 100%; } .filter-group:not(.category-group) { flex: 1; min-width: 0; } .filter-summary { align-items: start; } }
+@media (prefers-color-scheme: dark) { .filter-group, .search, .filter-summary { color: #b7c2d7; } .filter-group select { color: #e8edf7; background: #191f2a; border-color: #424b5d; } }
