@@ -14,7 +14,7 @@ describe("business categories", () => {
     expect(new Set(numbers).size).toBe(numbers.length);
     expect(numbers.length).toBe(manifest.length);
     expect(manifest.every((design) => categoryOf(design))).toBe(true);
-    expect(categories.map(({ id }) => filterDesigns(manifest, { category: id }).length)).toEqual([18, 7, 10, 12, 8, 5, 4]);
+    expect(categories.map(({ id }) => filterDesigns(manifest, { category: id }).length)).toEqual([18, 8, 10, 12, 8, 5, 4]);
     expect(categoryOf(manifest.find(({ no }) => no === "PF-010"))).toBe("hr-administration");
   });
   it("combines category, exact type, paper and both-language search", () => {

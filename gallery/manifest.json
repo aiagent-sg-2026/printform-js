@@ -1403,5 +1403,13 @@
     "type": "Purchase Order", "paper": "A4", "pages": 2,
     "tags": ["purchasing", "enterprise", "editable", "JSON", "barcode", "multi-page", "fictional", "sample", "offline"],
     "file": "designs/meridian-enterprise-purchase-order.html", "thumb": "thumbs/meridian-enterprise-purchase-order.png", "width": 794, "height": 1123
+  },
+  {
+    "id": "aster-three-way-match-review-pack", "no": "PF-065",
+    "style": { "en": "Midnight / copper", "zh": "午夜蓝 / 铜色" },
+    "title": { "en": "Aster Three-Way Match Review Pack", "zh": "Aster 三单匹配复核资料包" },
+    "type": "Procurement Review", "paper": "A4", "pages": 8,
+    "tags": ["purchasing", "reconciliation", "landscape", "integer-cents", "bilingual", "editable", "JSON", "multi-page", "fictional", "sample", "offline"],
+    "file": "designs/aster-three-way-match-review-pack.html", "thumb": "thumbs/aster-three-way-match-review-pack.png", "width": 1123, "height": 794
   }
 ]
