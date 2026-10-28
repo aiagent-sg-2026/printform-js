@@ -25,7 +25,7 @@ for (const [name, width, height] of [["desktop", 1365, 900], ["short", 1365, 480
     const page = await context.newPage();
     try {
       await page.goto("/gallery/index.html");
-      await expect(page.locator(".gallery-card")).toHaveCount(63);
+      await expect(page.locator(".gallery-card")).toHaveCount(64);
       await page.locator("#search").fill("PF-062");
       await page.locator(".gallery-card").scrollIntoViewIfNeeded();
       const position = await page.evaluate(() => scrollY);

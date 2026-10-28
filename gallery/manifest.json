@@ -1395,5 +1395,13 @@
     "type": "Invoice", "paper": "A4", "pages": 1,
     "tags": ["sales", "school", "bilingual", "Chinese", "English", "中英双语", "plum", "rose", "A5", "multi-page", "fictional", "sample", "offline"],
     "file": "designs/bilingual-academy-invoice.html", "thumb": "thumbs/bilingual-academy-invoice.png", "width": 794, "height": 1123
+  },
+  {
+    "id": "meridian-enterprise-purchase-order", "no": "PF-064",
+    "style": { "en": "Blue / gray", "zh": "蓝色 / 灰色" },
+    "title": { "en": "Meridian Enterprise Purchase Order", "zh": "Meridian 企业采购订单" },
+    "type": "Purchase Order", "paper": "A4", "pages": 2,
+    "tags": ["purchasing", "enterprise", "editable", "JSON", "barcode", "multi-page", "fictional", "sample", "offline"],
+    "file": "designs/meridian-enterprise-purchase-order.html", "thumb": "thumbs/meridian-enterprise-purchase-order.png", "width": 794, "height": 1123
   }
 ]

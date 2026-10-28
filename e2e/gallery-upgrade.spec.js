@@ -9,7 +9,7 @@ test.afterAll(async () => { await server?.close(); });
 test.beforeEach(() => server.switchBuild("a"));
 async function ready(page, url) {
   await page.goto(url || server.url);
-  await expect(page.locator("#result-count")).toContainText("/63");
+  await expect(page.locator("#result-count")).toContainText("/64");
   await page.evaluate(() => navigator.serviceWorker.ready);
   await page.reload();
   await expect(page.locator("#running-version")).toHaveText("aaaaaaaaaaaa");
@@ -65,7 +65,7 @@ test("real A to B waiting worker, safe manual activation, immutable old tab and 
   await expect(page.locator("#running-version")).toHaveText("bbbbbbbbbbbb");
   await expect(page.locator(".gallery-card")).toHaveCount(1);
   await page.locator("#clear-filters").click();
-  await expect(page.locator(".gallery-card .card-id").first()).toHaveText("PF-063");
+  await expect(page.locator(".gallery-card .card-id").first()).toHaveText("PF-064");
   await context.setOffline(false);
   // Chromium may report navigator.onLine=true after an offline cached reload,
   // so no new online event is guaranteed. The real manual retry must work too.
@@ -87,7 +87,7 @@ test("legacy Update now message remains a working user-driven migration path", a
 test("unsupported worker browser keeps a usable catalogue and truthful state", async ({ page }) => {
   await page.addInitScript(() => Object.defineProperty(Navigator.prototype, "serviceWorker", { get: () => undefined, configurable: true }));
   await page.goto(server.url);
-  await expect(page.locator(".gallery-card")).toHaveCount(63);
+  await expect(page.locator(".gallery-card")).toHaveCount(64);
   await expect(page.locator("#update-state")).toHaveText("Updates are not supported in this browser");
   await page.locator("#check-update").click();
   await expect(page.locator("#update-state")).toHaveText("Updates are not supported in this browser");
@@ -102,7 +102,7 @@ for (const corrupt of [false, true]) test(`failed ${corrupt ? "integrity" : "dow
   await expect(page.locator("#update-state")).toContainText("Update failed", { timeout: 35000 });
   await expect(page.locator("#running-version")).toHaveText("aaaaaaaaaaaa");
   await page.reload();
-  await expect(page.locator(".gallery-card")).toHaveCount(63);
+  await expect(page.locator(".gallery-card")).toHaveCount(64);
   expect(await page.evaluate(() => localStorage.getItem("synthetic-user-data"))).toBe("preserve");
   server.switchBuild("b");
   await page.locator("#check-update").click();

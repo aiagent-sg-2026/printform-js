@@ -1,5 +1,5 @@
 import { test, expect } from "@playwright/test";
-const catalogueCount = 63;
+const catalogueCount = 64;
 const category = (page, id) => page.locator(`#category-filters [data-filter-value="${id}"]`);
 test.use({ serviceWorkers: "block" });
 
@@ -15,7 +15,7 @@ test("categories combine with compact filters, keep focus and restore history", 
   await page.keyboard.press("Tab");
   await page.keyboard.press("Enter");
   await expect(category(page, "sales")).toBeFocused();
-  await expect(page.locator("#result-count")).toHaveText("18/63 designs");
+  await expect(page.locator("#result-count")).toHaveText("18/64 designs");
   await page.locator("#type-filter").selectOption("Quotation");
   await expect(page.locator(".gallery-card")).toHaveCount(3);
   await page.locator("#paper-filter").selectOption("A4");
@@ -35,7 +35,7 @@ test("categories combine with compact filters, keep focus and restore history", 
   await page.locator("#type-filter").selectOption("Quotation");
   await category(page, "purchasing").click();
   await expect(page.locator("#type-filter")).toHaveValue("all");
-  await expect(page.locator(".gallery-card")).toHaveCount(6);
+  await expect(page.locator(".gallery-card")).toHaveCount(7);
 });
 
 test("URL state is safe, reloadable and bilingual", async ({ page }) => {
@@ -138,7 +138,7 @@ test.describe("offline category navigation", () => {
     await page.reload();
     await expect(page.locator(".gallery-card")).toHaveCount(catalogueCount);
     await category(page, "hr-administration").click();
-    await expect(page.locator("#result-count")).toHaveText("4/63 designs");
+    await expect(page.locator("#result-count")).toHaveText("4/64 designs");
     await page.locator("#type-filter").selectOption("Work Order");
     await expect(page.locator(".gallery-card")).toHaveCount(1);
     await category(page, "sales").click();
