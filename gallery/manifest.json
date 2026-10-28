@@ -1333,5 +1333,19 @@
     "thumb": "thumbs/demobank-fourpage-statement.png",
     "width": 794,
     "height": 1123
+  },
+  {
+    "id": "demobank-bilingual-financing-placemat",
+    "no": "PF-057",
+    "style": { "en": "DemoBank Teal Illustration", "zh": "DemoBank 青绿插画" },
+    "title": { "en": "DemoBank Bilingual Financing Placemat", "zh": "DemoBank 英马双语融资宣传单" },
+    "type": "Financing Placemat",
+    "paper": "A4",
+    "pages": 2,
+    "tags": ["finance", "financing", "placemat", "brochure", "bilingual", "English", "Malay", "Bahasa Melayu", "pembiayaan", "fictional", "sample", "teal", "illustration", "offline"],
+    "file": "designs/demobank-bilingual-financing-placemat.html",
+    "thumb": "thumbs/demobank-bilingual-financing-placemat.png",
+    "width": 794,
+    "height": 1123
   }
 ]

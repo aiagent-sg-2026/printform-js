@@ -70,7 +70,18 @@ export function assertRepaymentDOM(tables, data) {
 export function assertRepaymentPDF(page, data) {
   const anchor = page.items.find(item => item.text === 'Principal / scenario');
   assert.ok(anchor, 'PDF must display the scenario header');
-  const end = page.items.find(item => item.text === labels.at(-1));
+  // Chromium may emit kerning pairs as separate PDF runs ("T" + "otal ...").
+  // Reassemble only the row-header column on one baseline, never arbitrary page text.
+  const findLabel = label => {
+    const column = page.items.filter(item => item.x >= anchor.x - 1 && item.x < anchor.x + 110);
+    for (const candidate of column) {
+      const parts = column.filter(item => Math.abs(item.y - candidate.y) < 1).sort((a, b) => a.x - b.x);
+      const normalize = text => text.normalize('NFKC').replace(/\s+/g, '');
+      if (normalize(parts.map(item => item.text).join('')) === normalize(label)) return { y: candidate.y, parts };
+    }
+    return null;
+  };
+  const end = findLabel(labels.at(-1));
   assert.ok(end, 'PDF repayment total row');
   const items = page.items.filter(item => item.y >= anchor.y - 15 && item.y <= end.y + 1);
   assert.ok(!items.some(item => /^(DEMO|RM)$/.test(item.text)), 'No PDF filler');
@@ -80,9 +91,9 @@ export function assertRepaymentPDF(page, data) {
   const subheads = items.filter(item => /^(Regular \(n−1\)|Final)$/.test(item.text)).sort((a, b) => a.x - b.x);
   assert.deepEqual(subheads.map(item => item.text), Array(3).fill(['Regular (n−1)', 'Final']).flat());
   const rows = labels.map((label, i) => {
-    const row = items.find(item => item.text === label);
+    const row = findLabel(label);
     assert.ok(row, `Missing PDF row ${label}`);
-    const values = at(row.y).filter(item => item !== row);
+    const values = at(row.y).filter(item => !row.parts.includes(item));
     assert.equal(values.length, i === 0 ? 6 : 3, `PDF grouped values: ${label}`);
     values.forEach((item, index) => {
       const group = i === 0 ? Math.floor(index / 2) : index;

@@ -38,6 +38,24 @@ describe('PF-056 repayment rendering regression', () => {
     const tables = await rendered(); mutate(tables[0]);
     expect(() => assertRepaymentDOM(tables, data)).toThrow();
   });
+  it('PDF guard accepts split kerning runs but still rejects misplaced/missing labels and wrong amounts', async () => {
+    const { rows } = (await rendered())[0];
+    const items = [{ text: 'Principal / scenario', x: 40, y: 100 }];
+    rows[0].slice(1).forEach((n, i) => items.push({ text: n.text, x: 157 + i * 136, y: 94 }));
+    rows[1].forEach((n, i) => items.push({ text: n.text, x: 157 + Math.floor(i / 2) * 136 + (i % 2) * 96, y: 106 }));
+    rows.slice(2).forEach((row, r) => {
+      const y = 120 + r * 14, label = row[0].text;
+      items.push({ text: label[0], x: 40, y }, { text: label.slice(1), x: 42.25, y });
+      row.slice(1).forEach((n, i) => items.push({ text: n.text, x: r === 0 ? 190 + i * 68 : 207 + i * 136, y }));
+    });
+    expect(assertRepaymentPDF({ items }, data)).toHaveLength(3);
+    const missing = items.filter(n => n.text !== 'otal Amount to be settled');
+    expect(() => assertRepaymentPDF({ items: missing }, data)).toThrow('PDF repayment total row');
+    const misplaced = items.map(n => n.text === 'otal Amount to be settled' ? { ...n, x: 300 } : n);
+    expect(() => assertRepaymentPDF({ items: misplaced }, data)).toThrow('PDF repayment total row');
+    const wrong = items.map(n => n.text === 'RM1,236.00' ? { ...n, text: 'RM1,236.01' } : n);
+    expect(() => assertRepaymentPDF({ items: wrong }, data)).toThrow();
+  });
   it('PDF guard rejects the original missing scenario header', () => {
     expect(() => assertRepaymentPDF({items:[{text:'Outstanding Balance', x:40, y:305}]}, data)).toThrow(/scenario header/);
   });
