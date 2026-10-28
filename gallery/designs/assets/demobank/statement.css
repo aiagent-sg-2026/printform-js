@@ -109,7 +109,8 @@ h1.important span { float: right; font-size: 7pt; }
 .repayment th { font-weight: 400; }
 .repayment td { text-align: center; }
 .repayment thead th, .repayment thead td { height: 12.5pt; }
-.repayment tbody tr:nth-child(-n+2) th, .repayment tbody tr:nth-child(-n+2) td { height: 20pt; }
+.repayment tbody tr:first-child th, .repayment tbody tr:first-child td { height: 12.5pt; }
+.repayment tbody tr:nth-child(2) th, .repayment tbody tr:nth-child(2) td { height: 15pt; }
 .repayment tbody tr:nth-child(3) th, .repayment tbody tr:nth-child(3) td { height: 11.3pt; }
 .repayment tbody tr:nth-child(4) th, .repayment tbody tr:nth-child(4) td { height: 12.5pt; }
 .qr-terms { min-height: 57pt; }

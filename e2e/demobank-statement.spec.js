@@ -3,8 +3,25 @@ import fs from 'node:fs';
 import { pathToFileURL } from 'node:url';
 import { execFileSync } from 'node:child_process';
 import { inspectDemoBank, assertDemoBank, inspectDemoBankPDF } from '../scripts/demobank-checks.mjs';
+import { inspectRepaymentDOM, assertRepaymentDOM, assertRepaymentPDF } from '../scripts/demobank-repayment-checks.mjs';
 const data=JSON.parse(fs.readFileSync('gallery/designs/assets/demobank/data.json','utf8'));
 const ready=page=>page.waitForFunction(()=>window.DEMOBANK_READY);
+
+test('PF056 rendered repayment DOM has semantic groups, spans and displayed arithmetic', async ({page}) => {
+  await page.goto('/gallery/designs/demobank-fourpage-statement.html'); await ready(page);
+  assertRepaymentDOM(await inspectRepaymentDOM(page), data);
+  const box = (await inspectDemoBank(page))[3].boxes.find(box => box.kind === 'repayment');
+  // Keep the supplied table footprint while repairing its internal grouping.
+  for (const [key, expected] of Object.entries({x:36.95, y:296.57, width:524.9, height:77.02})) {
+    expect(Math.abs(box[key] - expected)).toBeLessThan(.1);
+  }
+});
+
+test('PF056 repayment PDF displays scenario headers, no filler and reconciled amounts', async ({page}) => {
+  await page.goto('/gallery/designs/demobank-fourpage-statement.html'); await ready(page);
+  const pdf = await inspectDemoBankPDF(await page.pdf({preferCSSPageSize:true, printBackground:true}), data);
+  assertRepaymentPDF(pdf.pages[3], data);
+});
 
 test('PF056 actual engine preserves 4 A4 pages, exact transactions, header hierarchy and selectable PDF',async({page},testInfo)=>{
   const errors=[];page.on('pageerror',e=>errors.push(e.message));
@@ -45,6 +62,7 @@ test('PF056 standalone HTML is self-contained, offline and reloadable',async({br
     page.on('pageerror',e=>errors.push(e.message));
     await page.goto(pathToFileURL(file).href);await ready(page);assertDemoBank(await inspectDemoBank(page),data);
     await page.reload();await ready(page);assertDemoBank(await inspectDemoBank(page),data);
+    assertRepaymentDOM(await inspectRepaymentDOM(page),data);
     expect(requests).toEqual([]);expect(errors).toEqual([]);
   }finally{await context.close();}
 });

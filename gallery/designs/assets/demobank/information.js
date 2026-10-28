@@ -1,7 +1,7 @@
 window.DemoInformation = (d, m) => {
   const plans = d.repayment.months.map(n => m.repayment(d.repayment, n));
   const values = key => plans.map(p => `<td colspan="2">${key === 'months' ? p[key] + ' months' : 'RM' + m.money(p[key])}</td>`).join('');
-  const pairs = (key, other) => plans.map(p => `<td>${key === 'months' ? p[key] + ' months' : m.money(p[key])}</td><td>${other === 'final' ? m.money(p[other]) : 'DEMO'}</td>`).join('');
+  const instalments = plans.map(p => `<td>RM${m.money(p.regular)}</td><td>RM${m.money(p.final)}</td>`).join('');
   return `<h1>IMPORTANT INFORMATION <span>ILLUSTRATIVE TERMS / NOT FINANCIAL ADVICE</span></h1>
   <section class="finance-terms"><h2>1. Finance Charges — fictional teaching assumptions</h2>
   <p>DemoBank is not a bank. The figures below are synthetic examples for testing document layout and arithmetic. They are not an offer, a lending policy, an official rate or a recommendation. No finance charge is posted to the supplied statement.</p>
@@ -19,11 +19,13 @@ window.DemoInformation = (d, m) => {
   <p>Combined limit: RM16,000.00. Overdue/over-limit amounts: RM0.00 for every account. Minimums are computed separately by account and then added; a combined percentage alone can give a different rounded result.</p></section>
   <section class="repayment-terms"><h2>2. Notice on Monthly Payment — separate illustrative examples</h2>
   <p>Assume RM1,200.00 principal, 6% annual flat simple interest on the original principal, no compounding, no new spending and no fees. Interest = principal × 0.06 × months ÷ 12. These examples are independent of the statement balance.</p>
-  <table class="repayment"><colgroup><col style="width:116.64pt">${plans.map(()=>'<col style="width:96.24pt"><col style="width:39.6pt">').join('')}</colgroup><thead><tr><th>Outstanding Balance</th>${values('principal')}</tr></thead><tbody>
-  <tr><th>Repayment (monthly / final)<br>Each pair in RM; first n−1 / last</th>${pairs('regular','final')}</tr>
-  <tr><th>Repayment Period</th>${pairs('months','demo')}</tr>
-  <tr><th>Total Interest Incurred</th>${plans.map(p=>`<td>${m.money(p.interest)}</td><td>RM</td>`).join('')}</tr>
-  <tr><th>Total Amount to be settled</th>${plans.map(p=>`<td>${m.money(p.total)}</td><td>RM</td>`).join('')}</tr></tbody></table>
+  <table class="repayment"><colgroup><col style="width:116.64pt"></colgroup>${plans.map(()=>'<colgroup><col style="width:96.24pt"><col style="width:39.6pt"></colgroup>').join('')}<thead>
+  <tr><th scope="col" rowspan="2">Principal / scenario</th>${plans.map((p,i)=>`<th scope="colgroup" colspan="2">Scenario ${String.fromCharCode(65+i)} — RM${m.money(p.principal)}</th>`).join('')}</tr>
+  <tr>${plans.map(()=>'<th scope="col">Regular (n−1)</th><th scope="col">Final</th>').join('')}</tr></thead><tbody>
+  <tr><th scope="row">Monthly instalment</th>${instalments}</tr>
+  <tr><th scope="row">Repayment Period</th>${values('months')}</tr>
+  <tr><th scope="row">Total Interest Incurred</th>${values('interest')}</tr>
+  <tr><th scope="row">Total Amount to be settled</th>${values('total')}</tr></tbody></table>
   <p>Regular instalments are rounded down to cents; the final instalment absorbs the remainder. In each pair: (months − 1) × regular + final = principal + interest. Flat interest is not an effective annual percentage rate.</p>
   <p><b>Statement minimum:</b> RM${m.money(m.statement(d).minimum)} (page 3 rule). This is not a table instalment; no real payment is due.</p></section>
   <section class="qr-terms"><h2>3. Demo reference / non-payment QR</h2><div class="qr-line"><img src="${window.DEMOBANK_ASSETS?.['qr.svg'] || 'assets/demobank/qr.svg'}" alt="Demo QR for the reserved demobank.example domain"><p>This QR encodes only <b>https://demobank.example/demo</b>.<br>It is a non-payment example domain. It does not authorize a transfer, sign in to a bank or collect information.<br><span lang="ms">Kod QR ini bukan untuk pembayaran. Jangan hantar maklumat peribadi.</span></p></div></section>

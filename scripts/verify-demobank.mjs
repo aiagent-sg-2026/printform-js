@@ -6,6 +6,7 @@ import { createRequire } from 'node:module';
 import { execFileSync } from 'node:child_process';
 import { chromium } from 'playwright';
 import { inspectDemoBank, assertDemoBank, inspectDemoBankPDF } from './demobank-checks.mjs';
+import { inspectRepaymentDOM, assertRepaymentDOM, assertRepaymentPDF } from './demobank-repayment-checks.mjs';
 const root=path.resolve(import.meta.dirname,'..');
 const output=path.resolve(process.env.DEMOBANK_OUTPUT || path.join(root,'../output'));
 const data=JSON.parse(await fs.readFile(path.join(root,'gallery/designs/assets/demobank/data.json'),'utf8'));
@@ -23,6 +24,8 @@ try {
   findings.desktop=await inspectDemoBank(page);
   await fs.writeFile(path.join(output,'demobank-layout.json'),JSON.stringify(findings.desktop,null,2));
   assertDemoBank(findings.desktop,data); assert.deepEqual(errors,[]);
+  findings.repaymentDOM=await inspectRepaymentDOM(page);
+  findings.repaymentArithmetic=assertRepaymentDOM(findings.repaymentDOM,data);
   for(let i=0;i<4;i++) {
     const sheet=page.locator('.printform_page').nth(i);
     await sheet.screenshot({path:path.join(output,`demobank-page-${i+1}.png`)});
@@ -46,6 +49,7 @@ try {
   assertDemoBank(await inspectDemoBank(page),data);
   const bytes=await page.pdf({path:path.join(output,'demobank-statement.pdf'),preferCSSPageSize:true,printBackground:true});
   findings.pdf=await inspectDemoBankPDF(bytes,data);
+  findings.repaymentPDFArithmetic=assertRepaymentPDF(findings.pdf.pages[3],data);
   await page.emulateMedia({media:'screen'}); await page.setViewportSize({width:390,height:844});
   findings.mobileWidth=await page.locator('.printform_page').first().evaluate(n=>n.getBoundingClientRect().width);
   assert.ok(findings.mobileWidth>350 && findings.mobileWidth<390);
@@ -61,14 +65,16 @@ try {
   assertDemoBank(await inspectDemoBank(local),data);
   await local.reload(); await local.waitForFunction(()=>window.DEMOBANK_READY);
   assertDemoBank(await inspectDemoBank(local),data); assert.deepEqual(network,[]);
+  assertRepaymentDOM(await inspectRepaymentDOM(local),data);
   // Also start on a mobile viewport: pagination must be independent of screen zoom.
   await local.setViewportSize({width:390,height:844}); await local.reload();
   await local.waitForFunction(()=>window.DEMOBANK_READY);
   const mobileCoverage=await local.locator('[data-transaction-id]').evaluateAll(ns=>ns.map(n=>n.dataset.transactionId));
   assert.deepEqual(mobileCoverage,data.accounts.flatMap(a=>a.transactions.map(t=>t.id)));
   await local.emulateMedia({media:'print'}); assertDemoBank(await inspectDemoBank(local),data);
+  assertRepaymentDOM(await inspectRepaymentDOM(local),data);
   findings.offline={networkRequests:network,errors,reload:true,mobileFreshLoad:true};
   assert.deepEqual(errors,[]); await context.close();
   await fs.writeFile(path.join(output,'demobank-verification.json'),JSON.stringify(findings,null,2));
-  console.log('PASS: 4 A4 pages, exact 17 transactions, PDF text/bounds, QR pixels, mobile and offline reload.');
+  console.log('PASS: 4 A4 pages, exact 17 transactions, PDF text/bounds, QR pixels, mobile, offline reload, semantic repayment DOM/PDF and displayed arithmetic.');
 } finally {await browser.close();}

@@ -59,6 +59,12 @@ is RM1,236/1,272/1,308. Regular instalments are rounded down to cents; the final
 instalment absorbs the remainder. For 18 months: 17 × RM72.66 + RM72.78 = RM1,308.
 These are not effective APR examples or recommendations.
 
+The repayment table has three scoped scenario column groups. Each scenario
+header includes its principal; the second header row distinguishes Regular
+(n−1) from Final. Only the instalment row uses two separate values per scenario.
+Period, interest and total each span both columns, with RM attached to every
+monetary value. No placeholder data cells are emitted.
+
 ## Typography / fidelity limits
 
 The sanitized measurement source records Dax Regular/Bold/Italic, but no
@@ -106,6 +112,11 @@ page count, repeated headers, section continuation, no clipping/overlaps/footer
 collisions, page numbers, selectable PDF text and bounds, QR decoding, offline
 reload and fresh mobile-load print geometry. `e2e/demobank-statement.spec.js`
 provides focused Chromium regressions; gallery E2E also opens PF-056 offline.
+`scripts/demobank-repayment-checks.mjs` checks actual rendered header scopes,
+column groups and spans, then independently reconciles displayed DOM/PDF values.
+PDF checks use selectable text and its spatial grouping; this is not a claim
+that Chromium's PDF is a fully tagged accessible table. Mutated display values,
+missing scopes, wrong spans and filler are rejected by focused unit tests.
 
 ## Evidence / comparison method
 
