@@ -45,8 +45,13 @@ Root navigation uses the active shell, not new HTML mixed with cached old module
 The existing Gallery policy is preserved: discover/download automatically, but
 **activate and reload only on Update now**. Check for updates really calls
 `registration.update()` and reports checking, current, available, offline or failure.
-A waiting/active worker must report a different, installed build before it is offered.
-New activation requests target that exact build and reload at most once after controller change.
+A waiting worker must report a valid installed build before it is offered, even if
+it matches the loaded shell: the original network-first worker can serve shell B
+while legacy A still controls it and B waits. No GET_BUILD support is required from
+legacy A. An already active worker matching the shell clears the pending offer.
+Late identity replies from superseded workers cannot restore stale pending actions.
+New activation requests target that exact build and reload at most once after that
+identified worker becomes this page's controller.
 For migration, the original one-field `SKIP_WAITING` user action is also accepted only
 from a same-origin Gallery-scope client; unrelated clients and mismatched build IDs
 cannot activate the waiting worker.
@@ -74,6 +79,13 @@ until a client-free activation. Quota errors fail a new install safely.
   waiting activation, no unsolicited reload, multi-tab versions, filters, offline,
   reconnect, same-version, failed download and corrupted assets. Fixture cleanup is
   owned by the test. No production deployment/profile/cache is used.
+- `e2e/gallery-legacy-migration.spec.js`: exact public original commit
+  `53bd82bebad913553ad39d5e8c8ef63638db75f5`, original build script and verified
+  worker Git blob (not a simulated legacy client with a new worker). The fixture
+  uses local `git archive`; a shallow checkout missing that commit fails explicitly.
+  Actual installed A / shell B / waiting B, manual retry, preview deferral, storage
+  preservation, one document reload and zero other-tab reloads are asserted with
+  screenshots and worker-identity JSON.
 
 A screenshot showing 53 designs cannot establish its cause. An old active worker's
 cache-first manifest can preserve an older catalogue, and the prior mixed HTML/module

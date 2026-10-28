@@ -3,13 +3,16 @@ import os from "node:os";
 import path from "node:path";
 import http from "node:http";
 import { finalizeGalleryPwa } from "../scripts/gallery-pwa-build.mjs";
+import { buildOriginalGallery } from "./fixtures/gallery-original-build.js";
 
 // Bounded local A/B builds from public code and a real built engine, no production.
-export async function galleryServer() {
+export async function galleryServer({ legacy = false } = {}) {
   const folder = fs.mkdtempSync(path.join(os.tmpdir(), "pf-gallery-upgrade-"));
   const builds = { a: "a".repeat(40), b: "b".repeat(40) };
+  let provenance;
   for (const [name, revision] of Object.entries(builds)) {
     const output = path.join(folder, name);
+    if (legacy && name === "a") { provenance = await buildOriginalGallery(output); continue; }
     fs.cpSync("gallery", path.join(output, "gallery"), { recursive: true });
     fs.mkdirSync(path.join(output, "dist"));
     fs.copyFileSync("dist/printform.js", path.join(output, "dist/printform.js"));
@@ -39,6 +42,7 @@ export async function galleryServer() {
   await new Promise((resolve) => server.listen(0, "127.0.0.1", resolve));
   return {
     url: `http://127.0.0.1:${server.address().port}/gallery/index.html`,
+    provenance,
     switchBuild(value, fail = false, corrupt = false) { selected = value; broken = fail; corrupted = corrupt; },
     async close() { await new Promise((resolve) => server.close(resolve)); fs.rmSync(folder, { recursive: true, force: true }); }
   };
