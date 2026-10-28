@@ -2,11 +2,15 @@
 No network is used. Checked-in WOFF2 files make ordinary JS builds independent of Python.
 """
 from pathlib import Path
+from argparse import ArgumentParser
 from fontTools.ttLib import TTFont
 from fontTools.subset import Subsetter, Options
 
 root = Path(__file__).resolve().parents[1]
-target = root / 'gallery/designs/assets/aster'
+parser = ArgumentParser()
+parser.add_argument('--output', type=Path, default=root / 'gallery/designs/assets/fonts/aster-v1')
+target = parser.parse_args().output
+target.mkdir(parents=True, exist_ok=True)
 for weight in ['Regular', 'Bold']:
     font = TTFont(f'/usr/share/fonts/truetype/noto/NotoSans-{weight}.ttf')
     subset = Subsetter(options=Options())
@@ -14,6 +18,9 @@ for weight in ['Regular', 'Bold']:
     subset.subset(font)
     for key, value in [(1, 'Aster Sans'), (4, f'Aster Sans {weight}'), (6, f'AsterSans-{weight}'), (16, 'Aster Sans'), (17, weight)]:
         font['name'].setName(value, key, 3, 1, 0x409)
+    # Preserve the approved derivative's head timestamp, not wall-clock time.
+    font.recalcTimestamp = False
+    font['head'].modified = 3876032048
     font.flavor = 'woff2'
     font.save(target / f'NotoSans-{weight}.woff2')
 font = TTFont('/usr/share/fonts/opentype/noto/NotoSansCJK-Regular.ttc', fontNumber=2)
@@ -29,6 +36,8 @@ for table in font['cmap'].tables:
                 del table.cmap[code]
 for key, value in [(1, 'Aster CJK SC'), (4, 'Aster CJK SC Regular'), (6, 'AsterCJKSC-Regular'), (16, 'Aster CJK SC'), (17, 'Regular')]:
     font['name'].setName(value, key, 3, 1, 0x409)
+font.recalcTimestamp = False
+font['head'].modified = 3876032069
 font.flavor = 'woff2'
 font.save(target / 'NotoSansCJKsc-Regular.woff2')
 notice = Path('/usr/share/doc/fonts-noto-cjk/copyright').read_text()

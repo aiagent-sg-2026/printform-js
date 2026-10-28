@@ -7,7 +7,7 @@ import {fixture} from '../gallery/designs/assets/aster/fixtures.mjs';
 import {reconcile} from '../gallery/designs/assets/aster/reconcile.mjs';
 import {ready, select, inspect} from './aster-browser-checks.mjs';
 import {authoredChecks} from './aster-authored-checks.mjs';
-const root = path.resolve(import.meta.dirname, '..'), out = path.resolve(root, '../artifacts');
+const root = path.resolve(import.meta.dirname, '..'), out = path.resolve(process.env.ASTER_ARTIFACT_DIR || path.join(root, '../artifacts'));
 await fs.mkdir(out, {recursive:true});
 const sample = JSON.parse(await fs.readFile(path.join(root, 'gallery/designs/assets/aster/sample.json')));
 const oracle = JSON.parse(await fs.readFile(path.join(root, 'gallery/designs/assets/aster/expected.json')));
@@ -43,7 +43,7 @@ try {
   await page.pdf({path:path.join(out, 'aster-default.pdf'), preferCSSPageSize:true, printBackground:true});
   await fs.writeFile(path.join(out, 'aster-default-dom.json'), JSON.stringify(r, null, 2));
   await page.emulateMedia({media:'screen'});
-  await page.locator('.physical_page_wrapper').first().screenshot({path:path.join(root, 'gallery/thumbs/aster-three-way-match-review-pack.png')});
+  await page.locator('.physical_page_wrapper').first().screenshot({path:path.join(out, 'aster-thumbnail.png')});
   for (const count of [0, 1, 60, 150]) {
     await select(page, {count});
     r = await inspect(page, reconcile(fixture(sample, count)), {detail:'all', notes:'standard'});
@@ -143,7 +143,7 @@ try {
   const external = requests.filter(u => !u.startsWith(new URL(url).origin)); assert.deepEqual(external, []);
   // Genuine standalone works from a detached local file with networking blocked.
   const offline = await browser.newPage(); await offline.route('http**://**/*', route => route.abort());
-  await offline.goto(`file://${path.join(root, 'gallery/designs/aster-three-way-match-review-pack.html')}`); await ready(offline);
+  await offline.goto(`file://${path.resolve(root, '../artifacts/standalone/aster-three-way-match-review-pack.html')}`); await ready(offline);
   assert.deepEqual(await offline.evaluate(() => ASTER_RESULT.totals), oracle); await offline.close();
   results.push({name:'detached-file-offline', passed:true});
   const gallery = await browser.newPage({viewport:{width:1400,height:1000}});

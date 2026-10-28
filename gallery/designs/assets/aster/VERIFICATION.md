@@ -4,7 +4,71 @@ Executed 2026-10-28 in this isolated workspace, Chromium 151 (Playwright cache c
 Scope: Aster only. No engine/security/permission/public API changes; no Atlas/Lumen work.
 All evidence below is actual browser output, not inferred from a unit-test pass.
 
-## Review-fix rerun · 2026-10-28 (parent `5b20b44`)
+## Approved packaging fix · 2026-10-28 (parent `6434b83`)
+
+This section supersedes the historical packaging blocker below. Approval/preflight:
+`../ASTER_PACKAGING.md`, KB **PROCEED aea0b8bd-3db1-4074-a16c-a2b9efbfc212**.
+No old-template, engine, security/API, Gallery UI controls or PWA cache-policy change.
+
+- Gallery HTML uses three relative local WOFF2 assets in `assets/fonts/aster-v1/`.
+  Original renamed derivative bytes/coverage/cmap/license are preserved; no Aster-local copies remain.
+- Detached standalone is output-only at `../artifacts/standalone/aster-three-way-match-review-pack.html`;
+  absent from Git, Gallery/distribution and both logical/final release precache lists.
+- Builder emits both outputs from one shell/app/runtime. Font URLs are the only output difference.
+  Inline data URI favicon prevents a real implicit `/favicon.ico` 404, without filtering errors.
+- Font regeneration to a separate output directory reproduced all WOFF2/license bytes with `cmp`;
+  fixed original head timestamps, toolchain/source hashes documented beside shared fonts.
+- Focused Vitest: **25 files / 198 tests passed**, including Gallery/PWA integration and pagination/text regressions.
+  Repeat current-source builds reproduced both HTML outputs and readable runtime byte-for-byte.
+- Original 20-scenario browser suite and its three PDFs passed: **612 anchored monetary fields**,
+  exact CJK order, A4 landscape, font sizes, bounds, page counts and Gallery search/modal unchanged.
+- Metadata suite passed **6 cases / 467 anchored fields in each packaging**, Gallery and offline standalone.
+  Its six paired PDFs and DOM records have exactly identical text and geometry.
+- Additional same-Chromium proof: **9 packaging/fixture combinations** (HTTP Gallery, actual `file://`
+  Gallery with local relative fonts, detached offline standalone × default/long/150-line).
+  Every font explicitly loads; zero page/console/HTTP/font errors and exact request allowlists.
+  Three PDFs per packaging retain all strict existing PDF assertions; DOM/PDF text and coordinates match exactly.
+- Existing unchanged Gallery SW actually installed the controlled release, then served Aster HTML and
+  all three fonts from its cache with the browser offline; long bilingual fixture rendered **11 pages**.
+- Fresh before/after Gallery audit: **65 designs, 65 byte-identical result objects, zero differences**;
+  original 64 preserved. Known PF-004 three-page horizontal overflow persists unchanged.
+- Protected **1588 parent-tracked files** verified by Git blob hashes; original 64 manifest records unchanged.
+  Embedded runtime hash `ef3e078b1928128f147ac4a407cad4c93680f1924795132b94c662b64503884e` unchanged;
+  embedded application byte-identical to `6434b83`; readable runtime hash
+  `8a2e51ada1a644d3c427a1eb5754fd0a76bf66383d2eed22f58f97e638083f74` unchanged.
+
+### Raw byte accounting
+
+`verify-aster-packaging.mjs` measures real-path controlled site copies with the unchanged
+`buildGalleryPrecache`; no global build/full tests. Final exact counts are in
+`../artifacts/aster-package/packaging-results.json` and `precache-{oldMain,oldAster,shared}.json`.
+
+- Old main `5124bea`: **3156185 bytes / 187 logical files**.
+- Pre-fix `6434b83`: **30174764 bytes / 210 files**, increment **27018579 bytes** over old main.
+- New shared packaging: **14865923 bytes / 211 files**, increment **11709738 bytes** over old main;
+  saves **15308841 bytes** against pre-fix packaging. Documentation is included because existing policy precaches it.
+- Gallery HTML: **134115 bytes**, previously **15451726**. Standalone download: **15451758 bytes**, output-only.
+- Shared WOFF2: **3 faces / 11488280 bytes**, exactly one copy each in logical and final release lists.
+  Future new templates can reuse that set without another per-template font copy.
+- Final immutable release cache includes **215 entries / 14869120 bytes**, including existing icon/index behavior.
+  Its controlled disk output has stable and release copies by existing policy; only one font set is precached.
+
+These are uncompressed file/response-body bytes, not measured compressed transfer, CacheStorage overhead,
+or incremental browser delta-update bytes. Existing release caches may coexist; no eviction policy changed.
+Initial installation still eagerly downloads the shared font set once. Downloading the optional standalone
+separately costs its full body again and does not automatically warm Gallery's font URLs.
+The manager's earlier 27013315-byte estimate predates metadata/review documentation; current-parent
+measurement above includes every actual current precache entry rather than reusing that estimate.
+
+Evidence: `../artifacts/aster-package-*.log`, `aster-package-gallery-{before,after}*.json`,
+`../artifacts/aster-package/{packaging-results,browser-comparison,pwa-offline}.json`,
+`{gallery,file-gallery,standalone,metadata-gallery,metadata-standalone}/` PDFs, DOM records and network logs.
+Initial harness findings were corrected, not ignored: jsdom parsing a 15 MB base64 node timed out
+(replaced by stricter whole-output equality); generic server lacked `.mjs` MIME (used Python server);
+implicit favicon 404 fixed in Aster shell. No font/network-error filtering or assertion relaxation.
+No push/PR/merge/deploy; no Atlas/Lumen. Parent independent review remains required.
+
+## Review-fix rerun · 2026-10-28 (parent `5b20b44`, historical)
 
 Only two metadata bindings changed: escaped `document.id` in the running footer, and
 receipt-local distinct `returnReference` values from positive-return lines in the source register.

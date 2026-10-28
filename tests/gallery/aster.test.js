@@ -91,7 +91,7 @@ describe('PF-065 Aster bounded review pack', () => {
     expect(() => structure({}, {surprise:true})).toThrow('Unsupported schema');
     expect(() => validate(null)).toThrow();
   });
-  it('ships one offline standalone with current genuine-runtime provenance', () => {
+  it('ships local-font Gallery HTML with current genuine-runtime provenance', () => {
     const html = fs.readFileSync(path.join(dir, '../../aster-three-way-match-review-pack.html'), 'utf8');
     const doc = new DOMParser().parseFromString(html, 'text/html');
     expect(doc.querySelectorAll('script[src],link[rel=stylesheet]')).toHaveLength(0);

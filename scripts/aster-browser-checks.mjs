@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict';
 import {money} from '../gallery/designs/assets/aster/reconcile.mjs';
+import {longNarrative} from '../gallery/designs/assets/aster/fixtures.mjs';
 export async function ready(page) {
   await page.waitForFunction(() => ['ready', 'error'].includes(document.body.dataset.state), null, {timeout:120000});
   assert.equal(await page.locator('body').getAttribute('data-state'), 'ready', await page.locator('#status').textContent());
@@ -65,13 +66,10 @@ export async function inspect(page, report, state) {
   if (state.notes === 'long' && report.cases.some(c => c.id === 'REV-PARTIAL-003')) {
     const fragments = actual.fragments.filter(f => f.case === 'REV-PARTIAL-003');
     assert.ok(fragments.length > 1, 'real measured bilingual continuations required');
-    const expectedText = await page.evaluate(async () => {
-      const {render} = await import('/gallery/designs/assets/aster/template.mjs');
-      const {reconcile} = await import('/gallery/designs/assets/aster/reconcile.mjs');
-      const {fixture} = await import('/gallery/designs/assets/aster/fixtures.mjs');
-      const sample = JSON.parse(document.querySelector('#sample-data').textContent);
-      return render(reconcile(fixture(sample, Number(document.querySelector('#count').value))), {detail:document.querySelector('#detail').value, notes:'long'}, '').form.querySelector('[data-cell-key="narrative-REV-PARTIAL-003"]').textContent;
-    });
+    // Independent source expectation also works for offline file:// packaging;
+    // do not import authoring modules over HTTP just to inspect rendered output.
+    const question = report.cases.find(c => c.id === 'REV-PARTIAL-003').question;
+    const expectedText = `Review question · ${question}${longNarrative()}`;
     assert.equal(fragments.map(f => f.cells[1].text).join(''), expectedText, 'exact CJK/English grapheme order');
   }
   return actual;

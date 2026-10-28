@@ -3,7 +3,7 @@ import path from 'node:path';
 import assert from 'node:assert/strict';
 import {getDocument} from 'pdfjs-dist/legacy/build/pdf.mjs';
 import {longNarrative} from '../gallery/designs/assets/aster/fixtures.mjs';
-const out = path.resolve(import.meta.dirname, '../../artifacts');
+const out = path.resolve(process.env.ASTER_ARTIFACT_DIR || path.join(import.meta.dirname, '../../artifacts'));
 const results = [];
 for (const name of ['aster-default', 'aster-long', 'aster-150']) {
   const dom = JSON.parse(await fs.readFile(path.join(out, `${name}-dom.json`)));

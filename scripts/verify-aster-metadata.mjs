@@ -6,8 +6,12 @@ import {getDocument} from 'pdfjs-dist/legacy/build/pdf.mjs';
 import {reconcile} from '../gallery/designs/assets/aster/reconcile.mjs';
 import {longNarrative} from '../gallery/designs/assets/aster/fixtures.mjs';
 import {ready, inspect} from './aster-browser-checks.mjs';
-const root = path.resolve(import.meta.dirname, '..'), out = path.resolve(root, '../artifacts');
-const html = await fs.readFile(path.join(root, 'gallery/designs/aster-three-way-match-review-pack.html'), 'utf8');
+import {watchNetwork, checkFonts, checkNetwork} from './aster-network-checks.mjs';
+const root = path.resolve(import.meta.dirname, '..'), out = path.resolve(process.env.ASTER_ARTIFACT_DIR || path.join(root, '../artifacts'));
+await fs.mkdir(out, {recursive:true});
+const standalone = process.env.ASTER_PACKAGE === 'standalone';
+const source = path.resolve(root, standalone ? '../artifacts/standalone/aster-three-way-match-review-pack.html' : 'gallery/designs/aster-three-way-match-review-pack.html');
+const html = await fs.readFile(source, 'utf8');
 const sample = JSON.parse(await fs.readFile(path.join(root, 'gallery/designs/assets/aster/sample.json')));
 const url = `${process.env.ASTER_BASE_URL || 'http://127.0.0.1:4197'}/gallery/designs/aster-three-way-match-review-pack.html`;
 const browser = await chromium.launch({executablePath:process.env.CHROMIUM_PATH || undefined});
@@ -86,7 +90,9 @@ async function checkPDF(name, data, dom, test) {
 try {
   const baselinePage = await browser.newPage();
   baselinePage.on('pageerror', error => errors.push(error.message));
-  await baselinePage.goto(url); await ready(baselinePage);
+  if (standalone) await baselinePage.context().setOffline(true);
+  await baselinePage.goto(standalone ? `file://${source}` : url); await ready(baselinePage);
+  await checkFonts(baselinePage);
   const baseline = await inspect(baselinePage, reconcile(sample), {detail:'all', notes:'standard'});
   await baselinePage.close();
   for (const test of cases) {
@@ -98,12 +104,17 @@ try {
     assert.equal(report.totals.poOrderValueCents, 615000);
     const page = await browser.newPage({viewport:{width:1400,height:1100}});
     page.on('pageerror', error => errors.push(error.message));
-    // Use the rebuilt standalone app, changing ONLY its embedded JSON fixture.
+    const network = watchNetwork(page);
+    if (standalone) await page.context().setOffline(true);
+    // Use the rebuilt app, changing ONLY its embedded JSON fixture.
     const json = JSON.stringify(data).replace(/</g, '\\u003c');
     const modified = html.replace(/(<script type="application\/json" id="sample-data">)[\s\S]*?(<\/script>)/, (_, open, close) => open + json + close);
     assert.notEqual(modified, html);
-    await page.route(url, route => route.fulfill({status:200, contentType:'text/html', body:modified}));
-    await page.goto(url); await ready(page);
+    const target = standalone ? `file://${path.join(out, `aster-metadata-${test.name}.html`)}` : url;
+    if (standalone) await fs.writeFile(new URL(target), modified);
+    else await page.route(url, route => route.fulfill({status:200, contentType:'text/html', body:modified}));
+    await page.goto(target); await ready(page);
+    await checkFonts(page);
     if (test.notes) { await page.selectOption('#notes', test.notes); await ready(page); }
     const dom = await inspect(page, report, state);
     assert.deepEqual(await page.evaluate(() => ASTER_RESULT.totals), report.totals);
@@ -133,7 +144,9 @@ try {
     await page.emulateMedia({media:'screen'});
     await page.locator('.physical_page_wrapper').last().screenshot({path:path.join(out, `${name}-last.png`)});
     const anchoredMonetaryFields = await checkPDF(name, data, dom, test);
-    results.push({name, pages:dom.pages, actualDocumentId:data.document.id, receiptScope:scope, anchoredMonetaryFields, passed:true});
+    const fontURLs = ['NotoSans-Regular.woff2', 'NotoSans-Bold.woff2', 'NotoSansCJKsc-Regular.woff2'].map(file => new URL(`assets/fonts/aster-v1/${file}`, url).href);
+    checkNetwork(network, standalone ? [target] : [target, ...fontURLs]);
+    results.push({name, packaging:standalone ? 'offline-standalone' : 'gallery', pages:dom.pages, actualDocumentId:data.document.id, receiptScope:scope, anchoredMonetaryFields, passed:true});
     await page.close();
   }
   assert.deepEqual(errors, []);
