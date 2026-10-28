@@ -28,22 +28,17 @@ body { margin: 0; min-width: 0; }
 .card-info .card-id { font-size: 11px; font-weight: 700; letter-spacing: .04em; color: #2f5bd0; margin: 0 0 4px; }
 .type-tag { font-size: 10px; color: #536078; background: #f0f2f6; padding: 5px 7px; border-radius: 6px; white-space: nowrap; }
 .empty-state { text-align: center; color: #687286; padding: 40px; }
-.modal-header { display: flex; justify-content: space-between; align-items: start; gap: 18px; padding: 18px 22px; }
 .modal-header h2 { font-size: 18px; margin: 0 0 5px; }
 .modal-header p { font-size: 12px; color: #737d90; margin: 0; }
  .icon-button { width: 44px; height: 44px; flex: 0 0 44px; }
-.frame-wrap { height: min(70vh, 850px); overflow-y: auto; overflow-x: hidden; background: #e9ebef; display: flex; justify-content: center; align-items: flex-start; }
-.frame-stage { position: relative; flex: 0 0 auto; }
-.frame-wrap iframe { position: absolute; top: 0; left: 0; width: 794px; border: 0; background: #fff; transform-origin: top left; }
- .modal-actions { padding: 15px max(22px, env(safe-area-inset-right, 0px)) calc(15px + env(safe-area-inset-bottom, 0px)) max(22px, env(safe-area-inset-left, 0px)); }
 .button { border-radius: 8px; padding: 10px 14px; text-decoration: none; font-size: 13px; font-weight: 650; }
 .button.primary { background: #2268e4; color: white; }
 .button.secondary { border: 1px solid #d9dee8; color: inherit; }
 .button[data-print] { display: inline-flex; align-items: center; gap: 8px; font-family: inherit; cursor: pointer; }
 .button[data-print] svg { width: 16px; height: 16px; flex: 0 0 auto; }
 .button[data-print]:disabled { cursor: default; opacity: .55; }
- dialog { width: min(1000px, calc(100% - 24px - env(safe-area-inset-left, 0px) - env(safe-area-inset-right, 0px))); max-height: calc(100% - 24px - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px)); padding-top: env(safe-area-inset-top, 0px); }
-dialog::backdrop { background: #111827a8; }
+.version-footer { padding: 16px 16px calc(100px + env(safe-area-inset-bottom, 0px)); display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 8px; font-size: 12px; }
+.version-footer button { font: inherit; cursor: pointer; }
 @media (max-width: 900px) { .gallery-grid { columns: 2 210px; } }
 @media (max-width: 480px) { main { padding-top: 20px; } .controls { align-items: stretch; gap: 16px; } .gallery-grid { columns: 1; } .gallery-card { margin-bottom: 14px; } .modal-actions { flex-wrap: wrap; } .button { text-align: center; flex: 1; } }
 @media (prefers-color-scheme: dark) {

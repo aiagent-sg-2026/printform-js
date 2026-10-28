@@ -1,4 +1,5 @@
 import { loadManifest } from "./manifest-loader.js";
+import { newestFirst } from "./order.js";
 import { filterDesigns } from "./filter.js";
 import { normalizeFilters, readFilters, filterURL } from "./filter-state.js";
 import { createFilters } from "./filter-controls.js";
@@ -72,7 +73,7 @@ async function start() {
   loadState = "loading";
   showLoadState();
   try {
-    manifest = await loadManifest();
+    manifest = newestFirst(await loadManifest());
     filters = readFilters(manifest, location.search);
     modal = createModal(document.querySelector("#design-modal"), manifest);
     syncControls = createFilters(manifest, (patch) => { editingQuery = false; update(patch); });

@@ -1,0 +1,36 @@
+/* Gallery's native-dialog primitive: one layout owner, no document scaling. */
+:root {
+  --dialog-max-width: 1000px;
+  --dialog-gutter: 12px;
+  --dialog-space: 16px;
+  --dialog-border: #d9dee8;
+  --dialog-radius: 12px;
+  --dialog-elevation: 0 16px 64px #14233d40;
+  --dialog-backdrop: #111827a8;
+  --dialog-layer: 100;
+}
+.pf-dialog {
+  width: min(var(--dialog-max-width), calc(100% - 2 * var(--dialog-gutter) - env(safe-area-inset-left, 0px) - env(safe-area-inset-right, 0px)));
+  height: calc(100vh - 2 * var(--dialog-gutter));
+  height: calc(100dvh - 2 * var(--dialog-gutter) - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px));
+  max-height: none;
+  max-width: none;
+  padding: 0;
+  border: 1px solid var(--dialog-border);
+  border-radius: var(--dialog-radius);
+  box-shadow: var(--dialog-elevation);
+  overflow: hidden;
+  z-index: var(--dialog-layer);
+}
+.pf-dialog[open] { display: flex; flex-direction: column; }
+.pf-dialog::backdrop { background: var(--dialog-backdrop); }
+.pf-dialog-header, .pf-dialog-footer { flex: 0 0 auto; padding: var(--dialog-space); }
+.pf-dialog-header { display: flex; justify-content: space-between; align-items: start; gap: var(--dialog-space); border-bottom: 1px solid var(--dialog-border); }
+.pf-dialog-header > div { min-width: 0; overflow-wrap: anywhere; }
+.pf-dialog-footer { display: flex; flex-wrap: wrap; gap: 8px; border-top: 1px solid var(--dialog-border); }
+.pf-dialog-body { flex: 1 1 auto; min-height: 0; overflow: hidden; }
+.pf-dialog-body iframe { display: block; width: 100%; height: 100%; border: 0; background: white; }
+.preview-status { margin: 0; padding: 8px var(--dialog-space); font-size: 12px; }
+.preview-status[hidden] { display: none; }
+@media (prefers-color-scheme: dark) { :root { --dialog-border: #424b5d; } }
+@media (max-height: 450px) { .pf-dialog { --dialog-space: 8px; } .modal-header h2 { font-size: 14px; } }
