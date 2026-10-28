@@ -22,6 +22,13 @@ export function reviews(form, report, state) {
   });
   block(form, 'Case facts may overlap: do not sum evidence amounts as a KPI. Ordered-versus-billed differences alone are informational.', 'schedule-end without_prowheader', 'prose');
 }
+function receiptScope(receipt) {
+  const returns = receipt.lines.filter(l => l.returnedQty > 0);
+  if (!returns.length) return 'Gross receipt quantities, with attached return summary fields.';
+  const references = [...new Set(returns.map(l => l.returnReference).filter(Boolean))];
+  const missing = returns.some(l => !l.returnReference);
+  return `Includes attached return adjustments · references: ${references.length ? references.join(' / ') : 'not supplied'}${references.length && missing ? ' (some not supplied)' : ''}; no separate return document is claimed.`;
+}
 export function sources(form, report) {
   if (!report.rows.length) return;
   const {data, totals:t} = report;
@@ -35,7 +42,7 @@ export function sources(form, report) {
   data.receipts.forEach(r => row(form, [
     {text:`${r.id} / ${r.receivedDate}`},
     {text:r.lines.length ? `${r.lines.length} receipt rows · ${r.lines.map(l => l.poLineId).join(', ')}` : 'No lines in this fixture', policy:'split'},
-    {text:r.lines.some(l => l.returnedQty) ? 'Includes RET-DEMO-018 attached return adjustment; no separate return document is claimed.' : 'Gross receipt quantities, with attached return summary fields.', policy:'split'}
+    {text:receiptScope(r), policy:'split'}
   ], [22, 40, 38], 'sources'));
   data.invoices.forEach(i => row(form, [
     {text:`${i.id} / ${i.invoiceDate}`},

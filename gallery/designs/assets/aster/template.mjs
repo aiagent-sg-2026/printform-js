@@ -15,6 +15,6 @@ export function render(report, state, logo) {
   const display = schedule(form, report, state);
   reviews(form, report, state);
   sources(form, report);
-  form.append(node('footer', 'pfooter_pagenum running-footer', '<span>SAMPLE · fictional data · not an approval or payment instruction</span><span>PF-065 · ASTER-REVIEW-DEMO-001</span><span>Page <b data-page-number></b> / <b data-page-total></b></span>'));
+  form.append(node('footer', 'pfooter_pagenum running-footer', `<span>SAMPLE · fictional data · not an approval or payment instruction</span><span>PF-065 · ${esc(report.data.document.id)}</span><span>Page <b data-page-number></b> / <b data-page-total></b></span>`));
   return {form, display};
 }

@@ -4,7 +4,54 @@ Executed 2026-10-28 in this isolated workspace, Chromium 151 (Playwright cache c
 Scope: Aster only. No engine/security/permission/public API changes; no Atlas/Lumen work.
 All evidence below is actual browser output, not inferred from a unit-test pass.
 
-## Final results
+## Review-fix rerun · 2026-10-28 (parent `5b20b44`)
+
+Only two metadata bindings changed: escaped `document.id` in the running footer, and
+receipt-local distinct `returnReference` values from positive-return lines in the source register.
+Schema/validation remain unchanged: the property is required, but null and empty string are permitted;
+these now display reference-not-supplied text rather than inventing a reference. Non-return rows do not contribute references.
+
+Fresh verification for this review fix:
+
+- `node scripts/build-aster.mjs`: rebuilt standalone from current source; repeat build byte-identical.
+- `npx vitest run tests/gallery/aster.test.js tests/gallery/aster-metadata.test.js --maxWorkers=1 --no-file-parallelism`:
+  **2 files / 45 tests passed**, including seven new metadata tests.
+- `CHROMIUM_PATH=/home/ai-agent/.cache/ms-playwright/chromium-1234/chrome-linux/chrome node scripts/verify-aster.mjs`:
+  **20 checks passed**, zero page errors; all page counts/continuation positions below reproduced.
+- `node scripts/verify-aster-pdf.mjs`: **3 fresh PDFs / 612 anchored monetary fields passed**;
+  exact CJK source order, once-only money, readable font size, A4 geometry and bounds assertions unchanged.
+- With the same explicit Chromium path, `node scripts/verify-aster-metadata.mjs`: **6 custom JSON browser/PDF cases passed**,
+  **467 anchored monetary fields**, 24 canonical line amounts per PDF, zero page errors.
+  Cases: escaped custom ID/reference with long bilingual notes (11 pages), multiple distinct/duplicate references (9),
+  null reference (8), empty reference (8), mixed known/missing references (9), and zero-return row with reference (8).
+  Every page's header/footer contains the actual custom ID; no rendered/PDF stale demo ID or return reference remains.
+  Metadata-only cases preserve every oracle total; positive-return cases preserve all displayed financial fields;
+  removing a return preserves canonical invoice line amounts. PO/invoice totals remain 615000/600250 cents.
+- Inspected actual PDF rasters: multiple-reference source page 7, null-reference source page 7,
+  and escaped custom-ID final page 11 (plus representative method/final pages).
+- Diff/build comparison confirms only the standalone app payload changed: embedded runtime, CSS/font data,
+  sample JSON and logo are byte-identical to `5b20b44`. Original templates, manifest, thumbnails,
+  engine, service worker, precache builder and font files are untouched.
+
+Evidence: `../artifacts/aster-review-{build,unit,browser,pdf,metadata,scope}.log`,
+`aster-review-scope.json`, `aster-metadata-results.json`, `aster-metadata-*.pdf`,
+`aster-metadata-*-dom.json`, `aster-metadata-*-pdf-text.json`, `aster-metadata-*-last.png`,
+`aster-review-multiple-pdf-7.png`, `aster-review-null-pdf-7.png`, `aster-review-custom-pdf-11.png`.
+Browser setup note: an initial default Playwright headless-shell run passed but produced different large-fixture page counts;
+reran with the original explicit full-Chromium executable above, reproducing the prior page counts without assertion changes.
+Initial new harness issues (Vitest URL resolution and processed-row selector) were fixed before the passing reruns.
+
+Not rerun: prior 23-file/185-test broader suite, independent Python ten-fixture validation, clean dependency install,
+or 64/65-design gallery baseline. Those remain prior evidence only; scoped diff proves old templates untouched.
+
+**Unresolved P1 packaging blocker (independent review):** Gallery service worker eagerly precaches all HTML/assets;
+Aster adds approximately 27 MB including the font twice. Parent task must decide delivery architecture.
+No service worker/buildGalleryPrecache, font coverage or standalone delivery-pattern change was made here.
+No push/PR/merge/deploy; no Atlas/Lumen work. This local metadata fix does not resolve or approve packaging.
+
+## Prior implementation results · `5b20b44`
+
+The remaining sections record prior implementation evidence; only the reruns explicitly listed above are fresh.
 
 - Clean dependency install (`npm ci --ignore-scripts`), `npm run clean`, `npm run build:assets`, fresh `node scripts/build-aster.mjs`: passed.
 - Focused Vitest: **23 files / 185 tests passed**; existing jsdom pseudo-element warnings remain informational.
