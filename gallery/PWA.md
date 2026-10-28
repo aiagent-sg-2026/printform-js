@@ -72,6 +72,8 @@ until a client-free activation. Quota errors fail a new install safely.
 
 - `tests/gallery/order.test.js`: numerical order, stable fallback/ties, immutable input.
 - `tests/gallery/update.test.js`: safety/state/retry contracts, including unsupported SW.
+- `tests/gallery/original-fixture.test.js`: no-Git original build, exact worker SHA,
+  complete precache, licenses, corrupt-archive rejection and safe extraction output.
 - `e2e/gallery-preview.spec.js`: actual wheel, PageDown/Up, mobile CDP touch gesture,
   first/last-page reachability, dynamic A4/A5 and short/long data, short viewport,
   PF055/056/057/063, focus, Tab/Escape, background restoration and recovery.
@@ -81,8 +83,11 @@ until a client-free activation. Quota errors fail a new install safely.
   owned by the test. No production deployment/profile/cache is used.
 - `e2e/gallery-legacy-migration.spec.js`: exact public original commit
   `53bd82bebad913553ad39d5e8c8ef63638db75f5`, original build script and verified
-  worker Git blob (not a simulated legacy client with a new worker). The fixture
-  uses local `git archive`; a shallow checkout missing that commit fails explicitly.
+  worker Git blob (not a simulated legacy client with a new worker). Minimal
+  immutable inputs are vendored in `e2e/fixtures/gallery-original/inputs.json.gz`;
+  its README records source, SHA-256, licenses and payload boundaries. The helper
+  verifies the archive, source blobs and exact built worker SHA without Git,
+  history, tar or network access, including in shallow/exported checkouts.
   Actual installed A / shell B / waiting B, manual retry, preview deferral, storage
   preservation, one document reload and zero other-tab reloads are asserted with
   screenshots and worker-identity JSON.
