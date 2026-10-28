@@ -3,9 +3,63 @@ import fs from 'node:fs';
 import { execFileSync } from 'node:child_process';
 import { pathToFileURL } from 'node:url';
 import { inspectPlacemat, assertPlacemat, inspectPlacematPDF } from '../scripts/pf057-checks.mjs';
+import { inspectDOMSafety, assertDOMSafety, pdfRuns, measurePDFSafety, safetyCopy, assertPDFSafety } from '../scripts/pf057-print-safety.mjs';
+import { getDocument } from 'pdfjs-dist/legacy/build/pdf.mjs';
 const data = JSON.parse(fs.readFileSync('gallery/designs/assets/pf057/data.json', 'utf8'));
 const url = '/gallery/designs/demobank-bilingual-financing-placemat.html';
 const ready = page => page.waitForFunction(() => window.PF057_READY);
+const warning = 'SAMPLE — FICTIONAL FINANCING DEMONSTRATION';
+async function printedSafety(page) {
+  const bytes = await page.pdf({ preferCSSPageSize: true, printBackground: true });
+  const loading = getDocument({ data: new Uint8Array(bytes), isEvalSupported: false });
+  try {
+    const pdf = await loading.promise, safety = [];
+    expect(pdf.numPages).toBe(2);
+    for (let i = 1; i <= 2; i++) {
+      const sheet = await pdf.getPage(i), view = sheet.getViewport({ scale: 1 });
+      safety.push(measurePDFSafety(pdfRuns(await sheet.getTextContent(), view.height), view.width, view.height,
+        safetyCopy(data.translations[i === 1 ? 'en' : 'ms'], warning)));
+    }
+    return safety;
+  } finally { await loading.destroy(); }
+}
+
+test('PF057 guard reproduces original 1.3mm / 5.4pt unsafe footer on actual PDF', async ({ page, browserName }) => {
+  test.skip(browserName !== 'chromium', 'Actual PDF requires Chromium');
+  await page.goto(url); await ready(page); await page.emulateMedia({ media: 'print' });
+  // Old footer began at y=1023 CSSpx. Reproduce its exact typography/placement
+  // without retaining an unsafe production template or depending on Git history.
+  await page.addStyleTag({ content: `
+    .pf057 .pf057-footer { position: relative; top: 25px; height: 95.519685px; padding: 12px 31px 9px; }
+    .pf057 .pf057-footer-top small { font-size: 7px; }
+    .pf057 .pf057-footer-top > div:last-child b { font-size: 9px; }
+    .pf057 .pf057-warning { padding-top: 5px; margin-top: 6px; }
+    .pf057 .pf057-warning strong { font-size: 9.2px; }
+    .pf057 .pf057-warning span { font-size: 7.2px; }
+  ` });
+  const dom = await inspectDOMSafety(page);
+  expect(() => assertDOMSafety(dom)).toThrow(/DOM safety/);
+  for (const [i, safety] of (await printedSafety(page)).entries()) {
+    expect(safety.critical.find(n => n.text === data.translations[i === 0 ? 'en' : 'ms'].localWarning).minSizePt).toBeCloseTo(5.4, 2);
+    expect(safety.critical.find(n => n.text === warning).minSizePt).toBeCloseTo(6.9, 2);
+    expect(safety.lowestBottomMarginMm).toBeGreaterThan(1.2);
+    expect(safety.lowestBottomMarginMm).toBeLessThan(1.4);
+    expect(() => assertPDFSafety(safety, i + 1)).toThrow(/PDF safety font/);
+  }
+});
+
+test('PF057 PDF bottom guard rejects readable but unsafe low-positioned warnings', async ({ page, browserName }) => {
+  test.skip(browserName !== 'chromium', 'Actual PDF requires Chromium');
+  await page.goto(url); await ready(page); await page.emulateMedia({ media: 'print' });
+  await page.addStyleTag({ content: '.pf057 .pf057-warning { position: relative; top: 18px; }' });
+  const dom = await inspectDOMSafety(page);
+  expect(() => assertDOMSafety(dom)).toThrow(/DOM safety bottom/);
+  for (const [i, safety] of (await printedSafety(page)).entries()) {
+    expect(safety.minCriticalSizePt).toBeGreaterThan(7.5);
+    expect(safety.lowestBottomMarginMm).toBeLessThan(5);
+    expect(() => assertPDFSafety(safety, i + 1)).toThrow(/PDF safety bottom/);
+  }
+});
 
 test('PF057 real formatAll: bilingual grouped rates, warnings, bounds and selectable A4 PDF', async ({ page, browserName }) => {
   const errors = []; page.on('pageerror', e => errors.push(e.message));
@@ -14,6 +68,7 @@ test('PF057 real formatAll: bilingual grouped rates, warnings, bounds and select
   const result = await page.evaluate(() => window.PF057_FORMAT_REPORT);
   expect(result.failedCount).toBe(0);
   await page.emulateMedia({ media: 'print' }); assertPlacemat(await inspectPlacemat(page), data);
+  assertDOMSafety(await inspectDOMSafety(page));
   if (browserName === 'chromium') await inspectPlacematPDF(await page.pdf({ preferCSSPageSize: true, printBackground: true }), data);
   expect(errors).toEqual([]);
 });

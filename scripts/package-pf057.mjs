@@ -7,7 +7,15 @@ const output = path.resolve(process.env.PF057_OUTPUT || path.join(root, '../outp
 const stage = path.join(output, 'pf057-delivery');
 const zip = path.join(output, 'PF057-DemoBank-placemat.zip');
 const verification = JSON.parse(fs.readFileSync(path.join(output, 'pf057-verification.json')));
-if (verification.pdf.pages.length !== 2 || verification.offline.errors.length) throw new Error('Verify final artifacts first');
+for (const result of [verification.pdf, verification.offlinePDF]) {
+  if (result?.pages.length !== 2 || result.pages.some(p => !p.safety || p.safety.minCriticalSizePt < 7.5 || p.safety.lowestBottomMarginMm < 5)) {
+    throw new Error('Verify final physical PDF safety first');
+  }
+}
+if (verification.offline.errors.length) throw new Error('Verify final artifacts first');
+const comparison = JSON.parse(fs.readFileSync(path.join(output, 'pf057-printsafe-comparison.json')));
+const pdfHash = crypto.createHash('sha256').update(fs.readFileSync(path.join(output, 'pf057-demobank-placemat.pdf'))).digest('hex');
+if (comparison.afterSHA256 !== pdfHash) throw new Error('Stale physical PDF comparison');
 // Explicit allowlist: never walk the workspace, input, logs or node_modules.
 const sourceFiles = [
   'gallery/designs/demobank-bilingual-financing-placemat.html',
@@ -15,15 +23,16 @@ const sourceFiles = [
   'docs/PF057_PLACEMAT.md', 'LICENSE',
   'gallery/manifest.json', 'gallery/js/filter.js', 'gallery/js/categories.js',
   'scripts/sync-pf057-data.mjs', 'scripts/export-pf057.mjs', 'scripts/verify-pf057.mjs',
-  'scripts/pf057-checks.mjs', 'scripts/package-pf057.mjs',
-  'tests/gallery/pf057-placemat.test.js', 'e2e/pf057-placemat.spec.js',
+  'scripts/pf057-checks.mjs', 'scripts/pf057-print-safety.mjs', 'scripts/package-pf057.mjs',
+  'tests/gallery/pf057-placemat.test.js', 'tests/gallery/pf057-print-safety.test.js', 'e2e/pf057-placemat.spec.js',
   'dist/printform.js',
   ...fs.readdirSync(path.join(root, 'gallery/designs/assets/pf057')).map(file => `gallery/designs/assets/pf057/${file}`),
   ...['DejaVuSansCondensed.ttf', 'DejaVuSansCondensed-Bold.ttf', 'FONT-LICENSE.txt'].map(file => `gallery/designs/assets/demobank/${file}`)
 ];
 const artifacts = ['pf057-offline.html', 'pf057-demobank-placemat.pdf', 'pf057-data.json',
   'pf057-page-1.png', 'pf057-page-2.png', 'pf057-mobile-390.png',
-  'pf057-pdf-page-1.png', 'pf057-pdf-page-2.png', 'pf057-verification.json', 'PF057_VERIFICATION_REPORT.md'];
+  'pf057-pdf-page-1.png', 'pf057-pdf-page-2.png', 'pf057-verification.json',
+  'pf057-printsafe-comparison.json', 'PF057_VERIFICATION_REPORT.md'];
 for (const file of [...sourceFiles.map(file => path.join(root, file)), ...artifacts.map(file => path.join(output, file))]) {
   if (!fs.statSync(file).isFile() || fs.lstatSync(file).isSymbolicLink()) throw new Error(`Unsafe source: ${file}`);
 }

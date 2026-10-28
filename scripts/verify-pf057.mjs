@@ -5,6 +5,7 @@ import { pathToFileURL } from 'node:url';
 import { execFileSync } from 'node:child_process';
 import { chromium } from 'playwright';
 import { inspectPlacemat, assertPlacemat, inspectPlacematPDF } from './pf057-checks.mjs';
+import { inspectDOMSafety, assertDOMSafety } from './pf057-print-safety.mjs';
 const root = path.resolve(import.meta.dirname, '..');
 const output = path.resolve(process.env.PF057_OUTPUT || path.join(root, '../output/pf057'));
 const design = path.join(root, 'gallery/designs/demobank-bilingual-financing-placemat.html');
@@ -21,12 +22,14 @@ try {
   await page.goto(pathToFileURL(design).href); await page.waitForFunction(() => window.PF057_READY);
   findings.formatAll = await page.evaluate(() => window.PF057_FORMAT_REPORT);
   findings.desktop = await inspectPlacemat(page); assertPlacemat(findings.desktop, data);
+  findings.domSafety = await inspectDOMSafety(page); assertDOMSafety(findings.domSafety);
   for (let i = 0; i < 2; i++) {
     const sheet = page.locator('.printform_page').nth(i);
     await sheet.screenshot({ path: path.join(output, `pf057-page-${i + 1}.png`) });
     if (i === 0) await sheet.screenshot({ path: path.join(root, 'gallery/thumbs/demobank-bilingual-financing-placemat.png') });
   }
   await page.emulateMedia({ media: 'print' }); assertPlacemat(await inspectPlacemat(page), data);
+  findings.printDOMSafety = await inspectDOMSafety(page); assertDOMSafety(findings.printDOMSafety);
   const pdf = await page.pdf({ path: path.join(output, 'pf057-demobank-placemat.pdf'), preferCSSPageSize: true, printBackground: true });
   findings.pdf = await inspectPlacematPDF(pdf, data);
   const mobile = await browser.newPage({ viewport: { width: 390, height: 844 } });
@@ -50,11 +53,12 @@ try {
   await local.reload(); await local.waitForFunction(() => window.PF057_READY); assertPlacemat(await inspectPlacemat(local), data);
   await local.setViewportSize({ width: 390, height: 844 }); await local.reload(); await local.waitForFunction(() => window.PF057_READY);
   await local.emulateMedia({ media: 'print' }); assertPlacemat(await inspectPlacemat(local), data);
+  assertDOMSafety(await inspectDOMSafety(local));
   findings.offlinePDF = await inspectPlacematPDF(await local.pdf({ preferCSSPageSize: true, printBackground: true }), data);
   assert.deepEqual(network, []); assert.deepEqual(errors, []);
   findings.offline = { reload: true, freshMobile: true, networkRequests: network, errors };
   await context.close();
   await fs.copyFile(path.join(root, 'gallery/designs/assets/pf057/data.json'), path.join(output, 'pf057-data.json'));
   await fs.writeFile(path.join(output, 'pf057-verification.json'), JSON.stringify(findings, null, 2));
-  console.log('PASS: formatAll, 2 A4 pages, bilingual DOM/text bounds, exact grouped rates, selectable PDF, fresh 390px mobile, offline reload and PDF.');
+  console.log('PASS: formatAll, 2 A4 pages, bilingual DOM/text bounds, exact grouped rates, selectable PDF with >=7.5pt critical fonts / >=5mm bottom bboxes, fresh 390px mobile, offline reload and PDF.');
 } finally { await browser.close(); }

@@ -38,17 +38,29 @@ node scripts/sync-pf057-data.mjs --check
 npx vitest run tests/gallery --maxWorkers=1 --no-file-parallelism
 npm run build
 node scripts/build-site.mjs
-npx playwright test e2e/pf057-placemat.spec.js e2e/gallery-filters.spec.js e2e/demobank-statement.spec.js --project=chromium --workers=1
+npx playwright test e2e/pf057-placemat.spec.js e2e/gallery-filters.spec.js e2e/demobank-statement.spec.js e2e/pf055-corporate-insurance-proposal-agreement.spec.js --project=chromium --workers=1
 node scripts/verify-pf057.mjs
 ```
 
-Schedule heavy jobs serially, check shared VM load/processes and avoid the separate CSV job. Do not kill unrelated processes. Playwright owns/stops its test server. The file-based verifier needs no HTTP server.
+The prior full build passed 3542 tests. For PF057-only typography/checker changes, run focused tests and `node scripts/build-site.mjs`; a new heavy full build is unnecessary unless runtime impact changes.
+
+Schedule heavy jobs serially, check actual shared VM CPU/memory/heavy commands rather than waiting for an entire agent PID. Do not kill unrelated processes. Playwright owns/stops its test server. The file-based verifier needs no HTTP server.
 
 `verify-pf057.mjs` creates the offline HTML, PDF, page/mobile screenshots, copied JSON and machine-readable verification under `../output/pf057` (override `PF057_OUTPUT`). It refreshes only the PF-057 thumbnail. The standalone HTML embeds the runtime, scripts, fonts, SVGs and font license. It opens directly from disk without a network connection; edit the supplied source JSON/HTML/CSS/JS and regenerate to change the brochure.
 
 Checks cover independent arithmetic oracles, generated-data sync, translation keys, rendered values/spans, native text bounds, section overlap, image load, exact page count, matched bilingual section placement, print media, PDF dimensions/text bounds/warnings/table headers, no PDF links/attachments, fresh 390px measurement, resizing, offline reload and offline PDF export. Original 56 template/thumbnail hashes and the original 56 manifest entries are independently compared with the saved baseline.
 
 The package script `node scripts/package-pf057.mjs` creates an allowlisted ZIP in that output directory, excluding references, node_modules, logs and draft images. Generate/check final artifacts before packaging.
+
+## Physical print-safety regression
+
+Critical fictional/no-offer warnings, rate assumptions, annual units and formula paragraphs use 10.667 CSSpx (approximately 8pt in Chromium PDF). The hero is 318px high, benefit strip 110px, explanation card 570px and footer 120.52px; all retain the real two-page PrintForm path. Original art, numeric data and bilingual wording are unchanged.
+
+`scripts/pf057-print-safety.mjs` measures **actual PDF text transforms in physical points**, using embedded-font ascent/descent for conservative glyph bboxes (not baseline-only coordinates or CSS-size assertions). Every occurrence of each critical text must be present, at least 7.5pt, at least 5mm above the physical page bottom and at least 7mm from horizontal edges. Original PDF secondary warning: 5.4pt / 1.286mm bottom clearance. Corrected English and Malay pages: approximately 8pt / 7.156mm lowest clearance. Source and offline PDFs are both verified.
+
+DOM Range bounds also check minimum 10px type, safety margins and internal pitch/rate/date, table/note and footer overlaps. Playwright reproduces the original 6.9pt/5.4pt and 1.3mm unsafe footer on an actual two-page PDF, then independently rejects readable warnings shifted too low. Unit tests cover exact thresholds, descenders, split ligatures, repeated text and missing copy. No production engine/default is altered. A baseline-reproduced PF056 PDF checker kerning issue (`T` + `otal ...`) is handled only inside its row-header column; negative tests retain missing/misplaced-label and wrong-amount rejection.
+
+Non-critical table headings/sublabels remain compact at 6.75pt, including the enlarged income/rebate units (previously 4.95pt). Decorative eyebrow/page labels and reserved contacts remain approximately 5.025–6pt. They are reported separately in `pdf.pages[].safety.smallText`; none substitutes for a critical warning. At full A4 size the tables are readable but compact; zoom is recommended for fitted mobile preview.
 
 ## Licenses / print limitations
 

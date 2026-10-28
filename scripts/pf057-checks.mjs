@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict';
 import { getDocument } from 'pdfjs-dist/legacy/build/pdf.mjs';
+import { compact, safetyCopy, pdfRuns, measurePDFSafety, assertPDFSafety } from './pf057-print-safety.mjs';
 export const WARNING = 'SAMPLE — FICTIONAL FINANCING DEMONSTRATION';
 export async function inspectPlacemat(page) {
   return page.evaluate(() => [...document.querySelectorAll('.pf057 .printform_page')].map((sheet, index) => {
@@ -88,7 +89,6 @@ export async function inspectPlacematPDF(bytes, data) {
       const text = items.map(n => n.text).join(' '), t = data.translations[i === 1 ? 'en' : 'ms'];
       // PDF.js can split a ligature into adjacent runs ("fl" + "at").
       // Compare whitespace-free text as well as validating every run's geometry.
-      const compact = value => value.normalize('NFKC').replace(/\s+/g, '');
       const normalized = compact(text);
       for (const value of [WARNING, 'NOT A FINANCIAL OFFER', t.with, t.without, t.mathTitle, '6.00%', '5.00%', '4.00%', '9.00%', '7.50%', '5.50%', '37.5%', data.website, data.email]) {
         assert.ok(normalized.includes(compact(value)), `Selectable PDF text page ${i}: ${value}`);
@@ -100,7 +100,9 @@ export async function inspectPlacematPDF(bytes, data) {
         assert.ok(item.y - item.height >= 5 && item.y <= view.height - 1, `PDF vertical bounds: ${item.text}`);
       }
       assert.equal((await page.getAnnotations()).length, 0, 'No hidden application/payment links');
-      pages.push({ page: i, widthPt: view.width, heightPt: view.height, textItems: items.length, text });
+      const safety = measurePDFSafety(pdfRuns(content, view.height), view.width, view.height, safetyCopy(t, WARNING));
+      assertPDFSafety(safety, i);
+      pages.push({ page: i, widthPt: view.width, heightPt: view.height, textItems: items.length, text, safety });
     }
     assert.equal(await pdf.getAttachments(), null);
     return { pages, attachments: null };
