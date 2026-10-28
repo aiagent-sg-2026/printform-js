@@ -1347,5 +1347,53 @@
     "thumb": "thumbs/demobank-bilingual-financing-placemat.png",
     "width": 794,
     "height": 1123
+  },
+  {
+    "id": "modern-school-invoice", "no": "PF-058",
+    "style": { "en": "Blue / shield", "zh": "蓝色 / 盾形校徽" },
+    "title": { "en": "Modern School Invoice", "zh": "蓝色现代学校发票" },
+    "type": "Invoice", "paper": "A4", "pages": 1,
+    "tags": ["sales", "school", "education", "invoice", "blue", "A5", "multi-page", "fictional", "sample", "offline"],
+    "file": "designs/modern-school-invoice.html", "thumb": "thumbs/modern-school-invoice.png", "width": 794, "height": 1123
+  },
+  {
+    "id": "preschool-childcare-invoice", "no": "PF-059",
+    "style": { "en": "Green / nature", "zh": "绿色 / 自然插画" },
+    "title": { "en": "Preschool & Childcare Invoice", "zh": "绿色幼儿园托育发票" },
+    "type": "Invoice", "paper": "A4", "pages": 1,
+    "tags": ["sales", "school", "preschool", "childcare", "green", "A5", "multi-page", "fictional", "sample", "offline"],
+    "file": "designs/preschool-childcare-invoice.html", "thumb": "thumbs/preschool-childcare-invoice.png", "width": 794, "height": 1123
+  },
+  {
+    "id": "school-fee-statement", "no": "PF-060",
+    "style": { "en": "Monochrome / formal", "zh": "黑白 / 正式账单" },
+    "title": { "en": "School Fee Statement", "zh": "黑白学校费用账单" },
+    "type": "Invoice", "paper": "A4", "pages": 1,
+    "tags": ["sales", "school", "fees", "statement", "monochrome", "A5", "multi-page", "fictional", "sample", "offline"],
+    "file": "designs/school-fee-statement.html", "thumb": "thumbs/school-fee-statement.png", "width": 794, "height": 1123
+  },
+  {
+    "id": "tuition-enrichment-invoice", "no": "PF-061",
+    "style": { "en": "Coral / open book", "zh": "珊瑚色 / 书本标志" },
+    "title": { "en": "Tuition & Enrichment Invoice", "zh": "珊瑚色学费与拓展课程发票" },
+    "type": "Invoice", "paper": "A4", "pages": 1,
+    "tags": ["sales", "school", "tuition", "enrichment", "coral", "sessions", "A5", "multi-page", "fictional", "sample", "offline"],
+    "file": "designs/tuition-enrichment-invoice.html", "thumb": "thumbs/tuition-enrichment-invoice.png", "width": 794, "height": 1123
+  },
+  {
+    "id": "premium-international-school-invoice", "no": "PF-062",
+    "style": { "en": "Navy / gold", "zh": "海军蓝 / 金色" },
+    "title": { "en": "Premium International School Invoice", "zh": "海军蓝金色国际学校发票" },
+    "type": "Invoice", "paper": "A4", "pages": 1,
+    "tags": ["sales", "school", "international", "premium", "navy", "gold", "A5", "multi-page", "fictional", "sample", "offline"],
+    "file": "designs/premium-international-school-invoice.html", "thumb": "thumbs/premium-international-school-invoice.png", "width": 794, "height": 1123
+  },
+  {
+    "id": "bilingual-academy-invoice", "no": "PF-063",
+    "style": { "en": "Plum / rose", "zh": "梅紫 / 玫瑰色" },
+    "title": { "en": "Bilingual Academy Invoice", "zh": "梅紫色中英双语学校发票" },
+    "type": "Invoice", "paper": "A4", "pages": 1,
+    "tags": ["sales", "school", "bilingual", "Chinese", "English", "中英双语", "plum", "rose", "A5", "multi-page", "fictional", "sample", "offline"],
+    "file": "designs/bilingual-academy-invoice.html", "thumb": "thumbs/bilingual-academy-invoice.png", "width": 794, "height": 1123
   }
 ]

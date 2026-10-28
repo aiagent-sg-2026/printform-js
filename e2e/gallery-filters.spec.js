@@ -1,10 +1,11 @@
 import { test, expect } from "@playwright/test";
+const catalogueCount = 63;
 const category = (page, id) => page.locator(`#category-filters [data-filter-value="${id}"]`);
 test.use({ serviceWorkers: "block" });
 
 test("categories combine with compact filters, keep focus and restore history", async ({ page }) => {
   await page.goto("/gallery/index.html");
-  await expect(page.locator(".gallery-card")).toHaveCount(57);
+  await expect(page.locator(".gallery-card")).toHaveCount(catalogueCount);
   await expect(page.locator("#category-filters button")).toHaveCount(8);
   await page.locator('[data-language="zh"]').focus();
   await page.keyboard.press("Tab");
@@ -12,7 +13,7 @@ test("categories combine with compact filters, keep focus and restore history", 
   await page.keyboard.press("Tab");
   await page.keyboard.press("Enter");
   await expect(category(page, "sales")).toBeFocused();
-  await expect(page.locator("#result-count")).toHaveText("12/57 designs");
+  await expect(page.locator("#result-count")).toHaveText("18/63 designs");
   await page.locator("#type-filter").selectOption("Quotation");
   await expect(page.locator(".gallery-card")).toHaveCount(3);
   await page.locator("#paper-filter").selectOption("A4");
@@ -27,7 +28,7 @@ test("categories combine with compact filters, keep focus and restore history", 
   await page.goForward();
   await expect(page.locator("#search")).toHaveValue("no such design");
   await page.locator("#clear-filters").click();
-  await expect(page.locator(".gallery-card")).toHaveCount(57);
+  await expect(page.locator(".gallery-card")).toHaveCount(catalogueCount);
   await expect(page).not.toHaveURL(/category=|type=|paper=|q=/);
   await page.locator("#type-filter").selectOption("Quotation");
   await category(page, "purchasing").click();
@@ -41,7 +42,7 @@ test("URL state is safe, reloadable and bilingual", async ({ page }) => {
   await page.reload();
   await expect(page.locator("#search")).toHaveValue("PF-004");
   await page.locator('[data-language="zh"]').click();
-  await expect(category(page, "sales")).toHaveText("销售 (12)");
+  await expect(category(page, "sales")).toHaveText("销售 (18)");
   await expect(page.locator("#active-filters")).toContainText("当前筛选");
   await page.locator("#clear-filters").click();
   await page.locator("#search").fill("北辰");
@@ -68,7 +69,7 @@ test("loading and failed manifests can be retried without duplicate controls", a
   await page.unroute("**/gallery/manifest.json");
   await page.locator("#retry-load").focus();
   await page.keyboard.press("Enter");
-  await expect(page.locator(".gallery-card")).toHaveCount(57);
+  await expect(page.locator(".gallery-card")).toHaveCount(catalogueCount);
   await expect(page.locator("#search")).toBeFocused();
   await expect(page.locator("#category-filters button")).toHaveCount(8);
   await expect(page.locator("#load-status")).toBeHidden();
@@ -100,7 +101,7 @@ for (const [name, width, colorScheme, language] of [["desktop-light", 1200, "lig
     await page.setViewportSize({ width, height: 900 });
     await page.emulateMedia({ colorScheme });
     await page.goto("/gallery/index.html");
-    await expect(page.locator(".gallery-card")).toHaveCount(57);
+    await expect(page.locator(".gallery-card")).toHaveCount(catalogueCount);
     await page.locator(`[data-language="${language}"]`).click();
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
     for (const control of await page.locator("#category-filters button, .controls select, #search").all()) {
@@ -121,7 +122,7 @@ test("malformed data shows a recoverable error rather than an empty gallery", as
   await expect(page.locator("#empty-state")).toBeHidden();
   await page.unroute("**/gallery/manifest.json");
   await page.locator("#retry-load").click();
-  await expect(page.locator(".gallery-card")).toHaveCount(57);
+  await expect(page.locator(".gallery-card")).toHaveCount(catalogueCount);
 });
 
 test.describe("offline category navigation", () => {
@@ -130,12 +131,12 @@ test.describe("offline category navigation", () => {
     await page.goto("/gallery/index.html");
     await page.evaluate(() => navigator.serviceWorker.ready);
     await page.reload();
-    await expect(page.locator(".gallery-card")).toHaveCount(57);
+    await expect(page.locator(".gallery-card")).toHaveCount(catalogueCount);
     await context.setOffline(true);
     await page.reload();
-    await expect(page.locator(".gallery-card")).toHaveCount(57);
+    await expect(page.locator(".gallery-card")).toHaveCount(catalogueCount);
     await category(page, "hr-administration").click();
-    await expect(page.locator("#result-count")).toHaveText("4/57 designs");
+    await expect(page.locator("#result-count")).toHaveText("4/63 designs");
     await page.locator("#type-filter").selectOption("Work Order");
     await expect(page.locator(".gallery-card")).toHaveCount(1);
     await category(page, "sales").click();
@@ -171,6 +172,17 @@ test.describe("offline category navigation", () => {
     await expect(page.locator("[data-print]")).toBeEnabled();
     await expect(page.frameLocator("iframe").locator(".printform_page")).toHaveCount(2);
     await expect(page.frameLocator("iframe").locator(".pf057-warning")).toHaveCount(2);
+    await page.locator("[data-close]").click();
+    await category(page, "sales").click();
+    for (let number = 58; number <= 63; number++) {
+      await page.locator("#search").fill(`PF-${String(number).padStart(3, "0")}`);
+      await expect(page.locator(".gallery-card")).toHaveCount(1);
+      await page.locator(".gallery-card").click();
+      await expect(page.locator("[data-print]")).toBeEnabled();
+      await expect(page.frameLocator("iframe").locator(".printform_page")).toHaveCount(1);
+      await expect(page.frameLocator("iframe").locator("#print")).toBeEnabled();
+      await page.locator("[data-close]").click();
+    }
     await context.setOffline(false);
   });
 });

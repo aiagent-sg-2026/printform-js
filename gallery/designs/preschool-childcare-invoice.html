@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>PF-59 · Preschool & Childcare Invoice · Fictional sample</title>
+  <link rel="stylesheet" href="assets/school-invoices/invoice.css">
+  <link rel="stylesheet" href="assets/school-invoices/themes.css">
+  <style id="paper-rule">@page { size: A4 portrait; margin: 0; }</style>
+</head>
+<body data-style="preschool" data-paper="A4">
+  <nav class="controls" aria-label="Invoice preview controls">
+    <label for="paper">Paper size <select id="paper"><option>A4</option><option>A5</option></select></label>
+    <label for="sample">Dataset <select id="sample"><option value="short">Single-page sample</option><option value="long">Multi-page sample</option></select></label>
+    <button id="print" type="button" disabled>Print / Save PDF</button>
+    <p id="status" role="status" aria-live="polite">Loading fictional invoice…</p>
+  </nav>
+  <main id="invoice-root" aria-label="Preschool & Childcare Invoice"></main>
+  <script src="assets/school-invoices/data.js"></script>
+  <script src="assets/school-invoices/math.js"></script>
+  <script src="assets/school-invoices/art.js"></script>
+  <script src="assets/school-invoices/template.js"></script>
+  <script id="school-engine" type="text/plain" data-src="../../dist/printform.js"></script>
+  <script src="assets/school-invoices/controller.js"></script>
+</body>
+</html>

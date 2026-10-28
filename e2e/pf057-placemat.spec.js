@@ -102,7 +102,7 @@ test('PF057 self-contained export reloads with networking disabled', async ({ br
 test('PF057 gallery filters and preview expose the bilingual brochure', async ({ page }) => {
   await page.goto('/gallery/index.html?category=finance&q=PF-057');
   await expect(page.locator('.gallery-card')).toHaveCount(1);
-  await expect(page.locator('#result-count')).toHaveText('1/57 design');
+  await expect(page.locator('#result-count')).toHaveText('1/63 design');
   await page.locator('.gallery-card').click();
   await expect(page.locator('[data-print]')).toBeEnabled();
   const frame = page.frameLocator('iframe');

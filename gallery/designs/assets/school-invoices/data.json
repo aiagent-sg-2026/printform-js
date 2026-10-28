@@ -1,0 +1,60 @@
+{
+  "schemaVersion": 1,
+  "invoice": {
+    "id": "DEMO-2027-014",
+    "issued": "04 Jan 2027",
+    "due": "18 Jan 2027",
+    "period": "Jan–Mar 2027",
+    "currency": "SGD",
+    "taxBasisPoints": 250,
+    "taxNote": "Illustrative sample tax only; no tax registration or legal tax claim."
+  },
+  "customer": {
+    "name": "Demo Rowan Family",
+    "address": "14 Fictional Garden, Example City",
+    "email": "family@example.org"
+  },
+  "student": {
+    "name": "Demo Avery Rowan",
+    "nameZh": "示例学生小禾",
+    "id": "DEMO-ST-014",
+    "class": "Discovery 3 · Demo cohort",
+    "program": "Learning & creative enrichment"
+  },
+  "payment": {
+    "account": "DEMO-XXXX-NONVALID",
+    "email": "office@example.org",
+    "url": "https://example.org/demo-school-invoice",
+    "notice": "Demonstration only. Do not transfer money. QR opens an example.org demo URL."
+  },
+  "lineItems": [
+    { "id": "L001", "description": "Term tuition · discovery programme", "descriptionZh": "学期课程费用", "quantity": 3, "unitCents": 18000 },
+    { "id": "L002", "description": "Learning materials & activity kit", "descriptionZh": "学习材料与活动包", "quantity": 1, "unitCents": 3500 },
+    { "id": "L003", "description": "Creative studio · guided sessions", "descriptionZh": "创意工作坊课程", "quantity": 4, "unitCents": 2200 },
+    { "id": "L004", "description": "Demo learning subsidy / credit", "descriptionZh": "示例学习补助抵扣", "quantity": 1, "unitCents": -2500 }
+  ],
+  "adjustments": [
+    { "label": "Demo sibling discount", "labelZh": "示例家庭优惠", "cents": -1500 },
+    { "label": "Demo administrative adjustment", "labelZh": "示例行政调整", "cents": 0 }
+  ],
+  "longSample": {
+    "count": 44,
+    "descriptions": [
+      "Exploration workshop · guided practice with reusable learning resources and a reflective journal",
+      "Nature & number lab · small-group session",
+      "Community storytelling studio\nIncludes creative reading and collaborative discussion",
+      "InterdisciplinaryLearningPortfolioWithAnIntentionallyUnbrokenDemoReferenceForWrapping",
+      "Learning materials · zero-price demonstration",
+      "Demo enrichment subsidy · signed credit"
+    ],
+    "descriptionsZh": ["探索工作坊与学习记录", "自然与数学小组课程", "故事阅读与合作讨论", "跨学科学习作品记录与课程活动说明", "免费示例学习材料", "示例拓展课程补助抵扣"]
+  },
+  "styles": [
+    { "id": "modern", "number": 58, "file": "modern-school-invoice", "name": "Demo Bluehaven Academy", "title": "Modern School Invoice", "style": "Blue / shield", "zh": "蓝色现代学校发票", "tagline": "Curiosity today. Possibility tomorrow." },
+    { "id": "preschool", "number": 59, "file": "preschool-childcare-invoice", "name": "Demo Little Canopy Preschool", "title": "Preschool & Childcare Invoice", "style": "Green / nature", "zh": "绿色幼儿园托育发票", "tagline": "Little discoveries, growing together." },
+    { "id": "statement", "number": 60, "file": "school-fee-statement", "name": "Demo Ashgrove School", "title": "School Fee Statement", "style": "Monochrome / formal", "zh": "黑白学校费用账单", "tagline": "A thoughtful foundation for learning." },
+    { "id": "enrichment", "number": 61, "file": "tuition-enrichment-invoice", "name": "Demo Apricot Learning Academy", "title": "Tuition & Enrichment Invoice", "style": "Coral / open book", "zh": "珊瑚色学费与拓展课程发票", "tagline": "Explore. Create. Become." },
+    { "id": "premium", "number": 62, "file": "premium-international-school-invoice", "name": "Demo Meridian International School", "title": "Premium International School Invoice", "style": "Navy / gold", "zh": "海军蓝金色国际学校发票", "tagline": "Learning without horizons." },
+    { "id": "bilingual", "number": 63, "file": "bilingual-academy-invoice", "name": "Demo Blossom Bridge Academy", "nameZh": "示例花桥学苑", "title": "Bilingual Academy Invoice", "style": "Plum / rose", "zh": "梅紫色中英双语学校发票", "tagline": "Together in learning · 同心共学" }
+  ]
+}
