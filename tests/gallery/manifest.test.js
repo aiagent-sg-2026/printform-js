@@ -8,7 +8,7 @@ const validPapers = new Set(["A4", "A5", "LETTER", "LEGAL"]);
 
 describe("gallery manifest", () => {
   it("has complete entries with unique ids and supported paper sizes", () => {
-    expect(manifest).toHaveLength(63);
+    expect(manifest).toHaveLength(64);
     expect(new Set(manifest.map(({ id }) => id)).size).toBe(manifest.length);
     for (const item of manifest) {
       expect(item).toEqual(expect.objectContaining({ id: expect.any(String), no: expect.stringMatching(/^PF-\d{3}$/), style: { en: expect.any(String), zh: expect.any(String) }, title: { en: expect.any(String), zh: expect.any(String) }, type: expect.any(String), paper: expect.any(String), pages: expect.any(Number), tags: expect.any(Array), file: expect.any(String), thumb: expect.any(String), width: expect.any(Number), height: expect.any(Number) }));
@@ -32,6 +32,13 @@ describe("gallery manifest", () => {
     expect(manifest.find(({ no }) => no === "PF-054")).toMatchObject({
       id: "sanyo-blue-sales-quotation", pages: 5, paper: "A4", type: "Quotation",
       file: "designs/sanyo-blue-sales-quotation.html", tags: expect.arrayContaining(["sample", "navy", "five-pages"])
+    });
+  });
+
+  it("registers the editable Meridian purchase order as PF-064", () => {
+    expect(manifest.find(({ no }) => no === "PF-064")).toMatchObject({
+      id: "meridian-enterprise-purchase-order", pages: 2, paper: "A4", type: "Purchase Order",
+      tags: expect.arrayContaining(["purchasing", "editable", "offline", "barcode"])
     });
   });
 

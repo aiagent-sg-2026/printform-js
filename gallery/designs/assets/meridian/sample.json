@@ -1,0 +1,26 @@
+{
+  "poNumber": "PO-2026-004128",
+  "date": "28 Oct 2026",
+  "deliveryDate": "06 Nov 2026",
+  "supplierCode": "SUP-00128",
+  "paymentTerms": "60 Days",
+  "reference": "DEMO-RFQ-04128",
+  "supplier": {
+    "name": "Northstar Technology Distribution Pte. Ltd.",
+    "address": "Fictional supplier distribution centre\nSingapore · sample address only"
+  },
+  "deliverTo": {
+    "name": "Meridian Central Warehouse",
+    "address": "18 Pioneer Crescent\nSingapore 628557\nAttn: Sample Warehouse Team"
+  },
+  "taxRate": 9,
+  "remarks": "Please deliver to the sample warehouse.\nGoods must be in good condition. Quote the PO number on delivery documents.",
+  "items": [
+    {"code":"DEMO-001","barcode":"880000000001","description":"Wireless keyboard\nCompact layout · charcoal · fictional product","quantity":10,"uom":"PC","unitPrice":45,"discount":0},
+    {"code":"DEMO-002","barcode":"880000000002","description":"Optical mouse\nWireless · black · fictional product","quantity":15,"uom":"PC","unitPrice":22,"discount":0},
+    {"code":"DEMO-003","barcode":"880000000003","description":"USB-C docking station\nDual-display office dock · fictional product","quantity":5,"uom":"PC","unitPrice":185,"discount":0},
+    {"code":"DEMO-004","barcode":"880000000004","description":"24-inch LED monitor\nOffice display · fictional product","quantity":8,"uom":"PC","unitPrice":210,"discount":0},
+    {"code":"DEMO-005","barcode":"880000000005","description":"HDMI cable, 2 m\n4K support · fictional product","quantity":20,"uom":"PC","unitPrice":12.5,"discount":0},
+    {"code":"DEMO-006","barcode":"880000000006","description":"Laptop stand\nAluminium · silver · fictional product","quantity":12,"uom":"PC","unitPrice":38,"discount":0}
+  ]
+}
