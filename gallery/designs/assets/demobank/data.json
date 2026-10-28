@@ -1,0 +1,48 @@
+{
+  "schemaVersion": 1,
+  "bank": "DemoBank",
+  "website": "www.demobank.example",
+  "warning": "SAMPLE DOCUMENT — NOT VALID FOR BANKING USE",
+  "customer": {"name": "ALEX TAN", "address": ["18 Sample Lane, Demo Heights", "00000 Example City, Fictional Region"], "reference": "DEMO-2027-0042"},
+  "statementDate": "2027-04-30",
+  "dueDate": "2027-05-21",
+  "currency": "MYR",
+  "minimumBasisPoints": 500,
+  "minimumFloorMinor": 2500,
+  "qrPayload": "https://demobank.example/demo",
+  "accounts": [
+    {"id": "daily", "label": "DEMO DAILY", "masked": "XXXX XXXX XXXX D001", "limitMinor": 800000, "openingMinor": 125000,
+      "transactions": [
+        {"id": "D01", "date": "2027-04-02", "posted": "2027-04-03", "description": "Paper Kite Grocer · DEMO-D01", "category": "Grocery", "kind": "charge", "minor": 8650},
+        {"id": "D02", "date": "2027-04-03", "posted": "2027-04-04", "description": "Lantern Books · DEMO-D02", "category": "Books", "kind": "charge", "minor": 4200},
+        {"id": "D03", "date": "2027-04-05", "posted": "2027-04-06", "description": "Cloud Tram · DEMO-D03", "category": "Travel", "kind": "charge", "minor": 1800},
+        {"id": "D04", "date": "2027-04-07", "posted": "2027-04-08", "description": "Blue Acorn Cafe · DEMO-D04", "category": "Dining", "kind": "charge", "minor": 2750},
+        {"id": "D05", "date": "2027-04-08", "posted": "2027-04-09", "description": "Sample Studio · DEMO-D05", "category": "Digital", "kind": "charge", "minor": 9200, "foreign": {"currency": "USD", "minor": 2000, "rateNumerator": 460, "rateDenominator": 100}},
+        {"id": "D06", "date": "2027-04-10", "posted": "2027-04-11", "description": "Pebble Home · DEMO-D06", "category": "Home", "kind": "charge", "minor": 6300},
+        {"id": "D07", "date": "2027-04-12", "posted": "2027-04-13", "description": "Mint Meadow Market · DEMO-D07", "category": "Grocery", "kind": "charge", "minor": 7150},
+        {"id": "D08", "date": "2027-04-14", "posted": "2027-04-15", "description": "Fable Cinema · DEMO-D08", "category": "Leisure", "kind": "charge", "minor": 3600},
+        {"id": "D09", "date": "2027-04-16", "posted": "2027-04-17", "description": "Orbit Stationery · DEMO-D09", "category": "Office", "kind": "charge", "minor": 2450},
+        {"id": "D10", "date": "2027-04-18", "posted": "2027-04-19", "description": "Willow Workshop · DEMO-D10", "category": "Learning", "kind": "charge", "minor": 12500},
+        {"id": "D11", "date": "2027-04-20", "posted": "2027-04-21", "description": "Demo purchase reversal · DEMO-D11", "category": "Credit", "kind": "credit", "minor": 4200},
+        {"id": "D12", "date": "2027-04-22", "posted": "2027-04-23", "description": "Amber Bicycle · DEMO-D12", "category": "Travel", "kind": "charge", "minor": 5300},
+        {"id": "D13", "date": "2027-04-24", "posted": "2027-04-25", "description": "Petal Lunchroom · DEMO-D13", "category": "Dining", "kind": "charge", "minor": 3150},
+        {"id": "D14", "date": "2027-04-26", "posted": "2027-04-27", "description": "PAYMENT RECEIVED - THANK YOU", "category": "Payment", "kind": "payment", "minor": 100000}
+      ]},
+    {"id": "transfer", "label": "DEMO BALANCE TRANSFER", "masked": "XXXX XXXX XXXX D002", "limitMinor": 500000, "openingMinor": 240000,
+      "transactions": [
+        {"id": "B01", "date": "2027-04-04", "posted": "2027-04-05", "description": "Synthetic transfer plan fee · DEMO-B01", "category": "Fee", "kind": "charge", "minor": 1200},
+        {"id": "B02", "date": "2027-04-26", "posted": "2027-04-27", "description": "PAYMENT RECEIVED - THANK YOU", "category": "Payment", "kind": "payment", "minor": 40000}
+      ]},
+    {"id": "flex", "label": "DEMO FLEX", "masked": "XXXX XXXX XXXX D003", "limitMinor": 300000, "openingMinor": 86000,
+      "transactions": [
+        {"id": "F01", "date": "2027-04-27", "posted": "2027-04-28", "description": "PAYMENT RECEIVED - THANK YOU", "category": "Payment", "kind": "payment", "minor": 16000}
+      ]}
+  ],
+  "repayment": {"principalMinor": 120000, "annualBasisPoints": 600, "months": [6, 12, 18], "method": "Flat simple interest on original principal; no compounding or new spending. Equal rounded instalments, final instalment adjusted by remainder."},
+  "notices": [
+    {"title": "ILLUSTRATIVE MINIMUM PAYMENT / BAYARAN MINIMUM CONTOH", "en": "The sample minimum is 5% of each closing balance, rounded up to the next cent, with a RM25.00 floor and capped at that balance. No overdue amounts apply. Paying only this amount is not a repayment recommendation.", "ms": "Bayaran minimum contoh ialah 5% baki akhir setiap akaun, dibundarkan ke atas kepada sen, minimum RM25.00 dan tidak melebihi baki. Tiada tunggakan."},
+    {"title": "FOREIGN CURRENCY EXAMPLE / CONTOH MATA WANG ASING", "en": "DEMO-D05 converts USD20.00 at the fictional rate MYR4.60 per USD, giving RM92.00. No conversion fee is added. This rate is synthetic and is not a market quotation.", "ms": "DEMO-D05 menukar USD20.00 pada kadar rekaan MYR4.60 bagi setiap USD kepada RM92.00. Tiada fi pertukaran dikenakan."},
+    {"title": "SAMPLE ACCOUNT REVIEW / SEMAKAN AKAUN CONTOH", "compact": true, "en": "Fictional activity. CR reduces the amount owed.", "ms": "Aktiviti rekaan. CR mengurangkan jumlah terhutang."},
+    {"title": "DEMO CONTACT AND SAFETY / HUBUNGAN DAN KESELAMATAN DEMO", "en": "Do not make a payment or send personal information. DemoBank is a fictional UI testing brand. The example domain and QR provide no banking or payment service.", "ms": "Jangan membuat bayaran atau menghantar maklumat peribadi. DemoBank ialah jenama rekaan untuk ujian antara muka sahaja."}
+  ]
+}

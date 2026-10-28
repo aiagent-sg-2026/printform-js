@@ -4,7 +4,7 @@ test.use({ serviceWorkers: "block" });
 
 test("categories combine with compact filters, keep focus and restore history", async ({ page }) => {
   await page.goto("/gallery/index.html");
-  await expect(page.locator(".gallery-card")).toHaveCount(55);
+  await expect(page.locator(".gallery-card")).toHaveCount(56);
   await expect(page.locator("#category-filters button")).toHaveCount(8);
   await page.locator('[data-language="zh"]').focus();
   await page.keyboard.press("Tab");
@@ -12,7 +12,7 @@ test("categories combine with compact filters, keep focus and restore history", 
   await page.keyboard.press("Tab");
   await page.keyboard.press("Enter");
   await expect(category(page, "sales")).toBeFocused();
-  await expect(page.locator("#result-count")).toHaveText("12/55 designs");
+  await expect(page.locator("#result-count")).toHaveText("12/56 designs");
   await page.locator("#type-filter").selectOption("Quotation");
   await expect(page.locator(".gallery-card")).toHaveCount(3);
   await page.locator("#paper-filter").selectOption("A4");
@@ -27,7 +27,7 @@ test("categories combine with compact filters, keep focus and restore history", 
   await page.goForward();
   await expect(page.locator("#search")).toHaveValue("no such design");
   await page.locator("#clear-filters").click();
-  await expect(page.locator(".gallery-card")).toHaveCount(55);
+  await expect(page.locator(".gallery-card")).toHaveCount(56);
   await expect(page).not.toHaveURL(/category=|type=|paper=|q=/);
   await page.locator("#type-filter").selectOption("Quotation");
   await category(page, "purchasing").click();
@@ -68,7 +68,7 @@ test("loading and failed manifests can be retried without duplicate controls", a
   await page.unroute("**/gallery/manifest.json");
   await page.locator("#retry-load").focus();
   await page.keyboard.press("Enter");
-  await expect(page.locator(".gallery-card")).toHaveCount(55);
+  await expect(page.locator(".gallery-card")).toHaveCount(56);
   await expect(page.locator("#search")).toBeFocused();
   await expect(page.locator("#category-filters button")).toHaveCount(8);
   await expect(page.locator("#load-status")).toBeHidden();
@@ -100,7 +100,7 @@ for (const [name, width, colorScheme, language] of [["desktop-light", 1200, "lig
     await page.setViewportSize({ width, height: 900 });
     await page.emulateMedia({ colorScheme });
     await page.goto("/gallery/index.html");
-    await expect(page.locator(".gallery-card")).toHaveCount(55);
+    await expect(page.locator(".gallery-card")).toHaveCount(56);
     await page.locator(`[data-language="${language}"]`).click();
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
     for (const control of await page.locator("#category-filters button, .controls select, #search").all()) {
@@ -121,7 +121,7 @@ test("malformed data shows a recoverable error rather than an empty gallery", as
   await expect(page.locator("#empty-state")).toBeHidden();
   await page.unroute("**/gallery/manifest.json");
   await page.locator("#retry-load").click();
-  await expect(page.locator(".gallery-card")).toHaveCount(55);
+  await expect(page.locator(".gallery-card")).toHaveCount(56);
 });
 
 test.describe("offline category navigation", () => {
@@ -130,12 +130,12 @@ test.describe("offline category navigation", () => {
     await page.goto("/gallery/index.html");
     await page.evaluate(() => navigator.serviceWorker.ready);
     await page.reload();
-    await expect(page.locator(".gallery-card")).toHaveCount(55);
+    await expect(page.locator(".gallery-card")).toHaveCount(56);
     await context.setOffline(true);
     await page.reload();
-    await expect(page.locator(".gallery-card")).toHaveCount(55);
+    await expect(page.locator(".gallery-card")).toHaveCount(56);
     await category(page, "hr-administration").click();
-    await expect(page.locator("#result-count")).toHaveText("4/55 designs");
+    await expect(page.locator("#result-count")).toHaveText("4/56 designs");
     await page.locator("#type-filter").selectOption("Work Order");
     await expect(page.locator(".gallery-card")).toHaveCount(1);
     await category(page, "sales").click();
@@ -157,6 +157,13 @@ test.describe("offline category navigation", () => {
     await page.locator(".gallery-card").click();
     await expect(page.locator("[data-print]")).toBeEnabled();
     await expect(page.frameLocator("iframe").locator(".printform_page")).toHaveCount(20);
+    await page.locator("[data-close]").click();
+    await category(page, "finance").click();
+    await page.locator("#search").fill("PF-056");
+    await expect(page.locator(".gallery-card")).toHaveCount(1);
+    await page.locator(".gallery-card").click();
+    await expect(page.locator("[data-print]")).toBeEnabled();
+    await expect(page.frameLocator("iframe").locator(".printform_page")).toHaveCount(4);
     await context.setOffline(false);
   });
 });
