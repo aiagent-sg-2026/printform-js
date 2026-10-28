@@ -1,0 +1,61 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.org/schemas/demo-school-invoice-v1",
+  "title": "Fictional school invoice data interface",
+  "type": "object",
+  "required": ["schemaVersion", "invoice", "customer", "student", "lineItems", "payment"],
+  "properties": {
+    "schemaVersion": { "const": 1 },
+    "invoice": {
+      "type": "object",
+      "required": ["id", "issued", "due", "period", "currency"],
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "issued": { "type": "string" },
+        "due": { "type": "string" },
+        "period": { "type": "string" },
+        "currency": { "type": "string", "pattern": "^[A-Z]{3}$" },
+        "taxBasisPoints": { "type": "integer", "minimum": 0, "maximum": 10000, "default": 0 },
+        "taxNote": { "type": "string" }
+      }
+    },
+    "customer": {
+      "type": "object", "required": ["name", "address", "email"],
+      "properties": { "name": { "type": "string" }, "address": { "type": "string" }, "email": { "type": "string" } }
+    },
+    "student": {
+      "type": "object", "required": ["name", "id", "class", "program"],
+      "properties": { "name": { "type": "string" }, "nameZh": { "type": "string" }, "id": { "type": "string" }, "class": { "type": "string" }, "program": { "type": "string" } }
+    },
+    "lineItems": {
+      "type": "array", "minItems": 1,
+      "items": {
+        "type": "object", "required": ["id", "description", "quantity", "unitCents"],
+        "properties": {
+          "id": { "type": "string", "minLength": 1 },
+          "description": { "type": "string" },
+          "descriptionZh": { "type": "string" },
+          "quantity": { "type": "integer", "minimum": 0 },
+          "unitCents": { "type": "integer", "description": "Signed integer cents; negative for a credit. quantity is also the session count." }
+        }
+      }
+    },
+    "adjustments": {
+      "type": "array", "default": [],
+      "items": {
+        "type": "object", "required": ["label", "cents"],
+        "properties": { "label": { "type": "string" }, "labelZh": { "type": "string" }, "cents": { "type": "integer", "description": "Signed adjustment: discount is negative, surcharge is positive." } }
+      }
+    },
+    "payment": {
+      "type": "object", "required": ["account", "email", "url", "notice"],
+      "properties": {
+        "account": { "type": "string", "const": "DEMO-XXXX-NONVALID" },
+        "email": { "type": "string" },
+        "url": { "const": "https://example.org/demo-school-invoice" },
+        "notice": { "type": "string" }
+      }
+    }
+  },
+  "$comment": "This sample interface uses two-decimal currencies and integer quantities/sessions. longSample and styles in data.json are gallery fixture metadata, not transaction amounts. Currency symbols are not hardcoded. Unique line IDs and safe integer bounds are checked by math.js. Additional CJK text requires extending the licensed font subset."
+}

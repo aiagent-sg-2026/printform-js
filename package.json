@@ -47,6 +47,7 @@
   "devDependencies": {
     "@playwright/test": "^1.62.0",
     "es-module-lexer": "2.3.2",
+    "jsqr": "^1.4.0",
     "vite": "^8.1.5",
     "vitest": "4.1.11",
     "ws": "^8.21.1"

@@ -1,0 +1,118 @@
+/* Distinct information hierarchies and original artwork, not palette-only variants. */
+.theme-modern .printform_page { outline: 1px solid #bdd6ef; outline-offset: -8px; }
+.theme-modern .invoice-identity h2 { font-weight: 400; letter-spacing: 3px; }
+.theme-modern .invoice-line .line-grid > div + div { border-left: 1px solid var(--grid); }
+.theme-preschool { --ink: #315f42; --accent: #5a8853; --pale: #f0f5e9; --grid: #dce5d2; --due: #e7ecad; color: #314b3c; }
+.theme-preschool .printform_page { background: #fffef8; }
+.theme-preschool .invoice-header { border: 0; background: linear-gradient(135deg, #edf5e6, #fffef8 75%); padding-bottom: 24px; }
+.theme-preschool .brand h1 { font-family: SchoolSans, sans-serif; font-size: 24px; letter-spacing: -.7px; }
+.theme-preschool .brand-mark { width: 70px; flex-basis: 70px; }
+.theme-preschool .student-card { border: 1px solid #d4e2c8; border-radius: 15px 15px 15px 0; }
+.theme-preschool .table-heading .line-grid { background: #52794a; border-radius: 10px 10px 0 0; }
+.theme-preschool .amount-due { border-radius: 12px 0 12px 0; }
+.theme-preschool .footer-art { height: 84px; margin: 2px -30px 8px; }
+.theme-preschool .footer-art svg { height: 84px; }
+.theme-preschool .safety-line { border: 0; }
+.theme-statement { --ink: #262626; --accent: #555; --pale: #f2f2f2; --grid: #ddd; --due: #e6e6e6; color: #292929; }
+.theme-statement .invoice-header { border-top: 0; border-bottom: 2px solid #292929; margin: 0 30px 18px; padding: 32px 0 18px; grid-template-columns: 1.15fr 1fr; }
+.theme-statement .brand { align-items: flex-start; }
+.theme-statement .brand h1 { font-family: Georgia, serif; font-size: 25px; }
+.theme-statement .invoice-identity h2 { font-family: Georgia, serif; font-size: 20px; letter-spacing: .4px; }
+.theme-statement .student-card { border: 1px solid #bcbcbc; background: #fafafa; }
+.theme-statement .line-grid { grid-template-columns: minmax(0, 1fr) 150px; }
+.theme-statement .table-heading .line-grid { color: #222; background: #ececec; border-top: 1px solid #333; border-bottom: 1px solid #333; }
+.theme-statement .invoice-line[data-stripe='1'] .line-grid { background: #fff; }
+.theme-statement .description small { display: block; color: #616161; font-size: 10px; margin: 3px 0 0 37px; }
+.theme-statement .payment { border-left: 2px solid #999; padding-left: 12px; }
+.theme-statement .totals .amount-due { border: 0; }
+.theme-statement .closing { font-family: Georgia, serif; }
+.theme-enrichment { --ink: #a74229; --accent: #d86a44; --pale: #fff1e9; --grid: #efdbd0; --due: #f7c4ae; }
+.theme-enrichment .invoice-header { border-top: 0; border-left: 9px solid #e07850; background: linear-gradient(90deg,#fff3e9,#fff); padding-left: 21px; }
+.theme-enrichment .brand h1 { font-size: 24px; letter-spacing: -.5px; }
+.theme-enrichment .brand-mark { width: 70px; flex-basis: 70px; }
+.theme-enrichment .invoice-identity h2 { font-size: 23px; letter-spacing: 0; }
+.theme-enrichment .student-card { border-left: 0; border-top: 3px solid var(--accent); }
+.theme-enrichment .table-heading .line-grid { background: #c45c37; }
+.theme-enrichment .line-grid { grid-template-columns: minmax(0, 1fr) 66px 100px 105px; }
+.theme-enrichment .invoice-final { border-top: 3px solid #f2c7b4; margin-top: 12px; }
+.theme-enrichment .amount-due { border-left: 0; border-bottom: 3px solid var(--accent); }
+.theme-premium { --ink: #1a2c4c; --accent: #a78443; --pale: #f5f4ee; --grid: #e2dccd; --due: #dbc18a; color: #25324a; }
+.theme-premium .invoice-header { display: block; border-top: 0; position: relative; background: linear-gradient(138deg,#1a2c4c 0 22px,#c4a267 23px 29px,transparent 30px); padding-top: 28px; }
+.theme-premium .brand { justify-content: center; max-width: 85%; margin: auto; text-align: center; flex-direction: column; gap: 8px; }
+.theme-premium .brand-mark { width: 58px; flex-basis: auto; }
+.theme-premium .brand-kicker { font-size: 10px; letter-spacing: 2px; }
+.theme-premium .brand h1 { font-family: Georgia, serif; font-size: 27px; font-weight: 400; }
+.theme-premium .brand p { margin-top: 5px; }
+.theme-premium .invoice-identity { display: grid; grid-template-columns: 1fr 1fr; align-items: center; gap: 40px; margin-top: 22px; padding-top: 14px; border-top: 1px solid #cfb782; }
+.theme-premium .invoice-identity h2 { text-align: left; font-family: Georgia, serif; font-size: 29px; font-weight: 400; letter-spacing: 3px; margin: 0; }
+.theme-premium .student-card { border-left: 0; border: 1px solid #d9c7a3; }
+.theme-premium .amount-due { border: 0; }
+.theme-premium .page-foot { background: #1a2c4c; color: #fff; margin-top: 10px; }
+.theme-premium .safety-line { border-color: #ffffff30; }
+.theme-premium .footer-art { position: absolute; inset: 0; color: #dac395; z-index: -1; overflow: hidden; }
+.theme-premium .footer-art svg { position: absolute; bottom: 0; height: 95px; }
+.theme-bilingual { --ink: #663763; --accent: #9c5a7d; --pale: #fbf0f4; --grid: #ead8e4; --due: #efd9e4; font-family: SchoolSans, DemoSchoolCJK, sans-serif; }
+.theme-bilingual .invoice-header { border-top: 4px solid #72416f; background: linear-gradient(110deg,#fbf0f4,#fff); grid-template-columns: 1fr 1.05fr; }
+.theme-bilingual .brand-mark { width: 53px; flex-basis: 53px; }
+.theme-bilingual .brand h1 { font-size: 15px; }
+.theme-bilingual .invoice-identity h2 { font-size: 25px; letter-spacing: .4px; }
+.theme-bilingual .student-card { border: 0; border-radius: 0 16px 0 0; }
+.theme-bilingual .party-section h3 { letter-spacing: 0; }
+.theme-bilingual .line-grid { grid-template-columns: minmax(0, 1fr) 65px 110px 112px; }
+.theme-bilingual .table-heading .line-grid { font-size: 10px; }
+.theme-bilingual .line-code { float: left; margin-top: 1px; }
+.theme-bilingual .totals { font-size: 10.8px; }
+.theme-bilingual .totals .amount-due { border: 0; }
+.theme-bilingual .footer-art { height: 38px; position: relative; color: #995473; }
+.theme-bilingual .footer-art svg { position: absolute; right: 0; bottom: -20px; width: 65%; height: 95px; }
+body[data-paper='A5'] .theme-preschool .brand h1 { font-size: 17px; }
+body[data-paper='A5'] .theme-preschool .footer-art { height: 38px; margin: 0 -23px 0; }
+body[data-paper='A5'] .theme-preschool .footer-art svg { height: 38px; }
+body[data-paper='A5'] .theme-statement .invoice-header { margin: 0 23px 12px; padding-left: 0; padding-right: 0; }
+body[data-paper='A5'] .theme-statement .invoice-identity h2 { font-size: 15px; }
+body[data-paper='A5'] .theme-statement .brand h1 { font-size: 19px; }
+body[data-paper='A5'] .theme-statement .line-grid { grid-template-columns: minmax(0, 1fr) 100px; }
+body[data-paper='A5'] .theme-statement .general-notice { font-size: 10px; padding: 7px; }
+body[data-paper='A5'] .theme-statement .invoice-header { padding-top: 23px; padding-bottom: 12px; }
+body[data-paper='A5'] .theme-statement .invoice-final { padding-top: 10px; }
+body[data-paper='A5'] .theme-statement .settlement { grid-template-columns: minmax(0, .7fr) minmax(0, 1.3fr); gap: 12px; }
+body[data-paper='A5'] .theme-statement .description small { display: inline; margin-left: 8px; }
+body[data-paper='A5'] .theme-statement .line-grid > div { padding-top: 6px; padding-bottom: 6px; }
+body[data-paper='A5'] .theme-statement .closing { margin-top: 7px; }
+body[data-paper='A5'] .theme-statement .page-foot { padding-top: 7px; }
+body[data-paper='A5'] .theme-enrichment .invoice-header { padding-left: 14px; }
+body[data-paper='A5'] .theme-enrichment .brand h1 { font-size: 16px; }
+body[data-paper='A5'] .theme-enrichment .invoice-identity h2 { font-size: 17px; }
+body[data-paper='A5'] .theme-enrichment .line-grid { grid-template-columns: minmax(0, 1fr) 55px 68px 75px; }
+body[data-paper='A5'] .theme-premium .invoice-header { padding-top: 20px; padding-bottom: 14px; }
+body[data-paper='A5'] .theme-premium .brand { flex-direction: row; max-width: 100%; text-align: left; gap: 12px; }
+body[data-paper='A5'] .theme-premium .brand-mark { width: 44px; flex: 0 0 44px; }
+body[data-paper='A5'] .theme-premium .brand h1 { font-size: 20px; }
+body[data-paper='A5'] .theme-premium .brand-kicker { letter-spacing: .6px; }
+body[data-paper='A5'] .theme-premium .invoice-identity { margin-top: 10px; padding-top: 9px; gap: 16px; }
+body[data-paper='A5'] .theme-premium .invoice-identity h2 { font-size: 23px; }
+body[data-paper='A5'] .theme-bilingual .invoice-header { grid-template-columns: 1fr; gap: 10px; }
+body[data-paper='A5'] .theme-bilingual .brand { justify-content: flex-start; }
+body[data-paper='A5'] .theme-bilingual .brand-zh { font-size: 19px; display: inline-block; margin-bottom: 2px; }
+body[data-paper='A5'] .theme-bilingual .brand h1 { font-size: 12px; }
+body[data-paper='A5'] .theme-bilingual .brand-kicker { display: none; }
+body[data-paper='A5'] .theme-bilingual .invoice-identity { display: grid; grid-template-columns: 1fr 1.5fr; gap: 15px; align-items: center; }
+body[data-paper='A5'] .theme-bilingual .invoice-identity h2 { font-size: 18px; text-align: left; }
+body[data-paper='A5'] .theme-bilingual .invoice-identity { grid-template-columns: 1fr; gap: 7px; }
+body[data-paper='A5'] .theme-bilingual .invoice-identity dl { font-size: 10px; grid-template-columns: 1fr 1fr 1fr 1fr; }
+body[data-paper='A5'] .theme-bilingual .invoice-identity h2 { margin: 0; }
+body[data-paper='A5'] .theme-bilingual .invoice-header { padding-top: 20px; padding-bottom: 12px; }
+body[data-paper='A5'] .theme-bilingual .brand-mark { width: 34px; flex-basis: 34px; }
+body[data-paper='A5'] .theme-bilingual .party-section { gap: 10px; }
+body[data-paper='A5'] .theme-bilingual .party-section h3 { font-size: 10px; letter-spacing: 0; }
+body[data-paper='A5'] .theme-bilingual .line-grid { grid-template-columns: minmax(0, 1fr) 50px 77px 80px; }
+body[data-paper='A5'] .theme-bilingual .table-heading .line-grid > div { white-space: normal; padding-left: 5px; padding-right: 5px; }
+body[data-paper='A5'] .theme-bilingual .line-grid > div { padding: 5px; }
+body[data-paper='A5'] .theme-bilingual .totals { font-size: 10px; }
+body[data-paper='A5'] .theme-bilingual .settlement { grid-template-columns: minmax(0, .8fr) minmax(0, 1.2fr); gap: 12px; }
+body[data-paper='A5'] .theme-bilingual .amount-due { flex-wrap: nowrap; }
+body[data-paper='A5'] .theme-bilingual .amount-due strong { font-size: 18px; }
+body[data-paper='A5'] .theme-bilingual .amount-due > span { font-size: 10px; }
+body[data-paper='A5'] .theme-bilingual .closing { display: none; }
+body[data-paper='A5'] .theme-bilingual .footer-art { height: 5px; }
+body[data-paper='A5'] .theme-bilingual .footer-art svg { width: 42%; height: 50px; }

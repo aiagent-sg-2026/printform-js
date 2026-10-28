@@ -1,0 +1,113 @@
+@font-face { font-family: SchoolSans; src: url('../demobank/DejaVuSansCondensed.ttf') format('truetype'); font-weight: 400; font-display: block; }
+@font-face { font-family: SchoolSans; src: url('../demobank/DejaVuSansCondensed-Bold.ttf') format('truetype'); font-weight: 700; font-display: block; }
+@font-face { font-family: DemoSchoolCJK; src: url('DemoSchoolCJK-Regular.woff2') format('woff2'); font-weight: 400; font-display: block; }
+@font-face { font-family: DemoSchoolCJK; src: url('DemoSchoolCJK-Bold.woff2') format('woff2'); font-weight: 700; font-display: block; }
+html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+body { margin: 0; background: #e6eaf0; color: #203249; font-family: SchoolSans, DemoSchoolCJK, sans-serif; }
+* { box-sizing: border-box; }
+.controls { padding: 14px 20px; background: #fff; display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 12px; border-bottom: 1px solid #ccd3db; font-size: 14px; }
+.controls label { display: flex; align-items: center; gap: 7px; }
+.controls select, .controls button { font: inherit; background: #fff; color: #203249; border: 1px solid #8b9aab; padding: 8px 12px; border-radius: 5px; min-height: 40px; }
+.controls button { background: #203d65; color: #fff; cursor: pointer; }
+.controls :focus-visible { outline: 3px solid #c15d11; outline-offset: 3px; }
+#status { width: 100%; text-align: center; margin: 0; font-size: 12px; }
+#invoice-root { overflow: visible; padding: 24px 0; }
+.school-invoice { --ink: #173e70; --accent: #2065a1; --pale: #edf4fc; --grid: #d7e2ee; --due: #d8eafb; --edge: 30px; font-size: 12px; line-height: 1.45; color: #28374b; }
+.school-invoice.printform { width: var(--paper-width); }
+.school-invoice.printform_formatter_processed { display: flex; flex-direction: column; align-items: center; gap: 22px; width: 100% !important; }
+.school-invoice .physical_page_wrapper { margin: 0; }
+.school-invoice .printform_page { background: #fff; box-shadow: 0 8px 28px #26344b24; position: relative; }
+.school-invoice h1, .school-invoice h2, .school-invoice h3, .school-invoice p, .school-invoice dl, .school-invoice dd { margin: 0; }
+.school-invoice h3 { font-size: 10px; letter-spacing: .8px; color: var(--ink); margin-bottom: 5px; }
+.school-invoice p { overflow-wrap: anywhere; }
+.invoice-header { padding: 32px var(--edge) 23px; display: grid; grid-template-columns: 1.1fr 1fr; align-items: start; gap: 22px; border-top: 5px solid var(--accent); }
+.brand { display: flex; gap: 13px; align-items: center; min-width: 0; }
+.brand-mark { width: 65px; flex: 0 0 65px; color: var(--accent); }
+.brand-mark svg { width: 100%; display: block; }
+.brand-kicker { font-size: 10px; letter-spacing: 1px; color: var(--accent); margin-bottom: 5px; }
+.brand h1 { font-size: 21px; line-height: 1.15; color: var(--ink); overflow-wrap: anywhere; }
+.brand p { font-size: 10px; margin-top: 7px; color: #526174; }
+.brand-zh { font-family: DemoSchoolCJK, sans-serif; font-size: 25px; font-weight: 700; color: var(--ink); margin-bottom: 5px; }
+.invoice-identity h2 { font-size: 30px; letter-spacing: 1px; color: var(--ink); text-align: right; margin-bottom: 10px; line-height: 1.15; }
+.invoice-identity dl { display: grid; grid-template-columns: 1fr 1.2fr; gap: 3px 9px; font-size: 11px; }
+.invoice-identity dt { color: #5e6b7c; }
+.invoice-identity dd { text-align: right; font-weight: 700; overflow-wrap: anywhere; }
+.party-section { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; padding: 0 var(--edge) 23px; }
+.bill-to { padding: 13px 0; }
+.party-section strong { display: block; margin-bottom: 5px; overflow-wrap: anywhere; }
+.party-section p { line-height: 1.55; }
+.student-card { background: var(--pale); padding: 13px 16px; border-left: 3px solid var(--accent); }
+.table-heading, .invoice-line { padding: 0 var(--edge); }
+.line-grid { display: grid; grid-template-columns: minmax(0, 1fr) 45px 100px 105px; }
+.line-grid > div { min-width: 0; padding: 10px 12px; border-bottom: 1px solid var(--grid); }
+.table-heading .line-grid { color: #fff; background: var(--ink); font-weight: 700; font-size: 11px; }
+.table-heading .line-grid > div { padding-top: 10px; padding-bottom: 10px; border: 0; }
+.currency { display: block; font-size: 10px; font-weight: 400; }
+.invoice-line[data-stripe='1'] .line-grid { background: var(--pale); }
+.description { overflow-wrap: anywhere; white-space: pre-line; }
+.line-code { font-size: 10px; display: inline-block; color: #59697b; margin-right: 9px; }
+.zh-description { display: block; font-family: DemoSchoolCJK, sans-serif; margin-bottom: 2px; }
+.numeric { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.line-amount { font-weight: 700; }
+.invoice-final { padding: 22px var(--edge) 0; }
+.settlement { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 32px; align-items: start; }
+.payment { display: flex; gap: 12px; align-items: flex-start; font-size: 10px; line-height: 1.5; }
+.payment h3 { letter-spacing: .2px; }
+.payment p + p { margin-top: 5px; }
+.demo-qr { width: 76px; height: 76px; flex: 0 0 76px; }
+.account { font-weight: 700; overflow-wrap: anywhere; }
+.totals { font-variant-numeric: tabular-nums; }
+.totals > div { display: flex; justify-content: space-between; gap: 10px; padding: 4px 0; }
+.totals > div > span { overflow-wrap: anywhere; }
+.totals strong { white-space: nowrap; }
+.totals .amount-due { background: var(--due); color: var(--ink); margin-top: 6px; padding: 12px; align-items: center; border-left: 3px solid var(--accent); }
+.amount-due > span { font-size: 11px; font-weight: 700; }
+.amount-due small { display: block; font-size: 10px; }
+.amount-due strong { font-size: 24px; }
+.tax-note { font-size: 10px; color: #596579; margin-top: 12px !important; }
+.closing { border-top: 1px solid var(--grid); padding: 12px 0 0; margin-top: 15px; font-size: 10px; color: #596579; display: flex; justify-content: space-between; gap: 16px; }
+.general-notice { border: 1px solid #888; padding: 12px; margin-top: 12px; font-size: 11px; }
+.general-notice p { margin-top: 4px; }
+.page-foot { padding: 16px var(--edge) 25px; position: relative; isolation: isolate; color: var(--ink); }
+.safety-line { display: flex; align-items: center; justify-content: space-between; gap: 12px; border-top: 1px solid var(--grid); padding-top: 10px; }
+.safety-line > strong { font-size: 10px; line-height: 1.5; }
+.page-count { text-align: right; font-size: 11px; white-space: nowrap; }
+.page-count small { display: block; font-size: 10px; margin-top: 2px; }
+.footer-art { pointer-events: none; }
+.footer-art svg { width: 100%; display: block; }
+.school-invoice, .school-invoice * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+/* A5 is a reflowed layout, not a transform of the A4 source. */
+body[data-paper='A5'] .school-invoice { --edge: 23px; font-size: 10.8px; line-height: 1.35; }
+body[data-paper='A5'] .invoice-header { padding-top: 23px; padding-bottom: 15px; gap: 12px; }
+body[data-paper='A5'] .brand { gap: 8px; }
+body[data-paper='A5'] .brand-mark { width: 40px; flex-basis: 40px; }
+body[data-paper='A5'] .brand h1 { font-size: 16px; }
+body[data-paper='A5'] .brand-kicker { letter-spacing: 0; }
+body[data-paper='A5'] .brand p { display: none; }
+body[data-paper='A5'] .invoice-identity h2 { font-size: 21px; margin-bottom: 7px; }
+body[data-paper='A5'] .invoice-identity dl { font-size: 10px; gap: 3px 5px; }
+body[data-paper='A5'] .party-section { gap: 14px; padding-bottom: 14px; }
+body[data-paper='A5'] .bill-to { padding-top: 9px; }
+body[data-paper='A5'] .student-card { padding: 9px; }
+body[data-paper='A5'] .party-section p { line-height: 1.4; }
+body[data-paper='A5'] .line-grid { grid-template-columns: minmax(0, 1fr) 34px 70px 76px; }
+body[data-paper='A5'] .line-grid > div { padding: 7px 7px; }
+body[data-paper='A5'] .table-heading .line-grid { font-size: 10px; }
+body[data-paper='A5'] .invoice-final { padding-top: 14px; }
+body[data-paper='A5'] .settlement { grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr); gap: 15px; }
+body[data-paper='A5'] .payment { display: block; }
+body[data-paper='A5'] .demo-qr { width: 48px; height: 48px; margin-bottom: 5px; }
+body[data-paper='A5'] .totals > div { padding: 3px 0; }
+body[data-paper='A5'] .totals .amount-due { padding: 8px; }
+body[data-paper='A5'] .amount-due strong { font-size: 20px; }
+body[data-paper='A5'] .closing { display: block; margin-top: 10px; padding-top: 8px; }
+body[data-paper='A5'] .closing span { display: block; }
+body[data-paper='A5'] .page-foot { padding-top: 10px; padding-bottom: 23px; }
+@media print {
+  body { background: #fff; }
+  .controls { display: none !important; }
+  #invoice-root { padding: 0; }
+  .school-invoice.printform_formatter_processed { display: block; padding: 0; gap: 0; }
+  .school-invoice .physical_page_wrapper { zoom: 1 !important; }
+  .school-invoice .printform_page { box-shadow: none; break-inside: avoid; }
+}
