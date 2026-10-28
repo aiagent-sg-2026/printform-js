@@ -7,6 +7,8 @@ test("categories combine with compact filters, keep focus and restore history", 
   await page.goto("/gallery/index.html");
   await expect(page.locator(".gallery-card")).toHaveCount(catalogueCount);
   await expect(page.locator("#category-filters button")).toHaveCount(8);
+  await expect(page.locator(".gallery-card .card-id").first()).toHaveText("PF-063");
+  await expect(page.locator(".gallery-card .card-id").last()).toHaveText("PF-001");
   await page.locator('[data-language="zh"]').focus();
   await page.keyboard.press("Tab");
   await expect(category(page, "all")).toBeFocused();
@@ -196,7 +198,7 @@ test("closing a modal after history navigation restores a connected focus target
   await page.goBack();
   await expect(category(page, "all")).toHaveAttribute("aria-pressed", "true");
   await page.locator("[data-close]").click();
-  await expect(page.locator(".gallery-card").filter({ has: page.locator(`.card-id`, { hasText: "PF-001" }) })).toBeFocused();
+  await expect(page.locator(".gallery-card").filter({ has: page.locator(`.card-id`, { hasText: "PF-063" }) })).toBeFocused();
   expect(await page.locator(":focus").getAttribute("data-design-id")).toBe(id);
   await category(page, "purchasing").click();
   await category(page, "sales").click();

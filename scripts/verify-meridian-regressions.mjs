@@ -48,6 +48,7 @@ try {
   const frame=page.frames().find(f=>f.url().includes('meridian-enterprise'));
   assert.equal(await frame.locator('.printform_page').count(),2);
   assert.equal(await frame.locator('#print').isEnabled(),true);
+  await page.waitForFunction(()=>document.querySelector('[data-print]').disabled===false);
   assert.equal(await page.locator('[data-print]').isEnabled(),true);
   await page.screenshot({path:path.join(output,'gallery-pf064.png')});
   await page.locator('[data-close]').click();
