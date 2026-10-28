@@ -1,4 +1,5 @@
 import { currentLanguage, pageCount, text, typeName } from "./i18n.js";
+import { createDialog } from "../shared/dialog.js";
 
 export function createModal(dialog, manifest) {
   const frame = dialog.querySelector("iframe");
@@ -7,130 +8,79 @@ export function createModal(dialog, manifest) {
   const open = dialog.querySelector("[data-open]");
   const print = dialog.querySelector("[data-print]");
   const studio = dialog.querySelector("[data-studio]");
-  let returnFocus = null;
-  const close = () => dialog.close();
-  const frameWrap = dialog.querySelector(".frame-wrap");
-  const frameStage = document.createElement("div");
-  frameStage.className = "frame-stage";
-  frame.parentNode.insertBefore(frameStage, frame);
-  frameStage.appendChild(frame);
-  let frameContentHeight = 0;
-  let framePoll = null;
-  let designUrl = "";
-
-  function fitFrame() {
-    const availableWidth = frameWrap.clientWidth;
-    if (!availableWidth) return;
-    const scale = Math.min(1, availableWidth / 794);
-    frame.style.width = "794px";
-    frame.style.height = `${frameContentHeight}px`;
-    frame.style.transform = `scale(${scale})`;
-    frameStage.style.width = `${794 * scale}px`;
-    frameStage.style.height = `${frameContentHeight * scale}px`;
+  const status = dialog.querySelector(".preview-status");
+  let returnFocus, currentDesign, framePoll, designUrl = "", state = "previewLoading";
+  const primitive = createDialog(dialog, () => {
+    const card = [...document.querySelectorAll(".gallery-card")].find((node) => node.dataset.designId === returnFocus?.dataset.designId);
+    return returnFocus?.isConnected ? returnFocus : card || document.querySelector("#search");
+  });
+  function cancelPoll() { clearTimeout(framePoll); framePoll = null; }
+  function showStatus(next) {
+    state = next;
+    status.hidden = !next;
+    status.textContent = next ? text(next) : "";
   }
-
-  function cancelFramePoll() {
-    if (framePoll !== null) {
-      clearTimeout(framePoll);
-      framePoll = null;
-    }
+  function localize() {
+    if (!currentDesign) return;
+    title.textContent = `${currentDesign.no} · ${currentDesign.title[currentLanguage()]}`;
+    meta.textContent = `${typeName(currentDesign.type)} · ${currentDesign.style[currentLanguage()]} · ${currentDesign.paper} · ${pageCount(currentDesign.pages)}`;
+    open.textContent = text("openDesign");
+    studio.textContent = text("openStudio");
+    showStatus(state);
   }
-
-  function readFrameHeight() {
-    try {
-      frameContentHeight = frame.contentDocument.documentElement.scrollHeight;
-    } catch {
-      frameContentHeight = 0;
-    }
-    fitFrame();
-  }
-
   frame.addEventListener("load", () => {
-    cancelFramePoll();
+    cancelPoll();
+    if (!dialog.open) return;
+    try { if (frame.contentWindow.location.href === "about:blank") return; }
+    catch { showStatus("previewError"); return; }
     const started = Date.now();
     const poll = () => {
-      let processed = false;
+      if (!dialog.open) return;
       try {
-        processed = frame.contentWindow.__printFormProcessed === true;
-      } catch {
-        // Keep polling; the timeout path still attempts to read the height.
-      }
-      if (processed || Date.now() - started >= 5000) {
-        print.disabled = !processed;
-        framePoll = null;
-        readFrameHeight();
-        return;
-      }
+        primitive.bindFrame(frame.contentDocument);
+        if (frame.contentWindow.__printFormProcessed === true) {
+          print.disabled = false;
+          showStatus("");
+          return;
+        }
+      } catch { /* A failed/cross-origin load keeps the recoverable action. */ }
+      if (Date.now() - started >= 10000) { showStatus("previewError"); return; }
       framePoll = setTimeout(poll, 100);
     };
     poll();
   });
-
+  frame.addEventListener("error", () => { cancelPoll(); showStatus("previewError"); });
   print.addEventListener("click", () => {
     try {
-      if (!frame.contentWindow || frame.contentWindow.__printFormProcessed !== true) {
-        throw new Error("Print preview is not ready");
-      }
+      if (frame.contentWindow.__printFormProcessed !== true) throw new Error("Preview not ready");
       frame.contentWindow.focus();
       frame.contentWindow.print();
-    } catch {
-      window.open(designUrl, "_blank");
-    }
+    } catch { window.open(designUrl, "_blank", "noopener"); }
   });
-  window.addEventListener("resize", fitFrame);
-
-  function show(design, trigger) {
-    print.disabled = true;
-    cancelFramePoll();
-    frameContentHeight = 0;
-    frameStage.style.height = "0px";
-    returnFocus = trigger;
-    title.textContent = `${design.no} · ${design.title[currentLanguage()]}`;
-    meta.textContent = `${typeName(design.type)} · ${design.style[currentLanguage()]} · ${design.paper} · ${pageCount(design.pages)}`;
-    designUrl = new URL(`../${design.file}`, import.meta.url).href;
-    // Preview navigation must not add iframe entries to gallery filter history.
-    frame.contentWindow.location.replace(designUrl);
-    open.href = designUrl;
-    open.textContent = text("openDesign");
-    const safeStudioUrl = design.studioUrl && /^\.\/studio-v3(?:\/|$)/.test(design.studioUrl);
-    studio.hidden = !safeStudioUrl;
-    if (safeStudioUrl) {
-      studio.href = new URL(`../../${design.studioUrl.slice(2)}`, import.meta.url).href;
-      studio.textContent = text("openStudio");
-    }
-    dialog.showModal();
-    fitFrame();
-    dialog.querySelector("[data-close]").focus();
-  }
-  dialog.querySelector("[data-close]").addEventListener("click", close);
-  dialog.addEventListener("click", (event) => { if (event.target === dialog) close(); });
   dialog.addEventListener("close", () => {
-    cancelFramePoll();
-    frameContentHeight = 0;
-    frameStage.style.height = "0px";
+    cancelPoll();
+    print.disabled = true;
     frame.contentWindow.location.replace("about:blank");
-    const currentCard = [...document.querySelectorAll(".gallery-card")].find((card) => card.dataset.designId === returnFocus?.dataset.designId);
-    const target = returnFocus?.isConnected ? returnFocus : currentCard || document.querySelector("#search");
-    target?.focus();
+    currentDesign = null;
   });
-  dialog.addEventListener("keydown", (event) => {
-    if (event.key !== "Tab") return;
-    const focusable = [...dialog.querySelectorAll("a[href],button:not([disabled]):not([hidden])")];
-    const first = focusable[0];
-    const last = focusable[focusable.length - 1];
-    if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last.focus(); }
-    else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first.focus(); }
-  });
-  document.addEventListener("gallery-language-change", () => {
-    if (dialog.open && returnFocus?.dataset.designId) {
-      const design = manifest.find((item) => item.id === returnFocus.dataset.designId);
-      if (design) {
-        title.textContent = `${design.no} · ${design.title[currentLanguage()]}`;
-        meta.textContent = `${typeName(design.type)} · ${design.style[currentLanguage()]} · ${design.paper} · ${pageCount(design.pages)}`;
-        open.textContent = text("openDesign");
-        if (!studio.hidden) studio.textContent = text("openStudio");
-      }
+  document.addEventListener("gallery-language-change", localize);
+  return {
+    show(design, trigger) {
+      cancelPoll();
+      print.disabled = true;
+      returnFocus = trigger;
+      currentDesign = design;
+      designUrl = new URL(`../${design.file}`, import.meta.url).href;
+      open.href = designUrl;
+      const safeStudio = design.studioUrl && /^\.\/studio-v3(?:\/|$)/.test(design.studioUrl);
+      studio.hidden = !safeStudio;
+      if (safeStudio) studio.href = new URL(`../${design.studioUrl.slice(2)}`, document.baseURI).href;
+      showStatus("previewLoading");
+      localize();
+      primitive.open();
+      // replace avoids adding iframe entries to Gallery's filter history.
+      frame.contentWindow.location.replace(designUrl);
+      framePoll = setTimeout(() => showStatus("previewError"), 12000);
     }
-  });
-  return { show };
+  };
 }
