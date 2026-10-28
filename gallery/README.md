@@ -2,6 +2,8 @@
 
 Designs are standalone HTML files listed in `manifest.json`; each entry names one page-1 thumbnail. After building the local engine, run `node scripts/build-gallery-thumbs.mjs` to render all designs offline, regenerate PNGs, and refresh measured page counts and image dimensions in the manifest.
 
+PF-057 adds a two-page A4 **DemoBank Bilingual Financing Placemat** in Finance, English then Malay. It uses original vector artwork, shared fictional data and integer basis-point rebate calculations. Every page states SAMPLE and NOT A FINANCIAL OFFER. Run `node scripts/verify-pf057.mjs` after building for the offline HTML, PDF, screenshots and machine-readable checks in `../output/pf057`. See [PF-057](../docs/PF057_PLACEMAT.md) for reproduction and print limits.
+
 ## PWA
 
 The installable app is scoped to `/printform-js/gallery/`; it uses relative URLs and does not control other site pages. After the first online load, the gallery grid, search and filters, design preview iframes, Open design, and Print work offline. Thumbnails viewed before going offline are available from a bounded cache; never-viewed thumbnails show the browser placeholder with their alt text. The first successful precache reports “Ready to work offline”.
@@ -10,7 +12,7 @@ Updates are announced in a banner and only activate after selecting **Update now
 
 ## Business categories and filters
 
-Seven business categories live in `js/categories.js`, keyed by stable English IDs and PF numbers, independently of the generated manifest. Current coverage is Sales (12), Purchasing (6), Inventory & logistics (10), Finance (11), Retail & e-commerce (8), Customer management (5), and HR & administration (4). PF-010 Service Work Order belongs to HR & administration (administrative services). When adding a design, add its number to exactly one category and run the coverage test; never edit the thumbnail generator's manifest contract for categorization.
+Seven business categories live in `js/categories.js`, keyed by stable English IDs and PF numbers, independently of the generated manifest. Current coverage is Sales (12), Purchasing (6), Inventory & logistics (10), Finance (12), Retail & e-commerce (8), Customer management (5), and HR & administration (4). PF-010 Service Work Order belongs to HR & administration (administrative services). When adding a design, add its number to exactly one category and run the coverage test; never edit the thumbnail generator's manifest contract for categorization.
 
 Category counts show catalogue totals, while the result counter shows matching/total designs. Search matches both languages, PF number, name, style and tags. Category, exact document type, paper and search combine; selecting another category resets an incompatible type. Clear filters resets all four values. Keyboard-native selects and persistent category buttons preserve focus during filtering.
 

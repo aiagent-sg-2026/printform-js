@@ -1,0 +1,67 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="550" viewBox="0 0 1200 550" role="img" aria-labelledby="title desc">
+<title id="title">Planning together — original DemoBank illustration</title>
+<desc id="desc">Two fictional people consider a plan at a desk in a sunlit teal studio. Original geometric vector artwork, not a photograph.</desc>
+<defs>
+  <linearGradient id="room" x2="1" y2="1"><stop stop-color="#163d4d"/><stop offset="1" stop-color="#82bdb6"/></linearGradient>
+  <linearGradient id="window" x2="0" y2="1"><stop stop-color="#e4f1d9"/><stop offset="1" stop-color="#a8d3c7"/></linearGradient>
+  <linearGradient id="desk" x2="1" y2="0"><stop stop-color="#d5aa75"/><stop offset="1" stop-color="#f6d7a5"/></linearGradient>
+  <linearGradient id="jacket" x2="1" y2="1"><stop stop-color="#f1b57d"/><stop offset="1" stop-color="#cc7e55"/></linearGradient>
+  <linearGradient id="shirt" x2="1" y2="1"><stop stop-color="#3b8c88"/><stop offset="1" stop-color="#175a66"/></linearGradient>
+  <pattern id="lines" width="30" height="30" patternUnits="userSpaceOnUse"><path d="M0 30L30 0" stroke="#fff" stroke-opacity=".025"/></pattern>
+</defs>
+<path fill="url(#room)" d="M0 0h1200v550H0z"/>
+<path fill="url(#lines)" d="M0 0h1200v550H0z"/>
+<!-- Architectural window and invented city silhouettes -->
+<rect x="675" y="-20" width="490" height="385" rx="170" fill="#4d8b88"/>
+<rect x="688" y="-30" width="464" height="377" rx="160" fill="url(#window)"/>
+<circle cx="1056" cy="98" r="55" fill="#fff1cb" opacity=".8"/>
+<g fill="#74a8a0" opacity=".36"><path d="M704 220h52v127h-52zM771 175h67v172h-67zM853 244h54v103h-54zM922 203h88v144h-88zM1029 260h103v87h-103z"/></g>
+<path d="M921 0v347M688 177h464" stroke="#60988e" stroke-width="7"/>
+<path d="M674 351h492" stroke="#214e55" stroke-width="14"/>
+<!-- Floating planning board, all decoration: no baked-in financial text -->
+<g transform="translate(578 79) rotate(-5)">
+  <rect width="103" height="130" rx="12" fill="#123c4c" opacity=".22" x="5" y="8"/>
+  <rect width="103" height="130" rx="12" fill="#f4f2dc"/>
+  <path d="M18 27h54M18 38h36" stroke="#80aaa0" stroke-width="5" stroke-linecap="round"/>
+  <path d="M21 100V79m21 21V66m21 34V73m21 27V52" stroke="#2a7676" stroke-width="11"/>
+  <path d="M17 60l23-13 21 5 23-18" fill="none" stroke="#d8965b" stroke-width="3"/>
+</g>
+<!-- Advisor, expressive profile, textured hair, tailored ochre jacket -->
+<path d="M707 291q-57 7-62 95l-10 87h191l-10-108q-7-61-50-75" fill="url(#jacket)"/>
+<path d="M729 286l16 28 24-28 13 99h-65z" fill="#fff4df"/>
+<path d="M729 270v26q14 23 36-2v-29" fill="#be7f58"/>
+<ellipse cx="747" cy="227" rx="42" ry="54" fill="#d49a70"/>
+<path d="M704 234q-23-56 17-72 30-16 53 6 22 18 10 49-1-34-24-35-4 20-38 26l-10 35z" fill="#263e43"/>
+<path d="M710 208q-19 43 4 72l-24-6q-15-49 3-78" fill="#263e43"/>
+<path d="M729 223h9m20 0h9" stroke="#34484a" stroke-width="3" stroke-linecap="round"/>
+<path d="M747 229l-3 13h7m-15 11q12 8 22-2" fill="none" stroke="#995c43" stroke-width="2.5" stroke-linecap="round"/>
+<circle cx="714" cy="240" r="5" fill="#e9c17b"/>
+<path d="M707 319l-19 43 40 30-12 58m62-132l20 41-21 19" fill="none" stroke="#ad694b" stroke-width="3"/>
+<path d="M683 362q-11 23-5 47l80 30 13-22-58-37" fill="#dc9a68"/>
+<path d="M758 417q22-14 41-4l20 16-10 10-36-2-17-2" fill="#d49a70"/>
+<!-- Client in a deep teal shirt, open posture -->
+<path d="M967 287q-48 11-58 70l-16 112h196l-20-107q-10-59-60-76" fill="url(#shirt)"/>
+<path d="M972 277v25l20 20 20-24-1-31" fill="#9f644c"/>
+<path d="M971 299l20 23-16 32-20-43m58-14l-22 25 20 27 16-38" fill="#6ba49b"/>
+<ellipse cx="991" cy="224" rx="41" ry="54" fill="#bc8462"/>
+<path d="M951 218q-15-47 22-59 49-16 64 27l-5 42-13-27q-24 1-41-16-6 19-27 33" fill="#26363c"/>
+<path d="M971 222h9m19 0h10" stroke="#253c40" stroke-width="3" stroke-linecap="round"/>
+<path d="M988 227l-3 16h7m-16 10q13 9 25-2" fill="none" stroke="#85513e" stroke-width="2.5" stroke-linecap="round"/>
+<path d="M1048 335q32 29 26 71l-83 33-13-25 57-33-17-20" fill="#327779"/>
+<path d="M984 414q-17-10-36 2l-17 18 11 9 35-7 15-6" fill="#bc8462"/>
+<!-- Desktop, laptop, paper, coffee and plant -->
+<path d="M527 454l606-14 67 70H508z" fill="url(#desk)"/>
+<path d="M508 510h692v18H508z" fill="#9c7659"/>
+<ellipse cx="868" cy="456" rx="95" ry="14" fill="#946c51" opacity=".2"/>
+<path d="M779 364h130l25 88H801z" fill="#294951"/>
+<path d="M786 370h116l22 74H808z" fill="#a3c5b8"/>
+<path d="M797 452h143l-21 9H783z" fill="#537a7a"/>
+<path d="M842 408l10-12 13 12-13 12z" fill="#e8edce"/>
+<path d="M953 468l62-18 44 21-65 20z" fill="#fff8e4"/>
+<path d="M983 467l36 9m-25-14l23 6" stroke="#8fa99a" stroke-width="2"/>
+<path d="M1032 458l29-13" stroke="#204e59" stroke-width="4" stroke-linecap="round"/>
+<path d="M621 419h32l-4 33h-24z" fill="#f8edcd"/><path d="M653 425q20 0 5 18h-7" fill="none" stroke="#f8edcd" stroke-width="5"/>
+<path d="M1136 395q-18-69 16-111m-15 88q-48-8-42-44 41 4 42 44m7-36q45 0 42-41-36 0-42 41m-6 56q41 3 46-29-32-8-46 29" fill="#286d66"/>
+<path d="M1116 393h47l-8 54h-30z" fill="#e4c091"/>
+<path d="M0 542q416-36 667 8H0z" fill="#112e43" opacity=".5"/>
+</svg>
