@@ -2,7 +2,7 @@
 export const categories = [
   { id: "sales", en: "Sales", zh: "销售", numbers: [1, 4, 7, 12, 18, 19, 20, 21, 22, 53, 54, 55, 58, 59, 60, 61, 62, 63] },
   { id: "purchasing", en: "Purchasing", zh: "采购", numbers: [2, 13, 14, 15, 16, 17, 64, 65] },
-  { id: "inventory-logistics", en: "Inventory & logistics", zh: "库存与物流", numbers: [3, 5, 23, 24, 25, 26, 27, 28, 29, 41] },
+  { id: "inventory-logistics", en: "Inventory & logistics", zh: "库存与物流", numbers: [3, 5, 23, 24, 25, 26, 27, 28, 29, 41, 66] },
   { id: "finance", en: "Finance", zh: "财务", numbers: [6, 9, 30, 31, 32, 33, 46, 50, 51, 52, 56, 57] },
   { id: "retail-ecommerce", en: "Retail & e-commerce", zh: "零售与电商", numbers: [34, 35, 36, 37, 38, 39, 40, 42] },
   { id: "crm", en: "Customer management", zh: "客户管理", numbers: [43, 44, 45, 47, 48] },

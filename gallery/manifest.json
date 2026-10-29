@@ -1411,5 +1411,13 @@
     "type": "Procurement Review", "paper": "A4", "pages": 8,
     "tags": ["purchasing", "reconciliation", "landscape", "integer-cents", "bilingual", "editable", "JSON", "multi-page", "fictional", "sample", "offline"],
     "file": "designs/aster-three-way-match-review-pack.html", "thumb": "thumbs/aster-three-way-match-review-pack.png", "width": 1123, "height": 794
+  },
+  {
+    "id": "atlas-landed-cost-dossier", "no": "PF-066",
+    "style": { "en": "Ocean teal / sand", "zh": "海洋青 / 沙色" },
+    "title": { "en": "Atlas Landed Cost Dossier", "zh": "Atlas 到岸成本资料册" },
+    "type": "Landed Cost Dossier", "paper": "A4", "pages": 10,
+    "tags": ["inventory-logistics", "allocation", "landscape", "integer-cents", "bilingual", "editable", "JSON", "multi-page", "fictional", "sample", "offline"],
+    "file": "designs/atlas-landed-cost-dossier.html", "thumb": "thumbs/atlas-landed-cost-dossier.png", "width": 1123, "height": 794
   }
 ]

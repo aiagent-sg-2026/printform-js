@@ -9,7 +9,7 @@ const validPapers = new Set(["A4", "A5", "LETTER", "LEGAL"]);
 
 describe("gallery manifest", () => {
   it("has complete entries with unique ids and supported paper sizes", () => {
-    expect(manifest).toHaveLength(65);
+    expect(manifest).toHaveLength(66);
     expect(new Set(manifest.map(({ id }) => id)).size).toBe(manifest.length);
     for (const item of manifest) {
       expect(item).toEqual(expect.objectContaining({ id: expect.any(String), no: expect.stringMatching(/^PF-\d{3}$/), style: { en: expect.any(String), zh: expect.any(String) }, title: { en: expect.any(String), zh: expect.any(String) }, type: expect.any(String), paper: expect.any(String), pages: expect.any(Number), tags: expect.any(Array), file: expect.any(String), thumb: expect.any(String), width: expect.any(Number), height: expect.any(Number) }));
@@ -25,6 +25,18 @@ describe("gallery manifest", () => {
   it("preserves the original 64 manifest entries byte-equivalently after JSON normalization", () => {
     expect(createHash('sha256').update(JSON.stringify(manifest.slice(0, 64))).digest('hex'))
       .toBe('9920ac2201223ee367e9bc9967b8e4466dbde251c091ee40c19045af0cd7eee3');
+  });
+
+  it("preserves all 65 accepted pre-Atlas records", () => {
+    expect(createHash('sha256').update(JSON.stringify(manifest.slice(0, 65))).digest('hex'))
+      .toBe('f5cef9b2247bac5aff220beb903d20d64013fb2f9d4057a10a4157ee7b9b6d3b');
+  });
+
+  it("registers Atlas independently as PF-066", () => {
+    expect(manifest.find(({ no }) => no === "PF-066")).toMatchObject({
+      id: "atlas-landed-cost-dossier", pages: 10, type: "Landed Cost Dossier", paper: "A4", width: 1123, height: 794,
+      tags: expect.arrayContaining(["inventory-logistics", "allocation", "integer-cents", "offline", "landscape"])
+    });
   });
 
   it("has unique PF numbers", () => {
