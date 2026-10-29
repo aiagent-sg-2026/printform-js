@@ -1,0 +1,62 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:printform:atlas:1",
+  "title": "Atlas fictional landed cost source (semantic constraints in validate.mjs)",
+  "type": "object", "additionalProperties": false,
+  "required": ["schemaVersion", "document", "shipment", "containers", "lines", "charges"],
+  "properties": {
+    "schemaVersion": {"const": 1},
+    "document": {
+      "type": "object", "additionalProperties": false,
+      "required": ["id", "title", "company", "currency", "asOfDate", "notice"],
+      "properties": {
+        "id": {"$ref": "#/$defs/id"}, "title": {"$ref": "#/$defs/text"}, "company": {"$ref": "#/$defs/text"},
+        "currency": {"const": "SGD"}, "asOfDate": {"$ref": "#/$defs/date"}, "notice": {"$ref": "#/$defs/text"}
+      }
+    },
+    "shipment": {
+      "type": "object", "additionalProperties": false,
+      "required": ["id", "origin", "destination", "routeLabel", "departureDate", "arrivalDate"],
+      "properties": {
+        "id": {"$ref": "#/$defs/id"}, "origin": {"$ref": "#/$defs/text"}, "destination": {"$ref": "#/$defs/text"},
+        "routeLabel": {"$ref": "#/$defs/text"}, "departureDate": {"$ref": "#/$defs/date"}, "arrivalDate": {"$ref": "#/$defs/date"}
+      }
+    },
+    "containers": {
+      "type": "array", "minItems": 1, "items": {
+        "type": "object", "additionalProperties": false, "required": ["id", "label", "reference", "sealReference"],
+        "properties": {"id": {"$ref": "#/$defs/id"}, "label": {"$ref": "#/$defs/text"}, "reference": {"$ref": "#/$defs/text"}, "sealReference": {"$ref": "#/$defs/text"}}
+      }
+    },
+    "lines": {
+      "type": "array", "items": {
+        "type": "object", "additionalProperties": false,
+        "required": ["id", "containerId", "sku", "description", "quantity", "unitGoodsCents", "unitWeightGrams"],
+        "properties": {
+          "id": {"$ref": "#/$defs/id"}, "containerId": {"$ref": "#/$defs/id"}, "sku": {"$ref": "#/$defs/text"}, "description": {"$ref": "#/$defs/text"},
+          "quantity": {"$ref": "#/$defs/nonnegative"}, "unitGoodsCents": {"$ref": "#/$defs/nonnegative"},
+          "unitWeightGrams": {"oneOf": [{"$ref": "#/$defs/nonnegative"}, {"type": "null"}]}
+        }
+      }
+    },
+    "charges": {
+      "type": "array", "items": {
+        "type": "object", "additionalProperties": false,
+        "required": ["id", "description", "eligibleLineIds", "scopeContainerIds", "estimatedCents", "actualCents", "sourceRef"],
+        "properties": {
+          "id": {"$ref": "#/$defs/id"}, "description": {"$ref": "#/$defs/text"}, "sourceRef": {"$ref": "#/$defs/text"},
+          "eligibleLineIds": {"type": "array", "uniqueItems": true, "items": {"$ref": "#/$defs/id"}},
+          "scopeContainerIds": {"type": "array", "uniqueItems": true, "items": {"$ref": "#/$defs/id"}},
+          "estimatedCents": {"$ref": "#/$defs/signed"}, "actualCents": {"$ref": "#/$defs/signed"}
+        }
+      }
+    }
+  },
+  "$defs": {
+    "id": {"type": "string", "minLength": 1, "pattern": "^[ -~]+$"},
+    "text": {"type": "string", "minLength": 1},
+    "date": {"type": "string", "format": "date", "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$"},
+    "nonnegative": {"type": "integer", "minimum": 0, "maximum": 9007199254740991},
+    "signed": {"type": "integer", "minimum": -9007199254740991, "maximum": 9007199254740991}
+  }
+}

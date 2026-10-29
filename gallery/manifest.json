@@ -1403,5 +1403,29 @@
     "type": "Purchase Order", "paper": "A4", "pages": 2,
     "tags": ["purchasing", "enterprise", "editable", "JSON", "barcode", "multi-page", "fictional", "sample", "offline"],
     "file": "designs/meridian-enterprise-purchase-order.html", "thumb": "thumbs/meridian-enterprise-purchase-order.png", "width": 794, "height": 1123
+  },
+  {
+    "id": "aster-three-way-match-review-pack", "no": "PF-065",
+    "style": { "en": "Midnight / copper", "zh": "午夜蓝 / 铜色" },
+    "title": { "en": "Aster Three-Way Match Review Pack", "zh": "Aster 三单匹配复核资料包" },
+    "type": "Procurement Review", "paper": "A4", "pages": 8,
+    "tags": ["purchasing", "reconciliation", "landscape", "integer-cents", "bilingual", "editable", "JSON", "multi-page", "fictional", "sample", "offline"],
+    "file": "designs/aster-three-way-match-review-pack.html", "thumb": "thumbs/aster-three-way-match-review-pack.png", "width": 1123, "height": 794
+  },
+  {
+    "id": "atlas-landed-cost-dossier", "no": "PF-066",
+    "style": { "en": "Ocean teal / sand", "zh": "海洋青 / 沙色" },
+    "title": { "en": "Atlas Landed Cost Dossier", "zh": "Atlas 到岸成本资料册" },
+    "type": "Landed Cost Dossier", "paper": "A4", "pages": 10,
+    "tags": ["inventory-logistics", "allocation", "landscape", "integer-cents", "bilingual", "editable", "JSON", "multi-page", "fictional", "sample", "offline"],
+    "file": "designs/atlas-landed-cost-dossier.html", "thumb": "thumbs/atlas-landed-cost-dossier.png", "width": 1123, "height": 794
+  },
+  {
+    "id": "lumen-learning-progress-portfolio", "no": "PF-067",
+    "style": { "en": "Forest / ivory / apricot", "zh": "森林绿 / 象牙白 / 杏色" },
+    "title": { "en": "Lumen Learning Progress Portfolio", "zh": "Lumen 学习成长档案" },
+    "type": "Learning Portfolio", "paper": "A4", "pages": 9,
+    "tags": ["education", "learning", "portfolio", "teacher-authored", "counts-not-scores", "bilingual", "JSON", "multi-page", "fictional", "sample", "offline"],
+    "file": "designs/lumen-learning-progress-portfolio.html", "thumb": "thumbs/lumen-learning-progress-portfolio.png", "width": 794, "height": 1123
   }
 ]

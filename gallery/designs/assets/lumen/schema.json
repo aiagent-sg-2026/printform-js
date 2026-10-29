@@ -1,0 +1,496 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "schemaVersion": {
+      "const": 1
+    },
+    "document": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[A-Z][A-Z0-9-]{1,39}$"
+        },
+        "title": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 12000
+        },
+        "issued": {
+          "type": "string",
+          "format": "date"
+        },
+        "notice": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 12000
+        }
+      },
+      "required": [
+        "id",
+        "title",
+        "issued",
+        "notice"
+      ]
+    },
+    "school": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 12000
+        },
+        "address": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 12000
+        },
+        "teacher": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 12000
+        }
+      },
+      "required": [
+        "name",
+        "address",
+        "teacher"
+      ]
+    },
+    "child": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[A-Z][A-Z0-9-]{1,39}$"
+        },
+        "pseudonym": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 12000
+        },
+        "className": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 12000
+        },
+        "ageBand": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 12000
+        },
+        "introduction": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 12000
+        }
+      },
+      "required": [
+        "id",
+        "pseudonym",
+        "className",
+        "ageBand",
+        "introduction"
+      ]
+    },
+    "semesters": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[A-Z][A-Z0-9-]{1,39}$"
+          },
+          "label": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 12000
+          },
+          "start": {
+            "type": "string",
+            "format": "date"
+          },
+          "end": {
+            "type": "string",
+            "format": "date"
+          },
+          "attendance": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "scheduled": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "minimum": 0,
+                "maximum": 10000
+              },
+              "present": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "minimum": 0,
+                "maximum": 10000
+              },
+              "absent": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "minimum": 0,
+                "maximum": 10000
+              },
+              "unknown": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "minimum": 0,
+                "maximum": 10000
+              }
+            },
+            "required": [
+              "scheduled",
+              "present",
+              "absent",
+              "unknown"
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "label",
+          "start",
+          "end",
+          "attendance"
+        ]
+      },
+      "minItems": 1,
+      "maxItems": 2
+    },
+    "domains": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[A-Z][A-Z0-9-]{1,39}$"
+          },
+          "title": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 12000
+          },
+          "description": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 12000
+          },
+          "lookFors": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 12000
+            },
+            "minItems": 1,
+            "maxItems": 4
+          }
+        },
+        "required": [
+          "id",
+          "title",
+          "description",
+          "lookFors"
+        ]
+      },
+      "minItems": 4,
+      "maxItems": 12
+    },
+    "reflections": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "domainId": {
+            "type": "string",
+            "pattern": "^[A-Z][A-Z0-9-]{1,39}$"
+          },
+          "semesterId": {
+            "type": "string",
+            "pattern": "^[A-Z][A-Z0-9-]{1,39}$"
+          },
+          "status": {
+            "enum": [
+              "exploring",
+              "with-support",
+              "independently",
+              "not-observed"
+            ]
+          },
+          "comment": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 12000
+          }
+        },
+        "required": [
+          "domainId",
+          "semesterId",
+          "status",
+          "comment"
+        ]
+      },
+      "minItems": 0,
+      "maxItems": 24
+    },
+    "evidence": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[A-Z][A-Z0-9-]{1,39}$"
+          },
+          "domainIds": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "pattern": "^[A-Z][A-Z0-9-]{1,39}$"
+            },
+            "minItems": 1,
+            "maxItems": 12
+          },
+          "semesterId": {
+            "type": "string",
+            "pattern": "^[A-Z][A-Z0-9-]{1,39}$"
+          },
+          "date": {
+            "type": "string",
+            "format": "date"
+          },
+          "status": {
+            "enum": [
+              "observed",
+              "planned"
+            ]
+          },
+          "title": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 12000
+          },
+          "description": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 12000
+          },
+          "teacherNote": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 12000
+          }
+        },
+        "required": [
+          "id",
+          "domainIds",
+          "semesterId",
+          "date",
+          "status",
+          "title",
+          "description",
+          "teacherNote"
+        ]
+      },
+      "minItems": 0,
+      "maxItems": 120
+    },
+    "goals": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[A-Z][A-Z0-9-]{1,39}$"
+          },
+          "domainId": {
+            "type": "string",
+            "pattern": "^[A-Z][A-Z0-9-]{1,39}$"
+          },
+          "title": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 12000
+          },
+          "strategy": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 12000
+          },
+          "familyIdea": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 12000
+          },
+          "reviewDate": {
+            "type": "string",
+            "format": "date"
+          },
+          "evidenceIds": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "pattern": "^[A-Z][A-Z0-9-]{1,39}$"
+            },
+            "minItems": 0,
+            "maxItems": 20
+          }
+        },
+        "required": [
+          "id",
+          "domainId",
+          "title",
+          "strategy",
+          "familyIdea",
+          "reviewDate",
+          "evidenceIds"
+        ]
+      },
+      "minItems": 0,
+      "maxItems": 30
+    },
+    "communications": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[A-Z][A-Z0-9-]{1,39}$"
+          },
+          "semesterId": {
+            "type": "string",
+            "pattern": "^[A-Z][A-Z0-9-]{1,39}$"
+          },
+          "date": {
+            "type": "string",
+            "format": "date"
+          },
+          "channel": {
+            "enum": [
+              "conference",
+              "note",
+              "home-activity"
+            ]
+          },
+          "topic": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 12000
+          },
+          "summary": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 12000
+          },
+          "nextStep": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 12000
+          }
+        },
+        "required": [
+          "id",
+          "semesterId",
+          "date",
+          "channel",
+          "topic",
+          "summary",
+          "nextStep"
+        ]
+      },
+      "minItems": 0,
+      "maxItems": 30
+    },
+    "teacherReview": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "summary": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 12000
+        },
+        "strengths": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 12000
+          },
+          "minItems": 0,
+          "maxItems": 12
+        },
+        "nextSteps": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 12000
+          },
+          "minItems": 0,
+          "maxItems": 12
+        },
+        "reviewer": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 12000
+        },
+        "status": {
+          "enum": [
+            "draft",
+            "reviewed"
+          ]
+        }
+      },
+      "required": [
+        "summary",
+        "strengths",
+        "nextSteps",
+        "reviewer",
+        "status"
+      ]
+    }
+  },
+  "required": [
+    "schemaVersion",
+    "document",
+    "school",
+    "child",
+    "semesters",
+    "domains",
+    "reflections",
+    "evidence",
+    "goals",
+    "communications",
+    "teacherReview"
+  ]
+}

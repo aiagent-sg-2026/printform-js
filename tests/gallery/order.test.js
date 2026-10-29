@@ -4,11 +4,11 @@ import { describe, expect, it } from "vitest";
 import { newestFirst } from "../../gallery/js/order.js";
 
 describe("catalogue newest-first convention", () => {
-  it("preserves all 64 canonical entries and their source order", () => {
+  it("preserves all 67 canonical entries and their source order", () => {
     const manifest = JSON.parse(fs.readFileSync(path.resolve(import.meta.dirname, "../../gallery/manifest.json")));
     const original = JSON.stringify(manifest);
     const ordered = newestFirst(manifest);
-    expect(ordered.map(({ no }) => no)).toEqual(Array.from({ length: 64 }, (_, index) => `PF-${String(64 - index).padStart(3, "0")}`));
+    expect(ordered.map(({ no }) => no)).toEqual(Array.from({ length: 67 }, (_, index) => `PF-${String(67 - index).padStart(3, "0")}`));
     expect(JSON.stringify(manifest)).toBe(original);
     for (const design of ordered) expect(manifest).toContain(design);
   });

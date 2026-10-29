@@ -1,0 +1,399 @@
+[
+  {
+    "name": "all-missing",
+    "valid": true,
+    "expected": {
+      "documentId": "LUMEN-DEMO-067",
+      "domainCount": 4,
+      "semesterCount": 1,
+      "observedRecordCount": 0,
+      "plannedRecordCount": 0,
+      "evidenceCoverage": {
+        "numerator": 0,
+        "denominator": 4,
+        "percent1dp": "0.0"
+      },
+      "coverageMeaning": "domain-semester cells with at least one observed evidence record / all configured domain-semester cells; not ability or development score",
+      "cells": [
+        {
+          "semesterId": "TERM-01",
+          "domainId": "DOM-01",
+          "observedEvidenceIds": [],
+          "observedEvidenceCount": 0,
+          "reflectionStatus": null
+        },
+        {
+          "semesterId": "TERM-01",
+          "domainId": "DOM-02",
+          "observedEvidenceIds": [],
+          "observedEvidenceCount": 0,
+          "reflectionStatus": null
+        },
+        {
+          "semesterId": "TERM-01",
+          "domainId": "DOM-03",
+          "observedEvidenceIds": [],
+          "observedEvidenceCount": 0,
+          "reflectionStatus": null
+        },
+        {
+          "semesterId": "TERM-01",
+          "domainId": "DOM-04",
+          "observedEvidenceIds": [],
+          "observedEvidenceCount": 0,
+          "reflectionStatus": null
+        }
+      ],
+      "attendance": [
+        {
+          "semesterId": "TERM-01",
+          "state": "missing",
+          "knownAttendanceRate": null,
+          "recordingCoverage": null
+        }
+      ],
+      "goalCount": 0,
+      "communicationCount": 1
+    },
+    "base": "sample(4,1)",
+    "replaceTopLevel": {
+      "semesters": [
+        {
+          "id": "TERM-01",
+          "label": "Semester 1 / 学期 1",
+          "start": "2026-01-01",
+          "end": "2026-06-30",
+          "attendance": {
+            "scheduled": null,
+            "present": null,
+            "absent": null,
+            "unknown": null
+          }
+        }
+      ],
+      "reflections": [],
+      "evidence": [],
+      "goals": []
+    }
+  },
+  {
+    "name": "zero-observed-planned-not-observed",
+    "valid": true,
+    "expected": {
+      "documentId": "LUMEN-DEMO-067",
+      "domainCount": 4,
+      "semesterCount": 1,
+      "observedRecordCount": 0,
+      "plannedRecordCount": 3,
+      "evidenceCoverage": {
+        "numerator": 0,
+        "denominator": 4,
+        "percent1dp": "0.0"
+      },
+      "coverageMeaning": "domain-semester cells with at least one observed evidence record / all configured domain-semester cells; not ability or development score",
+      "cells": [
+        {
+          "semesterId": "TERM-01",
+          "domainId": "DOM-01",
+          "observedEvidenceIds": [],
+          "observedEvidenceCount": 0,
+          "reflectionStatus": "exploring"
+        },
+        {
+          "semesterId": "TERM-01",
+          "domainId": "DOM-02",
+          "observedEvidenceIds": [],
+          "observedEvidenceCount": 0,
+          "reflectionStatus": "with-support"
+        },
+        {
+          "semesterId": "TERM-01",
+          "domainId": "DOM-03",
+          "observedEvidenceIds": [],
+          "observedEvidenceCount": 0,
+          "reflectionStatus": "independently"
+        },
+        {
+          "semesterId": "TERM-01",
+          "domainId": "DOM-04",
+          "observedEvidenceIds": [],
+          "observedEvidenceCount": 0,
+          "reflectionStatus": null
+        }
+      ],
+      "attendance": [
+        {
+          "semesterId": "TERM-01",
+          "state": "recorded",
+          "knownAttendanceRate": {
+            "numerator": 88,
+            "denominator": 95,
+            "percent1dp": "92.6"
+          },
+          "recordingCoverage": {
+            "numerator": 95,
+            "denominator": 100,
+            "percent1dp": "95.0"
+          }
+        }
+      ],
+      "goalCount": 2,
+      "communicationCount": 1
+    },
+    "base": "sample(4,1)",
+    "replaceTopLevel": {
+      "evidence": [
+        {
+          "id": "EV-1-01",
+          "domainIds": [
+            "DOM-01"
+          ],
+          "semesterId": "TERM-01",
+          "date": "2026-03-02",
+          "status": "planned",
+          "title": "Learning invitation 1 / 学习活动",
+          "description": "Robin selected two materials, tried a different arrangement and shared an idea with a peer. This record describes the moment without inferring a fixed trait. Robin选择了两种材料，尝试另一种排列，并与同伴分享想法。",
+          "teacherNote": "Next, offer another opportunity in a different context and record what changes. 下一次在不同情境中再次观察，并记录支持方式。"
+        },
+        {
+          "id": "EV-1-02",
+          "domainIds": [
+            "DOM-02"
+          ],
+          "semesterId": "TERM-01",
+          "date": "2026-03-03",
+          "status": "planned",
+          "title": "Learning invitation 2 / 学习活动",
+          "description": "Robin selected two materials, tried a different arrangement and shared an idea with a peer. This record describes the moment without inferring a fixed trait. Robin选择了两种材料，尝试另一种排列，并与同伴分享想法。",
+          "teacherNote": "Next, offer another opportunity in a different context and record what changes. 下一次在不同情境中再次观察，并记录支持方式。"
+        },
+        {
+          "id": "EV-1-03",
+          "domainIds": [
+            "DOM-03"
+          ],
+          "semesterId": "TERM-01",
+          "date": "2026-03-04",
+          "status": "planned",
+          "title": "Learning invitation 3 / 学习活动",
+          "description": "Robin selected two materials, tried a different arrangement and shared an idea with a peer. This record describes the moment without inferring a fixed trait. Robin选择了两种材料，尝试另一种排列，并与同伴分享想法。",
+          "teacherNote": "Next, offer another opportunity in a different context and record what changes. 下一次在不同情境中再次观察，并记录支持方式。"
+        }
+      ]
+    }
+  },
+  {
+    "name": "zero-denominator",
+    "valid": true,
+    "expected": {
+      "documentId": "LUMEN-DEMO-067",
+      "domainCount": 4,
+      "semesterCount": 1,
+      "observedRecordCount": 2,
+      "plannedRecordCount": 1,
+      "evidenceCoverage": {
+        "numerator": 2,
+        "denominator": 4,
+        "percent1dp": "50.0"
+      },
+      "coverageMeaning": "domain-semester cells with at least one observed evidence record / all configured domain-semester cells; not ability or development score",
+      "cells": [
+        {
+          "semesterId": "TERM-01",
+          "domainId": "DOM-01",
+          "observedEvidenceIds": [
+            "EV-1-01"
+          ],
+          "observedEvidenceCount": 1,
+          "reflectionStatus": "exploring"
+        },
+        {
+          "semesterId": "TERM-01",
+          "domainId": "DOM-02",
+          "observedEvidenceIds": [
+            "EV-1-02"
+          ],
+          "observedEvidenceCount": 1,
+          "reflectionStatus": "with-support"
+        },
+        {
+          "semesterId": "TERM-01",
+          "domainId": "DOM-03",
+          "observedEvidenceIds": [],
+          "observedEvidenceCount": 0,
+          "reflectionStatus": "independently"
+        },
+        {
+          "semesterId": "TERM-01",
+          "domainId": "DOM-04",
+          "observedEvidenceIds": [],
+          "observedEvidenceCount": 0,
+          "reflectionStatus": null
+        }
+      ],
+      "attendance": [
+        {
+          "semesterId": "TERM-01",
+          "state": "recorded",
+          "knownAttendanceRate": {
+            "numerator": 0,
+            "denominator": 0,
+            "percent1dp": null
+          },
+          "recordingCoverage": {
+            "numerator": 0,
+            "denominator": 0,
+            "percent1dp": null
+          }
+        }
+      ],
+      "goalCount": 2,
+      "communicationCount": 1
+    },
+    "base": "sample(4,1)",
+    "replaceTopLevel": {
+      "semesters": [
+        {
+          "id": "TERM-01",
+          "label": "Semester 1 / 学期 1",
+          "start": "2026-01-01",
+          "end": "2026-06-30",
+          "attendance": {
+            "scheduled": 0,
+            "present": 0,
+            "absent": 0,
+            "unknown": 0
+          }
+        }
+      ]
+    }
+  },
+  {
+    "name": "duplicate-id",
+    "valid": false,
+    "error": "duplicate ID in domains",
+    "base": "sample(4,1)",
+    "replaceTopLevel": {
+      "domains": [
+        {
+          "id": "DOM-01",
+          "title": "Language & storytelling / 语言表达",
+          "description": "An invitation to notice learning in everyday play, not a benchmark or ranking. 关注日常游戏中的学习过程，不作标准化排名。",
+          "lookFors": [
+            "Describe the context and the learner’s own words.",
+            "Record support offered and a possible next invitation."
+          ]
+        },
+        {
+          "id": "DOM-01",
+          "title": "Language & storytelling / 语言表达",
+          "description": "An invitation to notice learning in everyday play, not a benchmark or ranking. 关注日常游戏中的学习过程，不作标准化排名。",
+          "lookFors": [
+            "Describe the context and the learner’s own words.",
+            "Record support offered and a possible next invitation."
+          ]
+        },
+        {
+          "id": "DOM-03",
+          "title": "Discovery & inquiry / 探索发现",
+          "description": "An invitation to notice learning in everyday play, not a benchmark or ranking. 关注日常游戏中的学习过程，不作标准化排名。",
+          "lookFors": [
+            "Describe the context and the learner’s own words.",
+            "Record support offered and a possible next invitation."
+          ]
+        },
+        {
+          "id": "DOM-04",
+          "title": "Creative expression / 创意表达",
+          "description": "An invitation to notice learning in everyday play, not a benchmark or ranking. 关注日常游戏中的学习过程，不作标准化排名。",
+          "lookFors": [
+            "Describe the context and the learner’s own words.",
+            "Record support offered and a possible next invitation."
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "invalid-date",
+    "valid": false,
+    "error": "'2026-02-30' is not a 'date'",
+    "base": "sample(4,1)",
+    "replaceTopLevel": {
+      "document": {
+        "id": "LUMEN-DEMO-067",
+        "title": "Lumen Learning Progress Portfolio / 学习成长档案",
+        "issued": "2026-02-30",
+        "notice": "FICTIONAL DEMO — teacher-reviewed illustrative records, not an assessment or real child record."
+      }
+    }
+  },
+  {
+    "name": "unknown-reference",
+    "valid": false,
+    "error": "unknown evidence reference",
+    "base": "sample(4,1)",
+    "replaceTopLevel": {
+      "evidence": [
+        {
+          "id": "EV-1-01",
+          "domainIds": [
+            "DOM-UNKNOWN"
+          ],
+          "semesterId": "TERM-01",
+          "date": "2026-03-02",
+          "status": "observed",
+          "title": "Learning invitation 1 / 学习活动",
+          "description": "Robin selected two materials, tried a different arrangement and shared an idea with a peer. This record describes the moment without inferring a fixed trait. Robin选择了两种材料，尝试另一种排列，并与同伴分享想法。",
+          "teacherNote": "Next, offer another opportunity in a different context and record what changes. 下一次在不同情境中再次观察，并记录支持方式。"
+        },
+        {
+          "id": "EV-1-02",
+          "domainIds": [
+            "DOM-02"
+          ],
+          "semesterId": "TERM-01",
+          "date": "2026-03-03",
+          "status": "observed",
+          "title": "Learning invitation 2 / 学习活动",
+          "description": "Robin selected two materials, tried a different arrangement and shared an idea with a peer. This record describes the moment without inferring a fixed trait. Robin选择了两种材料，尝试另一种排列，并与同伴分享想法。",
+          "teacherNote": "Next, offer another opportunity in a different context and record what changes. 下一次在不同情境中再次观察，并记录支持方式。"
+        },
+        {
+          "id": "EV-1-03",
+          "domainIds": [
+            "DOM-03"
+          ],
+          "semesterId": "TERM-01",
+          "date": "2026-03-04",
+          "status": "planned",
+          "title": "Learning invitation 3 / 学习活动",
+          "description": "Robin selected two materials, tried a different arrangement and shared an idea with a peer. This record describes the moment without inferring a fixed trait. Robin选择了两种材料，尝试另一种排列，并与同伴分享想法。",
+          "teacherNote": "Next, offer another opportunity in a different context and record what changes. 下一次在不同情境中再次观察，并记录支持方式。"
+        }
+      ]
+    }
+  },
+  {
+    "name": "attendance-mismatch",
+    "valid": false,
+    "error": "attendance conservation",
+    "base": "sample(4,1)",
+    "replaceTopLevel": {
+      "semesters": [
+        {
+          "id": "TERM-01",
+          "label": "Semester 1 / 学期 1",
+          "start": "2026-01-01",
+          "end": "2026-06-30",
+          "attendance": {
+            "scheduled": 100,
+            "present": 99,
+            "absent": 7,
+            "unknown": 5
+          }
+        }
+      ]
+    }
+  }
+]

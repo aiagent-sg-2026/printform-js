@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="660" height="200" viewBox="0 0 660 200" role="img" aria-label="Fictional ocean route and cargo containers">
+<rect x="1" y="1" width="658" height="198" rx="10" fill="#eee5d6"/>
+<g fill="none" stroke="#155d63" stroke-width="3"><path d="M38 145C150 23 463 25 612 91" stroke-dasharray="9 8"/><path d="m594 76 20 16-24 9"/><circle cx="38" cy="145" r="8" fill="#fff"/><circle cx="614" cy="93" r="8" fill="#fff"/></g>
+<g transform="translate(219 84)"><path d="m-16 49 29 25h179l27-25Z" fill="#155d63"/><path d="M6 83q20-10 40 0t40 0 40 0 40 0 40 0" fill="none" stroke="#b45e2c" stroke-width="3"/>
+<g stroke="#203b43" stroke-width="2"><rect x="10" y="9" width="62" height="38" fill="#fff"/><rect x="78" y="9" width="62" height="38" fill="#b45e2c"/><rect x="146" y="9" width="48" height="38" fill="#fff"/><path d="M22 14v28m12-28v28m12-28v28m12-28v28m32-28v28m12-28v28m12-28v28m12-28v28m32-28v28m12-28v28m12-28v28"/></g></g>
+</svg>

@@ -1,0 +1,500 @@
+{
+  "schemaVersion": 1,
+  "document": {
+    "id": "ATLAS-DEMO-2026-001",
+    "title": "Landed Cost Dossier",
+    "company": "Atlas Fictional Logistics Studio",
+    "currency": "SGD",
+    "asOfDate": "2026-10-28",
+    "notice": "SAMPLE \u2014 fictional costing data; not a customs declaration, invoice or payment instruction"
+  },
+  "shipment": {
+    "id": "SHIP-DEMO-042",
+    "origin": "Example Port Alpha",
+    "destination": "Example Port Delta",
+    "routeLabel": "Fictional sea route / demonstration only",
+    "departureDate": "2026-10-12",
+    "arrivalDate": "2026-10-26"
+  },
+  "containers": [
+    {
+      "id": "CONT-01",
+      "label": "Fictional container 01",
+      "reference": "DEMO-CONTAINER-01",
+      "sealReference": "DEMO-SEAL-01"
+    },
+    {
+      "id": "CONT-02",
+      "label": "Fictional container 02",
+      "reference": "DEMO-CONTAINER-02",
+      "sealReference": "DEMO-SEAL-02"
+    },
+    {
+      "id": "CONT-03",
+      "label": "Fictional container 03",
+      "reference": "DEMO-CONTAINER-03",
+      "sealReference": "DEMO-SEAL-03"
+    }
+  ],
+  "lines": [
+    {
+      "id": "LIN-001",
+      "containerId": "CONT-01",
+      "sku": "DEMO-SKU-001",
+      "description": "Fictional hinge assembly / specimen 01",
+      "quantity": 8,
+      "unitGoodsCents": 1425,
+      "unitWeightGrams": 375
+    },
+    {
+      "id": "LIN-002",
+      "containerId": "CONT-01",
+      "sku": "DEMO-SKU-002",
+      "description": "Modular cable tray / specimen 02",
+      "quantity": 11,
+      "unitGoodsCents": 1600,
+      "unitWeightGrams": 500
+    },
+    {
+      "id": "LIN-003",
+      "containerId": "CONT-01",
+      "sku": "DEMO-SKU-003",
+      "description": "Packing separator set / specimen 03",
+      "quantity": 14,
+      "unitGoodsCents": 1775,
+      "unitWeightGrams": 625
+    },
+    {
+      "id": "LIN-004",
+      "containerId": "CONT-01",
+      "sku": "DEMO-SKU-004",
+      "description": "Precision mounting plate / specimen 04",
+      "quantity": 17,
+      "unitGoodsCents": 1950,
+      "unitWeightGrams": 750
+    },
+    {
+      "id": "LIN-005",
+      "containerId": "CONT-01",
+      "sku": "DEMO-SKU-005",
+      "description": "Reusable transport sleeve / specimen 05",
+      "quantity": 20,
+      "unitGoodsCents": 2125,
+      "unitWeightGrams": 250
+    },
+    {
+      "id": "LIN-006",
+      "containerId": "CONT-01",
+      "sku": "DEMO-SKU-006",
+      "description": "Control enclosure shell / specimen 06",
+      "quantity": 5,
+      "unitGoodsCents": 2300,
+      "unitWeightGrams": 375
+    },
+    {
+      "id": "LIN-007",
+      "containerId": "CONT-01",
+      "sku": "DEMO-SKU-007",
+      "description": "Adjustable bracket pair / specimen 07",
+      "quantity": 8,
+      "unitGoodsCents": 2475,
+      "unitWeightGrams": 500
+    },
+    {
+      "id": "LIN-008",
+      "containerId": "CONT-01",
+      "sku": "DEMO-SKU-008",
+      "description": "Protective corner kit / specimen 08",
+      "quantity": 11,
+      "unitGoodsCents": 2650,
+      "unitWeightGrams": 625
+    },
+    {
+      "id": "LIN-009",
+      "containerId": "CONT-02",
+      "sku": "DEMO-SKU-009",
+      "description": "Service access panel / specimen 09",
+      "quantity": 14,
+      "unitGoodsCents": 2825,
+      "unitWeightGrams": 750
+    },
+    {
+      "id": "LIN-010",
+      "containerId": "CONT-02",
+      "sku": "DEMO-SKU-010",
+      "description": "Synthetic spacer pack / specimen 10",
+      "quantity": 17,
+      "unitGoodsCents": 3000,
+      "unitWeightGrams": 250
+    },
+    {
+      "id": "LIN-011",
+      "containerId": "CONT-02",
+      "sku": "DEMO-SKU-011",
+      "description": "Workshop storage rail / specimen 11",
+      "quantity": 20,
+      "unitGoodsCents": 3175,
+      "unitWeightGrams": 375
+    },
+    {
+      "id": "LIN-012",
+      "containerId": "CONT-02",
+      "sku": "DEMO-SKU-012",
+      "description": "Non-powered connector housing / specimen 12",
+      "quantity": 5,
+      "unitGoodsCents": 3350,
+      "unitWeightGrams": 500
+    },
+    {
+      "id": "LIN-013",
+      "containerId": "CONT-02",
+      "sku": "DEMO-SKU-013",
+      "description": "Fictional hinge assembly / specimen 13",
+      "quantity": 8,
+      "unitGoodsCents": 3525,
+      "unitWeightGrams": 625
+    },
+    {
+      "id": "LIN-014",
+      "containerId": "CONT-02",
+      "sku": "DEMO-SKU-014",
+      "description": "Modular cable tray / specimen 14",
+      "quantity": 11,
+      "unitGoodsCents": 3700,
+      "unitWeightGrams": 750
+    },
+    {
+      "id": "LIN-015",
+      "containerId": "CONT-02",
+      "sku": "DEMO-SKU-015",
+      "description": "Packing separator set / specimen 15",
+      "quantity": 14,
+      "unitGoodsCents": 3875,
+      "unitWeightGrams": 250
+    },
+    {
+      "id": "LIN-016",
+      "containerId": "CONT-02",
+      "sku": "DEMO-SKU-016",
+      "description": "Precision mounting plate / specimen 16",
+      "quantity": 17,
+      "unitGoodsCents": 4050,
+      "unitWeightGrams": 375
+    },
+    {
+      "id": "LIN-017",
+      "containerId": "CONT-03",
+      "sku": "DEMO-SKU-017",
+      "description": "Reusable transport sleeve / specimen 17",
+      "quantity": 20,
+      "unitGoodsCents": 4225,
+      "unitWeightGrams": 500
+    },
+    {
+      "id": "LIN-018",
+      "containerId": "CONT-03",
+      "sku": "DEMO-SKU-018",
+      "description": "Control enclosure shell / specimen 18",
+      "quantity": 5,
+      "unitGoodsCents": 4400,
+      "unitWeightGrams": 625
+    },
+    {
+      "id": "LIN-019",
+      "containerId": "CONT-03",
+      "sku": "DEMO-SKU-019",
+      "description": "Adjustable bracket pair / specimen 19",
+      "quantity": 8,
+      "unitGoodsCents": 4575,
+      "unitWeightGrams": 750
+    },
+    {
+      "id": "LIN-020",
+      "containerId": "CONT-03",
+      "sku": "DEMO-SKU-020",
+      "description": "Protective corner kit / specimen 20",
+      "quantity": 11,
+      "unitGoodsCents": 4750,
+      "unitWeightGrams": 250
+    },
+    {
+      "id": "LIN-021",
+      "containerId": "CONT-03",
+      "sku": "DEMO-SKU-021",
+      "description": "Service access panel / specimen 21",
+      "quantity": 14,
+      "unitGoodsCents": 4925,
+      "unitWeightGrams": 375
+    },
+    {
+      "id": "LIN-022",
+      "containerId": "CONT-03",
+      "sku": "DEMO-SKU-022",
+      "description": "Synthetic spacer pack / specimen 22",
+      "quantity": 17,
+      "unitGoodsCents": 5100,
+      "unitWeightGrams": 500
+    },
+    {
+      "id": "LIN-023",
+      "containerId": "CONT-03",
+      "sku": "DEMO-SKU-023",
+      "description": "Workshop storage rail / specimen 23",
+      "quantity": 20,
+      "unitGoodsCents": 5275,
+      "unitWeightGrams": 625
+    },
+    {
+      "id": "LIN-024",
+      "containerId": "CONT-03",
+      "sku": "DEMO-SKU-024",
+      "description": "Non-powered connector housing / specimen 24",
+      "quantity": 5,
+      "unitGoodsCents": 5450,
+      "unitWeightGrams": 750
+    }
+  ],
+  "charges": [
+    {
+      "id": "CHG-01",
+      "description": "Synthetic ocean transport",
+      "eligibleLineIds": [
+        "LIN-001",
+        "LIN-002",
+        "LIN-003",
+        "LIN-004",
+        "LIN-005",
+        "LIN-006",
+        "LIN-007",
+        "LIN-008",
+        "LIN-009",
+        "LIN-010",
+        "LIN-011",
+        "LIN-012",
+        "LIN-013",
+        "LIN-014",
+        "LIN-015",
+        "LIN-016",
+        "LIN-017",
+        "LIN-018",
+        "LIN-019",
+        "LIN-020",
+        "LIN-021",
+        "LIN-022",
+        "LIN-023",
+        "LIN-024"
+      ],
+      "scopeContainerIds": [
+        "CONT-01",
+        "CONT-02",
+        "CONT-03"
+      ],
+      "estimatedCents": 160000,
+      "actualCents": 180000,
+      "sourceRef": "DEMO-SRC-CHG-01"
+    },
+    {
+      "id": "CHG-02",
+      "description": "Container 01 handling",
+      "eligibleLineIds": [
+        "LIN-001",
+        "LIN-002",
+        "LIN-003",
+        "LIN-004",
+        "LIN-005",
+        "LIN-006",
+        "LIN-007",
+        "LIN-008"
+      ],
+      "scopeContainerIds": [
+        "CONT-01"
+      ],
+      "estimatedCents": 22000,
+      "actualCents": 24000,
+      "sourceRef": "DEMO-SRC-CHG-02"
+    },
+    {
+      "id": "CHG-03",
+      "description": "Container 02 handling",
+      "eligibleLineIds": [
+        "LIN-009",
+        "LIN-010",
+        "LIN-011",
+        "LIN-012",
+        "LIN-013",
+        "LIN-014",
+        "LIN-015",
+        "LIN-016"
+      ],
+      "scopeContainerIds": [
+        "CONT-02"
+      ],
+      "estimatedCents": 24000,
+      "actualCents": 27000,
+      "sourceRef": "DEMO-SRC-CHG-03"
+    },
+    {
+      "id": "CHG-04",
+      "description": "Container 03 handling",
+      "eligibleLineIds": [
+        "LIN-017",
+        "LIN-018",
+        "LIN-019",
+        "LIN-020",
+        "LIN-021",
+        "LIN-022",
+        "LIN-023",
+        "LIN-024"
+      ],
+      "scopeContainerIds": [
+        "CONT-03"
+      ],
+      "estimatedCents": 20000,
+      "actualCents": 21000,
+      "sourceRef": "DEMO-SRC-CHG-04"
+    },
+    {
+      "id": "CHG-05",
+      "description": "Terminal service example",
+      "eligibleLineIds": [
+        "LIN-001",
+        "LIN-002",
+        "LIN-003",
+        "LIN-004",
+        "LIN-005",
+        "LIN-006",
+        "LIN-007",
+        "LIN-008",
+        "LIN-009",
+        "LIN-010",
+        "LIN-011",
+        "LIN-012",
+        "LIN-013",
+        "LIN-014",
+        "LIN-015",
+        "LIN-016",
+        "LIN-017",
+        "LIN-018",
+        "LIN-019",
+        "LIN-020",
+        "LIN-021",
+        "LIN-022",
+        "LIN-023",
+        "LIN-024"
+      ],
+      "scopeContainerIds": [
+        "CONT-01",
+        "CONT-02",
+        "CONT-03"
+      ],
+      "estimatedCents": 40000,
+      "actualCents": 45000,
+      "sourceRef": "DEMO-SRC-CHG-05"
+    },
+    {
+      "id": "CHG-06",
+      "description": "Illustrative cargo cover service",
+      "eligibleLineIds": [
+        "LIN-001",
+        "LIN-002",
+        "LIN-003",
+        "LIN-004",
+        "LIN-005",
+        "LIN-006",
+        "LIN-007",
+        "LIN-008",
+        "LIN-009",
+        "LIN-010",
+        "LIN-011",
+        "LIN-012",
+        "LIN-013",
+        "LIN-014",
+        "LIN-015",
+        "LIN-016",
+        "LIN-017",
+        "LIN-018",
+        "LIN-019",
+        "LIN-020",
+        "LIN-021",
+        "LIN-022",
+        "LIN-023",
+        "LIN-024"
+      ],
+      "scopeContainerIds": [
+        "CONT-01",
+        "CONT-02",
+        "CONT-03"
+      ],
+      "estimatedCents": 16000,
+      "actualCents": 18000,
+      "sourceRef": "DEMO-SRC-CHG-06"
+    },
+    {
+      "id": "CHG-07",
+      "description": "Synthetic service credit",
+      "eligibleLineIds": [
+        "LIN-001",
+        "LIN-002",
+        "LIN-003",
+        "LIN-004",
+        "LIN-005",
+        "LIN-006",
+        "LIN-007",
+        "LIN-008",
+        "LIN-009",
+        "LIN-010",
+        "LIN-011",
+        "LIN-012",
+        "LIN-013",
+        "LIN-014",
+        "LIN-015",
+        "LIN-016",
+        "LIN-017",
+        "LIN-018",
+        "LIN-019",
+        "LIN-020",
+        "LIN-021",
+        "LIN-022",
+        "LIN-023",
+        "LIN-024"
+      ],
+      "scopeContainerIds": [
+        "CONT-01",
+        "CONT-02",
+        "CONT-03"
+      ],
+      "estimatedCents": -10000,
+      "actualCents": -12000,
+      "sourceRef": "DEMO-SRC-CHG-07"
+    },
+    {
+      "id": "CHG-08",
+      "description": "Inspection example / containers 02 and 03",
+      "eligibleLineIds": [
+        "LIN-009",
+        "LIN-010",
+        "LIN-011",
+        "LIN-012",
+        "LIN-013",
+        "LIN-014",
+        "LIN-015",
+        "LIN-016",
+        "LIN-017",
+        "LIN-018",
+        "LIN-019",
+        "LIN-020",
+        "LIN-021",
+        "LIN-022",
+        "LIN-023",
+        "LIN-024"
+      ],
+      "scopeContainerIds": [
+        "CONT-02",
+        "CONT-03"
+      ],
+      "estimatedCents": 30000,
+      "actualCents": 36000,
+      "sourceRef": "DEMO-SRC-CHG-08"
+    }
+  ]
+}
