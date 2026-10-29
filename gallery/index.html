@@ -34,10 +34,13 @@
       <p data-i18n="subheading">Explore live, paginated business documents built with PrintForm.js.</p>
     </section>
     <section class="controls" aria-label="Gallery filters">
-      <div class="filter-group category-group"><span id="category-label" data-i18n="categoryLabel">Business category</span><div id="category-filters" class="chips" role="group" aria-labelledby="category-label"></div></div>
       <label class="search"><span data-i18n="searchLabel">Search designs</span><input id="search" type="search" disabled data-i18n-placeholder="searchPlaceholder" placeholder="Search by name or tag"></label>
+      <button id="advanced-toggle" class="button secondary" type="button" disabled aria-expanded="false" aria-controls="advanced-filters"><span data-i18n="advancedFilters">Advanced filters</span><span class="disclosure-icon" aria-hidden="true">⌄</span></button>
+      <div id="advanced-filters" class="advanced-filters" hidden>
+      <div class="filter-group category-group"><span id="category-label" data-i18n="categoryLabel">Business category</span><div id="category-filters" class="chips" role="group" aria-labelledby="category-label"></div></div>
       <label class="filter-group"><span data-i18n="typeLabel">Document type</span><select id="type-filter" disabled></select></label>
       <label class="filter-group"><span data-i18n="paperLabel">Paper</span><select id="paper-filter" disabled></select></label>
+      </div>
       <div class="filter-summary"><span id="active-filters"></span><button id="clear-filters" class="button secondary" type="button" data-i18n="clearFilters" disabled>Clear filters</button></div>
     </section>
     <div id="load-status" class="load-status" role="status"><span data-i18n="loading">Loading designs…</span> <button id="retry-load" class="button secondary" type="button" data-i18n="retry" hidden>Retry</button></div>

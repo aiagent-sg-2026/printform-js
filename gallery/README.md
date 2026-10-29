@@ -29,3 +29,14 @@ PF-054 adds a separate navy-blue, five-page A4 variant with fictional supply lin
 PF-055 adds a rose/red-pink A4 **Corporate Insurance Proposal and Agreement** sample in Sales under the fictional Rose Assurance Studio brand. It is not an insurance policy or an endorsement. Its naturally measured 20-page stream alternates terms, three distinct schedules, continuous two-column terms, a signature and about five pages of post-signature appendix. Build the engine, then run `node scripts/export-pf055.mjs` for a standalone offline HTML in `../output`. See [mixed-flow semantics and limits](../docs/MIXED_FLOW.md); no pages are manually authored.
 
 PF-056 adds a fictional **DemoBank Four-page Statement** in Finance: summary, two automatically paginated transaction pages and illustrative information. All four pages carry a banking-use prohibition. The 17 synthetic transactions reconcile in integer cents. No real bank identity or source font is included. Run `node scripts/export-demobank.mjs` after building for a standalone offline HTML. See [implementation and verification](../docs/DEMOBANK_STATEMENT.md) for assets, reproduction steps, measurement limits and test commands.
+
+### Compact filters
+
+Search, result count and the active-filter summary remain visible. The labelled
+Advanced filters button opens category, document-type and paper controls; this
+panel starts collapsed on every page load, including filtered URLs. Expanding or
+collapsing never changes filter values, catalogue order or browser history.
+The button is disabled until the catalogue is ready and exposes its state with
+`aria-expanded`/`aria-controls`; collapsing restores focus if it was inside.
+Gallery control sizing is owned by `--gallery-control-min-size` (44px) and
+`--gallery-input-font-size` (16px). These shell tokens do not enter print iframes.

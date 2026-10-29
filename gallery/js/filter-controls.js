@@ -3,6 +3,15 @@ import { filterDesigns, uniqueValues } from "./filter.js";
 import { currentLanguage, text, typeName } from "./i18n.js";
 
 export function createFilters(manifest, onChange) {
+  const toggle = document.querySelector("#advanced-toggle");
+  const panel = document.querySelector("#advanced-filters");
+  toggle.disabled = false;
+  // Disclosure is presentation state only: never mutate filters or browser history.
+  toggle.addEventListener("click", () => {
+    if (!panel.hidden && panel.contains(document.activeElement)) toggle.focus();
+    panel.hidden = !panel.hidden;
+    toggle.setAttribute("aria-expanded", String(!panel.hidden));
+  });
   const container = document.querySelector("#category-filters");
   const type = document.querySelector("#type-filter");
   const paper = document.querySelector("#paper-filter");
