@@ -1,0 +1,474 @@
+{
+  "schemaVersion": 1,
+  "document": {
+    "id": "LUMEN-DEMO-067",
+    "title": "Lumen Learning Progress Portfolio / 学习成长档案",
+    "issued": "2026-11-20",
+    "notice": "FICTIONAL DEMO — teacher-reviewed illustrative records, not an assessment or real child record."
+  },
+  "school": {
+    "name": "Lumen Grove Learning Studio — Fictional",
+    "address": "18 Imaginary Garden, Example City",
+    "teacher": "Demo Educator Rowan"
+  },
+  "child": {
+    "id": "CHILD-DEMO-01",
+    "pseudonym": "Demo Robin",
+    "className": "Garden Explorers — fictional class",
+    "ageBand": "Illustrative preschool group; no real birth date",
+    "introduction": "Robin is a fictional learner created to demonstrate a portfolio. This sample connects classroom observations, descriptive reflections and practical next steps. 本档案仅使用虚构资料，展示观察、教师反思与家庭活动如何关联。"
+  },
+  "semesters": [
+    {
+      "id": "TERM-01",
+      "label": "Semester 1 / 学期 1",
+      "start": "2026-01-01",
+      "end": "2026-06-30",
+      "attendance": {
+        "scheduled": 100,
+        "present": 88,
+        "absent": 7,
+        "unknown": 5
+      }
+    },
+    {
+      "id": "TERM-02",
+      "label": "Semester 2 / 学期 2",
+      "start": "2026-07-01",
+      "end": "2026-11-30",
+      "attendance": {
+        "scheduled": 90,
+        "present": 79,
+        "absent": 6,
+        "unknown": 5
+      }
+    }
+  ],
+  "domains": [
+    {
+      "id": "DOM-01",
+      "title": "Language & storytelling / 语言表达",
+      "description": "An invitation to notice learning in everyday play, not a benchmark or ranking. 关注日常游戏中的学习过程，不作标准化排名。",
+      "lookFors": [
+        "Describe the context and the learner’s own words.",
+        "Record support offered and a possible next invitation."
+      ]
+    },
+    {
+      "id": "DOM-02",
+      "title": "Early numeracy / 初步数学",
+      "description": "An invitation to notice learning in everyday play, not a benchmark or ranking. 关注日常游戏中的学习过程，不作标准化排名。",
+      "lookFors": [
+        "Describe the context and the learner’s own words.",
+        "Record support offered and a possible next invitation."
+      ]
+    },
+    {
+      "id": "DOM-03",
+      "title": "Discovery & inquiry / 探索发现",
+      "description": "An invitation to notice learning in everyday play, not a benchmark or ranking. 关注日常游戏中的学习过程，不作标准化排名。",
+      "lookFors": [
+        "Describe the context and the learner’s own words.",
+        "Record support offered and a possible next invitation."
+      ]
+    },
+    {
+      "id": "DOM-04",
+      "title": "Creative expression / 创意表达",
+      "description": "An invitation to notice learning in everyday play, not a benchmark or ranking. 关注日常游戏中的学习过程，不作标准化排名。",
+      "lookFors": [
+        "Describe the context and the learner’s own words.",
+        "Record support offered and a possible next invitation."
+      ]
+    },
+    {
+      "id": "DOM-05",
+      "title": "Movement & coordination / 动作协调",
+      "description": "An invitation to notice learning in everyday play, not a benchmark or ranking. 关注日常游戏中的学习过程，不作标准化排名。",
+      "lookFors": [
+        "Describe the context and the learner’s own words.",
+        "Record support offered and a possible next invitation."
+      ]
+    },
+    {
+      "id": "DOM-06",
+      "title": "Social connection / 社交互动",
+      "description": "An invitation to notice learning in everyday play, not a benchmark or ranking. 关注日常游戏中的学习过程，不作标准化排名。",
+      "lookFors": [
+        "Describe the context and the learner’s own words.",
+        "Record support offered and a possible next invitation."
+      ]
+    },
+    {
+      "id": "DOM-07",
+      "title": "Self-management / 自我管理",
+      "description": "An invitation to notice learning in everyday play, not a benchmark or ranking. 关注日常游戏中的学习过程，不作标准化排名。",
+      "lookFors": [
+        "Describe the context and the learner’s own words.",
+        "Record support offered and a possible next invitation."
+      ]
+    },
+    {
+      "id": "DOM-08",
+      "title": "Care for our world / 关爱环境",
+      "description": "An invitation to notice learning in everyday play, not a benchmark or ranking. 关注日常游戏中的学习过程，不作标准化排名。",
+      "lookFors": [
+        "Describe the context and the learner’s own words.",
+        "Record support offered and a possible next invitation."
+      ]
+    }
+  ],
+  "reflections": [
+    {
+      "domainId": "DOM-01",
+      "semesterId": "TERM-01",
+      "status": "exploring",
+      "comment": "During a small-group invitation, Robin explored materials and explained one choice. The educator offered time and a clear question rather than a fixed answer. 小组活动中，Robin尝试使用材料并说明自己的选择；教师提供等待时间与开放问题。"
+    },
+    {
+      "domainId": "DOM-01",
+      "semesterId": "TERM-02",
+      "status": "with-support",
+      "comment": "During a small-group invitation, Robin explored materials and explained one choice. The educator offered time and a clear question rather than a fixed answer. 小组活动中，Robin尝试使用材料并说明自己的选择；教师提供等待时间与开放问题。"
+    },
+    {
+      "domainId": "DOM-02",
+      "semesterId": "TERM-01",
+      "status": "with-support",
+      "comment": "During a small-group invitation, Robin explored materials and explained one choice. The educator offered time and a clear question rather than a fixed answer. 小组活动中，Robin尝试使用材料并说明自己的选择；教师提供等待时间与开放问题。"
+    },
+    {
+      "domainId": "DOM-02",
+      "semesterId": "TERM-02",
+      "status": "independently",
+      "comment": "During a small-group invitation, Robin explored materials and explained one choice. The educator offered time and a clear question rather than a fixed answer. 小组活动中，Robin尝试使用材料并说明自己的选择；教师提供等待时间与开放问题。"
+    },
+    {
+      "domainId": "DOM-03",
+      "semesterId": "TERM-01",
+      "status": "independently",
+      "comment": "During a small-group invitation, Robin explored materials and explained one choice. The educator offered time and a clear question rather than a fixed answer. 小组活动中，Robin尝试使用材料并说明自己的选择；教师提供等待时间与开放问题。"
+    },
+    {
+      "domainId": "DOM-03",
+      "semesterId": "TERM-02",
+      "status": "exploring",
+      "comment": "During a small-group invitation, Robin explored materials and explained one choice. The educator offered time and a clear question rather than a fixed answer. 小组活动中，Robin尝试使用材料并说明自己的选择；教师提供等待时间与开放问题。"
+    },
+    {
+      "domainId": "DOM-04",
+      "semesterId": "TERM-01",
+      "status": "exploring",
+      "comment": "During a small-group invitation, Robin explored materials and explained one choice. The educator offered time and a clear question rather than a fixed answer. 小组活动中，Robin尝试使用材料并说明自己的选择；教师提供等待时间与开放问题。"
+    },
+    {
+      "domainId": "DOM-04",
+      "semesterId": "TERM-02",
+      "status": "with-support",
+      "comment": "During a small-group invitation, Robin explored materials and explained one choice. The educator offered time and a clear question rather than a fixed answer. 小组活动中，Robin尝试使用材料并说明自己的选择；教师提供等待时间与开放问题。"
+    },
+    {
+      "domainId": "DOM-05",
+      "semesterId": "TERM-01",
+      "status": "with-support",
+      "comment": "During a small-group invitation, Robin explored materials and explained one choice. The educator offered time and a clear question rather than a fixed answer. 小组活动中，Robin尝试使用材料并说明自己的选择；教师提供等待时间与开放问题。"
+    },
+    {
+      "domainId": "DOM-05",
+      "semesterId": "TERM-02",
+      "status": "independently",
+      "comment": "During a small-group invitation, Robin explored materials and explained one choice. The educator offered time and a clear question rather than a fixed answer. 小组活动中，Robin尝试使用材料并说明自己的选择；教师提供等待时间与开放问题。"
+    },
+    {
+      "domainId": "DOM-06",
+      "semesterId": "TERM-01",
+      "status": "independently",
+      "comment": "During a small-group invitation, Robin explored materials and explained one choice. The educator offered time and a clear question rather than a fixed answer. 小组活动中，Robin尝试使用材料并说明自己的选择；教师提供等待时间与开放问题。"
+    },
+    {
+      "domainId": "DOM-06",
+      "semesterId": "TERM-02",
+      "status": "exploring",
+      "comment": "During a small-group invitation, Robin explored materials and explained one choice. The educator offered time and a clear question rather than a fixed answer. 小组活动中，Robin尝试使用材料并说明自己的选择；教师提供等待时间与开放问题。"
+    },
+    {
+      "domainId": "DOM-07",
+      "semesterId": "TERM-01",
+      "status": "exploring",
+      "comment": "During a small-group invitation, Robin explored materials and explained one choice. The educator offered time and a clear question rather than a fixed answer. 小组活动中，Robin尝试使用材料并说明自己的选择；教师提供等待时间与开放问题。"
+    },
+    {
+      "domainId": "DOM-07",
+      "semesterId": "TERM-02",
+      "status": "with-support",
+      "comment": "During a small-group invitation, Robin explored materials and explained one choice. The educator offered time and a clear question rather than a fixed answer. 小组活动中，Robin尝试使用材料并说明自己的选择；教师提供等待时间与开放问题。"
+    },
+    {
+      "domainId": "DOM-08",
+      "semesterId": "TERM-01",
+      "status": "with-support",
+      "comment": "During a small-group invitation, Robin explored materials and explained one choice. The educator offered time and a clear question rather than a fixed answer. 小组活动中，Robin尝试使用材料并说明自己的选择；教师提供等待时间与开放问题。"
+    }
+  ],
+  "evidence": [
+    {
+      "id": "EV-1-01",
+      "domainIds": [
+        "DOM-01"
+      ],
+      "semesterId": "TERM-01",
+      "date": "2026-03-02",
+      "status": "observed",
+      "title": "Learning invitation 1 / 学习活动",
+      "description": "Robin selected two materials, tried a different arrangement and shared an idea with a peer. This record describes the moment without inferring a fixed trait. Robin选择了两种材料，尝试另一种排列，并与同伴分享想法。",
+      "teacherNote": "Next, offer another opportunity in a different context and record what changes. 下一次在不同情境中再次观察，并记录支持方式。"
+    },
+    {
+      "id": "EV-2-01",
+      "domainIds": [
+        "DOM-01"
+      ],
+      "semesterId": "TERM-02",
+      "date": "2026-09-02",
+      "status": "observed",
+      "title": "Learning invitation 1 / 学习活动",
+      "description": "Robin selected two materials, tried a different arrangement and shared an idea with a peer. This record describes the moment without inferring a fixed trait. Robin选择了两种材料，尝试另一种排列，并与同伴分享想法。",
+      "teacherNote": "Next, offer another opportunity in a different context and record what changes. 下一次在不同情境中再次观察，并记录支持方式。"
+    },
+    {
+      "id": "EV-1-02",
+      "domainIds": [
+        "DOM-02"
+      ],
+      "semesterId": "TERM-01",
+      "date": "2026-03-03",
+      "status": "observed",
+      "title": "Learning invitation 2 / 学习活动",
+      "description": "Robin selected two materials, tried a different arrangement and shared an idea with a peer. This record describes the moment without inferring a fixed trait. Robin选择了两种材料，尝试另一种排列，并与同伴分享想法。",
+      "teacherNote": "Next, offer another opportunity in a different context and record what changes. 下一次在不同情境中再次观察，并记录支持方式。"
+    },
+    {
+      "id": "EV-2-02",
+      "domainIds": [
+        "DOM-02"
+      ],
+      "semesterId": "TERM-02",
+      "date": "2026-09-03",
+      "status": "observed",
+      "title": "Learning invitation 2 / 学习活动",
+      "description": "Robin selected two materials, tried a different arrangement and shared an idea with a peer. This record describes the moment without inferring a fixed trait. Robin选择了两种材料，尝试另一种排列，并与同伴分享想法。",
+      "teacherNote": "Next, offer another opportunity in a different context and record what changes. 下一次在不同情境中再次观察，并记录支持方式。"
+    },
+    {
+      "id": "EV-1-03",
+      "domainIds": [
+        "DOM-03"
+      ],
+      "semesterId": "TERM-01",
+      "date": "2026-03-04",
+      "status": "observed",
+      "title": "Learning invitation 3 / 学习活动",
+      "description": "Robin selected two materials, tried a different arrangement and shared an idea with a peer. This record describes the moment without inferring a fixed trait. Robin选择了两种材料，尝试另一种排列，并与同伴分享想法。",
+      "teacherNote": "Next, offer another opportunity in a different context and record what changes. 下一次在不同情境中再次观察，并记录支持方式。"
+    },
+    {
+      "id": "EV-2-03",
+      "domainIds": [
+        "DOM-03"
+      ],
+      "semesterId": "TERM-02",
+      "date": "2026-09-04",
+      "status": "observed",
+      "title": "Learning invitation 3 / 学习活动",
+      "description": "Robin selected two materials, tried a different arrangement and shared an idea with a peer. This record describes the moment without inferring a fixed trait. Robin选择了两种材料，尝试另一种排列，并与同伴分享想法。",
+      "teacherNote": "Next, offer another opportunity in a different context and record what changes. 下一次在不同情境中再次观察，并记录支持方式。"
+    },
+    {
+      "id": "EV-1-04",
+      "domainIds": [
+        "DOM-04"
+      ],
+      "semesterId": "TERM-01",
+      "date": "2026-03-05",
+      "status": "observed",
+      "title": "Learning invitation 4 / 学习活动",
+      "description": "Robin selected two materials, tried a different arrangement and shared an idea with a peer. This record describes the moment without inferring a fixed trait. Robin选择了两种材料，尝试另一种排列，并与同伴分享想法。",
+      "teacherNote": "Next, offer another opportunity in a different context and record what changes. 下一次在不同情境中再次观察，并记录支持方式。"
+    },
+    {
+      "id": "EV-2-04",
+      "domainIds": [
+        "DOM-04"
+      ],
+      "semesterId": "TERM-02",
+      "date": "2026-09-05",
+      "status": "observed",
+      "title": "Learning invitation 4 / 学习活动",
+      "description": "Robin selected two materials, tried a different arrangement and shared an idea with a peer. This record describes the moment without inferring a fixed trait. Robin选择了两种材料，尝试另一种排列，并与同伴分享想法。",
+      "teacherNote": "Next, offer another opportunity in a different context and record what changes. 下一次在不同情境中再次观察，并记录支持方式。"
+    },
+    {
+      "id": "EV-1-05",
+      "domainIds": [
+        "DOM-05"
+      ],
+      "semesterId": "TERM-01",
+      "date": "2026-03-06",
+      "status": "observed",
+      "title": "Learning invitation 5 / 学习活动",
+      "description": "Robin selected two materials, tried a different arrangement and shared an idea with a peer. This record describes the moment without inferring a fixed trait. Robin选择了两种材料，尝试另一种排列，并与同伴分享想法。",
+      "teacherNote": "Next, offer another opportunity in a different context and record what changes. 下一次在不同情境中再次观察，并记录支持方式。"
+    },
+    {
+      "id": "EV-2-05",
+      "domainIds": [
+        "DOM-05"
+      ],
+      "semesterId": "TERM-02",
+      "date": "2026-09-06",
+      "status": "observed",
+      "title": "Learning invitation 5 / 学习活动",
+      "description": "Robin selected two materials, tried a different arrangement and shared an idea with a peer. This record describes the moment without inferring a fixed trait. Robin选择了两种材料，尝试另一种排列，并与同伴分享想法。",
+      "teacherNote": "Next, offer another opportunity in a different context and record what changes. 下一次在不同情境中再次观察，并记录支持方式。"
+    },
+    {
+      "id": "EV-1-06",
+      "domainIds": [
+        "DOM-06"
+      ],
+      "semesterId": "TERM-01",
+      "date": "2026-03-07",
+      "status": "observed",
+      "title": "Learning invitation 6 / 学习活动",
+      "description": "Robin selected two materials, tried a different arrangement and shared an idea with a peer. This record describes the moment without inferring a fixed trait. Robin选择了两种材料，尝试另一种排列，并与同伴分享想法。",
+      "teacherNote": "Next, offer another opportunity in a different context and record what changes. 下一次在不同情境中再次观察，并记录支持方式。"
+    },
+    {
+      "id": "EV-2-06",
+      "domainIds": [
+        "DOM-06"
+      ],
+      "semesterId": "TERM-02",
+      "date": "2026-09-07",
+      "status": "observed",
+      "title": "Learning invitation 6 / 学习活动",
+      "description": "Robin selected two materials, tried a different arrangement and shared an idea with a peer. This record describes the moment without inferring a fixed trait. Robin选择了两种材料，尝试另一种排列，并与同伴分享想法。",
+      "teacherNote": "Next, offer another opportunity in a different context and record what changes. 下一次在不同情境中再次观察，并记录支持方式。"
+    },
+    {
+      "id": "EV-1-07",
+      "domainIds": [
+        "DOM-07"
+      ],
+      "semesterId": "TERM-01",
+      "date": "2026-03-08",
+      "status": "observed",
+      "title": "Learning invitation 7 / 学习活动",
+      "description": "Robin selected two materials, tried a different arrangement and shared an idea with a peer. This record describes the moment without inferring a fixed trait. Robin选择了两种材料，尝试另一种排列，并与同伴分享想法。",
+      "teacherNote": "Next, offer another opportunity in a different context and record what changes. 下一次在不同情境中再次观察，并记录支持方式。"
+    },
+    {
+      "id": "EV-2-07",
+      "domainIds": [
+        "DOM-07"
+      ],
+      "semesterId": "TERM-02",
+      "date": "2026-09-08",
+      "status": "planned",
+      "title": "Learning invitation 7 / 学习活动",
+      "description": "Robin selected two materials, tried a different arrangement and shared an idea with a peer. This record describes the moment without inferring a fixed trait. Robin选择了两种材料，尝试另一种排列，并与同伴分享想法。",
+      "teacherNote": "Next, offer another opportunity in a different context and record what changes. 下一次在不同情境中再次观察，并记录支持方式。"
+    },
+    {
+      "id": "EV-1-08",
+      "domainIds": [
+        "DOM-08"
+      ],
+      "semesterId": "TERM-01",
+      "date": "2026-03-09",
+      "status": "observed",
+      "title": "Learning invitation 8 / 学习活动",
+      "description": "Robin selected two materials, tried a different arrangement and shared an idea with a peer. This record describes the moment without inferring a fixed trait. Robin选择了两种材料，尝试另一种排列，并与同伴分享想法。",
+      "teacherNote": "Next, offer another opportunity in a different context and record what changes. 下一次在不同情境中再次观察，并记录支持方式。"
+    }
+  ],
+  "goals": [
+    {
+      "id": "GOAL-01",
+      "domainId": "DOM-01",
+      "title": "Extend an idea through a second invitation",
+      "strategy": "Offer choice, wait time and a simple visual cue; document the response.",
+      "familyIdea": "Try a playful shared task with everyday safe materials. 家庭可使用安全日常材料共同游戏。",
+      "reviewDate": "2026-12-04",
+      "evidenceIds": [
+        "EV-1-01"
+      ]
+    },
+    {
+      "id": "GOAL-03",
+      "domainId": "DOM-03",
+      "title": "Extend an idea through a second invitation",
+      "strategy": "Offer choice, wait time and a simple visual cue; document the response.",
+      "familyIdea": "Try a playful shared task with everyday safe materials. 家庭可使用安全日常材料共同游戏。",
+      "reviewDate": "2026-12-04",
+      "evidenceIds": [
+        "EV-1-03"
+      ]
+    },
+    {
+      "id": "GOAL-05",
+      "domainId": "DOM-05",
+      "title": "Extend an idea through a second invitation",
+      "strategy": "Offer choice, wait time and a simple visual cue; document the response.",
+      "familyIdea": "Try a playful shared task with everyday safe materials. 家庭可使用安全日常材料共同游戏。",
+      "reviewDate": "2026-12-04",
+      "evidenceIds": [
+        "EV-1-05"
+      ]
+    },
+    {
+      "id": "GOAL-07",
+      "domainId": "DOM-07",
+      "title": "Extend an idea through a second invitation",
+      "strategy": "Offer choice, wait time and a simple visual cue; document the response.",
+      "familyIdea": "Try a playful shared task with everyday safe materials. 家庭可使用安全日常材料共同游戏。",
+      "reviewDate": "2026-12-04",
+      "evidenceIds": [
+        "EV-1-07"
+      ]
+    }
+  ],
+  "communications": [
+    {
+      "id": "COM-01",
+      "semesterId": "TERM-01",
+      "date": "2026-05-14",
+      "channel": "conference",
+      "topic": "Shared observations and a small next step / 共同观察与下一步",
+      "summary": "Fictional family and educator compared what was noticed in different settings; differences were retained rather than averaged.",
+      "nextStep": "Invite a short family note; no response is required for this demonstration."
+    },
+    {
+      "id": "COM-02",
+      "semesterId": "TERM-02",
+      "date": "2026-10-14",
+      "channel": "conference",
+      "topic": "Shared observations and a small next step / 共同观察与下一步",
+      "summary": "Fictional family and educator compared what was noticed in different settings; differences were retained rather than averaged.",
+      "nextStep": "Invite a short family note; no response is required for this demonstration."
+    }
+  ],
+  "teacherReview": {
+    "summary": "Draft for demonstration. Read each observation in context and check the source references before discussing next steps. 本示例不作能力排名，也不替代教师的专业判断。",
+    "strengths": [
+      "Enjoys explaining a construction idea with a partner.",
+      "Shows curiosity when comparing natural materials."
+    ],
+    "nextSteps": [
+      "Offer a quieter small-group storytelling invitation.",
+      "Revisit recorded observations with the learner and family."
+    ],
+    "reviewer": "Demo Educator Rowan",
+    "status": "draft"
+  }
+}

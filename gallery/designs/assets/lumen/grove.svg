@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 420 180" role="img" aria-labelledby="title desc">
+<title id="title">Lumen learning grove</title><desc id="desc">Original abstract leaves, a sun and open book shapes. No people or personal data.</desc>
+<rect width="420" height="180" rx="18" fill="#FAF8F0"/>
+<circle cx="341" cy="44" r="20" fill="#E9BE69"/>
+<path d="M41 150H382" stroke="#286455" stroke-width="2" opacity=".3"/>
+<path d="M203 145V65M203 107l-41-27M203 91l38-23" fill="none" stroke="#286455" stroke-width="4" stroke-linecap="round"/>
+<path d="M160 78c-34 5-46-15-40-36 26-1 42 13 40 36zM244 68c28 5 44-9 43-33-28-2-44 10-43 33zM204 61c-21-12-22-32-4-47 20 17 21 34 4 47z" fill="#286455"/>
+<path d="M204 125c-24-17-52-17-78-7v32c28-10 55-9 78 5 23-14 50-15 78-5v-32c-26-10-54-10-78 7z" fill="#E9BE69"/>
+<path d="M204 126v29M137 127c18-4 35-2 50 5M220 132c16-7 34-9 50-5" fill="none" stroke="#286455" stroke-width="2"/>
+<circle cx="74" cy="124" r="5" fill="#E9BE69"/><circle cx="326" cy="124" r="5" fill="#286455"/>
+</svg>

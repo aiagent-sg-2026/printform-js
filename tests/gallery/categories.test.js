@@ -14,8 +14,9 @@ describe("business categories", () => {
     expect(new Set(numbers).size).toBe(numbers.length);
     expect(numbers.length).toBe(manifest.length);
     expect(manifest.every((design) => categoryOf(design))).toBe(true);
-    expect(categories.map(({ id }) => filterDesigns(manifest, { category: id }).length)).toEqual([18, 8, 11, 12, 8, 5, 4]);
+    expect(categories.map(({ id }) => filterDesigns(manifest, { category: id }).length)).toEqual([18, 8, 11, 12, 8, 5, 4, 1]);
     expect(categoryOf(manifest.find(({ no }) => no === "PF-066"))).toBe("inventory-logistics");
+    expect(categoryOf(manifest.find(({ no }) => no === "PF-067"))).toBe("education");
     expect(categoryOf(manifest.find(({ no }) => no === "PF-010"))).toBe("hr-administration");
   });
   it("combines category, exact type, paper and both-language search", () => {

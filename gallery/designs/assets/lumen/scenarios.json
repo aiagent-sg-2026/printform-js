@@ -1,0 +1,890 @@
+[
+  {
+    "domains": 4,
+    "semesters": 1,
+    "expected": {
+      "documentId": "LUMEN-DEMO-067",
+      "domainCount": 4,
+      "semesterCount": 1,
+      "observedRecordCount": 2,
+      "plannedRecordCount": 1,
+      "evidenceCoverage": {
+        "numerator": 2,
+        "denominator": 4,
+        "percent1dp": "50.0"
+      },
+      "coverageMeaning": "domain-semester cells with at least one observed evidence record / all configured domain-semester cells; not ability or development score",
+      "cells": [
+        {
+          "semesterId": "TERM-01",
+          "domainId": "DOM-01",
+          "observedEvidenceIds": [
+            "EV-1-01"
+          ],
+          "observedEvidenceCount": 1,
+          "reflectionStatus": "exploring"
+        },
+        {
+          "semesterId": "TERM-01",
+          "domainId": "DOM-02",
+          "observedEvidenceIds": [
+            "EV-1-02"
+          ],
+          "observedEvidenceCount": 1,
+          "reflectionStatus": "with-support"
+        },
+        {
+          "semesterId": "TERM-01",
+          "domainId": "DOM-03",
+          "observedEvidenceIds": [],
+          "observedEvidenceCount": 0,
+          "reflectionStatus": "independently"
+        },
+        {
+          "semesterId": "TERM-01",
+          "domainId": "DOM-04",
+          "observedEvidenceIds": [],
+          "observedEvidenceCount": 0,
+          "reflectionStatus": null
+        }
+      ],
+      "attendance": [
+        {
+          "semesterId": "TERM-01",
+          "state": "recorded",
+          "knownAttendanceRate": {
+            "numerator": 88,
+            "denominator": 95,
+            "percent1dp": "92.6"
+          },
+          "recordingCoverage": {
+            "numerator": 95,
+            "denominator": 100,
+            "percent1dp": "95.0"
+          }
+        }
+      ],
+      "goalCount": 2,
+      "communicationCount": 1
+    }
+  },
+  {
+    "domains": 4,
+    "semesters": 2,
+    "expected": {
+      "documentId": "LUMEN-DEMO-067",
+      "domainCount": 4,
+      "semesterCount": 2,
+      "observedRecordCount": 6,
+      "plannedRecordCount": 1,
+      "evidenceCoverage": {
+        "numerator": 6,
+        "denominator": 8,
+        "percent1dp": "75.0"
+      },
+      "coverageMeaning": "domain-semester cells with at least one observed evidence record / all configured domain-semester cells; not ability or development score",
+      "cells": [
+        {
+          "semesterId": "TERM-01",
+          "domainId": "DOM-01",
+          "observedEvidenceIds": [
+            "EV-1-01"
+          ],
+          "observedEvidenceCount": 1,
+          "reflectionStatus": "exploring"
+        },
+        {
+          "semesterId": "TERM-01",
+          "domainId": "DOM-02",
+          "observedEvidenceIds": [
+            "EV-1-02"
+          ],
+          "observedEvidenceCount": 1,
+          "reflectionStatus": "with-support"
+        },
+        {
+          "semesterId": "TERM-01",
+          "domainId": "DOM-03",
+          "observedEvidenceIds": [
+            "EV-1-03"
+          ],
+          "observedEvidenceCount": 1,
+          "reflectionStatus": "independently"
+        },
+        {
+          "semesterId": "TERM-01",
+          "domainId": "DOM-04",
+          "observedEvidenceIds": [
+            "EV-1-04"
+          ],
+          "observedEvidenceCount": 1,
+          "reflectionStatus": "exploring"
+        },
+        {
+          "semesterId": "TERM-02",
+          "domainId": "DOM-01",
+          "observedEvidenceIds": [
+            "EV-2-01"
+          ],
+          "observedEvidenceCount": 1,
+          "reflectionStatus": "with-support"
+        },
+        {
+          "semesterId": "TERM-02",
+          "domainId": "DOM-02",
+          "observedEvidenceIds": [
+            "EV-2-02"
+          ],
+          "observedEvidenceCount": 1,
+          "reflectionStatus": "independently"
+        },
+        {
+          "semesterId": "TERM-02",
+          "domainId": "DOM-03",
+          "observedEvidenceIds": [],
+          "observedEvidenceCount": 0,
+          "reflectionStatus": "exploring"
+        },
+        {
+          "semesterId": "TERM-02",
+          "domainId": "DOM-04",
+          "observedEvidenceIds": [],
+          "observedEvidenceCount": 0,
+          "reflectionStatus": null
+        }
+      ],
+      "attendance": [
+        {
+          "semesterId": "TERM-01",
+          "state": "recorded",
+          "knownAttendanceRate": {
+            "numerator": 88,
+            "denominator": 95,
+            "percent1dp": "92.6"
+          },
+          "recordingCoverage": {
+            "numerator": 95,
+            "denominator": 100,
+            "percent1dp": "95.0"
+          }
+        },
+        {
+          "semesterId": "TERM-02",
+          "state": "recorded",
+          "knownAttendanceRate": {
+            "numerator": 79,
+            "denominator": 85,
+            "percent1dp": "92.9"
+          },
+          "recordingCoverage": {
+            "numerator": 85,
+            "denominator": 90,
+            "percent1dp": "94.4"
+          }
+        }
+      ],
+      "goalCount": 2,
+      "communicationCount": 2
+    }
+  },
+  {
+    "domains": 8,
+    "semesters": 1,
+    "expected": {
+      "documentId": "LUMEN-DEMO-067",
+      "domainCount": 8,
+      "semesterCount": 1,
+      "observedRecordCount": 6,
+      "plannedRecordCount": 1,
+      "evidenceCoverage": {
+        "numerator": 6,
+        "denominator": 8,
+        "percent1dp": "75.0"
+      },
+      "coverageMeaning": "domain-semester cells with at least one observed evidence record / all configured domain-semester cells; not ability or development score",
+      "cells": [
+        {
+          "semesterId": "TERM-01",
+          "domainId": "DOM-01",
+          "observedEvidenceIds": [
+            "EV-1-01"
+          ],
+          "observedEvidenceCount": 1,
+          "reflectionStatus": "exploring"
+        },
+        {
+          "semesterId": "TERM-01",
+          "domainId": "DOM-02",
+          "observedEvidenceIds": [
+            "EV-1-02"
+          ],
+          "observedEvidenceCount": 1,
+          "reflectionStatus": "with-support"
+        },
+        {
+          "semesterId": "TERM-01",
+          "domainId": "DOM-03",
+          "observedEvidenceIds": [
+            "EV-1-03"
+          ],
+          "observedEvidenceCount": 1,
+          "reflectionStatus": "independently"
+        },
+        {
+          "semesterId": "TERM-01",
+          "domainId": "DOM-04",
+          "observedEvidenceIds": [
+            "EV-1-04"
+          ],
+          "observedEvidenceCount": 1,
+          "reflectionStatus": "exploring"
+        },
+        {
+          "semesterId": "TERM-01",
+          "domainId": "DOM-05",
+          "observedEvidenceIds": [
+            "EV-1-05"
+          ],
+          "observedEvidenceCount": 1,
+          "reflectionStatus": "with-support"
+        },
+        {
+          "semesterId": "TERM-01",
+          "domainId": "DOM-06",
+          "observedEvidenceIds": [
+            "EV-1-06"
+          ],
+          "observedEvidenceCount": 1,
+          "reflectionStatus": "independently"
+        },
+        {
+          "semesterId": "TERM-01",
+          "domainId": "DOM-07",
+          "observedEvidenceIds": [],
+          "observedEvidenceCount": 0,
+          "reflectionStatus": "exploring"
+        },
+        {
+          "semesterId": "TERM-01",
+          "domainId": "DOM-08",
+          "observedEvidenceIds": [],
+          "observedEvidenceCount": 0,
+          "reflectionStatus": null
+        }
+      ],
+      "attendance": [
+        {
+          "semesterId": "TERM-01",
+          "state": "recorded",
+          "knownAttendanceRate": {
+            "numerator": 88,
+            "denominator": 95,
+            "percent1dp": "92.6"
+          },
+          "recordingCoverage": {
+            "numerator": 95,
+            "denominator": 100,
+            "percent1dp": "95.0"
+          }
+        }
+      ],
+      "goalCount": 4,
+      "communicationCount": 1
+    }
+  },
+  {
+    "domains": 8,
+    "semesters": 2,
+    "expected": {
+      "documentId": "LUMEN-DEMO-067",
+      "domainCount": 8,
+      "semesterCount": 2,
+      "observedRecordCount": 14,
+      "plannedRecordCount": 1,
+      "evidenceCoverage": {
+        "numerator": 14,
+        "denominator": 16,
+        "percent1dp": "87.5"
+      },
+      "coverageMeaning": "domain-semester cells with at least one observed evidence record / all configured domain-semester cells; not ability or development score",
+      "cells": [
+        {
+          "semesterId": "TERM-01",
+          "domainId": "DOM-01",
+          "observedEvidenceIds": [
+            "EV-1-01"
+          ],
+          "observedEvidenceCount": 1,
+          "reflectionStatus": "exploring"
+        },
+        {
+          "semesterId": "TERM-01",
+          "domainId": "DOM-02",
+          "observedEvidenceIds": [
+            "EV-1-02"
+          ],
+          "observedEvidenceCount": 1,
+          "reflectionStatus": "with-support"
+        },
+        {
+          "semesterId": "TERM-01",
+          "domainId": "DOM-03",
+          "observedEvidenceIds": [
+            "EV-1-03"
+          ],
+          "observedEvidenceCount": 1,
+          "reflectionStatus": "independently"
+        },
+        {
+          "semesterId": "TERM-01",
+          "domainId": "DOM-04",
+          "observedEvidenceIds": [
+            "EV-1-04"
+          ],
+          "observedEvidenceCount": 1,
+          "reflectionStatus": "exploring"
+        },
+        {
+          "semesterId": "TERM-01",
+          "domainId": "DOM-05",
+          "observedEvidenceIds": [
+            "EV-1-05"
+          ],
+          "observedEvidenceCount": 1,
+          "reflectionStatus": "with-support"
+        },
+        {
+          "semesterId": "TERM-01",
+          "domainId": "DOM-06",
+          "observedEvidenceIds": [
+            "EV-1-06"
+          ],
+          "observedEvidenceCount": 1,
+          "reflectionStatus": "independently"
+        },
+        {
+          "semesterId": "TERM-01",
+          "domainId": "DOM-07",
+          "observedEvidenceIds": [
+            "EV-1-07"
+          ],
+          "observedEvidenceCount": 1,
+          "reflectionStatus": "exploring"
+        },
+        {
+          "semesterId": "TERM-01",
+          "domainId": "DOM-08",
+          "observedEvidenceIds": [
+            "EV-1-08"
+          ],
+          "observedEvidenceCount": 1,
+          "reflectionStatus": "with-support"
+        },
+        {
+          "semesterId": "TERM-02",
+          "domainId": "DOM-01",
+          "observedEvidenceIds": [
+            "EV-2-01"
+          ],
+          "observedEvidenceCount": 1,
+          "reflectionStatus": "with-support"
+        },
+        {
+          "semesterId": "TERM-02",
+          "domainId": "DOM-02",
+          "observedEvidenceIds": [
+            "EV-2-02"
+          ],
+          "observedEvidenceCount": 1,
+          "reflectionStatus": "independently"
+        },
+        {
+          "semesterId": "TERM-02",
+          "domainId": "DOM-03",
+          "observedEvidenceIds": [
+            "EV-2-03"
+          ],
+          "observedEvidenceCount": 1,
+          "reflectionStatus": "exploring"
+        },
+        {
+          "semesterId": "TERM-02",
+          "domainId": "DOM-04",
+          "observedEvidenceIds": [
+            "EV-2-04"
+          ],
+          "observedEvidenceCount": 1,
+          "reflectionStatus": "with-support"
+        },
+        {
+          "semesterId": "TERM-02",
+          "domainId": "DOM-05",
+          "observedEvidenceIds": [
+            "EV-2-05"
+          ],
+          "observedEvidenceCount": 1,
+          "reflectionStatus": "independently"
+        },
+        {
+          "semesterId": "TERM-02",
+          "domainId": "DOM-06",
+          "observedEvidenceIds": [
+            "EV-2-06"
+          ],
+          "observedEvidenceCount": 1,
+          "reflectionStatus": "exploring"
+        },
+        {
+          "semesterId": "TERM-02",
+          "domainId": "DOM-07",
+          "observedEvidenceIds": [],
+          "observedEvidenceCount": 0,
+          "reflectionStatus": "with-support"
+        },
+        {
+          "semesterId": "TERM-02",
+          "domainId": "DOM-08",
+          "observedEvidenceIds": [],
+          "observedEvidenceCount": 0,
+          "reflectionStatus": null
+        }
+      ],
+      "attendance": [
+        {
+          "semesterId": "TERM-01",
+          "state": "recorded",
+          "knownAttendanceRate": {
+            "numerator": 88,
+            "denominator": 95,
+            "percent1dp": "92.6"
+          },
+          "recordingCoverage": {
+            "numerator": 95,
+            "denominator": 100,
+            "percent1dp": "95.0"
+          }
+        },
+        {
+          "semesterId": "TERM-02",
+          "state": "recorded",
+          "knownAttendanceRate": {
+            "numerator": 79,
+            "denominator": 85,
+            "percent1dp": "92.9"
+          },
+          "recordingCoverage": {
+            "numerator": 85,
+            "denominator": 90,
+            "percent1dp": "94.4"
+          }
+        }
+      ],
+      "goalCount": 4,
+      "communicationCount": 2
+    }
+  },
+  {
+    "domains": 12,
+    "semesters": 1,
+    "expected": {
+      "documentId": "LUMEN-DEMO-067",
+      "domainCount": 12,
+      "semesterCount": 1,
+      "observedRecordCount": 10,
+      "plannedRecordCount": 1,
+      "evidenceCoverage": {
+        "numerator": 10,
+        "denominator": 12,
+        "percent1dp": "83.3"
+      },
+      "coverageMeaning": "domain-semester cells with at least one observed evidence record / all configured domain-semester cells; not ability or development score",
+      "cells": [
+        {
+          "semesterId": "TERM-01",
+          "domainId": "DOM-01",
+          "observedEvidenceIds": [
+            "EV-1-01"
+          ],
+          "observedEvidenceCount": 1,
+          "reflectionStatus": "exploring"
+        },
+        {
+          "semesterId": "TERM-01",
+          "domainId": "DOM-02",
+          "observedEvidenceIds": [
+            "EV-1-02"
+          ],
+          "observedEvidenceCount": 1,
+          "reflectionStatus": "with-support"
+        },
+        {
+          "semesterId": "TERM-01",
+          "domainId": "DOM-03",
+          "observedEvidenceIds": [
+            "EV-1-03"
+          ],
+          "observedEvidenceCount": 1,
+          "reflectionStatus": "independently"
+        },
+        {
+          "semesterId": "TERM-01",
+          "domainId": "DOM-04",
+          "observedEvidenceIds": [
+            "EV-1-04"
+          ],
+          "observedEvidenceCount": 1,
+          "reflectionStatus": "exploring"
+        },
+        {
+          "semesterId": "TERM-01",
+          "domainId": "DOM-05",
+          "observedEvidenceIds": [
+            "EV-1-05"
+          ],
+          "observedEvidenceCount": 1,
+          "reflectionStatus": "with-support"
+        },
+        {
+          "semesterId": "TERM-01",
+          "domainId": "DOM-06",
+          "observedEvidenceIds": [
+            "EV-1-06"
+          ],
+          "observedEvidenceCount": 1,
+          "reflectionStatus": "independently"
+        },
+        {
+          "semesterId": "TERM-01",
+          "domainId": "DOM-07",
+          "observedEvidenceIds": [
+            "EV-1-07"
+          ],
+          "observedEvidenceCount": 1,
+          "reflectionStatus": "exploring"
+        },
+        {
+          "semesterId": "TERM-01",
+          "domainId": "DOM-08",
+          "observedEvidenceIds": [
+            "EV-1-08"
+          ],
+          "observedEvidenceCount": 1,
+          "reflectionStatus": "with-support"
+        },
+        {
+          "semesterId": "TERM-01",
+          "domainId": "DOM-09",
+          "observedEvidenceIds": [
+            "EV-1-09"
+          ],
+          "observedEvidenceCount": 1,
+          "reflectionStatus": "independently"
+        },
+        {
+          "semesterId": "TERM-01",
+          "domainId": "DOM-10",
+          "observedEvidenceIds": [
+            "EV-1-10"
+          ],
+          "observedEvidenceCount": 1,
+          "reflectionStatus": "exploring"
+        },
+        {
+          "semesterId": "TERM-01",
+          "domainId": "DOM-11",
+          "observedEvidenceIds": [],
+          "observedEvidenceCount": 0,
+          "reflectionStatus": "with-support"
+        },
+        {
+          "semesterId": "TERM-01",
+          "domainId": "DOM-12",
+          "observedEvidenceIds": [],
+          "observedEvidenceCount": 0,
+          "reflectionStatus": null
+        }
+      ],
+      "attendance": [
+        {
+          "semesterId": "TERM-01",
+          "state": "recorded",
+          "knownAttendanceRate": {
+            "numerator": 88,
+            "denominator": 95,
+            "percent1dp": "92.6"
+          },
+          "recordingCoverage": {
+            "numerator": 95,
+            "denominator": 100,
+            "percent1dp": "95.0"
+          }
+        }
+      ],
+      "goalCount": 6,
+      "communicationCount": 1
+    }
+  },
+  {
+    "domains": 12,
+    "semesters": 2,
+    "expected": {
+      "documentId": "LUMEN-DEMO-067",
+      "domainCount": 12,
+      "semesterCount": 2,
+      "observedRecordCount": 22,
+      "plannedRecordCount": 1,
+      "evidenceCoverage": {
+        "numerator": 22,
+        "denominator": 24,
+        "percent1dp": "91.7"
+      },
+      "coverageMeaning": "domain-semester cells with at least one observed evidence record / all configured domain-semester cells; not ability or development score",
+      "cells": [
+        {
+          "semesterId": "TERM-01",
+          "domainId": "DOM-01",
+          "observedEvidenceIds": [
+            "EV-1-01"
+          ],
+          "observedEvidenceCount": 1,
+          "reflectionStatus": "exploring"
+        },
+        {
+          "semesterId": "TERM-01",
+          "domainId": "DOM-02",
+          "observedEvidenceIds": [
+            "EV-1-02"
+          ],
+          "observedEvidenceCount": 1,
+          "reflectionStatus": "with-support"
+        },
+        {
+          "semesterId": "TERM-01",
+          "domainId": "DOM-03",
+          "observedEvidenceIds": [
+            "EV-1-03"
+          ],
+          "observedEvidenceCount": 1,
+          "reflectionStatus": "independently"
+        },
+        {
+          "semesterId": "TERM-01",
+          "domainId": "DOM-04",
+          "observedEvidenceIds": [
+            "EV-1-04"
+          ],
+          "observedEvidenceCount": 1,
+          "reflectionStatus": "exploring"
+        },
+        {
+          "semesterId": "TERM-01",
+          "domainId": "DOM-05",
+          "observedEvidenceIds": [
+            "EV-1-05"
+          ],
+          "observedEvidenceCount": 1,
+          "reflectionStatus": "with-support"
+        },
+        {
+          "semesterId": "TERM-01",
+          "domainId": "DOM-06",
+          "observedEvidenceIds": [
+            "EV-1-06"
+          ],
+          "observedEvidenceCount": 1,
+          "reflectionStatus": "independently"
+        },
+        {
+          "semesterId": "TERM-01",
+          "domainId": "DOM-07",
+          "observedEvidenceIds": [
+            "EV-1-07"
+          ],
+          "observedEvidenceCount": 1,
+          "reflectionStatus": "exploring"
+        },
+        {
+          "semesterId": "TERM-01",
+          "domainId": "DOM-08",
+          "observedEvidenceIds": [
+            "EV-1-08"
+          ],
+          "observedEvidenceCount": 1,
+          "reflectionStatus": "with-support"
+        },
+        {
+          "semesterId": "TERM-01",
+          "domainId": "DOM-09",
+          "observedEvidenceIds": [
+            "EV-1-09"
+          ],
+          "observedEvidenceCount": 1,
+          "reflectionStatus": "independently"
+        },
+        {
+          "semesterId": "TERM-01",
+          "domainId": "DOM-10",
+          "observedEvidenceIds": [
+            "EV-1-10"
+          ],
+          "observedEvidenceCount": 1,
+          "reflectionStatus": "exploring"
+        },
+        {
+          "semesterId": "TERM-01",
+          "domainId": "DOM-11",
+          "observedEvidenceIds": [
+            "EV-1-11"
+          ],
+          "observedEvidenceCount": 1,
+          "reflectionStatus": "with-support"
+        },
+        {
+          "semesterId": "TERM-01",
+          "domainId": "DOM-12",
+          "observedEvidenceIds": [
+            "EV-1-12"
+          ],
+          "observedEvidenceCount": 1,
+          "reflectionStatus": "independently"
+        },
+        {
+          "semesterId": "TERM-02",
+          "domainId": "DOM-01",
+          "observedEvidenceIds": [
+            "EV-2-01"
+          ],
+          "observedEvidenceCount": 1,
+          "reflectionStatus": "with-support"
+        },
+        {
+          "semesterId": "TERM-02",
+          "domainId": "DOM-02",
+          "observedEvidenceIds": [
+            "EV-2-02"
+          ],
+          "observedEvidenceCount": 1,
+          "reflectionStatus": "independently"
+        },
+        {
+          "semesterId": "TERM-02",
+          "domainId": "DOM-03",
+          "observedEvidenceIds": [
+            "EV-2-03"
+          ],
+          "observedEvidenceCount": 1,
+          "reflectionStatus": "exploring"
+        },
+        {
+          "semesterId": "TERM-02",
+          "domainId": "DOM-04",
+          "observedEvidenceIds": [
+            "EV-2-04"
+          ],
+          "observedEvidenceCount": 1,
+          "reflectionStatus": "with-support"
+        },
+        {
+          "semesterId": "TERM-02",
+          "domainId": "DOM-05",
+          "observedEvidenceIds": [
+            "EV-2-05"
+          ],
+          "observedEvidenceCount": 1,
+          "reflectionStatus": "independently"
+        },
+        {
+          "semesterId": "TERM-02",
+          "domainId": "DOM-06",
+          "observedEvidenceIds": [
+            "EV-2-06"
+          ],
+          "observedEvidenceCount": 1,
+          "reflectionStatus": "exploring"
+        },
+        {
+          "semesterId": "TERM-02",
+          "domainId": "DOM-07",
+          "observedEvidenceIds": [
+            "EV-2-07"
+          ],
+          "observedEvidenceCount": 1,
+          "reflectionStatus": "with-support"
+        },
+        {
+          "semesterId": "TERM-02",
+          "domainId": "DOM-08",
+          "observedEvidenceIds": [
+            "EV-2-08"
+          ],
+          "observedEvidenceCount": 1,
+          "reflectionStatus": "independently"
+        },
+        {
+          "semesterId": "TERM-02",
+          "domainId": "DOM-09",
+          "observedEvidenceIds": [
+            "EV-2-09"
+          ],
+          "observedEvidenceCount": 1,
+          "reflectionStatus": "exploring"
+        },
+        {
+          "semesterId": "TERM-02",
+          "domainId": "DOM-10",
+          "observedEvidenceIds": [
+            "EV-2-10"
+          ],
+          "observedEvidenceCount": 1,
+          "reflectionStatus": "with-support"
+        },
+        {
+          "semesterId": "TERM-02",
+          "domainId": "DOM-11",
+          "observedEvidenceIds": [],
+          "observedEvidenceCount": 0,
+          "reflectionStatus": "independently"
+        },
+        {
+          "semesterId": "TERM-02",
+          "domainId": "DOM-12",
+          "observedEvidenceIds": [],
+          "observedEvidenceCount": 0,
+          "reflectionStatus": null
+        }
+      ],
+      "attendance": [
+        {
+          "semesterId": "TERM-01",
+          "state": "recorded",
+          "knownAttendanceRate": {
+            "numerator": 88,
+            "denominator": 95,
+            "percent1dp": "92.6"
+          },
+          "recordingCoverage": {
+            "numerator": 95,
+            "denominator": 100,
+            "percent1dp": "95.0"
+          }
+        },
+        {
+          "semesterId": "TERM-02",
+          "state": "recorded",
+          "knownAttendanceRate": {
+            "numerator": 79,
+            "denominator": 85,
+            "percent1dp": "92.9"
+          },
+          "recordingCoverage": {
+            "numerator": 85,
+            "denominator": 90,
+            "percent1dp": "94.4"
+          }
+        }
+      ],
+      "goalCount": 6,
+      "communicationCount": 2
+    }
+  }
+]

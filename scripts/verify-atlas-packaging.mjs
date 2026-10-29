@@ -1,3 +1,5 @@
+// Historical 65→66 Atlas audit; prerequisites: docs/ATLAS_HISTORICAL_AUDIT.md.
+import {requireAtlasAuditBaseline} from './atlas-audit-baseline.mjs';
 import fs from 'node:fs';
 import path from 'node:path';
 import assert from 'node:assert/strict';
@@ -5,6 +7,7 @@ import {createHash} from 'node:crypto';
 import {execFileSync} from 'node:child_process';
 import {buildGalleryPrecache, finalizeGalleryPwa} from './gallery-pwa-build.mjs';
 const root = path.resolve(import.meta.dirname, '..'), out = path.resolve(root, '../artifacts/atlas');
+requireAtlasAuditBaseline(root);
 const git = (...args) => execFileSync('git', args, {cwd:root, maxBuffer:256 * 1024 * 1024});
 const hash = (v, algorithm = 'sha256') => createHash(algorithm).update(v).digest('hex');
 const fonts = ['NotoSans-Regular.woff2', 'NotoSans-Bold.woff2', 'NotoSansCJKsc-Regular.woff2'];

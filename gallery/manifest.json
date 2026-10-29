@@ -1419,5 +1419,13 @@
     "type": "Landed Cost Dossier", "paper": "A4", "pages": 10,
     "tags": ["inventory-logistics", "allocation", "landscape", "integer-cents", "bilingual", "editable", "JSON", "multi-page", "fictional", "sample", "offline"],
     "file": "designs/atlas-landed-cost-dossier.html", "thumb": "thumbs/atlas-landed-cost-dossier.png", "width": 1123, "height": 794
+  },
+  {
+    "id": "lumen-learning-progress-portfolio", "no": "PF-067",
+    "style": { "en": "Forest / ivory / apricot", "zh": "森林绿 / 象牙白 / 杏色" },
+    "title": { "en": "Lumen Learning Progress Portfolio", "zh": "Lumen 学习成长档案" },
+    "type": "Learning Portfolio", "paper": "A4", "pages": 9,
+    "tags": ["education", "learning", "portfolio", "teacher-authored", "counts-not-scores", "bilingual", "JSON", "multi-page", "fictional", "sample", "offline"],
+    "file": "designs/lumen-learning-progress-portfolio.html", "thumb": "thumbs/lumen-learning-progress-portfolio.png", "width": 794, "height": 1123
   }
 ]
