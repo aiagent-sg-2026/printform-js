@@ -10,7 +10,10 @@ test("categories combine with compact filters, keep focus and restore history", 
   await expect(page.locator("#category-filters button")).toHaveCount(8);
   await expect(page.locator(".gallery-card .card-id").first()).toHaveText("PF-063");
   await expect(page.locator(".gallery-card .card-id").last()).toHaveText("PF-001");
+  await expect(page.locator("#check-update")).toBeEnabled();
   await page.locator('[data-language="zh"]').focus();
+  await page.keyboard.press("Tab");
+  await expect(page.locator("#check-update")).toBeFocused();
   await page.keyboard.press("Tab");
   await expect(page.locator("#search")).toBeFocused();
   await page.keyboard.press("Tab");

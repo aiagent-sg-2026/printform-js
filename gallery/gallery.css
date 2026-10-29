@@ -1,7 +1,7 @@
 * { box-sizing: border-box; }
 :root { --gallery-control-min-size: 44px; --gallery-input-font-size: 16px; --gallery-icon-size: 20px; --gallery-icon-radius: 8px; --gallery-icon-surface: #f0f2f6; --gallery-icon-hover: #e2e7ef; --gallery-icon-focus: #1f65db; font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; color: #172033; background: #f5f6f8; font-synthesis: none; }
 body { margin: 0; min-width: 0; }
- .topbar { position: sticky; top: 0; z-index: 20; display: flex; align-items: center; justify-content: space-between; height: calc(68px + env(safe-area-inset-top, 0px)); padding: env(safe-area-inset-top, 0px) max(clamp(18px, 5vw, 72px), env(safe-area-inset-right, 0px)) 0 max(clamp(18px, 5vw, 72px), env(safe-area-inset-left, 0px)); transition: transform .2s ease; background: #fff; }
+ .topbar { position: sticky; top: 0; z-index: 20; display: grid; grid-template-columns: 1fr auto auto; align-items: center; gap: 8px 16px; min-height: calc(68px + env(safe-area-inset-top, 0px)); padding: calc(8px + env(safe-area-inset-top, 0px)) max(clamp(18px, 5vw, 72px), env(safe-area-inset-right, 0px)) 8px max(clamp(18px, 5vw, 72px), env(safe-area-inset-left, 0px)); transition: transform .2s ease; background: #fff; }
 .brand { display: inline-flex; align-items: center; min-height: var(--gallery-control-min-size); font-weight: 750; color: #15213a; text-decoration: none; letter-spacing: -.04em; font-size: 20px; }
 .brand span { color: #3478f6; }
 .language { display: flex; gap: 5px; }
@@ -40,8 +40,6 @@ body { margin: 0; min-width: 0; }
 .button[data-print] { display: inline-flex; align-items: center; gap: 8px; font-family: inherit; cursor: pointer; }
 .button[data-print] svg { width: 16px; height: 16px; flex: 0 0 auto; }
 .button[data-print]:disabled { cursor: default; opacity: .55; }
-.version-footer { padding: 16px 16px calc(100px + env(safe-area-inset-bottom, 0px)); display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 8px; font-size: 12px; }
-.version-footer button { font: inherit; cursor: pointer; }
 @media (max-width: 900px) { .gallery-grid { columns: 2 210px; } }
 @media (max-width: 480px) { main { padding-top: 20px; } .controls { align-items: stretch; gap: 16px; } .gallery-grid { columns: 1; } .gallery-card { margin-bottom: 14px; } .modal-actions { flex-wrap: wrap; } .button { text-align: center; flex: 1; } }
 @media (prefers-color-scheme: dark) {
@@ -107,3 +105,14 @@ body { margin: 0; min-width: 0; }
 }
 
 .modal-actions .button:not([hidden]) { flex: 0 1 auto; display: inline-flex; align-items: center; justify-content: center; }
+
+/* One loaded-build/update control group; updater IDs and state owner are unchanged. */
+.topbar-update { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 12px; min-width: 0; max-width: 440px; }
+.version-info { display: flex; flex-direction: column; gap: 3px; min-width: 0; font-size: 12px; overflow-wrap: anywhere; }
+#running-version { font-variant-numeric: tabular-nums; }
+#check-update { flex: none; font: inherit; font-size: 13px; background: transparent; cursor: pointer; }
+#check-update:disabled { opacity: .65; cursor: default; }
+@media (max-width: 800px) {
+  .topbar { grid-template-columns: minmax(0, 1fr) auto; gap: 4px 8px; }
+  .topbar-update { grid-column: 1 / -1; max-width: none; }
+}

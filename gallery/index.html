@@ -26,6 +26,10 @@
       <button type="button" data-language="en" aria-pressed="true">EN</button>
       <button type="button" data-language="zh" aria-pressed="false">中文</button>
     </div>
+    <div class="topbar-update">
+      <div class="version-info"><span><span data-i18n="runningBuild">Running build</span>: <output id="running-version"></output></span><span id="update-state" role="status"></span></div>
+      <button id="check-update" class="button secondary" type="button" data-i18n="checkUpdates">Check for updates</button>
+    </div>
   </header>
   <main>
     <section class="intro">
@@ -48,7 +52,6 @@
     <section id="gallery-grid" class="gallery-grid" aria-label="Print form designs"></section>
     <p id="empty-state" class="empty-state" hidden data-i18n="empty">No designs match these filters.</p>
   </main>
-  <footer class="version-footer"><span data-i18n="runningBuild">Running build</span>: <output id="running-version"></output> · <span id="update-state" role="status"></span> <button id="check-update" class="button secondary" type="button" data-i18n="checkUpdates">Check for updates</button></footer>
   <div id="connection-status" class="status-chip" role="status" hidden></div>
   <div id="update-banner" class="update-banner" role="status" hidden><span></span><button id="update-button" type="button"></button></div>
   <div id="update-overlay" class="update-overlay" role="status" aria-live="polite" hidden><span class="loader"></span><span data-i18n="updating">Updating PrintForm Gallery...</span></div>

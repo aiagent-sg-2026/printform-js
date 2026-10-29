@@ -33,7 +33,7 @@ detached on navigation/close and the page-wide controller is created once.
 Gallery retains its own scope, worker and cache prefix; Studio/user storage is untouched.
 The site build stamps `printform-build` into the loaded HTML and copies modules,
 styles, templates, shared assets and engine into immutable `releases/<build>/` paths.
-The footer labels the **loaded page**, never network metadata or another tab's worker.
+The topbar labels the **loaded page**, never network metadata or another tab's worker.
 A source checkout without the site build is explicitly local/unversioned.
 
 Installation checks network-only `build-info.json`, downloads the complete release,
@@ -72,6 +72,9 @@ until a client-free activation. Quota errors fail a new install safely.
 
 - `tests/gallery/order.test.js`: numerical order, stable fallback/ties, immutable input.
 - `tests/gallery/update.test.js`: safety/state/retry contracts, including unsupported SW.
+- `e2e/gallery-topbar-update.spec.js`: responsive EN/ZH version/check controls,
+  keyboard return after smart-scroll hiding, long status wrapping, and real local
+  A/B worker checking, failed-install recovery and explicit state-preserving update.
 - `tests/gallery/original-fixture.test.js`: no-Git original build, exact worker SHA,
   complete precache, licenses, corrupt-archive rejection and safe extraction output.
 - `e2e/gallery-preview.spec.js`: actual wheel, PageDown/Up, mobile CDP touch gesture,
