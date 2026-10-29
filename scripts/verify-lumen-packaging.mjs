@@ -4,7 +4,10 @@ import assert from 'node:assert/strict';
 import {createHash} from 'node:crypto';
 import {execFileSync} from 'node:child_process';
 import {buildGalleryPrecache, finalizeGalleryPwa} from './gallery-pwa-build.mjs';
-const root = path.resolve(import.meta.dirname, '..'), out = path.resolve(root, '../artifacts/lumen'), baseline = '39b2bf3bf09c60782a7a2fc5519807809da3dd97';
+// Historical 66→67 Lumen audit; prerequisites: docs/LUMEN_HISTORICAL_AUDIT.md.
+import {LUMEN_AUDIT_BASELINE, requireLumenAuditBaseline} from './lumen-audit-baseline.mjs';
+const root = path.resolve(import.meta.dirname, '..'), out = path.resolve(root, '../artifacts/lumen'), baseline = LUMEN_AUDIT_BASELINE;
+requireLumenAuditBaseline(root, baseline);
 const git = (...args) => execFileSync('git', args, {cwd:root, maxBuffer:256 * 1024 * 1024});
 const hash = (bytes, algo = 'sha256') => createHash(algo).update(bytes).digest('hex');
 const allowed = new Set(['gallery/manifest.json', 'gallery/js/categories.js', 'tests/gallery/manifest.test.js', 'tests/gallery/order.test.js', 'tests/gallery/categories.test.js', 'scripts/verify-atlas-packaging.mjs']);

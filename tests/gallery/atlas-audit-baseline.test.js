@@ -12,6 +12,14 @@ it('fails actionably on a genuinely missing local Git baseline, without fetching
     expect(() => requireAtlasAuditBaseline(dir)).toThrow(/Do not skip.*fetch automatically/);
   } finally { fs.rmSync(dir, {recursive:true, force:true}); }
 });
-it('accepts the locally available historical baseline', () => {
-  expect(() => requireAtlasAuditBaseline(path.resolve(import.meta.dirname, '../..'))).not.toThrow();
+it('accepts a baseline created in an independent temporary local repository', () => {
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'atlas-audit-'));
+  try {
+    execFileSync('git', ['init', '--quiet', dir]);
+    execFileSync('git', ['-c', 'user.name=Pi Coding Agent', '-c', 'user.email=pi-coding-agent@localhost',
+      '-c', 'commit.gpgsign=false', 'commit', '--quiet', '--allow-empty', '--no-verify', '-m', 'Test baseline'], {cwd:dir});
+    const sha = execFileSync('git', ['rev-parse', 'HEAD'], {cwd:dir, encoding:'utf8'}).trim();
+    expect(sha).toMatch(/^[0-9a-f]{40}$/);
+    expect(() => requireAtlasAuditBaseline(dir, sha)).not.toThrow();
+  } finally { fs.rmSync(dir, {recursive:true, force:true}); }
 });
