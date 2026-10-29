@@ -84,3 +84,21 @@ body { margin: 0; min-width: 0; }
 .load-status { padding: 20px 0; }
 @media (max-width: 480px) { .search, .search input { width: 100%; } .filter-group:not(.category-group) { flex: 1; min-width: 0; } .filter-summary { align-items: start; } }
 @media (prefers-color-scheme: dark) { .filter-group, .search, .filter-summary { color: #b7c2d7; } .filter-group select { color: #e8edf7; background: #191f2a; border-color: #424b5d; } }
+
+/* Disclosure shares existing control tokens; no paper-preview styles are changed. */
+.advanced-filters { display: flex; flex-wrap: wrap; gap: 18px 28px; flex-basis: 100%; }
+.advanced-filters[hidden] { display: none; }
+#advanced-toggle { display: inline-flex; align-items: center; justify-content: center; gap: 8px; background: transparent; color: inherit; font-family: inherit; cursor: pointer; }
+.disclosure-icon { display: inline-block; }
+#advanced-toggle[aria-expanded=true] .disclosure-icon { transform: rotate(180deg); }
+@media (max-width: 600px) {
+  main { padding-top: 12px; }
+  .intro { padding: 8px 0 18px; }
+  .intro h1 { font-size: 32px; margin: 10px 0; }
+  .intro > p:last-child { font-size: 15px; }
+  .controls { gap: 12px; padding: 16px 0; }
+  .controls > .search { width: 100%; }
+  .controls > .search input { width: 100%; }
+  #advanced-toggle { flex: 0 0 auto; }
+  .advanced-filters { gap: 16px; }
+}

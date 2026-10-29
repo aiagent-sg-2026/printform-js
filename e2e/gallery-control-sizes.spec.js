@@ -6,6 +6,7 @@ for (const width of [320, 390, 768, 1440]) {
     await page.setViewportSize({ width, height: 844 });
     await page.goto("/gallery/index.html");
     await expect(page.locator("#search")).toBeEnabled();
+    await page.locator("#advanced-toggle").click();
     for (const locale of ["en", "zh"]) {
       await page.locator(`[data-language="${locale}"]`).click();
       for (const selector of ["#search", "#type-filter", "#paper-filter"]) {

@@ -6,10 +6,15 @@ test.use({ serviceWorkers: "block" });
 test("categories combine with compact filters, keep focus and restore history", async ({ page }) => {
   await page.goto("/gallery/index.html");
   await expect(page.locator(".gallery-card")).toHaveCount(catalogueCount);
+  await page.locator("#advanced-toggle").click();
   await expect(page.locator("#category-filters button")).toHaveCount(8);
   await expect(page.locator(".gallery-card .card-id").first()).toHaveText("PF-063");
   await expect(page.locator(".gallery-card .card-id").last()).toHaveText("PF-001");
   await page.locator('[data-language="zh"]').focus();
+  await page.keyboard.press("Tab");
+  await expect(page.locator("#search")).toBeFocused();
+  await page.keyboard.press("Tab");
+  await expect(page.locator("#advanced-toggle")).toBeFocused();
   await page.keyboard.press("Tab");
   await expect(category(page, "all")).toBeFocused();
   await page.keyboard.press("Tab");
@@ -64,6 +69,7 @@ test("loading and failed manifests can be retried without duplicate controls", a
   await page.goto("/gallery/index.html", { waitUntil: "domcontentloaded" });
   await expect(page.locator("#load-status")).toContainText("Loading designs");
   await expect(page.locator("#search")).toBeDisabled();
+  await expect(page.locator("#advanced-toggle")).toBeDisabled();
   await expect.poll(() => Boolean(finish)).toBe(true);
   await finish();
   await expect(page.locator("#load-status")).toContainText("Could not load designs");
@@ -106,6 +112,7 @@ for (const [name, width, colorScheme, language] of [["desktop-light", 1200, "lig
     await expect(page.locator(".gallery-card")).toHaveCount(catalogueCount);
     await page.locator(`[data-language="${language}"]`).click();
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+    await page.locator("#advanced-toggle").click();
     for (const control of await page.locator("#category-filters button, .controls select, #search").all()) {
       const box = await control.boundingBox();
       expect(box.x).toBeGreaterThanOrEqual(0);
@@ -137,6 +144,7 @@ test.describe("offline category navigation", () => {
     await context.setOffline(true);
     await page.reload();
     await expect(page.locator(".gallery-card")).toHaveCount(catalogueCount);
+    await page.locator("#advanced-toggle").click();
     await category(page, "hr-administration").click();
     await expect(page.locator("#result-count")).toHaveText("4/64 designs");
     await page.locator("#type-filter").selectOption("Work Order");
@@ -191,6 +199,7 @@ test.describe("offline category navigation", () => {
 
 test("closing a modal after history navigation restores a connected focus target", async ({ page }) => {
   await page.goto("/gallery/index.html");
+  await page.locator("#advanced-toggle").click();
   await category(page, "sales").click();
   const id = await page.locator(".gallery-card").first().getAttribute("data-design-id");
   await page.locator(".gallery-card").first().click();

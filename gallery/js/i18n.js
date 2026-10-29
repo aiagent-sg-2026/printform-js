@@ -1,6 +1,6 @@
 export const translations = {
   en: {
-    categoryLabel: "Business category", activeFilters: "Active filters", clearFilters: "Clear filters",
+    advancedFilters: "Advanced filters", categoryLabel: "Business category", activeFilters: "Active filters", clearFilters: "Clear filters",
     loading: "Loading designs…", loadError: "Could not load designs. Check your connection and retry.",
     eyebrow: "DOCUMENT DESIGN LIBRARY", heading: "Forms made for print.",
     subheading: "Explore live, paginated business documents built with PrintForm.js.",
@@ -31,7 +31,7 @@ export const translations = {
     typePayslip: "Payslip", typeDebitNote: "Debit Note", typeReconciliation: "Reconciliation"
   },
   zh: {
-    categoryLabel: "业务分类", activeFilters: "当前筛选", clearFilters: "清除筛选",
+    advancedFilters: "高级筛选", categoryLabel: "业务分类", activeFilters: "当前筛选", clearFilters: "清除筛选",
     loading: "正在加载设计…", loadError: "无法加载设计，请检查网络后重试。",
     eyebrow: "打印文档设计库", heading: "为打印而设计的表单。",
     subheading: "探索由 PrintForm.js 实时分页的商务文档。", searchLabel: "搜索设计",

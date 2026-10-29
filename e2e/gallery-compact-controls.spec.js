@@ -1,0 +1,50 @@
+import { test, expect } from "@playwright/test";
+
+test.use({ serviceWorkers: "block" });
+for (const width of [320, 390, 768, 1440]) {
+  test(`compact filters preserve state and keyboard access at ${width}px`, async ({ page }) => {
+    await page.setViewportSize({ width, height: width === 320 ? 720 : 844 });
+    await page.goto("/gallery/index.html");
+    const toggle = page.locator("#advanced-toggle"), panel = page.locator("#advanced-filters");
+    await expect(page.locator("#search")).toBeEnabled();
+    await expect(toggle).toHaveAttribute("aria-expanded", "false");
+    await expect(panel).toBeHidden();
+    for (const id of ["search", "result-count", "active-filters"]) await expect(page.locator(`#${id}`)).toBeVisible();
+    if (width <= 390) expect((await page.locator(".gallery-card").first().boundingBox()).y).toBeLessThan(width === 320 ? 720 : 844);
+    const order = await page.locator(".card-id").allTextContents();
+    const url = page.url();
+    await toggle.focus();
+    await page.keyboard.press("Enter");
+    await expect(panel).toBeVisible();
+    await page.keyboard.press("Tab");
+    await expect(page.locator('#category-filters button').first()).toBeFocused();
+    await page.locator("#paper-filter").selectOption("A4");
+    await page.locator("#search").fill("PF-064");
+    await expect(page.locator(".gallery-card")).toHaveCount(1);
+    const filteredURL = page.url();
+    await toggle.click();
+    await expect(panel).toBeHidden();
+    await expect(toggle).toBeFocused();
+    expect(page.url()).toBe(filteredURL);
+    await expect(page.locator("#active-filters")).toContainText("A4");
+    await page.locator('[data-language="zh"]').click();
+    await expect(toggle).toHaveText(/高级筛选/);
+    await expect(panel).toBeHidden();
+    await page.reload();
+    await expect(page.locator("#search")).toHaveValue("PF-064");
+    await expect(panel).toBeHidden();
+    await page.locator("#clear-filters").click();
+    await expect(page).toHaveURL(url);
+    expect(await page.locator(".card-id").allTextContents()).toEqual(order);
+    await page.goBack();
+    await expect(page.locator("#search")).toHaveValue("PF-064");
+    await expect(page.locator("#active-filters")).toContainText("A4");
+    await page.goForward();
+    await expect(page.locator("#search")).toHaveValue("");
+    expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(width);
+    await page.screenshot({ path: test.info().outputPath(`compact-${width}.png`) });
+    await toggle.click();
+    expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(width);
+    await page.screenshot({ path: test.info().outputPath(`expanded-${width}.png`) });
+  });
+}
